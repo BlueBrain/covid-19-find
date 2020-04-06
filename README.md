@@ -1,2 +1,2 @@
-# convid-19-find
+# covid-19-find
 BBP/FIND COVID-19 project
