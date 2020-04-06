@@ -44,3 +44,20 @@ Compile app in `dist/` folder.
 ```sh
 yarn build
 ```
+
+
+## Install API dependencies
+```sh
+cd api
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Run API
+
+```sh
+cd api
+. venv/bin/activate
+flask run
+```
