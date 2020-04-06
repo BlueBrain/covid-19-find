@@ -1,0 +1,44 @@
+{
+  "name": "covid-19-find",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/wwajerowicz/covid-19-find.git",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "start": "parcel -p 8080 watch app/index.html",
+    "build": "tsc --noEmit && parcel build app/index.html",
+    "lint": "eslint \"./app/**/*.{ts,tsx,js,jsx}\"",
+    "style": "prettier --check \"./app/**/*.{ts,tsx,js,jsx,less,html,css}\""
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-router-dom": "^5.1.3",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "enzyme-to-json": "^3.4.3",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-html": "^6.0.0",
+    "jest": "^25.1.0",
+    "jest-css-modules": "^2.1.0",
+    "less": "^3.11.0",
+    "lint-staged": "^10.0.3",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.0.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-helmet": "^5.2.1",
+    "react-router-dom": "^5.1.2"
+  }
+}
