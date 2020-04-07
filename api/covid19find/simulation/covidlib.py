@@ -106,7 +106,6 @@ def simulate(num_compartments,params,beta):
       newinfected[0,i]=init_infected[i] # note: orig code effectively has newinfected[0,i]=0
       population[0,i] = init_pop[i]
       susceptibles[0,i] = init_pop[i]-init_infected[i]
-      print ('Initial susceptibles for ',i,'=',susceptibles[0,i])
       if susceptibles[0,i]<0:
           susceptibles[0,i]=0
   #    susceptible_prop[0,i] = susceptibles[0,i]/population[0,i]
@@ -248,7 +247,6 @@ def simulate(num_compartments,params,beta):
          'num_deaths': np.round(newdeaths[:,0],1)
         })
    for i in range(1,num_compartments):
-      print(compartment[i])
       dfadd = pd.DataFrame({
          'days': range(0,num_days),
          'compartment': np.full(num_days,compartment[i]),
