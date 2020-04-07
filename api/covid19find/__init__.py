@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, send_file
+from flask import Flask, Response
+from .simulator import Simulator
 
 
 def create_app(test_config=None):
@@ -41,8 +42,9 @@ def create_app(test_config=None):
 
     @app.route("/api/simulation", methods=['POST'])
     def run_simulation():
-        return send_file(
-            "out.csv",
+        return Response(
+            Simulator().run(),
             mimetype="text/csv"
         )
+
     return app
