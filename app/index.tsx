@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Header from './components/Header';
+import Hero from './components/Hero';
 
 ReactDOM.render(
   <div>
-    <h1>Hello From React Thanks!</h1>
+    <Header />
+    <Hero />
   </div>,
   document.getElementById('app'),
 );
