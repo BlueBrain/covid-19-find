@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, send_file
 
 
 def create_app(test_config=None):
@@ -20,14 +20,29 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
+    # a simple hardcoded list of countries
     @app.route('/api/countries')
     def countries():
         return {
             "countries": [{
                 "countryCode": "CH",
-                "countryName": "Switzerland"
+                "name": "Switzerland"
             }]
         }
 
+    # a simple hardcoded list of countries
+    @app.route('/api/countries/CH')
+    def country_details():
+        return {
+            "countryCode": "CH",
+            "name": "Switzerland",
+            "population": 8570000
+        }
+
+    @app.route("/api/simulation", methods=['POST'])
+    def run_simulation():
+        return send_file(
+            "out.csv",
+            mimetype="text/csv"
+        )
     return app
