@@ -1,0 +1,48 @@
+.hero {
+  color: #fff;
+  background-image: url('https://www.finddx.org/wp-content/uploads/2020/04/Coronavirus_CaitlinMonney_FIND.jpg');
+  background-size: 100vw auto;
+  background-position: center;
+  background-size: cover;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  min-height: 230px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+  .gradient {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: -webkit-linear-gradient(90deg, #cd4652 0, #d3553f 100%);
+    opacity: 0.8;
+  }
+
+  .content {
+    box-sizing: border-box;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    max-width: 1200px;
+  }
+
+  .subtitle {
+    font-weight: lighter;
+  }
+
+  .underline {
+    &:after {
+      background-color: #fff;
+    }
+  }
+
+  .btn {
+    margin-bottom: 2rem;
+  }
+}

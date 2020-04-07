@@ -1,0 +1,33 @@
+.graph-viewer {
+  margin-bottom: 1em;
+}
+.graph-viewer > .wrapper > .graph {
+  width: 100%;
+  height: 100%;
+}
+.graph-viewer > .wrapper {
+  padding: 1em;
+  height: 250px;
+  width: 100%;
+}
+
+.domain {
+  stroke: 'grey';
+}
+
+.graph .label {
+  fill: #666;
+  font-size: 12px;
+}
+
+.axis line {
+  stroke: #666;
+}
+
+.axis path {
+  stroke: #666;
+}
+
+.axis text {
+  fill: #666;
+}
