@@ -1,0 +1,21 @@
+compartment,Hospitals,Other high contact,Rest of population
+init_pop,50000,4800000,7200000
+init_infected,100,5000,4000
+num_days,100,,
+inversion_date,5,,
+beta_pre_inversion,0.35,,
+alpha_post_inversion,35,,
+latent_period,3,,
+incubation_period,7,,
+infective_period,10,,
+confirmation_rate,0.2,,
+gamma,0.99,,
+recovery_period,10,,
+tau,0.01,,
+death_period,10,,
+test_start,2,,
+num_tests,1000,0,0
+true_positive_rate,1,,
+false_positive_rate,0,,
+test_symptomatic_only,False,,
+p_positive_if_symptomatic,0.9,,
