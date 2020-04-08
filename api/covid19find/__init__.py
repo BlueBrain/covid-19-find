@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, Response
 from .simulator import Simulator
+from .simulation.getcountrydata import get_country_data
 
 
 def create_app(test_config=None):
@@ -32,12 +33,20 @@ def create_app(test_config=None):
         }
 
     # a simple hardcoded list of countries
-    @app.route('/api/countries/CH')
-    def country_details():
+    @app.route('/api/countries/<country_code>')
+    def country_details(country_code):
+        (population, urban_population_percentage, urban_population_in_degraded_housing_percentage, over_65_percentage,
+         hospital_employment, high_contact_population, remote_areas_population_percentage) = get_country_data(
+            country_code)
         return {
-            "countryCode": "CH",
-            "name": "Switzerland",
-            "population": 8570000
+            "countryCode": country_code,
+            "population": population,
+            "urbanPopulationPercentage": urban_population_percentage,
+            "urbanPopulationInDegradedHousingPercentage": urban_population_in_degraded_housing_percentage,
+            "over65Percentage": over_65_percentage,
+            "hospitalEmployment": hospital_employment,
+            "highContactPopulation": high_contact_population,
+            "remoteAreasPopulationPercentage": remote_areas_population_percentage
         }
 
     @app.route("/api/simulation", methods=['POST'])
