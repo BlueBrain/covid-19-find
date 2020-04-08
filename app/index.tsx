@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import ActionBox from './components/ActionBox';
 import API from './API';
 import APIProvider from './APIProvider';
-import Countries from './containers/countries';
+import Countries from './containers/Countries';
 
 const api = new API();
 

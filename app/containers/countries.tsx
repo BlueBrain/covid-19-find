@@ -1,20 +1,26 @@
 import * as React from 'react';
 import useAPI from '../hooks/useAPI';
 
+import CountrySelector from '../components/CountrySelector';
+
 const Countries: React.FC = ({ children }) => {
-  const api = useAPI();
   const [countries, setCountries] = React.useState([]);
+  const api = useAPI();
 
   React.useEffect(() => {
     api
       .countries()
-      .then(setCountries)
+      .then(response => setCountries(response.countries))
       .catch(console.error);
   }, []);
 
-  console.log({ countries });
+  const submitCountry = (country: any) => {
+    console.log('country', country);
+  };
 
-  return <>{children}</>;
+  return (
+    <CountrySelector countries={countries} onClickSubmit={submitCountry} />
+  );
 };
 
 export default Countries;
