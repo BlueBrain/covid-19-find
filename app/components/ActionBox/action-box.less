@@ -1,15 +1,69 @@
+@import '../../assets/styles/config/_fonts.less';
+
 .action-box {
   .input {
     width: 100%;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 10px;
-    height: 300px;
+    padding: 15px 20px;
   }
+
   .world {
     margin-left: 2rem;
     width: 40%;
     text-align: center;
     margin-top: -2rem;
+  }
+
+  .country-form {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .form-column {
+    margin-right: 30px;
+  }
+
+  label {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 12px;
+    display: block;
+    line-height: 14px;
+  }
+
+  input {
+    .font-default();
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 7px 10px;
+    outline-style: none;
+    font-size: 13px;
+    background-color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+  }
+
+  .country-info-select {
+    .font-default();
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 145px;
+    background-color: white;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 4px 10px;
+    outline-style: none;
+    font-size: 13px;
+    font-weight: 300;
   }
 }
 
@@ -17,4 +71,21 @@
   fill: rgba(255, 255, 255, 0.2);
   stroke: rgba(255, 255, 255, 0);
   stroke-width: 1px;
+
+  .selected {
+    fill: white;
+  }
+}
+
+.countries-list {
+  .font-default();
+  width: 170px;
+  font-size: 13px;
+  border-radius: 10px;
+  padding: 0px 10px;
+  position: absolute;
+  background-color: white;
+  font-weight: 300;
+  cursor: pointer;
+  overflow-y: scroll;
 }
