@@ -136,6 +136,7 @@ const CountrySelector: React.FC<{
           </div>
         </div>
       </div>
+      <div className="triangle"></div>
     </section>
   );
 };

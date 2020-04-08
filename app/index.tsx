@@ -6,6 +6,7 @@ import ActionBox from './components/ActionBox';
 import API from './API';
 import APIProvider from './APIProvider';
 import Countries from './containers/Countries';
+import TestSelector from './components/TestSelector';
 
 const api = new API();
 
@@ -42,6 +43,7 @@ ReactDOM.render(
           </div>
         </section>
         <Countries />
+        <TestSelector />
         <ActionBox />
       </main>
     </div>

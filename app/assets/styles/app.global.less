@@ -1,3 +1,5 @@
+@import '../../assets/styles/config/_fonts.less';
+
 h1,
 h2,
 h3 {
@@ -66,10 +68,9 @@ button {
 .btn {
   border-width: 1px;
   border-style: solid;
-
   color: #fff;
-
   background: rgba(255, 255, 255, 0.2);
+
   &:hover {
     border-color: #00a5b1;
     color: #00a5b1;
@@ -78,6 +79,7 @@ button {
 
   &.icon {
     padding-right: 50px;
+
     i {
       position: absolute;
       right: 25px;
@@ -96,6 +98,7 @@ main {
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
+    margin-bottom: 40px;
     max-width: 1200px;
     position: relative;
     display: flex;
@@ -127,6 +130,7 @@ main {
   box-shadow: 0 16px 24px 0 rgba(0, 1, 6, 0.32);
   width: 300px;
   margin-top: -10rem;
+
   p {
     text-align: left;
     font-weight: bold;
@@ -140,8 +144,10 @@ main {
   position: relative;
   width: 100%;
   box-shadow: 0 16px 24px 0 rgba(0, 1, 6, 0.32);
+
   .title {
     display: flex;
+
     .number {
       color: rgb(105, 120, 129);
       background-color: white;
@@ -152,25 +158,30 @@ main {
       font-weight: bold;
       line-height: 50px;
       position: relative;
+
       span {
         position: relative;
-        left: 12px;
+        left: 15px;
       }
     }
+
     h2 {
       color: #fff;
       margin-top: 0;
       margin-left: 1rem;
       font-weight: lighter;
     }
+
     .underline {
       &:after {
         background-color: #fff;
       }
     }
   }
+
   &.primary {
     background-color: #00a5b1;
+
     .number {
       color: #00a5b1;
     }
@@ -179,4 +190,36 @@ main {
   .container {
     display: flex;
   }
+
+  .input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 15px 20px;
+  }
+}
+
+input {
+  .font-default();
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 7px 10px;
+  outline-style: none;
+  font-size: 13px;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-weight: 300;
+}
+
+.triangle {
+  position: absolute;
+  content: ' ';
+  bottom: -40px;
+  left: 45%;
+  height: 0;
+  border-left: 80px solid transparent;
+  border-right: 80px solid transparent;
+  border-top: 50px solid rgb(105, 120, 129);
 }
