@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { IoIosPlay } from 'react-icons/io';
 
 import './Hero.less';
 
@@ -16,7 +17,10 @@ const Hero: React.FC = () => {
           resoures
         </h2>
         <button className="btn icon">
-          <i className="icon-play"></i>Start Simulation{' '}
+          Start Simulation{'  '}
+          <i className="icon-play">
+            <IoIosPlay />
+          </i>
         </button>
       </div>
     </section>
