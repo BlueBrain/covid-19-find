@@ -5,6 +5,7 @@ import CountrySelector from '../components/CountrySelector';
 
 const Countries: React.FC = ({ children }) => {
   const [countries, setCountries] = React.useState([]);
+  const [countryInfo, setCountryInfo] = React.useState({});
   const api = useAPI();
 
   React.useEffect(() => {
@@ -14,12 +15,23 @@ const Countries: React.FC = ({ children }) => {
       .catch(console.error);
   }, []);
 
-  const submitCountry = (country: any) => {
-    console.log('country', country);
+  const loadCountryData = async (countryCode: string) => {
+    const info = await api.country(countryCode);
+
+    setCountryInfo(info);
+  };
+
+  const submitCountry = () => {
+    console.log('clicked Submit');
   };
 
   return (
-    <CountrySelector countries={countries} onClickSubmit={submitCountry} />
+    <CountrySelector
+      countries={countries}
+      onClickSubmit={submitCountry}
+      countryInfo={countryInfo}
+      onClickSelectCountry={loadCountryData}
+    />
   );
 };
 

@@ -8,7 +8,9 @@ import './country-selector.less';
 const CountrySelector: React.FC<{
   countries: any[];
   onClickSubmit: (country: any) => void;
-}> = ({ countries, onClickSubmit }) => {
+  onClickSelectCountry: (country: any) => void;
+  countryInfo: any;
+}> = ({ countries, onClickSubmit, countryInfo, onClickSelectCountry }) => {
   const [showCountries, setShowCountries] = React.useState(false);
   const [country, setCountry] = React.useState({
     name: '',
@@ -32,7 +34,18 @@ const CountrySelector: React.FC<{
 
     setCountry(selectedCountry);
     setShowCountries(false);
+    onClickSelectCountry(countryId);
   };
+
+  const {
+    population,
+    over65Percentage,
+    remoteAreasPopulationPercentage,
+    urbanPopulationInDegradedHousingPercentage,
+    urbanPopulationPercentage,
+    hospitalEmployment,
+    highContactPopulation,
+  } = countryInfo;
 
   return (
     <section>
@@ -73,40 +86,51 @@ const CountrySelector: React.FC<{
                   % population in cities of <br />1 mio
                 </label>
                 <input
-                  placeholder="Enter... (0%-100%)"
-                  name="population-cities"
+                  value={urbanPopulationPercentage || 'Enter... (0%-100%)'}
+                  readOnly
                 />
                 <label>Estimated total hospital employment</label>
                 <input
-                  placeholder="Enter... [0-100]"
-                  name="population-cities"
+                  value={hospitalEmployment || 'Enter... [0-100]'}
+                  readOnly
                 />
               </div>
               <div className="form-column">
                 <label>Population size</label>
-                <input placeholder="Enter... [0-100]" name="population-size" />
+                <input value={population || 'Enter... [0-100]'} readOnly />
                 <label>% population in degraded housing</label>
                 <input
-                  placeholder="Enter... (0%-100%)"
-                  name="degraded-housing"
+                  value={
+                    urbanPopulationInDegradedHousingPercentage ||
+                    'Enter... (0%-100%)'
+                  }
+                  readOnly
                 />
                 <label>% population high risk occupations</label>
                 <input
-                  placeholder="Enter... (0%-100%)"
-                  name="high-risk-occupations"
+                  value={highContactPopulation || 'Enter... (0%-100%)'}
+                  readOnly
                 />
               </div>
               <div className="form-column">
                 <label>% population age +65 years</label>
-                <input placeholder="Enter... (0%-100%)" name="over-65" />
+                <input
+                  value={over65Percentage || 'Enter... (0%-100%)'}
+                  readOnly
+                />
                 <label>% population remote/isolated areas</label>
-                <input placeholder="Enter... (0%-100%)" name="remote-areas" />
+                <input
+                  value={
+                    remoteAreasPopulationPercentage || 'Enter... (0%-100%)'
+                  }
+                  readOnly
+                />
               </div>
             </form>
           </div>
           <div className="world">
             <SVGMap map={World} />
-            <button className="action" onClick={onClickSubmit}>
+            <button className="action" onClick={() => onClickSubmit(country)}>
               Submit
             </button>
           </div>
