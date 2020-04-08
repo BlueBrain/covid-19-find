@@ -191,3 +191,5 @@ dmypy.json
 
 # venv
 api/venv
+
+api/data

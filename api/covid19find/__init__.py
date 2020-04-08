@@ -1,55 +1,30 @@
 import os
 
 from flask import Flask, Response
+import json
+
+from .countryrepository import CountryRepository
 from flask_cors import CORS
 from .simulator import Simulator
-from .simulation.getcountrydata import get_country_data
+from .coviddatarepository import CovidDataRepository
 
 
-def create_app(test_config=None):
+def create_app():
     # create and configure the app
+
+    data_repo = CovidDataRepository(os.environ.get("DATA_DIR"))
+    data_repo.update_data()
+    country_repo = CountryRepository()
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
-
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
-    # a simple hardcoded list of countries
     @app.route('/api/countries')
     def countries():
-        return {
-            "countries": [{
-                "countryCode": "CH",
-                "name": "Switzerland"
-            }]
-        }
+        return country_repo.country_list()
 
-    # a simple hardcoded list of countries
     @app.route('/api/countries/<country_code>')
     def country_details(country_code):
-        (population, urban_population_percentage, urban_population_in_degraded_housing_percentage, over_65_percentage,
-         hospital_employment, high_contact_population, remote_areas_population_percentage) = get_country_data(
-            country_code)
-        return {
-            "countryCode": country_code,
-            "population": population,
-            "urbanPopulationPercentage": urban_population_percentage,
-            "urbanPopulationInDegradedHousingPercentage": urban_population_in_degraded_housing_percentage,
-            "over65Percentage": over_65_percentage,
-            "hospitalEmployment": hospital_employment,
-            "highContactPopulation": high_contact_population,
-            "remoteAreasPopulationPercentage": remote_areas_population_percentage
-        }
+        return country_repo.country_details(country_code)
 
     @app.route("/api/simulation", methods=['POST'])
     def run_simulation():
@@ -57,5 +32,11 @@ def create_app(test_config=None):
             Simulator().run(),
             mimetype="text/csv"
         )
+
+    @app.route("/api/covid19data/<country_code>")
+    def country_covid19_data(country_code):
+        return Response(
+            json.dumps(data_repo.data_for(country_code)),
+            mimetype="application/json")
 
     return app

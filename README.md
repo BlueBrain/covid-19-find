@@ -61,3 +61,8 @@ cd api
 . venv/bin/activate
 flask run
 ```
+
+
+List of country codes from https://datahub.io/core/country-list#data-cli with modifications to match COVID19 data.
+
+COVID19 data for countries from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
