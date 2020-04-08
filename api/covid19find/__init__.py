@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, Response
+from flask_cors import CORS
 from .simulator import Simulator
 from .simulation.getcountrydata import get_country_data
 
@@ -8,6 +9,7 @@ from .simulation.getcountrydata import get_country_data
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
