@@ -5,8 +5,9 @@ import Hero from './components/Hero';
 import ActionBox from './components/ActionBox';
 import API from './API';
 import APIProvider from './APIProvider';
-import Countries from './containers/Countries';
 import TestSelector from './components/TestSelector';
+import Countries from './containers/countries';
+import Simulation from './containers/simulation';
 
 const api = new API();
 
@@ -45,6 +46,9 @@ ReactDOM.render(
         <Countries />
         <TestSelector />
         <ActionBox />
+        <Simulation compartment="Hospitals" />
+        <Simulation compartment="Other high contact" />
+        <Simulation compartment="Rest of population" />
       </main>
     </div>
   </APIProvider>,

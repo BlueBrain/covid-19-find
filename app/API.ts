@@ -1,4 +1,5 @@
 import { apiBase } from './config';
+import csv from 'csvtojson';
 
 export default class API {
   base: string;
@@ -18,8 +19,8 @@ export default class API {
   }
 
   simulation() {
-    return fetch(`${this.base}/simulation`, { method: 'POST' }).then(response =>
-      response.text(),
-    );
+    return fetch(`${this.base}/simulation`, { method: 'POST' })
+      .then(response => response.text())
+      .then(string => csv().fromString(string));
   }
 }
