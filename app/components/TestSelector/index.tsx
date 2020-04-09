@@ -5,9 +5,12 @@ import useFormInput from '../../hooks/useFormInput';
 import './test-selector.less';
 
 const TestSelector: React.FC = () => {
-  const PCRs = useFormInput('');
-  const rapidTestKits = useFormInput('');
-  const xRays = useFormInput('');
+  const PCRsSensitivity = useFormInput('');
+  const rapidTestKitsSensitivity = useFormInput('');
+  const xRaysSensitivity = useFormInput('');
+  const PCRsSelectivity = useFormInput('');
+  const rapidTestKitsSelectivity = useFormInput('');
+  const xRaysSelectivity = useFormInput('');
 
   const onClickSubmit = data => {
     console.log('clicked');
@@ -28,40 +31,49 @@ const TestSelector: React.FC = () => {
           <form className="tests-form">
             <div className="tests-form-container">
               <div className="input test-box">
-                <div>
-                  <label>
-                    Maximal deployment
-                    <br />
-                    <em>PCRs</em>
-                    <br />
-                    (primary care requirements)
-                    <br />
-                    per day
-                  </label>
-                </div>
-                <div>
-                  <input {...PCRs} />
+                <p className="test-description">
+                  Maximal deployment
+                  <br />
+                  <em>PCRs*</em>
+                  <br />
+                  per day
+                </p>
+                <div className="test-input">
+                  <label className="label-mini">Sensitivity</label>
+                  <input {...PCRsSensitivity} />
+                  <label className="label-mini">Selectivity</label>
+                  <input {...PCRsSelectivity} />
                 </div>
               </div>
               <div className="input test-box">
-                <label>
+                <p className="test-description">
                   Maximal deployment of
                   <br />
                   <em>Rapid Test Kits</em>
                   <br />
                   per day
-                </label>
-                <input {...rapidTestKits} />
+                </p>
+                <div className="test-input">
+                  <label className="label-mini">Sensitivity</label>
+                  <input {...rapidTestKitsSensitivity} />
+                  <label className="label-mini">Selectivity</label>
+                  <input {...rapidTestKitsSelectivity} />
+                </div>
               </div>
               <div className="input test-box">
-                <label>
+                <p className="test-description">
                   Maximal deployment of
                   <br />
                   <em>Chest X-rays</em>
                   <br />
                   per day
-                </label>
-                <input {...xRays} />
+                </p>
+                <div className="test-input">
+                  <label className="label-mini">Sensitivity</label>
+                  <input {...xRaysSensitivity} />
+                  <label className="label-mini">Selectivity</label>
+                  <input {...xRaysSelectivity} />
+                </div>
               </div>
             </div>
           </form>
