@@ -193,3 +193,6 @@ dmypy.json
 api/venv
 
 api/data
+
+release
+release.tar.gz
