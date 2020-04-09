@@ -12,7 +12,7 @@ from .coviddatarepository import CovidDataRepository
 def create_app():
     # create and configure the app
 
-    data_repo = CovidDataRepository(os.environ.get("DATA_DIR"))
+    data_repo = CovidDataRepository(os.environ.get("DATA_DIR"), "/tmp")
     data_repo.update_data()
     country_repo = CountryRepository()
     app = Flask(__name__, instance_relative_config=True)
@@ -48,7 +48,6 @@ def create_app():
 
     @app.route('/<path:filename>')
     def static_files(filename):
-        print(static_files_dir)
         return send_from_directory(static_files_dir,
                                    filename, as_attachment=False)
 
