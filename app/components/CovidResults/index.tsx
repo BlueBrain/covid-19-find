@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
-import colors from '../../colors';
 import Color from 'color';
+import colors from '../../colors';
+
+import './covid-results';
 
 export type CovidData = {
   currentActive: number;
@@ -20,76 +22,90 @@ export type CovidData = {
 const CovidResults: React.FC<{
   data: CovidData;
 }> = ({ data }) => {
-  const chartData = data.timeseries.filter(entry => !!entry.currentActive);
+  let firstActiveDay = 0;
+  const chartData = data.timeseries.filter((entry, index) => {
+    if (!firstActiveDay) {
+      if (!!entry.currentActive) {
+        firstActiveDay = index;
+        return true;
+      }
+      return !!entry.currentActive;
+    }
+    return true;
+  });
 
   return (
-    <>
-      <section>
-        <div className="half">
-          <h2 className="underline">
-            {data.totalConfirmed.toLocaleString()} Coronavirus Cases
-          </h2>
-          <h2 className="underline">
-            {data.totalDeaths.toLocaleString()} Deaths
-          </h2>
-          <h2 className="underline">
-            {data.totalRecovered.toLocaleString()} Recovered
-          </h2>
-        </div>
-        <div className="half">
-          <Line
-            data={{
-              backgroundColor: '#fff',
-              datasets: [
-                {
-                  label: 'Current Active',
-                  data: chartData.map(entry => entry.currentActive),
-                  borderColor: [colors.aubergine],
-                  backgroundColor: [
-                    Color(colors.aubergine)
-                      .alpha(0.2)
-                      .toString(),
-                  ],
-                },
-                {
-                  label: 'Total Confirmed',
-                  data: chartData.map(entry => entry.totalConfirmed),
+    <div className="result covid-results">
+      <div className="stats">
+        <h3>
+          {data.totalConfirmed.toLocaleString()}
+          <br />
+          <span className="subtitle"> Coronavirus Cases</span>
+        </h3>
+        <h3>
+          {data.totalDeaths.toLocaleString()}
+          <br />
+          <span className="subtitle">Deaths</span>
+        </h3>
+        <h3>
+          {data.totalRecovered.toLocaleString()}
+          <br />
+          <span className="subtitle"> Recovered</span>
+        </h3>
+      </div>
+      <div className="chart">
+        <Line
+          data={{
+            backgroundColor: '#fff',
+            datasets: [
+              {
+                label: 'Current Active',
+                data: chartData.map(entry => entry.currentActive),
+                borderColor: [colors.aubergine],
+                backgroundColor: [
+                  Color(colors.aubergine)
+                    .alpha(0.2)
+                    .toString(),
+                ],
+              },
+              {
+                label: 'Total Confirmed',
+                data: chartData.map(entry => entry.totalConfirmed),
 
-                  borderColor: [colors.blueGray],
-                  backgroundColor: [
-                    Color(colors.blueGray)
-                      .alpha(0.2)
-                      .toString(),
-                  ],
-                },
-                {
-                  label: 'Total Deaths',
-                  data: chartData.map(entry => entry.totalDeaths),
-                  borderColor: [colors.pomegranate],
+                borderColor: [colors.blueGray],
+                backgroundColor: [
+                  Color(colors.blueGray)
+                    .alpha(0.2)
+                    .toString(),
+                ],
+              },
+              {
+                label: 'Total Deaths',
+                data: chartData.map(entry => entry.totalDeaths),
+                borderColor: [colors.pomegranate],
 
-                  backgroundColor: [
-                    Color(colors.pomegranate)
-                      .alpha(0.2)
-                      .toString(),
-                  ],
-                },
-                {
-                  label: 'Total Recovered',
-                  data: chartData.map(entry => entry.totalRecovered),
-                  borderColor: [colors.turqouise],
-                  backgroundColor: [
-                    Color(colors.turqouise)
-                      .alpha(0.2)
-                      .toString(),
-                  ],
-                },
-              ],
-              labels: chartData.map(entry => entry.date),
-            }}
-          />
-        </div>
-      </section>
-    </>
+                backgroundColor: [
+                  Color(colors.pomegranate)
+                    .alpha(0.2)
+                    .toString(),
+                ],
+              },
+              {
+                label: 'Total Recovered',
+                data: chartData.map(entry => entry.totalRecovered),
+                borderColor: [colors.turqouise],
+                backgroundColor: [
+                  Color(colors.turqouise)
+                    .alpha(0.2)
+                    .toString(),
+                ],
+              },
+            ],
+            labels: chartData.map(entry => entry.date),
+          }}
+        />
+      </div>
+    </div>
   );
 };
 

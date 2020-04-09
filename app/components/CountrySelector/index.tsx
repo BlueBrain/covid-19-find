@@ -64,8 +64,8 @@ const CountrySelector: React.FC<{
   } = countryInfo;
 
   return (
-    <section>
-      <div className="country-selector action-box">
+    <>
+      <div className="country-selector">
         <div className="title">
           <div className="number">
             <span>1</span>
@@ -170,7 +170,7 @@ const CountrySelector: React.FC<{
         </div>
       </div>
       <div className="triangle"></div>
-    </section>
+    </>
   );
 };
 

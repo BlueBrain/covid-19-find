@@ -34,18 +34,22 @@ const Countries: React.FC = ({ children }) => {
   };
 
   return (
-    <>
-      <CountrySelector
-        countries={countries}
-        onClickSubmit={submitCountry}
-        countryInfo={countryInfo}
-        onClickSelectCountry={loadCountryData}
-        defaultCountryCode={defaultCountryCode}
-      />
-      {!!countryInfo && !!countryInfo.covidData && (
-        <CovidResults data={countryInfo.covidData} />
-      )}
-    </>
+    <section className="input">
+      <div className="action-box">
+        <CountrySelector
+          countries={countries}
+          onClickSubmit={submitCountry}
+          countryInfo={countryInfo}
+          onClickSelectCountry={loadCountryData}
+          defaultCountryCode={defaultCountryCode}
+        />
+      </div>
+      <div className="results-drop">
+        {!!countryInfo && !!countryInfo.covidData && (
+          <CovidResults data={countryInfo.covidData} />
+        )}
+      </div>
+    </section>
   );
 };
 
