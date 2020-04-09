@@ -1,5 +1,20 @@
 @import '../../assets/styles/config/_fonts.less';
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Roboto, sans-serif;
+  color: rgb(28, 28, 28);
+  font-size: 16px;
+  line-height: 1.4rem;
+}
+
 h1,
 h2,
 h3 {
@@ -10,15 +25,6 @@ h3 {
 h1 {
   font-weight: 800;
   font-size: 40px;
-}
-
-body {
-  font-family: Roboto, sans-serif;
-  padding: 0;
-  margin: 0;
-  color: rgb(28, 28, 28);
-  font-size: 16px;
-  line-height: 1.4rem;
 }
 
 em {
@@ -194,7 +200,6 @@ main {
   }
 
   .input {
-    width: 100%;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 10px;
     padding: 15px 20px;
@@ -218,8 +223,9 @@ input {
 .triangle {
   position: absolute;
   content: ' ';
-  bottom: -40px;
-  left: 45%;
+  bottom: -50px;
+  left: 50%;
+  margin-left: -80px;
   height: 0;
   border-left: 80px solid transparent;
   border-right: 80px solid transparent;

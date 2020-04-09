@@ -89,16 +89,32 @@ const CountrySelector: React.FC<{
                   value={urbanPopulationPercentage || 'Enter... (0%-100%)'}
                   readOnly
                 />
-                <label>Estimated total hospital employment</label>
+                <label>
+                  Estimated total hospital
+                  <br />
+                  employment
+                </label>
                 <input
                   value={hospitalEmployment || 'Enter... [0-100]'}
+                  readOnly
+                />
+                <label>
+                  % population age <br />
+                  +65 years
+                </label>
+                <input
+                  value={over65Percentage || 'Enter... (0%-100%)'}
                   readOnly
                 />
               </div>
               <div className="form-column">
                 <label>Population size</label>
                 <input value={population || 'Enter... [0-100]'} readOnly />
-                <label>% population in degraded housing</label>
+                <label>
+                  % population in
+                  <br />
+                  degraded housing
+                </label>
                 <input
                   value={
                     urbanPopulationInDegradedHousingPercentage ||
@@ -106,19 +122,20 @@ const CountrySelector: React.FC<{
                   }
                   readOnly
                 />
-                <label>% population high risk occupations</label>
+                <label>
+                  % population high
+                  <br />
+                  risk occupations
+                </label>
                 <input
                   value={highContactPopulation || 'Enter... (0%-100%)'}
                   readOnly
                 />
-              </div>
-              <div className="form-column">
-                <label>% population age +65 years</label>
-                <input
-                  value={over65Percentage || 'Enter... (0%-100%)'}
-                  readOnly
-                />
-                <label>% population remote/isolated areas</label>
+                <label>
+                  % population
+                  <br />
+                  remote/isolated areas
+                </label>
                 <input
                   value={
                     remoteAreasPopulationPercentage || 'Enter... (0%-100%)'

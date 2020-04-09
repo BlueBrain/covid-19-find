@@ -1,20 +1,56 @@
 @import '../../assets/styles/config/_fonts.less';
+@import '../../assets/styles/config/_queries.less';
 
 .country-selector {
+  .container {
+    align-items: flex-start;
+
+    @media @small {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @media (max-width: 470px) {
+      display: block;
+    }
+  }
+
   .world {
     margin-left: 2rem;
-    width: 40%;
+    width: 55%;
     text-align: center;
-    margin-top: -2rem;
+
+    @media @small {
+      margin: 2rem 0 0;
+    }
+
+    @media (max-width: 470px) {
+      width: 100%;
+    }
+  }
+
+  .action {
+    @media (max-width: 470px) {
+      margin-top: 1rem;
+    }
   }
 
   .country-form {
     display: flex;
     align-items: flex-end;
+
+    @media (max-width: 470px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   .form-column {
-    margin-right: 30px;
+    margin: 15px;
+
+    @media (max-width: 470px) {
+      margin: 0 15px;
+    }
   }
 
   label {
