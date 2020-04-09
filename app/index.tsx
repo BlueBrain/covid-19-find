@@ -8,6 +8,7 @@ import APIProvider from './APIProvider';
 import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
+import About from './components/About';
 
 const api = new API();
 
@@ -49,6 +50,7 @@ ReactDOM.render(
         <Simulation compartment="Hospitals" />
         <Simulation compartment="Other high contact" />
         <Simulation compartment="Rest of population" />
+        <About />
       </main>
     </div>
   </APIProvider>,

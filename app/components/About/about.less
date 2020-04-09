@@ -1,0 +1,81 @@
+@import '../../assets/styles/config/_colors.less';
+@import '../../assets/styles/config/_queries.less';
+
+.about {
+  background-color: @light-background-color;
+  width: 100%;
+  max-width: none;
+  padding: 4rem 0;
+
+  @media @small {
+    flex-direction: column-reverse;
+    padding: 4rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 2rem;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+  }
+
+  .content {
+    padding-left: 2rem;
+    border-left: 1px solid black;
+    max-width: 400px;
+
+    @media @small {
+      width: 80%;
+      max-width: none;
+    }
+  }
+
+  .image-container {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 2rem;
+    flex-direction: row;
+
+    @media @small {
+      margin-top: 2rem;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .bbp-logo,
+  .find-logo {
+    height: 120px;
+    width: 120px;
+    display: block;
+    margin-bottom: 1rem;
+
+    @media @small {
+      height: 80px;
+      width: 80px;
+    }
+  }
+
+  .connection-image {
+    width: 240px;
+    height: 240px;
+    margin-right: 60px;
+
+    @media @small {
+      height: 160px;
+      width: 160px;
+    }
+
+    @media (max-width: 550px) {
+      height: 100px;
+      width: 100px;
+    }
+  }
+}
