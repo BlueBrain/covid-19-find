@@ -1,5 +1,5 @@
 import * as React from 'react';
-import API from '../api';
+import API from '../API';
 import { APIContext } from '../APIProvider';
 
 export default function useNexusContext(): API {
