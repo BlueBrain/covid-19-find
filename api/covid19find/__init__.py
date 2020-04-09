@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, Response
+from flask import Flask, Response, send_from_directory
 import json
 
 from .countryrepository import CountryRepository
@@ -38,5 +38,18 @@ def create_app():
         return Response(
             json.dumps(data_repo.data_for(country_code)),
             mimetype="application/json")
+
+    static_files_dir = os.path.abspath(os.environ.get("STATIC_DATA_DIR"))
+
+    @app.route('/')
+    def index():
+        return send_from_directory(static_files_dir,
+                                   'index.html', as_attachment=False)
+
+    @app.route('/<path:filename>')
+    def static_files(filename):
+        print(static_files_dir)
+        return send_from_directory(static_files_dir,
+                                   filename, as_attachment=False)
 
     return app
