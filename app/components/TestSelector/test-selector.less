@@ -3,17 +3,23 @@
 .test-selector {
   position: relative;
 
-  label {
+  .test-description {
     color: white;
     font-size: 20px;
     line-height: 22px;
     margin-bottom: 15px;
     font-weight: 300;
+    margin-top: 0;
+    line-height: 25px;
   }
 
-  input {
-    margin-left: auto;
-    margin-right: auto;
+  .label-mini {
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 12px;
+    display: block;
+    line-height: 14px;
+    margin-bottom: 0;
   }
 
   .test-box {
@@ -23,6 +29,15 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .test-input {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .tests-form-container {
