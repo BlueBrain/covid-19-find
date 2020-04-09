@@ -18,6 +18,12 @@ export default class API {
     );
   }
 
+  countryCovidData(countryCode: string) {
+    return fetch(`${this.base}/covid19data/${countryCode}`).then(response =>
+      response.json(),
+    );
+  }
+
   simulation() {
     return fetch(`${this.base}/simulation`, { method: 'POST' })
       .then(response => response.text())

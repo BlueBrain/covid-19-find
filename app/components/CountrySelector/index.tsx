@@ -10,7 +10,14 @@ const CountrySelector: React.FC<{
   onClickSubmit: (country: any) => void;
   onClickSelectCountry: (country: any) => void;
   countryInfo: any;
-}> = ({ countries, onClickSubmit, countryInfo, onClickSelectCountry }) => {
+  defaultCountryCode: string;
+}> = ({
+  countries,
+  onClickSubmit,
+  countryInfo,
+  onClickSelectCountry,
+  defaultCountryCode,
+}) => {
   const [showCountries, setShowCountries] = React.useState(false);
   const [country, setCountry] = React.useState({
     name: '',
@@ -37,6 +44,15 @@ const CountrySelector: React.FC<{
     onClickSelectCountry(countryId);
   };
 
+  React.useEffect(() => {
+    const defaultCountry = countries.find(
+      country => country.countryCode === defaultCountryCode,
+    );
+    if (defaultCountry) {
+      selectCountry(defaultCountry);
+    }
+  }, [defaultCountryCode, countries]);
+
   const {
     population,
     over65Percentage,
@@ -48,8 +64,8 @@ const CountrySelector: React.FC<{
   } = countryInfo;
 
   return (
-    <section>
-      <div className="country-selector action-box">
+    <>
+      <div className="country-selector">
         <div className="title">
           <div className="number">
             <span>1</span>
@@ -154,7 +170,7 @@ const CountrySelector: React.FC<{
         </div>
       </div>
       <div className="triangle"></div>
-    </section>
+    </>
   );
 };
 

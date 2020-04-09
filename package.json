@@ -12,6 +12,7 @@
     "style": "prettier --check \"./app/**/*.{ts,tsx,js,jsx,less,html,css}\""
   },
   "devDependencies": {
+    "@types/color": "^3.0.1",
     "@types/csvtojson": "^1.1.5",
     "@types/d3": "^5.7.2",
     "@types/jest": "^25.1.0",
@@ -40,6 +41,7 @@
   "dependencies": {
     "@svg-maps/world": "^1.0.0",
     "chart.js": "^2.9.3",
+    "color": "^3.1.2",
     "csvtojson": "^2.0.10",
     "d3": "^5.15.1",
     "react": "^16.12.0",
