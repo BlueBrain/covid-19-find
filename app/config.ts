@@ -1,1 +1,2 @@
-export const apiBase = 'http://localhost:5000/api';
+export const apiBase =
+  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
