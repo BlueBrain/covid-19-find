@@ -11,7 +11,6 @@ WORKDIR /opt/covid-19-find
 ADD api .
 WORKDIR /opt/covid-19-find
 RUN pip install -r requirements.txt
-RUN pip install waitress
 ENV DATA_DIR /tmp
 ENV FLASK_ENV production
 COPY --from=builder /opt/build/dist ./static
