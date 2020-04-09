@@ -29,6 +29,12 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
+
+    @media @small {
+      margin-top: 1rem;
+      margin: 2rem;
+      width: auto;
+    }
   }
 
   .test-input {
@@ -44,6 +50,10 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+
+    @media @small {
+      display: block;
+    }
   }
 
   .tests-form {
