@@ -30,7 +30,10 @@ selectivity_xray=0.9
 num_tests_PCR=1000
 num_tests_RDT=1000
 num_tests_xray=1000
-cl.run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
+(dataframes, total_tests_by_scenario,total_deaths_by_scenario)=cl.run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,selectivity_PCR,selectivity_RDT,selectivity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray)
+print('total deaths by scenario')
+for i in range (1,len(total_deaths_by_scenario)):
+    print ('scenario: ',i,': ', total_deaths_by_scenario[i])
