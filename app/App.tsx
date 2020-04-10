@@ -33,10 +33,10 @@ const DEFAULT_PARAMS = {
 const App: React.FC = () => {
   const [values, setValues] = React.useState<SimulationParams>(DEFAULT_PARAMS);
 
-  const handleTestSubmit = testValues => {
+  const handleSubmit = changedValues => {
     setValues({
       ...values,
-      ...testValues,
+      ...changedValues,
     });
   };
 
@@ -46,8 +46,8 @@ const App: React.FC = () => {
       <Hero />
       <main>
         <TopSection />
-        <Countries />
-        <TestSelector {...values} onSubmit={handleTestSubmit} />
+        <Countries {...values} onSubmit={handleSubmit} />
+        <TestSelector {...values} onSubmit={handleSubmit} />
         <Simulation simulationParams={values} />
         <About />
       </main>

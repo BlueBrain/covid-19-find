@@ -30,7 +30,6 @@ const TestSelector: React.FC<TestSelectorVales & {
   num_tests_xray,
   onSubmit,
 }) => {
-  const formRef = React.useRef<HTMLFormElement>(null);
   const PCRsSensitivity = useFormInput(sensitivity_PCR);
   const PCRtotal = useFormInput(num_tests_PCR);
   const rapidTestKitTotal = useFormInput(num_tests_RDT);
@@ -58,7 +57,7 @@ const TestSelector: React.FC<TestSelectorVales & {
   };
 
   return (
-    <form className="tests-form" ref={formRef} onSubmit={handleSubmit}>
+    <form className="tests-form" onSubmit={handleSubmit}>
       <section>
         <div className="test-selector action-box">
           <div className="title">
