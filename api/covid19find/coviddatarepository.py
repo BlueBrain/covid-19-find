@@ -98,8 +98,11 @@ class CovidDataRepository:
                 print("Couldn't find country code for: " + country)
 
     def data_for(self, country_code):
-        with open(os.path.join(self.country_data_dir, country_code + ".json")) as country_file:
-            return json.load(country_file)
+        try:
+            with open(os.path.join(self.country_data_dir, country_code + ".json")) as country_file:
+                return json.load(country_file)
+        except FileNotFoundError:
+            return None
 
     def __load_country_codes(self):
         country_codes_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "country_codes.json")

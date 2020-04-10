@@ -18,13 +18,22 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
 
+    def not_found_if_none(data, country_code):
+        if data is None:
+            return Response(response=json.dumps({
+                "status": 404,
+                "error": "Couldn't find data for country " + country_code
+            }), status=404, mimetype="application/json")
+        else:
+            return data
+
     @app.route('/api/countries')
     def countries():
         return country_repo.country_list()
 
     @app.route('/api/countries/<country_code>')
     def country_details(country_code):
-        return country_repo.country_details(country_code)
+        return not_found_if_none(country_repo.country_details(country_code), country_code)
 
     @app.route("/api/simulation", methods=['POST'])
     def run_simulation():
@@ -35,9 +44,7 @@ def create_app():
 
     @app.route("/api/covid19data/<country_code>")
     def country_covid19_data(country_code):
-        return Response(
-            json.dumps(data_repo.data_for(country_code)),
-            mimetype="application/json")
+        return not_found_if_none(data_repo.data_for(country_code), country_code)
 
     static_files_dir = os.path.abspath(os.environ.get("STATIC_DATA_DIR"))
 
