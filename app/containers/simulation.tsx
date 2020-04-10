@@ -1,87 +1,50 @@
 import * as React from 'react';
 import useAPI from '../hooks/useAPI';
 import SimulationResults from '../components/SimulationResults';
+import { SimulationParams, Scenarios } from '../API';
 
-const Simulation: React.FC<{ compartment?: string }> = ({
-  compartment = 'Hospitals',
+const Simulation: React.FC<{ simulationParams?: SimulationParams }> = ({
+  simulationParams,
 }) => {
   const api = useAPI();
-  const [datasets, setDatasets] = React.useState(null);
+  const [simulationData, setSimulationData] = React.useState<{
+    loading: boolean;
+    error: Error | null;
+    data: Scenarios | null;
+  }>({
+    loading: false,
+    error: null,
+    data: null,
+  });
 
   React.useEffect(() => {
+    if (!simulationParams) {
+      return;
+    }
+    setSimulationData({
+      loading: true,
+      error: null,
+      data: null,
+    });
     api
-      .simulation()
-      .then(data => {
-        console.log(data);
-        const filteredData = data.filter(
-          entry => entry.compartment === compartment,
-        );
-        const datasets = filteredData.reduce(
-          (memo, entry, index) => {
-            memo.numDeaths.push(Number(entry.num_deaths));
-            memo.infected.push(Number(entry.num_infected));
-            memo.susceptibles.push(Number(entry.susceptibles));
-            memo.labels.push(`day ${entry.days}`);
-            return memo;
-          },
-          {
-            numDeaths: [],
-            infected: [],
-            susceptibles: [],
-            labels: [],
-          },
-        );
-        setDatasets(datasets);
+      .simulation(simulationParams)
+      .then(simulationData => {
+        setSimulationData({
+          error: null,
+          loading: false,
+          data: simulationData,
+        });
       })
-      .catch(console.error);
-  }, []);
+      .catch(error => {
+        setSimulationData({
+          error,
+          loading: false,
+          data: null,
+        });
+      });
+  }, [simulationParams]);
 
-  return (
-    <section id="simulation-results">
-      <div className="action-box primary">
-        <div className="title">
-          <div className="number">
-            <span>3</span>
-          </div>
-          <h2 className="underline">
-            Select and view <em>Proposed Scenarios</em>
-          </h2>
-        </div>
-        <div className="container"></div>
-      </div>
-      <div className="results-drop">
-        {!!datasets && (
-          <SimulationResults
-            data={{
-              gridlines: {
-                color: '#fff',
-              },
-              backgroundColor: '#fff',
-              datasets: [
-                {
-                  label: 'Deaths',
-                  data: datasets.numDeaths,
-                  borderColor: ['#fff'],
-                },
-                {
-                  label: 'Infected',
-                  data: datasets.infected,
-                  borderColor: ['#fff'],
-                },
-                {
-                  label: 'Susceptibles',
-                  data: datasets.susceptibles,
-                  borderColor: ['#fff'],
-                },
-              ],
-              labels: datasets.labels,
-            }}
-            title={compartment}
-          />
-        )}
-      </div>
-    </section>
-  );
+  return <SimulationResults {...simulationData} />;
 };
 
 export default Simulation;

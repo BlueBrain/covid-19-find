@@ -2,7 +2,6 @@ import json
 import os
 from .countrydata.Countries import Country
 
-from .simulation.getcountrydata import get_country_data
 import pycountry
 
 
