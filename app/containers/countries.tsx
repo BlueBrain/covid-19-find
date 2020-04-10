@@ -61,6 +61,10 @@ const Countries: React.FC = ({ children }) => {
 
   const open = !countryInfo.loading;
 
+  const countryLabel = countries.find(
+    entry => entry.countryCode === countryInfo?.data?.countryInfo?.countryCode,
+  )?.name;
+
   return (
     <section className="input" id="country-selection">
       <div className="action-box">
@@ -80,7 +84,12 @@ const Countries: React.FC = ({ children }) => {
         {!!countryInfo &&
           !!countryInfo?.data &&
           !!countryInfo.data.covidData.timeseries && (
-            <CovidResults data={countryInfo.data.covidData} />
+            <CovidResults
+              data={countryInfo.data.covidData}
+              countryLabel={
+                countryLabel || countryInfo?.data?.countryInfo.countryCode
+              }
+            />
           )}
         {/* TODO do something on error */}
         {!!countryInfo && !!countryInfo.error && countryInfo.error.message}

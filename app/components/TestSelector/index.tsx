@@ -6,6 +6,9 @@ import './test-selector.less';
 
 const TestSelector: React.FC = () => {
   const PCRsSensitivity = useFormInput('');
+  const PCRtotal = useFormInput('');
+  const rapidTestKitTotal = useFormInput('');
+  const chestXRayTotal = useFormInput('');
   const rapidTestKitsSensitivity = useFormInput('');
   const xRaysSensitivity = useFormInput('');
   const PCRsSelectivity = useFormInput('');
@@ -37,11 +40,19 @@ const TestSelector: React.FC = () => {
                   <em>PCRs*</em>
                   <br />
                   per day
+                  <input
+                    {...PCRtotal}
+                    placeholder={'Enter... [0-100]'}
+                    style={{
+                      width: '200px',
+                      margin: '1rem auto',
+                    }}
+                  />
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input {...PCRsSensitivity} />
-                  <label className="label-mini">Selectivity</label>
+                  <label className="label-mini">Specificity</label>
                   <input {...PCRsSelectivity} />
                 </div>
               </div>
@@ -52,11 +63,19 @@ const TestSelector: React.FC = () => {
                   <em>Rapid Test Kits</em>
                   <br />
                   per day
+                  <input
+                    {...rapidTestKitTotal}
+                    placeholder={'Enter... [0-100]'}
+                    style={{
+                      width: '200px',
+                      margin: '1rem auto',
+                    }}
+                  />
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input {...rapidTestKitsSensitivity} />
-                  <label className="label-mini">Selectivity</label>
+                  <label className="label-mini">Specificity</label>
                   <input {...rapidTestKitsSelectivity} />
                 </div>
               </div>
@@ -67,11 +86,19 @@ const TestSelector: React.FC = () => {
                   <em>Chest X-rays</em>
                   <br />
                   per day
+                  <input
+                    {...rapidTestKitTotal}
+                    placeholder={'Enter... [0-100]'}
+                    style={{
+                      width: '200px',
+                      margin: '1rem auto',
+                    }}
+                  ></input>
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input {...xRaysSensitivity} />
-                  <label className="label-mini">Selectivity</label>
+                  <label className="label-mini">Specificity</label>
                   <input {...xRaysSelectivity} />
                 </div>
               </div>

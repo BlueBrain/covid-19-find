@@ -118,17 +118,15 @@ const CountrySelector: React.FC<{
                     ))}
                   </div>
                 )}
-                <label>
-                  % population in cities of <br />1 mio
-                </label>
+                <label>% population in urban areas</label>
                 <input
                   value={urbanPopulationPercentage || 'Enter... (0%-100%)'}
                   readOnly
                 />
                 <label>
-                  Estimated total hospital
+                  Total hospital beds
                   <br />
-                  employment
+                  (private and public)
                 </label>
                 <input
                   value={hospitalEmployment || 'Enter... [0-100]'}
@@ -142,6 +140,15 @@ const CountrySelector: React.FC<{
                   value={over65Percentage || 'Enter... (0%-100%)'}
                   readOnly
                 />
+                <label>
+                  Estimated Staff
+                  <br />
+                  per hospital bed
+                </label>
+                <input
+                  value={hospitalEmployment || 'Enter... [0-100]'}
+                  readOnly
+                />
               </div>
               <div className="form-column">
                 <label>Population size</label>
@@ -150,7 +157,7 @@ const CountrySelector: React.FC<{
                   readOnly
                 />
                 <label>
-                  % population in
+                  % urban population in
                   <br />
                   degraded housing
                 </label>
@@ -164,7 +171,7 @@ const CountrySelector: React.FC<{
                 <label>
                   % population high
                   <br />
-                  risk occupations
+                  contact occupations
                 </label>
                 <input
                   value={highContactPopulation || 'Enter... (0%-100%)'}

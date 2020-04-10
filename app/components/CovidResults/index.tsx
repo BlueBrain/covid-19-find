@@ -21,7 +21,8 @@ export type CovidData = {
 
 const CovidResults: React.FC<{
   data: CovidData;
-}> = ({ data }) => {
+  countryLabel: string;
+}> = ({ data, countryLabel }) => {
   let firstActiveDay = 0;
   const chartData = data.timeseries.filter((entry, index) => {
     if (!firstActiveDay) {
@@ -55,7 +56,7 @@ const CovidResults: React.FC<{
       </div>
       <div className="chart">
         <h3 className="title">
-          Caronavirus Cases{' '}
+          {countryLabel} | Current State of epidemic{' '}
           <a
             title="data from Johns Hopkins University"
             href="https://coronavirus.jhu.edu/map.html"
