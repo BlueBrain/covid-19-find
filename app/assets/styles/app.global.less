@@ -15,6 +15,15 @@ body {
   line-height: 1.4rem;
 }
 
+a {
+  color: #d3553f;
+}
+
+::selection {
+  background: #00a5b1;
+  color: white;
+}
+
 h1,
 h2,
 h3 {
@@ -145,7 +154,7 @@ main {
   background-size: auto;
   background-image: url(../images/lawyer.png);
   box-shadow: 0 16px 24px 0 rgba(0, 1, 6, 0.32);
-  width: 300px;
+  width: 400px;
   margin-top: -10rem;
 
   p {
@@ -254,9 +263,16 @@ input {
   position: relative;
   top: -36px;
   padding-top: 6em;
+  z-index: -1;
+  opacity: 0;
+  transition: all ease-in 500ms;
   .result {
     display: flex;
     flex-direction: row;
+  }
+  &.open {
+    margin-top: 0;
+    opacity: 1;
   }
 }
 
@@ -269,5 +285,13 @@ section.input {
 
   .results-drop {
     width: auto;
+  }
+}
+
+.chart {
+  h3.title {
+    margin-top: 0;
+    text-align: center;
+    color: #697881;
   }
 }

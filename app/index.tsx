@@ -46,10 +46,7 @@ ReactDOM.render(
         </section>
         <Countries />
         <TestSelector />
-        <ActionBox />
-        <Simulation compartment="Hospitals" />
-        <Simulation compartment="Other high contact" />
-        <Simulation compartment="Rest of population" />
+        <Simulation />
         <About />
       </main>
     </div>

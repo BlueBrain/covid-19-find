@@ -16,12 +16,14 @@ const Hero: React.FC = () => {
           country-specific allocation of <br />
           resoures
         </h2>
-        <button className="btn icon">
-          Start Simulation{'  '}
-          <i className="icon-play">
-            <IoIosPlay />
-          </i>
-        </button>
+        <a href="#country-selection">
+          <button className="btn icon">
+            Start Simulation{'  '}
+            <i className="icon-play">
+              <IoIosPlay />
+            </i>
+          </button>
+        </a>
       </div>
     </section>
   );

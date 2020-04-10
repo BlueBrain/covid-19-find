@@ -5,16 +5,36 @@ import { IoIosArrowDown } from 'react-icons/io';
 
 import './country-selector.less';
 
+export type CountryInfo = {
+  countryCode: string;
+  highContactPopulation: number;
+  hospitalBeds: number;
+  hospitalEmployment: number;
+  over65Percentage: number;
+  population: number;
+  remoteAreasPopulationPercentage: number;
+  urbanPopulationInDegradedHousingPercentage: number;
+  urbanPopulationPercentage: number;
+};
+
 const CountrySelector: React.FC<{
   countries: any[];
   onClickSubmit: (country: any) => void;
   onClickSelectCountry: (country: any) => void;
-  countryInfo: any;
+  countryInfo: CountryInfo | null;
   defaultCountryCode: string;
 }> = ({
   countries,
   onClickSubmit,
-  countryInfo,
+  countryInfo = {
+    population: null,
+    over65Percentage: null,
+    remoteAreasPopulationPercentage: null,
+    urbanPopulationInDegradedHousingPercentage: null,
+    urbanPopulationPercentage: null,
+    hospitalEmployment: null,
+    highContactPopulation: null,
+  },
   onClickSelectCountry,
   defaultCountryCode,
 }) => {
@@ -29,7 +49,7 @@ const CountrySelector: React.FC<{
       const previousCountry = document.getElementById(
         country.countryCode.toLowerCase(),
       );
-      previousCountry.removeAttribute('class');
+      previousCountry?.removeAttribute('class');
     }
 
     const countryId = selectedCountry.countryCode;
@@ -125,7 +145,10 @@ const CountrySelector: React.FC<{
               </div>
               <div className="form-column">
                 <label>Population size</label>
-                <input value={population || 'Enter... [0-100]'} readOnly />
+                <input
+                  value={population?.toLocaleString() || 'Enter... [0-100]'}
+                  readOnly
+                />
                 <label>
                   % population in
                   <br />
