@@ -1,5 +1,6 @@
 @import '../../assets/styles/config/_colors.less';
 @import '../../assets/styles/config/_queries.less';
+@import '../../assets/styles/config/_fonts.less';
 
 .about {
   background-color: @light-background-color;
@@ -21,9 +22,9 @@
   }
 
   p {
+    .roboto-light;
     font-size: 1.2rem;
     line-height: 1.5rem;
-    font-weight: 300;
   }
 
   .content {
@@ -45,7 +46,6 @@
 
     @media @small {
       margin-top: 2rem;
-      width: 100%;
       justify-content: center;
     }
   }
