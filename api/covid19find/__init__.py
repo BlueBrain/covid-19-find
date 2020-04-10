@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, Response, send_from_directory, request
+from werkzeug.exceptions import BadRequestKeyError
 import json
 
 from .countryrepository import CountryRepository
@@ -37,29 +38,38 @@ def create_app():
 
     @app.route("/api/simulation", methods=['POST'])
     def run_simulation():
-        return {
-            "scenarios": Simulator().run(
-                total_pop=request.form["total_pop"],
-                pop_hospitals=request.form["pop_hospitals"],
-                pop_high_contact=request.form["pop_high_contact"],
-                prop_urban=request.form["prop_urban"],
-                prop_isolated=request.form["prop_isolated"],
-                degraded=request.form["degraded"],
-                ge_65=request.form["ge_65"],
-                prop_tests_hospitals=request.form["prop_tests_hospitals"],
-                prop_tests_high_contact=request.form["prop_tests_high_contact"],
-                prop_tests_rest_of_population=request.form["prop_tests_rest_of_population"],
-                sensitivity_PCR=request.form["sensitivity_PCR"],
-                sensitivity_RDT=request.form["sensitivity_RDT"],
-                sensitivity_xray=request.form["sensitivity_xray"],
-                selectivity_PCR=request.form["selectivity_PCR"],
-                selectivity_RDT=request.form["selectivity_RDT"],
-                selectivity_xray=request.form["selectivity_xray"],
-                num_tests_PCR=request.form["num_tests_PCR"],
-                num_tests_RDT=request.form["num_tests_RDT"],
-                num_tests_xray=request.form["num_tests_xray"]
+        try:
+            return {
+                "scenarios": Simulator().run(
+                    total_pop=request.form["total_pop"],
+                    pop_hospitals=request.form["pop_hospitals"],
+                    pop_high_contact=request.form["pop_high_contact"],
+                    prop_urban=request.form["prop_urban"],
+                    prop_isolated=request.form["prop_isolated"],
+                    degraded=request.form["degraded"],
+                    ge_65=request.form["ge_65"],
+                    prop_tests_hospitals=request.form["prop_tests_hospitals"],
+                    prop_tests_high_contact=request.form["prop_tests_high_contact"],
+                    prop_tests_rest_of_population=request.form["prop_tests_rest_of_population"],
+                    sensitivity_PCR=request.form["sensitivity_PCR"],
+                    sensitivity_RDT=request.form["sensitivity_RDT"],
+                    sensitivity_xray=request.form["sensitivity_xray"],
+                    selectivity_PCR=request.form["selectivity_PCR"],
+                    selectivity_RDT=request.form["selectivity_RDT"],
+                    selectivity_xray=request.form["selectivity_xray"],
+                    num_tests_PCR=request.form["num_tests_PCR"],
+                    num_tests_RDT=request.form["num_tests_RDT"],
+                    num_tests_xray=request.form["num_tests_xray"]
+                )
+            }
+        except BadRequestKeyError as bke:
+            return Response(
+                json.dumps({
+                    "status": 400,
+                    "error": "Missing form parameter: '" + bke.args[0] + "'."
+                }),
+                status=400
             )
-        }
 
     @app.route("/api/covid19data/<country_code>")
     def country_covid19_data(country_code):
