@@ -54,7 +54,37 @@ const CovidResults: React.FC<{
         </h3>
       </div>
       <div className="chart">
+        <h3 className="title">
+          Caronavirus Cases{' '}
+          <a
+            title="data from Johns Hopkins University"
+            href="https://coronavirus.jhu.edu/map.html"
+            target="_blank"
+          >
+            *
+          </a>
+        </h3>
         <Line
+          options={{
+            scales: {
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'People',
+                  },
+                },
+              ],
+              xAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Days',
+                  },
+                },
+              ],
+            },
+          }}
           data={{
             backgroundColor: '#fff',
             datasets: [
