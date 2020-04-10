@@ -175,12 +175,9 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
                 print('max_infections in ',comp,'=',dfmaxcomp['total_infected'][j])
                 print('max in isolation in ',comp,'=',dfmaxcomp['total_isolated'][j])
                 print()
-                plot_results(scenario_name,comp,int(num_tests_performed[i]),dfcomp['days'],dfcomp['total_isolated'],dfcomp['total_infected'],dfcomp['tested'],dfcomp['total_infected_notisolated'],dfcomp['total_confirmed'],dfcomp['total_deaths'],dfcomp['susceptibles'])
              #the million given in the second argument represents the number of tests - it is a dummy to be replaced by real number
              
-             if not(expert_mode):
-                 plot_results(scenario_name,'ALL',dfsumcomp['new_tested'],dfsum['days'],dfsum['total_isolated'],dfsum['total_infected'],dfsum['tested'],dfsum['total_infected_notisolated'],dfsum['total_confirmed'],dfsum['total_deaths'],dfsum['susceptibles'])
-             
+
              print('************')
              total_tests_by_scenario[i]=dfsumcomp['new_tested'].sum()
              total_deaths_by_scenario[i]=dfsumcomp['total_deaths'].sum()
