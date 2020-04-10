@@ -121,7 +121,7 @@ const CountrySelector: React.FC<{
                 <label>% population in urban areas</label>
                 <input
                   value={urbanPopulationPercentage || 'Enter... (0%-100%)'}
-                  readOnly
+                  required
                 />
                 <label>
                   Total hospital beds
@@ -130,7 +130,7 @@ const CountrySelector: React.FC<{
                 </label>
                 <input
                   value={hospitalEmployment || 'Enter... [0-100]'}
-                  readOnly
+                  required
                 />
                 <label>
                   % population age <br />
@@ -138,7 +138,7 @@ const CountrySelector: React.FC<{
                 </label>
                 <input
                   value={over65Percentage || 'Enter... (0%-100%)'}
-                  readOnly
+                  required
                 />
                 <label>
                   Estimated Staff
@@ -147,14 +147,14 @@ const CountrySelector: React.FC<{
                 </label>
                 <input
                   value={hospitalEmployment || 'Enter... [0-100]'}
-                  readOnly
+                  required
                 />
               </div>
               <div className="form-column">
                 <label>Population size</label>
                 <input
                   value={population?.toLocaleString() || 'Enter... [0-100]'}
-                  readOnly
+                  required
                 />
                 <label>
                   % urban population in
@@ -166,7 +166,7 @@ const CountrySelector: React.FC<{
                     urbanPopulationInDegradedHousingPercentage ||
                     'Enter... (0%-100%)'
                   }
-                  readOnly
+                  required
                 />
                 <label>
                   % population high
@@ -175,7 +175,7 @@ const CountrySelector: React.FC<{
                 </label>
                 <input
                   value={highContactPopulation || 'Enter... (0%-100%)'}
-                  readOnly
+                  required
                 />
                 <label>
                   % population
@@ -186,7 +186,7 @@ const CountrySelector: React.FC<{
                   value={
                     remoteAreasPopulationPercentage || 'Enter... (0%-100%)'
                   }
-                  readOnly
+                  required
                 />
               </div>
             </form>

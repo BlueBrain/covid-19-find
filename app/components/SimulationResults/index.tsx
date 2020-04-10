@@ -102,6 +102,7 @@ const SimulationResults: React.FC<{
             </ul>
           )}
         </div>
+        <div className="triangle primary"></div>
       </div>
       <div
         className={`results-drop primary ${open ? 'open' : ''}`}
