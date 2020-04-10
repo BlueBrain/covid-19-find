@@ -1,6 +1,14 @@
 import pycountry
 import numpy as np
 import pandas as pd
+import os
+
+
+path_prefix = os.path.abspath(os.path.dirname(__file__))
+total_pop_file = os.path.join(path_prefix, 'data/total_pop.csv')
+age_distr_file = os.path.join(path_prefix, 'data/age_distr.csv')
+pcnt_urban_file = os.path.join(path_prefix, 'data/pcnt_urban.csv')
+hospital_beds_file = os.path.join(path_prefix, 'data/hospital_beds.csv')
 
 
 def convert_to_numeric(country_key, data):
@@ -21,7 +29,7 @@ defaults = {"this_year": "2020"}
 total_pop = {"country": "Country code",
             "name": "Region, subregion, country or area *",
             "units": 1e3,
-            "data": pd.read_csv("./data/total_pop.csv")}
+            "data": pd.read_csv(total_pop_file)}
 
 age_distr = {"country": "LocID",
             "name": "Location",
@@ -29,14 +37,14 @@ age_distr = {"country": "LocID",
             "age": "AgeGrp",
             "total_pop": "PopTotal",
             "units": 1e3,
-            "data": pd.read_csv("./data/age_distr.csv")}
+            "data": pd.read_csv(age_distr_file)}
 
 pcnt_urban = {"country": "Country Code",
              "name": "Country Name",
              "units": 1,
-             "data": convert_to_numeric("Country Code", pd.read_csv("./data/pcnt_urban.csv"))}
+             "data": convert_to_numeric("Country Code", pd.read_csv(pcnt_urban_file))}
 
 hospital_beds = {"country": "Country Code",
                 "name": "Country Name",
                 "units": 1,
-                "data": convert_to_numeric("Country Code", pd.read_csv("./data/hospital_beds.csv"))}
+                "data": convert_to_numeric("Country Code", pd.read_csv(hospital_beds_file))}
