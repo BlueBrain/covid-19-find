@@ -1,7 +1,9 @@
 import json
 import os
+from .countrydata.Countries import Country
 
 from .simulation.getcountrydata import get_country_data
+import pycountry
 
 
 class CountryRepository:
@@ -17,16 +19,21 @@ class CountryRepository:
         return self.country_data
 
     def country_details(self, country_code):
-        (population, urban_population_percentage, urban_population_in_degraded_housing_percentage, over_65_percentage,
-         hospital_employment, high_contact_population, remote_areas_population_percentage) = get_country_data(
-            country_code)
+        # (population, urban_population_percentage, urban_population_in_degraded_housing_percentage, over_65_percentage,
+        #  hospital_employment, high_contact_population, remote_areas_population_percentage) =
+        pcountry = pycountry.countries.get(alpha_2=country_code)
+        if pcountry is None:
+            return None
+        country = Country(int(pcountry.numeric), 2020, age=65)
+
         return {
             "countryCode": country_code,
-            "population": population,
-            "urbanPopulationPercentage": urban_population_percentage,
-            "urbanPopulationInDegradedHousingPercentage": urban_population_in_degraded_housing_percentage,
-            "over65Percentage": over_65_percentage,
-            "hospitalEmployment": hospital_employment,
-            "highContactPopulation": high_contact_population,
-            "remoteAreasPopulationPercentage": remote_areas_population_percentage
+            "population": country.get_population(),
+            "urbanPopulationPercentage": country.get_pcnt_urban(),
+            "urbanPopulationInDegradedHousingPercentage": country.get_pcnt_degraded(),
+            "over65Percentage": country.get_overX(),
+            "hospitalEmployment": None,
+            "hospitalBeds": country.get_hosp_beds(),
+            "highContactPopulation": country.get_high_contact(),
+            "remoteAreasPopulationPercentage": country.get_remote()
         }
