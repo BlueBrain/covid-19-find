@@ -1,13 +1,13 @@
 compartment,Hospitals,Other high contact,Rest of population
 num_days,200,,
-init_infected,100,100,100
+init_infected,100,0,0
 p_positive_if_symptomatic,0.9,,
 background_rate_symptomatic,0.02,,
 latent_period,3,,
 incubation_period,7,,
 infective_period,10,,
 death_period,20,,
-inversion_date,100,,
+inversion_date,3,,
 recovery_period,20,,
 test_start,2,,
 beta_pre_inversion,0.35,,

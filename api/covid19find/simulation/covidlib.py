@@ -230,7 +230,10 @@ def simulate(num_compartments,params,beta):
     high_risk_urban=int(params['total_pop'][0])*float(params['prop_urban'][0])*float(params['degraded'][0])
     other_high_risk=int(params['init_pop'][1] )                  
     init_pop[1]=high_risk_urban+other_high_risk
-    init_pop[2]=int(params['total_pop'][0])-init_pop[0]+init_pop[1]
+    init_pop[2]=int(params['total_pop'][0])-init_pop[0]-init_pop[1]
+    print('population hospitals=',init_pop[0])
+    print('population high risk=', init_pop[1])
+    print('rest of population=',init_pop[2])
  # =============================================================================
   # Initialize arrays storing time series
     days=np.zeros(num_days)
@@ -267,7 +270,7 @@ def simulate(num_compartments,params,beta):
        infectednotisolated[0,i]=init_infected[i]
 
  
-    alpha=beta/70 #test to make alpha disappear
+    alpha=beta/35 #test to make alpha disappear
  
     totaldeaths=np.zeros(num_compartments)
     maxinfected=np.zeros(num_compartments)
@@ -367,7 +370,7 @@ def simulate(num_compartments,params,beta):
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]
               
            if infected[t,i] - isolated[t,i] > 0:
-              infectednotisolated[t,i] = infected[t,i] - isolated[t,i]
+              infectednotisolated[t,i] = infected[t,i] - isolated[t,i] #accounting identity
            else:
               infectednotisolated[t,i] = 0
  

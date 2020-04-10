@@ -6,7 +6,6 @@ degraded,0,,
 ge_65,0.045,,
 high_contact,0.3,,
 isolated_area,0.2,,
-init_infected,100,5000,4000
 prop_tests,0.5,0.5,0
 Testkits,PCR,RDT,Chest x_rays
 sensitivity,0.95,0.85,0.9
