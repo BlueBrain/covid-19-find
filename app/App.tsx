@@ -6,8 +6,9 @@ import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import About from './components/About';
+import { SimulationParams } from './API';
 
-const simulationParams = {
+const DEFAULT_PARAMS = {
   total_pop: 80000000,
   pop_hospitals: 10000,
   pop_high_contact: 1000000,
@@ -30,6 +31,15 @@ const simulationParams = {
 };
 
 const App: React.FC = () => {
+  const [values, setValues] = React.useState<SimulationParams>(DEFAULT_PARAMS);
+
+  const handleTestSubmit = testValues => {
+    setValues({
+      ...values,
+      ...testValues,
+    });
+  };
+
   return (
     <div>
       <Header />
@@ -37,8 +47,8 @@ const App: React.FC = () => {
       <main>
         <TopSection />
         <Countries />
-        <TestSelector />
-        <Simulation simulationParams={simulationParams} />
+        <TestSelector {...values} onSubmit={handleTestSubmit} />
+        <Simulation simulationParams={values} />
         <About />
       </main>
     </div>
