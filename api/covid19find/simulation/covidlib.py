@@ -184,7 +184,7 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
              #=============================================================================
              print('')
          return(dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario)
- 
+
  
 
 def simulate(num_compartments,params,beta):
