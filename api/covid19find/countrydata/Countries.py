@@ -1,7 +1,7 @@
 import os
 import sys
 import glob
-from config import *
+import config
 import pycountry
 import pandas as pd
 
@@ -90,12 +90,12 @@ class Country:
         self.age = age
         assert pycountry.countries.get(numeric=str(self.code).zfill(3)) is not None
 
-        self.set_name(total_pop)
-        self.set_population(total_pop)
-        self.set_pcnt_urban(pcnt_urban)
+        self.set_name(config.total_pop)
+        self.set_population(config.total_pop)
+        self.set_pcnt_urban(config.pcnt_urban)
         self.set_pcnt_degraded()
-        self.set_overX(age_distr)
-        self.set_hosp_beds(hospital_beds)
+        self.set_overX(config.age_distr)
+        self.set_hosp_beds(config.hospital_beds)
         self.set_high_contact()
         self.set_remote()
 
@@ -104,6 +104,8 @@ class Country:
         units = data["units"]
         df = data["data"]
         df = df.loc[df[key] == self.code]
+        if df.empty:
+            return (self.year, getattr(self, attr))        
         if attr == "overX":
             age_key = data["age"]
             year_key = data["year"]
@@ -125,7 +127,7 @@ class Country:
 
     def search_avail_stats(self):
         subs = {}
-        datasets = [total_pop, pcnt_urban, None, age_distr, hospital_beds, None, None]
+        datasets = [config.total_pop, config.pcnt_urban, None, config.age_distr, config.hospital_beds, None, None]
         attrs = ["pop", "urban", "degraded", "overX", "hosp_beds", "high_contact", "remote"]
         for data, attr in zip(datasets, attrs):
             subs[attr] = (str(self.year), getattr(self, attr))
