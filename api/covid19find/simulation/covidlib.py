@@ -6,19 +6,21 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import os
 
 def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,selectivity_PCR,selectivity_RDT,selectivity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
+         path_prefix = os.path.abspath(os.path.dirname(__file__))
          expert_mode=False
-         simsfile = 'compart_params.csv'
-         
-         betafile = 'betas.csv'
+         simsfile = os.path.join(path_prefix, 'compart_params.csv')
+
+         betafile = os.path.join(path_prefix, 'betas.csv')
 #         testkitfile='test_kits.csv'
-         userparsfile='user_params.csv'
-         scenariosfile='scenarios.csv'
-         
+         userparsfile=os.path.join(path_prefix, 'user_params.csv')
+         scenariosfile=os.path.join(path_prefix, 'scenarios.csv')
+
  # =============================================================================
  #         if len(sys.argv) > 1:
  #            simsfile = sys.argv[1]
