@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
+def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
@@ -55,7 +55,7 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
          p['testkits']=['PCR','RDT','Chest xrays']
    #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
          p['total_pop'][0]=total_pop
-         p['init_pop'][0]=pop_hospitals
+         p['init_pop'][0]=hospital_beds*float(p['staff_per_bed'][0])
          p['high_contact'][0]=pop_high_contact
          p['prop_urban'][0]=prop_urban
          p['isolated_area'][0]=prop_isolated
@@ -458,7 +458,7 @@ def plot_results(scenario_name,compartment,num_tests, days,num_isolated,num_infe
      plt.show()
      plt.close()
      plt.plot(days,num_isolated,color='b', label="Num_isolated")
-     plt.title(compartment+' - Isolated')
+     plt.title(scenario_name+': '+compartment+' - Isolated')
      plt.ylabel('Number')
      plt.xlabel('Day')
      plt.legend(title= "Legend")

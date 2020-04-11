@@ -1,5 +1,5 @@
 compartment,Hospitals,Other high contact,Rest of population
-num_days,200,,
+num_days,400,,
 init_infected,0,0,1
 p_positive_if_symptomatic,0.9,,
 background_rate_symptomatic,0.02,,
@@ -16,4 +16,5 @@ confirmation_rate,0.2,,
 gamma,0.99,,
 tau,0.01,,
 num_testkit_types,3,,
-lower_bound_beta,0.036,,
+lower_bound_beta,0.02,,
+staff_per_bed,4,,
