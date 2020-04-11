@@ -365,8 +365,6 @@ def simulate(num_compartments,params,beta):
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
                susceptibles[t,i]=0  
            susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
-           if i==0:
-               print ('t=',t,'infected=',infected[t,i],'susceptibles=',susceptibles[t,i],'susceptible_prop=', susceptible_prop[t,i])
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t,i]  # JPV changed
            if t >= recovery_period:
