@@ -21,15 +21,15 @@ isolated_area=0.2
 prop_tests_hospitals=None, #legacy variable - to be removed in next release
 prop_tests_high_contact=None #legacy variable - to be removed in next release
 prop_tests_rest_of_population=None #legacy variable - to be removed in next release
-sensitivity_PCR=0.95
-sensitivity_RDT=0.85
-sensitivity_xray=0.9
-specificity_PCR=0.95
-specificity_RDT=0.9
-specificity_xray=0.9
-num_tests_PCR=0
-num_tests_RDT=0
-num_tests_xray=0
+sensitivity_PCR=1
+sensitivity_RDT=1
+sensitivity_xray=1
+specificity_PCR=1
+specificity_RDT=1
+specificity_xray=1
+num_tests_PCR=1000
+num_tests_RDT=1000
+num_tests_xray=1000
 dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=cl.run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
