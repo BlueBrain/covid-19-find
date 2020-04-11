@@ -283,14 +283,14 @@ def simulate(num_compartments,params,beta):
   #  print ('test_symptomatic_only',test_symptomatic_only)
     for t in range(1,num_days):
        days[t]=t
-       #adjust value of betas - we assume they fall linearly with time after the intervention
+       #adjust value of betas - we assume they fall linearly with time after the intervention until they reach a lower bound
        if t > inversion_date:
            for i in range (0,num_compartments):
                for j in range(0,num_compartments):
-                   if beta[i,j]-alpha[i,j] > 0:
+                   if beta[i,j]-alpha[i,j] > float(params['lower_bound_beta'][0]):
                        beta[i,j]=beta[i,j]-alpha[i,j]
                    else:
-                       beta[i,j] = 0
+                       beta[i,j] = float(params['lower_bound_beta'][0])
        # add up number of new infected for each compartment - total correct at end of loops
        for i in range(0,num_compartments): #this is the compartment doing the infecting
            newinfected[t,i]=0
@@ -300,7 +300,6 @@ def simulate(num_compartments,params,beta):
 
                compart_newinfected[t,i,j] = infectednotisolated[t-1,i]*beta[i,j]*susceptible_prop[t-1,j] #this records how many new infections compart i will cause in compart j 
        for i in range(0,num_compartments): #now each compartment adds up the total of new infections
-     
            newinfected[t,i]=0
            for j in range(0,num_compartments):
              newinfected[t,i]=newinfected[t,i]+compart_newinfected[t,j,i]
@@ -361,11 +360,13 @@ def simulate(num_compartments,params,beta):
     #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
            deaths[t,i] = deaths[t-1,i]+newdeaths[t,i]
            population[t,i] = population[t-1,i]-newdeaths[t,i]
-           susceptibles[t,i]=population[t,i]-infectednotisolated[t,i]-recovered[t,i]  #this is an accounting identity
+           susceptibles[t,i]=population[t-1,i]-infectednotisolated[t-1,i]-recovered[t-1,i]  
      #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
                susceptibles[t,i]=0  
            susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
+           if i==0:
+               print ('t=',t,'infected=',infected[t,i],'susceptibles=',susceptibles[t,i],'susceptible_prop=', susceptible_prop[t,i])
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t,i]  # JPV changed
            if t >= recovery_period:
