@@ -31,7 +31,7 @@ const SimulationResults: React.FC<{
   const graphs = [
     {
       title: 'Deaths',
-      key: 'num_deaths',
+      key: 'new_deaths',
       color: colors.pomegranate,
     },
     {
