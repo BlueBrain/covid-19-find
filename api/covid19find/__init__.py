@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, Response, send_from_directory, request
 from werkzeug.exceptions import BadRequestKeyError
+from apscheduler.schedulers.background import BackgroundScheduler
+from pytz import utc
 import json
 
 from .countryrepository import CountryRepository
@@ -12,12 +14,20 @@ from .coviddatarepository import CovidDataRepository
 
 def create_app():
     # create and configure the app
-
-    data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
-    data_repo.update_data()
-    country_repo = CountryRepository()
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
+
+    data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
+
+    def update_covid_data():
+        app.logger.info("Updating COVID-19 data")
+        data_repo.update_data()
+
+    update_covid_data()
+    country_repo = CountryRepository()
+
+    scheduler = BackgroundScheduler(timezone=utc)
+    scheduler.add_job(func=update_covid_data, trigger="cron", hour="5")
 
     def not_found_if_none(data, country_code):
         if data is None:

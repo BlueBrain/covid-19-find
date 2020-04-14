@@ -24,12 +24,12 @@ prop_tests_rest_of_population=None #legacy variable - to be removed in next rele
 sensitivity_PCR=0.95
 sensitivity_RDT=0.85
 sensitivity_xray=0.9
-specificity_PCR=1
-specificity_RDT=1
-specificity_xray=1
-num_tests_PCR=1000
-num_tests_RDT=1000
-num_tests_xray=1000
+specificity_PCR=0.99
+specificity_RDT=0.99
+specificity_xray=0.99
+num_tests_PCR=10000
+num_tests_RDT=10000
+num_tests_xray=10000
 #Instead of giving hospital employment it now uses hospital beds
 dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=cl.run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
