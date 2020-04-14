@@ -41,25 +41,25 @@ def create_app():
         try:
             return {
                 "scenarios": Simulator().run(
-                    total_pop=request.form["total_pop"],
-                    pop_hospitals=request.form["pop_hospitals"],
-                    pop_high_contact=request.form["pop_high_contact"],
-                    prop_urban=request.form["prop_urban"],
-                    prop_isolated=request.form["prop_isolated"],
-                    degraded=request.form["degraded"],
-                    ge_65=request.form["ge_65"],
-                    prop_tests_hospitals=request.form["prop_tests_hospitals"],
-                    prop_tests_high_contact=request.form["prop_tests_high_contact"],
-                    prop_tests_rest_of_population=request.form["prop_tests_rest_of_population"],
-                    sensitivity_PCR=request.form["sensitivity_PCR"],
-                    sensitivity_RDT=request.form["sensitivity_RDT"],
-                    sensitivity_xray=request.form["sensitivity_xray"],
-                    selectivity_PCR=request.form["selectivity_PCR"],
-                    selectivity_RDT=request.form["selectivity_RDT"],
-                    selectivity_xray=request.form["selectivity_xray"],
-                    num_tests_PCR=request.form["num_tests_PCR"],
-                    num_tests_RDT=request.form["num_tests_RDT"],
-                    num_tests_xray=request.form["num_tests_xray"]
+                    total_pop=int(request.form["total_pop"]),
+                    hospital_beds=int(request.form["hospital_beds"]),
+                    pop_high_contact=int(request.form["pop_high_contact"]),
+                    prop_urban=float(request.form["prop_urban"]),
+                    prop_isolated=float(request.form["prop_isolated"]),
+                    degraded=float(request.form["degraded"]),
+                    ge_65=float(request.form["ge_65"]),
+                    prop_tests_hospitals=float(request.form["prop_tests_hospitals"]),
+                    prop_tests_high_contact=float(request.form["prop_tests_high_contact"]),
+                    prop_tests_rest_of_population=float(request.form["prop_tests_rest_of_population"]),
+                    sensitivity_PCR=float(request.form["sensitivity_PCR"]),
+                    sensitivity_RDT=float(request.form["sensitivity_RDT"]),
+                    sensitivity_xray=float(request.form["sensitivity_xray"]),
+                    specificity_PCR=float(request.form["specificity_PCR"]),
+                    specificity_RDT=float(request.form["specificity_RDT"]),
+                    specificity_xray=float(request.form["specificity_xray"]),
+                    num_tests_PCR=int(request.form["num_tests_PCR"]),
+                    num_tests_RDT=int(request.form["num_tests_RDT"]),
+                    num_tests_xray=int(request.form["num_tests_xray"])
                 )
             }
         except BadRequestKeyError as bke:
