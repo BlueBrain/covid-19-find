@@ -9,7 +9,7 @@ Created on Fri Apr 10 09:25:47 2020
 
 import covidlib as cl
 total_pop=12050000
-hospital_beds=10000
+hospital_beds=50000
 pop_high_contact=2000000
 pop_rest=8072000
 prop_urban=0.4

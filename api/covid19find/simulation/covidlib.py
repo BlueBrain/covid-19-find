@@ -14,7 +14,8 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          expert_mode=True
          simsfile = 'compart_params.csv'
          
-         betafile = 'betas.csv'
+         initial_betafile = 'initial_betas.csv'
+         final_betafile = 'final_betas.csv'
 #         testkitfile='test_kits.csv'
          userparsfile='user_params.csv'
          scenariosfile='scenarios.csv'
@@ -75,18 +76,36 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          p['num_tests'][2]=num_tests_xray
  #        p['test_symptomatic_only']=['true','true','true']
          
-            
+         #define size of compartments   
+         high_risk_urban=int(p['total_pop'][0])*float(p['prop_urban'][0])*float(p['degraded'][0])
+         other_high_risk=int(p['init_pop'][1] )                  
+         p['init_pop'][1]=high_risk_urban+other_high_risk
+         p['init_pop'][2]=int(p['total_pop'][0])-int(p['init_pop'][0])-int(p['init_pop'][1])
+         print('init_pops=',p['init_pop'])
          num_testkit_types=int(p['num_testkit_types'][0])
          
          
          
-         beta_table = pd.read_csv(betafile,header=None)
+         beta_table = pd.read_csv(initial_betafile,header=None)
          (rows,cols) = beta_table.shape
          initial_beta = np.zeros((num_compartments,num_compartments))
          for i in range(1,num_compartments+1):
             for j in range(1,num_compartments+1):
                initial_beta[i-1,j-1] = beta_table.iloc[i,j]
+         
+        
+         initial_beta=calibratebeta(num_compartments, initial_beta, p['init_pop'], float(p['beta_pre_inversion'][0]))
+    #     print ('transformed betas=', initial_beta)
                
+         beta_table = pd.read_csv(final_betafile,header=None)
+         (rows,cols) = beta_table.shape
+         final_beta = np.zeros((num_compartments,num_compartments))
+         for i in range(1,num_compartments+1):
+            for j in range(1,num_compartments+1):
+               final_beta[i-1,j-1] = beta_table.iloc[i,j]
+         
+         final_beta=calibratebeta(num_compartments, final_beta, p['init_pop'], float(p['beta_post_inversion'][0]))
+        
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
          num_scenarios=rows-1
@@ -118,7 +137,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
     #           print('prop tests for scenario ',j,' set to', p['prop_tests'][j-1])
          
              beta=initial_beta.copy() #this is essential - otherwise the beta gets modified inside the simulation
-             df = simulate(num_compartments,p,beta)
+             df = simulate(num_compartments,p,beta,final_beta)
              dataframes.append(df)
              
              df.to_csv(filename,index=False)
@@ -187,7 +206,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
  
  
 
-def simulate(num_compartments,params,beta):
+def simulate(num_compartments,params,beta, final_beta):
     num_days = int(params['num_days'][0])
     inversion_date = int(params['inversion_date'][0])
     beta_pre_inversion = float(params['beta_pre_inversion'][0])
@@ -229,10 +248,8 @@ def simulate(num_compartments,params,beta):
         sys.exit()
         
     init_pop[0]=int(params['init_pop'][0])
-    high_risk_urban=int(params['total_pop'][0])*float(params['prop_urban'][0])*float(params['degraded'][0])
-    other_high_risk=int(params['init_pop'][1] )                  
-    init_pop[1]=high_risk_urban+other_high_risk
-    init_pop[2]=int(params['total_pop'][0])-init_pop[0]-init_pop[1]
+    init_pop[1]=int(params['init_pop'][1])
+    init_pop[2]=int(params['init_pop'][2])
     print('population hospitals=',init_pop[0])
     print('population high risk=', init_pop[1])
     print('rest of population=',init_pop[2])
@@ -263,7 +280,7 @@ def simulate(num_compartments,params,beta):
     compart_newinfected=np.zeros((num_days,num_compartments,num_compartments))
  
     for i in range(num_compartments):
-       newinfected[0,i]=init_infected[i] # note: orig code effectively has newinfected[0,i]=0
+       newinfected[0,i]=init_infected[i] 
        population[0,i] = init_pop[i]
        susceptibles[0,i] = init_pop[i]-init_infected[i]
        if susceptibles[0,i]<0:
@@ -287,10 +304,10 @@ def simulate(num_compartments,params,beta):
        if t > inversion_date:
            for i in range (0,num_compartments):
                for j in range(0,num_compartments):
-                   if beta[i,j]-alpha[i,j] > float(params['lower_bound_beta'][0]):
+                   if beta[i,j]-alpha[i,j] > final_beta[i,j]:
                        beta[i,j]=beta[i,j]-alpha[i,j]
                    else:
-                       beta[i,j] = float(params['lower_bound_beta'][0])
+                       beta[i,j] = final_beta[i,j]
        # add up number of new infected for each compartment - total correct at end of loops
        for i in range(0,num_compartments): #this is the compartment doing the infecting
            newinfected[t,i]=0
@@ -342,7 +359,7 @@ def simulate(num_compartments,params,beta):
    #                  print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)   
           # Put all positive cases into isolation
            #print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t-1,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)   
-           print('true_positives=', true_positives,'false positives', false_positives)     
+        #   print('true_positives=', true_positives,'false positives', false_positives)     
            newisolated[t-1,i] = true_positives #+false_positives
            newisolatedinfected[t-1,i] = true_positives
            newrecovered[t-1,i] = 0
@@ -360,12 +377,17 @@ def simulate(num_compartments,params,beta):
            recovered[t,i] = recovered[t-1,i]+newrecovered[t-1,i]
     #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
            deaths[t,i] = deaths[t-1,i]+newdeaths[t-1,i]
-           population[t,i] = population[t-1,i]-newdeaths[t,i]
-           susceptibles[t,i]=population[t,i]-infected[t,i]-recovered[t,i]  
+           population[t,i] = population[t-1,i]-newdeaths[t-1,i]
+           
+           susceptibles[t,i]=population[t,i]-infected[t,i]-recovered[t,i] 
+          
+     
      #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
                susceptibles[t,i]=0  
            susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
+  #         if i==0:
+  #             print ('t=',t,'susceptibles',susceptibles[t,i],'infected=',infected[t,i],'recovered', recovered[t,i],'population=',population[t,i],'susceptible_prop=',susceptible_prop[t,i])
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t-1,i]  # JPV changed
            if t >= recovery_period:
@@ -473,6 +495,26 @@ def plot_results(scenario_name,compartment,num_tests, days,num_isolated,num_infe
      plt.legend(title= "Legend")
      plt.show()
      plt.close()
+     
+def calibratebeta(n,beta,pops,targetbeta):
+    b = aggregatebeta(n,beta,pops)
+    adjust=targetbeta/b
+    beta=beta*adjust
+    return beta
+
+def aggregatebeta(n,betas,pops):
+  # print('pops=',pops)
+   total = 0
+   P = np.sum(pops)
+#   print('betas=',betas)
+   for j in range(n):
+     col_sum = 0
+     for i in range(0,n):
+ #       print('i=',i,'j=',j)
+        col_sum = col_sum + betas[i][j]
+     total = total + col_sum*pops[j]
+   aggb = total/P
+   return aggb
      
 
  
