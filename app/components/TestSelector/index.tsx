@@ -114,7 +114,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   <br />
                   per day
                   <input
-                    {...rapidTestKitTotal}
+                    {...numTestsRDTInput}
                     placeholder={'Enter... [0-100]'}
                     style={{
                       width: '200px',
@@ -126,7 +126,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input
-                    {...rapidTestKitsSensitivity}
+                    {...sensitivityRDTInput}
                     step="0.01"
                     min="0"
                     max="1"
@@ -134,7 +134,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   />
                   <label className="label-mini">Specificity</label>
                   <input
-                    {...rapidTestKitsSelectivity}
+                    {...specificityRDTInput}
                     step="0.01"
                     min="0"
                     max="1"
@@ -150,7 +150,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   <br />
                   per day
                   <input
-                    {...chestXRayTotal}
+                    {...numTestsXrayInput}
                     placeholder={'Enter... [0-100]'}
                     style={{
                       width: '200px',
@@ -162,7 +162,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input
-                    {...xRaysSensitivity}
+                    {...sensitivityXrayInput}
                     step="0.01"
                     min="0"
                     max="1"
@@ -170,7 +170,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   />
                   <label className="label-mini">Specificity</label>
                   <input
-                    {...xRaysSelectivity}
+                    {...specificityXrayInput}
                     step="0.01"
                     min="0"
                     max="1"
