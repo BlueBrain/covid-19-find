@@ -5,25 +5,13 @@ import { IoIosArrowDown } from 'react-icons/io';
 
 import './country-selector.less';
 import useFormInput from '../../hooks/useFormInput';
-
-export type CountryParams = {
-  total_pop?: number;
-  pop_hospitals?: number;
-  pop_high_contact?: number;
-  prop_urban?: number;
-  prop_isolated?: number;
-  degraded?: number;
-  ge_65?: number;
-  prop_tests_hospitals?: number;
-  prop_tests_high_contact?: number;
-  prop_tests_rest_of_population?: number;
-};
+import { CountryResponse } from '../../API';
 
 const CountrySelector: React.FC<{
   countries: any[];
-  onSubmit?: (value: CountryParams) => void;
+  onSubmit?: (value: CountryResponse) => void;
   onClickSelectCountry: (country: any) => void;
-  countryInfo: CountryParams;
+  countryInfo: CountryResponse;
   defaultCountryCode: string;
 }> = ({
   countries,
@@ -32,17 +20,20 @@ const CountrySelector: React.FC<{
   onClickSelectCountry,
   defaultCountryCode,
 }) => {
-  const population = useFormInput(countryInfo.total_pop, 'Enter...');
-  const over65Percentage = useFormInput(countryInfo.ge_65);
-  const remoteAreasPopulationPercentage = useFormInput(
-    countryInfo.prop_isolated,
+  const population = useFormInput(countryInfo.population, 'Enter...');
+  const over65Proportion = useFormInput(countryInfo.over65Proportion);
+  const remoteAreasPopulationProportion = useFormInput(
+    countryInfo.remoteAreasPopulationProportion,
   );
-  const urbanPopulationInDegradedHousingPercentage = useFormInput(
-    countryInfo.degraded,
+  const urbanPopulationInDegradedHousingProportion = useFormInput(
+    countryInfo.urbanPopulationInDegradedHousingProportion,
   );
-  const urbanPopulationPercentage = useFormInput(countryInfo.prop_urban);
-  const hospitalEmployment = useFormInput(countryInfo.pop_hospitals);
-  const highContactPopulation = useFormInput(countryInfo.pop_high_contact);
+  const urbanPopulationProportion = useFormInput(
+    countryInfo.urbanPopulationProportion,
+  );
+  const hospitalEmployment = useFormInput(countryInfo.hospitalEmployment);
+  const hospitalBeds = useFormInput(countryInfo.hospitalBeds);
+  const highContactPopulation = useFormInput(countryInfo.highContactPopulation);
   const [showCountries, setShowCountries] = React.useState(false);
   const [country, setCountry] = React.useState({
     name: '',
@@ -50,20 +41,27 @@ const CountrySelector: React.FC<{
   });
 
   React.useEffect(() => {
-    countryInfo.total_pop && population.changeValue(countryInfo.total_pop);
-    countryInfo.ge_65 && over65Percentage.changeValue(countryInfo.ge_65);
-    countryInfo.prop_isolated &&
-      remoteAreasPopulationPercentage.changeValue(countryInfo.prop_isolated);
-    countryInfo.degraded &&
-      urbanPopulationInDegradedHousingPercentage.changeValue(
-        countryInfo.degraded,
+    countryInfo.population && population.changeValue(countryInfo.population);
+    countryInfo.over65Proportion &&
+      over65Proportion.changeValue(countryInfo.over65Proportion);
+    countryInfo.remoteAreasPopulationProportion &&
+      remoteAreasPopulationProportion.changeValue(
+        countryInfo.remoteAreasPopulationProportion,
       );
-    countryInfo.prop_urban &&
-      urbanPopulationPercentage.changeValue(countryInfo.prop_urban);
-    countryInfo.pop_hospitals &&
-      hospitalEmployment.changeValue(countryInfo.pop_hospitals);
-    countryInfo.pop_high_contact &&
-      highContactPopulation.changeValue(countryInfo.pop_high_contact);
+    countryInfo.urbanPopulationInDegradedHousingProportion &&
+      urbanPopulationInDegradedHousingProportion.changeValue(
+        countryInfo.urbanPopulationInDegradedHousingProportion,
+      );
+    countryInfo.urbanPopulationProportion &&
+      urbanPopulationProportion.changeValue(
+        countryInfo.urbanPopulationProportion,
+      );
+    countryInfo.hospitalEmployment &&
+      hospitalEmployment.changeValue(countryInfo.hospitalEmployment);
+    countryInfo.hospitalBeds &&
+      hospitalBeds.changeValue(countryInfo.hospitalBeds);
+    countryInfo.highContactPopulation &&
+      highContactPopulation.changeValue(countryInfo.highContactPopulation);
   }, [countryInfo]);
 
   const selectCountry = selectedCountry => {
@@ -99,17 +97,16 @@ const CountrySelector: React.FC<{
     e.preventDefault();
     onSubmit &&
       onSubmit({
-        total_pop: population.value,
-        pop_hospitals: hospitalEmployment.value,
-        pop_high_contact: highContactPopulation.value,
-        prop_urban: urbanPopulationPercentage.value,
-        prop_isolated: remoteAreasPopulationPercentage.value,
-        degraded: urbanPopulationInDegradedHousingPercentage.value,
-        ge_65: over65Percentage.value,
-        // TODO we dont have these values???
-        // prop_tests_hospitals?: number;
-        // prop_tests_high_contact?: number;
-        // prop_tests_rest_of_population?: number;
+        countryCode: country.countryCode,
+        population: population.value,
+        hospitalEmployment: hospitalEmployment.value,
+        hospitalBeds: hospitalBeds.value,
+        highContactPopulation: highContactPopulation.value,
+        urbanPopulationProportion: urbanPopulationProportion.value,
+        remoteAreasPopulationProportion: remoteAreasPopulationProportion.value,
+        urbanPopulationInDegradedHousingProportion:
+          urbanPopulationInDegradedHousingProportion.value,
+        over65Proportion: over65Proportion.value,
       });
   };
 
@@ -148,28 +145,24 @@ const CountrySelector: React.FC<{
                 </div>
               )}
               <label>% population in urban areas</label>
-              <input {...urbanPopulationPercentage} required />
+              <input {...urbanPopulationProportion} required />
               <label>
                 Total hospital beds
                 <br />
                 (private and public)
               </label>
-              <input {...hospitalEmployment} required />
+              <input {...hospitalBeds} required />
               <label>
                 % population age <br />
                 +65 years
               </label>
-              <input {...over65Percentage} required />
+              <input {...over65Proportion} required />
               <label>
                 Estimated Staff
                 <br />
                 per hospital bed
               </label>
-              <input
-                // TODO this value doesnt exist yet
-                value={4}
-                readOnly
-              />
+              <input {...hospitalEmployment} required />
             </div>
             <div className="form-column">
               <label>Population size</label>
@@ -179,7 +172,7 @@ const CountrySelector: React.FC<{
                 <br />
                 degraded housing
               </label>
-              <input {...urbanPopulationInDegradedHousingPercentage} required />
+              <input {...urbanPopulationInDegradedHousingProportion} required />
               <label>
                 % population high
                 <br />
@@ -191,7 +184,7 @@ const CountrySelector: React.FC<{
                 <br />
                 remote/isolated areas
               </label>
-              <input {...remoteAreasPopulationPercentage} required />
+              <input {...remoteAreasPopulationProportion} required />
             </div>
           </div>
           <div className="world">

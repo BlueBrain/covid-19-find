@@ -104,6 +104,8 @@ class Country:
         units = data["units"]
         df = data["data"]
         df = df.loc[df[key] == self.code]
+        if df.empty:
+            return (self.year, getattr(self, attr))
         if attr == "overX":
             age_key = data["age"]
             year_key = data["year"]

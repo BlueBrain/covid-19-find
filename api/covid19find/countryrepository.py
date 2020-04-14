@@ -33,11 +33,11 @@ class CountryRepository:
         return {
             "countryCode": country_code,
             "population": country.get_population(),
-            "urbanPopulationPercentage": country.get_pcnt_urban(),
-            "urbanPopulationInDegradedHousingPercentage": country.get_pcnt_degraded(),
-            "over65Percentage": over65percentage,
+            "urbanPopulationProportion": country.get_pcnt_urban(),
+            "urbanPopulationInDegradedHousingProportion": country.get_pcnt_degraded(),
+            "over65Proportion": over65percentage,
             "hospitalEmployment": None,
             "hospitalBeds": country.get_hosp_beds(),
             "highContactPopulation": country.get_high_contact(),
-            "remoteAreasPopulationPercentage": country.get_remote()
+            "remoteAreasPopulationProportion": country.get_remote()
         }

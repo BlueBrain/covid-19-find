@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
+def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
-                   sensitivity_RDT,sensitivity_xray,selectivity_PCR,selectivity_RDT,selectivity_xray, \
+                   sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
          path_prefix = os.path.abspath(os.path.dirname(__file__))
          expert_mode=False
@@ -55,27 +55,27 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
          
          p['compartment']=['Hospitals','Other high contact ','Rest of population']
          p['testkits']=['PCR','RDT','Chest xrays']
-         p['init_infected']=[100,5000,4000]
+   #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
          p['total_pop'][0]=total_pop
-         p['init_pop'][0]=pop_hospitals
+         p['init_pop'][0]=hospital_beds*float(p['staff_per_bed'][0])
          p['high_contact'][0]=pop_high_contact
          p['prop_urban'][0]=prop_urban
          p['isolated_area'][0]=prop_isolated
          p['degraded'][0]=degraded
          p['ge_65'][0]=ge_65
-    #       p['prop_tests'][0]=prop_tests_hospitals
-     #      p['prop_tests'][1]=prop_tests_high_contact
-    #       p['prop_tests'][2]=prop_tests_rest_of_population
+ #        p['prop_tests'][0]=prop_tests_hospitals
+ #        p['prop_tests'][1]=prop_tests_high_contact
+  #       p['prop_tests'][2]=prop_tests_rest_of_population
          p['sensitivity'][0]=sensitivity_PCR
          p['sensitivity'][1]=sensitivity_RDT
          p['sensitivity'][2]=sensitivity_xray
-         p['selectivity'][0]=selectivity_PCR
-         p['selectivity'][1]=selectivity_RDT
-         p['selectivity'][2]=selectivity_xray
+         p['specificity'][0]=specificity_PCR
+         p['specificity'][1]=specificity_RDT
+         p['specificity'][2]=specificity_xray
          p['num_tests'][0]=num_tests_PCR
          p['num_tests'][1]=num_tests_RDT
          p['num_tests'][2]=num_tests_xray
-         p['test_symptomatic_only']=['true','true','true']
+ #        p['test_symptomatic_only']=['true','true','true']
          
             
          num_testkit_types=int(p['num_testkit_types'][0])
@@ -88,7 +88,7 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
          for i in range(1,num_compartments+1):
             for j in range(1,num_compartments+1):
                initial_beta[i-1,j-1] = beta_table.iloc[i,j]
-
+               
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
          num_scenarios=rows-1
@@ -117,6 +117,8 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
              for j in range(1, num_compartments+1):
                target=scenarios[i][j]
                p['prop_tests'][j-1]=target
+    #           print('prop tests for scenario ',j,' set to', p['prop_tests'][j-1])
+
              beta=initial_beta.copy() #this is essential - otherwise the beta gets modified inside the simulation
              df = simulate(num_compartments,p,beta)
              dataframes.append(df)
@@ -133,7 +135,7 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
                # print('num_daily tests in ',comp,' =', num_tests_performed[i])
                 if expert_mode:
                     print('total tests in compartment',comp,'=',dfsumcomp['new_tested'][j])
-                    print('total_deaths in ',comp,'=', dfsumcomp['total_deaths'][j])
+                    print('total_deaths in ',comp,'=', dfsumcomp['new_deaths'][j])
                     print('max_infections in ',comp,'=',dfmaxcomp['total_infected'][j])
                     print('max in isolation in ',comp,'=',dfmaxcomp['total_isolated'][j])
                     print()
@@ -144,12 +146,12 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
                  plot_results(scenario_name,'ALL',dfsumcomp['new_tested'],dfsum['days'],dfsum['total_isolated'],dfsum['total_infected'],dfsum['tested'],dfsum['total_infected_notisolated'],dfsum['total_confirmed'],dfsum['total_deaths'],dfsum['susceptibles'])
                  print('************')
              total_tests_by_scenario[i]=dfsumcomp['new_tested'].sum()
-             total_deaths_by_scenario[i]=dfsumcomp['total_deaths'].sum()
+             total_deaths_by_scenario[i]=dfsumcomp['new_deaths'].sum()
              max_infected_by_scenario[i]=dfsum['total_infected'].max()
              max_isolated_by_scenario[i]=dfsum['total_isolated'].max()
              if expert_mode:
                  print('Total tested  =',total_tests_by_scenario[i])
-
+             
                  print('Max infected=',max_infected_by_scenario[i])
                  print('Max isolated=',max_isolated_by_scenario[i])
                  print('Total deaths=',total_deaths_by_scenario[i])
@@ -167,7 +169,7 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
              print('')
              print('Total Deaths')
              print('')
-
+            
              for i in range(1,num_scenarios+1):
                  print('Scenario ',i,total_deaths_by_scenario[i])
              print('')
@@ -180,11 +182,11 @@ def run_simulation(total_pop,pop_hospitals,pop_high_contact,prop_urban,prop_isol
              print('')
              for i in range(1,num_scenarios+1):
                 print('Scenario ',i,max_isolated_by_scenario[i])
-
+           
              #=============================================================================
              print('')
          return(dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario)
-
+ 
  
 
 def simulate(num_compartments,params,beta):
@@ -211,7 +213,7 @@ def simulate(num_compartments,params,beta):
     prop_tests = np.zeros(num_compartments)
     num_tests=np.zeros(num_compartments)
     sensitivity=np.zeros(num_testkit_types)
-    selectivity=np.zeros(num_testkit_types)
+    specificity=np.zeros(num_testkit_types)
     for i in range(0,num_compartments):
          compartment.append(params['compartment'][i])
          init_infected[i] = params['init_infected'][i] 
@@ -219,7 +221,7 @@ def simulate(num_compartments,params,beta):
     for k in range(0,num_testkit_types):
          num_tests[k]=int(params['num_tests'][k])
  # ############
- # In this version of the code there are only 3 compartments.
+ # In this version of the code there are only 3 compartments. 
  # The second compartment aggregates people in high risk professions and
  # People in degraded urban areas. 
  # It would probably be better to separate them into two compartments
@@ -232,7 +234,10 @@ def simulate(num_compartments,params,beta):
     high_risk_urban=int(params['total_pop'][0])*float(params['prop_urban'][0])*float(params['degraded'][0])
     other_high_risk=int(params['init_pop'][1] )                  
     init_pop[1]=high_risk_urban+other_high_risk
-    init_pop[2]=int(params['total_pop'][0])-init_pop[0]+init_pop[1]
+    init_pop[2]=int(params['total_pop'][0])-init_pop[0]-init_pop[1]
+    print('population hospitals=',init_pop[0])
+    print('population high risk=', init_pop[1])
+    print('rest of population=',init_pop[2])
  # =============================================================================
   # Initialize arrays storing time series
     days=np.zeros(num_days)
@@ -269,7 +274,7 @@ def simulate(num_compartments,params,beta):
        infectednotisolated[0,i]=init_infected[i]
 
  
-    alpha=beta/alpha_post_inversion
+    alpha=beta/alpha_post_inversion #alpha post inversion is now actually a multiplier. Name is wrong.
  
     totaldeaths=np.zeros(num_compartments)
     maxinfected=np.zeros(num_compartments)
@@ -280,61 +285,66 @@ def simulate(num_compartments,params,beta):
   #  print ('test_symptomatic_only',test_symptomatic_only)
     for t in range(1,num_days):
        days[t]=t
-       #adjust value of betas - we assume they fall linearly with time after the intervention
+       #adjust value of betas - we assume they fall linearly with time after the intervention until they reach a lower bound
        if t > inversion_date:
            for i in range (0,num_compartments):
                for j in range(0,num_compartments):
-                   if beta[i,j]-alpha[i,j] > 0:
+                   if beta[i,j]-alpha[i,j] > float(params['lower_bound_beta'][0]):
                        beta[i,j]=beta[i,j]-alpha[i,j]
                    else:
-                       beta[i,j] = 0
+                       beta[i,j] = float(params['lower_bound_beta'][0])
        # add up number of new infected for each compartment - total correct at end of loops
        for i in range(0,num_compartments): #this is the compartment doing the infecting
            newinfected[t,i]=0
            for j in range(0, num_compartments):      
        # beta_arr[t] = beta #this is legacy code
-             #This computes how many infections compart i will cause in compartment j 
-               compart_newinfected[t,i,j] = infectednotisolated[t-1,i]*beta[i,j]*susceptible_prop[t-1,j] #this records how many new infections compart i will cause in compart j 
+             #This computes how many infections compart i will cause in compartment j - this seems t
 
+               compart_newinfected[t,i,j] = infectednotisolated[t-1,i]*beta[i,j]*susceptible_prop[t-1,j] #this records how many new infections compart i will cause in compart j
        for i in range(0,num_compartments): #now each compartment adds up the total of new infections
-     
            newinfected[t,i]=0
            for j in range(0,num_compartments):
-             newinfected[t,i]=newinfected[t,i]+compart_newinfected[t,j,i]  
+             newinfected[t,i]=newinfected[t,i]+compart_newinfected[t,j,i]
+             if newinfected[t,i]>susceptibles[t-1,i]:
+                 newinfected[t,i]=susceptibles[t-1,i]
      
        for i in range(0,num_compartments): 
            true_positives=0
            false_positives=0
            for k in range(0,num_testkit_types): #accumulate true and false positives across different kinds of tests
-
                tests_available=prop_tests[i]*num_tests[k]
-               true_positive_rate=float(params['sensitivity'][k])
-               false_positive_rate=1-float(params['selectivity'][k])
-               if t < test_start:
-                  newtested[t,i] = 0
-                  newisolated[t,i] = 0
-                  newisolatedinfected[t,i] =  0
-               else:
-                  if population[t-1,i] >= tests_available:
-                     newtested[t,i] = tests_available
-                  else:
-                     newtested[t,i] = population[t-1,i]
-               if test_symptomatic_only:
-                 total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-1,i]
-                 if total_symptomatic<tests_available:
-                     newtested[t,i]=total_symptomatic
-                 p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
-                 true_positives = true_positives+newtested[t,i] * p_positive_if_symptomatic * true_positive_rate
-                 false_positives = false_positives+newtested[t,i] * (1-p_positive_if_symptomatic) * false_positive_rate
-               else:
-                 true_positives = true_positives+newtested[t,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
-                 if true_positives>infectednotisolated[t-1,i]:
-                     true_positives=infectednotisolated[t-1,i]
-                 false_positives=false_positives+newtested[t,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
+   #            print ('compartment=',i,' test_type=',k,'prop_tests=', prop_tests[i],'num_tests=',num_tests[k],'tests_available=',tests_available)
+               if tests_available>0:
+                   true_positive_rate=float(params['sensitivity'][k])
+                   false_positive_rate=1-float(params['specificity'][k])
+                   if t < test_start:
+                      newtested[t,i] = 0
+                      newisolated[t,i] = 0
+                      newisolatedinfected[t,i] =  0
+                   else:
+                      if population[t-1,i] >= tests_available:
+                         newtested[t,i] = tests_available
+                      else:
+                         newtested[t,i] = population[t-1,i]
+                   if test_symptomatic_only:
+                         total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-1,i]
+                         if total_symptomatic<tests_available:
+                             newtested[t,i]=total_symptomatic
+                         p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
+                         true_positives = true_positives+newtested[t,i] * p_positive_if_symptomatic * true_positive_rate
+                         false_positives = false_positives+newtested[t,i] * (1-p_positive_if_symptomatic) * false_positive_rate
 
+                   else: #also testing non-symptomatic
+                     true_positives = true_positives+newtested[t-1,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
+
+                     if true_positives>infectednotisolated[t-1,i]:
+                         true_positives=infectednotisolated[t-1,i]
+                     false_positives=false_positives+newtested[t,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
+   #                  print('true_positives=', true_positives,'false positives', false_positives)
+    #                 print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)
           # Put all positive cases into isolation
      
-           newisolated[t,i] = true_positives+false_positives
+           newisolated[t,i] = true_positives # +false_positives
            newisolatedinfected[t,i] = true_positives
            newrecovered[t,i] = 0
            if t >= recovery_period:
@@ -349,12 +359,14 @@ def simulate(num_compartments,params,beta):
            if infected[t,i]<0:
                infected[t,i]=0
            recovered[t,i] = recovered[t-1,i]+newrecovered[t-1,i]
-           susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]
+    #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
+           deaths[t,i] = deaths[t-1,i]+newdeaths[t,i]
+           population[t,i] = population[t-1,i]-newdeaths[t,i]
+           susceptibles[t,i]=population[t-1,i]-infectednotisolated[t-1,i]-recovered[t-1,i]
+     #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
                susceptibles[t,i]=0
-           population[t,i] = population[t-1,i]-newdeaths[t,i]
-           susceptible_prop[t,i] = susceptibles[t,i]/population[t,i]
-           deaths[t,i] = deaths[t-1,i]+newdeaths[t,i]
+           susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t,i]  # JPV changed
            if t >= recovery_period:
@@ -363,9 +375,9 @@ def simulate(num_compartments,params,beta):
            else:
               isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i]
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]
-              
+  #         print('t=',t,'infected=',infected[t,i],'isolated=',isolated[t,i])
            if infected[t,i] - isolated[t,i] > 0:
-              infectednotisolated[t,i] = infected[t,i] - isolated[t,i]
+              infectednotisolated[t,i] = infected[t,i] - isolated[t,i] #accounting identity
            else:
               infectednotisolated[t,i] = 0
  
@@ -390,7 +402,7 @@ def simulate(num_compartments,params,beta):
           'num_isolated_infected': np.round(newisolatedinfected[:,0],1),
           'num_confirmed': np.round(newconfirmed[:,0],1),
           'num_recovered': np.round(newrecovered[:,0],1),
-          'num_deaths': np.round(newdeaths[:,0],1)
+          'new_deaths': np.round(newdeaths[:,0],1)
          })
     for i in range(1,num_compartments):
        dfadd = pd.DataFrame({
@@ -413,7 +425,7 @@ def simulate(num_compartments,params,beta):
           'num_isolated_infected': np.round(newisolatedinfected[:,i],1),
           'num_confirmed': np.round(newconfirmed[:,i],1),
           'num_recovered': np.round(newrecovered[:,i],1),
-          'num_deaths': np.round(newdeaths[:,i],1)
+          'new_deaths': np.round(newdeaths[:,i],1)
          })
        df = df.append(dfadd)
  # =============================================================================
@@ -448,7 +460,7 @@ def plot_results(scenario_name,compartment,num_tests, days,num_isolated,num_infe
      plt.show()
      plt.close()
      plt.plot(days,num_isolated,color='b', label="Num_isolated")
-     plt.title(compartment+' - Isolated')
+     plt.title(scenario_name+': '+compartment+' - Isolated')
      plt.ylabel('Number')
      plt.xlabel('Day')
      plt.legend(title= "Legend")
