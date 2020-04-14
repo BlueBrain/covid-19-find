@@ -9,7 +9,7 @@ Created on Fri Apr 10 09:25:47 2020
 
 import covidlib as cl
 total_pop=12050000
-hospital_beds=50000
+hospital_beds=10000
 pop_high_contact=2000000
 pop_rest=8072000
 prop_urban=0.4
@@ -24,9 +24,9 @@ prop_tests_rest_of_population=None #legacy variable - to be removed in next rele
 sensitivity_PCR=0.95
 sensitivity_RDT=0.85
 sensitivity_xray=0.9
-specificity_PCR=1
-specificity_RDT=1
-specificity_xray=1
+specificity_PCR=0.99
+specificity_RDT=0.99
+specificity_xray=0.99
 num_tests_PCR=1000
 num_tests_RDT=1000
 num_tests_xray=1000

@@ -298,13 +298,13 @@ def simulate(num_compartments,params,beta):
        # beta_arr[t] = beta #this is legacy code
              #This computes how many infections compart i will cause in compartment j - this seems t
 
-               compart_newinfected[t,i,j] = infectednotisolated[t-1,i]*beta[i,j]*susceptible_prop[t-1,j] #this records how many new infections compart i will cause in compart j 
+               compart_newinfected[t-1,i,j] = infectednotisolated[t-1,i]*beta[i,j]*susceptible_prop[t-1,j] #this records how many new infections compart i will cause in compart j 
        for i in range(0,num_compartments): #now each compartment adds up the total of new infections
-           newinfected[t,i]=0
+           newinfected[t-1,i]=0
            for j in range(0,num_compartments):
-             newinfected[t,i]=newinfected[t,i]+compart_newinfected[t,j,i]
-             if newinfected[t,i]>susceptibles[t-1,i]:
-                 newinfected[t,i]=susceptibles[t-1,i]
+             newinfected[t-1,i]=newinfected[t-1,i]+compart_newinfected[t-1,j,i]
+             if newinfected[t-1,i]>susceptibles[t-1,i]:
+                 newinfected[t-1,i]=susceptibles[t-1,i]
      
        for i in range(0,num_compartments): 
            true_positives=0
@@ -316,66 +316,68 @@ def simulate(num_compartments,params,beta):
                    true_positive_rate=float(params['sensitivity'][k])
                    false_positive_rate=1-float(params['specificity'][k])
                    if t < test_start:
-                      newtested[t,i] = 0
-                      newisolated[t,i] = 0
-                      newisolatedinfected[t,i] =  0
+                      newtested[t-1,i] = 0
+                      newisolated[t-1,i] = 0
+                      newisolatedinfected[t-1,i] =  0
                    else:
                       if population[t-1,i] >= tests_available:
-                         newtested[t,i] = tests_available
+                         newtested[t-1,i] = tests_available
                       else:
-                         newtested[t,i] = population[t-1,i]
+                         newtested[t-1,i] = population[t-1,i]
                    if test_symptomatic_only:
                          total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-1,i]
                          if total_symptomatic<tests_available:
-                             newtested[t,i]=total_symptomatic
+                             newtested[t-1,i]=total_symptomatic
                          p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
-                         true_positives = true_positives+newtested[t,i] * p_positive_if_symptomatic * true_positive_rate
-                         false_positives = false_positives+newtested[t,i] * (1-p_positive_if_symptomatic) * false_positive_rate
+                         true_positives = true_positives+newtested[t-1,i] * p_positive_if_symptomatic * true_positive_rate
+                         false_positives = false_positives+newtested[t-1,i] * (1-p_positive_if_symptomatic) * false_positive_rate
                      
                    else: #also testing non-symptomatic
                      true_positives = true_positives+newtested[t-1,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
                      
                      if true_positives>infectednotisolated[t-1,i]:
                          true_positives=infectednotisolated[t-1,i]
-                     false_positives=false_positives+newtested[t,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
-   #                  print('true_positives=', true_positives,'false positives', false_positives)          
-    #                 print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)   
+                     false_positives=false_positives+newtested[t-1,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
+        
+   #                  print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)   
           # Put all positive cases into isolation
-     
-           newisolated[t,i] = true_positives # +false_positives
-           newisolatedinfected[t,i] = true_positives
-           newrecovered[t,i] = 0
+           #print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t-1,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)   
+           print('true_positives=', true_positives,'false positives', false_positives)     
+           newisolated[t-1,i] = true_positives #+false_positives
+           newisolatedinfected[t-1,i] = true_positives
+           newrecovered[t-1,i] = 0
            if t >= recovery_period:
-              newrecovered[t,i] = newinfected[t-recovery_period,i]*gamma
+              newrecovered[t-1,i] = newinfected[t-recovery_period-1,i]*gamma
            newdeaths[t,i] = 0
            if t >= death_period:
-               newdeaths[t,i] = newinfected[t-death_period,i]*tau
+               newdeaths[t-1,i] = newinfected[t-death_period-1,i]*tau
            else:
-               newdeaths[t,i]=0
-           newconfirmed[t,i] = newisolated[t,i]
-           infected[t,i] = infected[t-1,i]+newinfected[t,i]-newrecovered[t,i]-newdeaths[t,i]
+               newdeaths[t-1,i]=0
+           newconfirmed[t-1,i] = newisolated[t-1,i]
+           infected[t,i] = infected[t-1,i]+newinfected[t-1,i]-newrecovered[t-1,i]-newdeaths[t-1,i]
            if infected[t,i]<0:
                infected[t,i]=0
            recovered[t,i] = recovered[t-1,i]+newrecovered[t-1,i]
     #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
-           deaths[t,i] = deaths[t-1,i]+newdeaths[t,i]
+           deaths[t,i] = deaths[t-1,i]+newdeaths[t-1,i]
            population[t,i] = population[t-1,i]-newdeaths[t,i]
-           susceptibles[t,i]=population[t-1,i]-infectednotisolated[t-1,i]-recovered[t-1,i]  
+           susceptibles[t,i]=population[t,i]-infected[t,i]-recovered[t,i]  
      #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
                susceptibles[t,i]=0  
            susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
-           confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t,i]  # JPV changed
+           confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t-1,i]  # JPV changed
            if t >= recovery_period:
-              isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i] - newisolated[t-recovery_period,i]
+              isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i] - newisolated[t-recovery_period-1,i] #fin qui
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i] - newisolatedinfected[t-recovery_period,i] # JPV changed
            else:
               isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i]
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]
   #         print('t=',t,'infected=',infected[t,i],'isolated=',isolated[t,i])   
            if infected[t,i] - isolated[t,i] > 0:
-              infectednotisolated[t,i] = infected[t,i] - isolated[t,i] #accounting identity            
+              infectednotisolated[t,i] = infected[t,i] - (isolated[t,i]) #accounting identity            
+            
            else:
               infectednotisolated[t,i] = 0
  
