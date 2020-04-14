@@ -137,6 +137,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
     #           print('prop tests for scenario ',j,' set to', p['prop_tests'][j-1])
          
              beta=initial_beta.copy() #this is essential - otherwise the beta gets modified inside the simulation
+
              df = simulate(num_compartments,p,beta,final_beta)
              dataframes.append(df)
              
@@ -156,7 +157,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
                     print('max_infections in ',comp,'=',dfmaxcomp['total_infected'][j])
                     print('max in isolation in ',comp,'=',dfmaxcomp['total_isolated'][j])
                     print()
-                    plot_results(scenario_name,comp,int(num_tests_performed[i]),dfcomp['days'],dfcomp['total_isolated'],dfcomp['total_infected'],dfcomp['tested'],dfcomp['total_infected_notisolated'],dfcomp['total_confirmed'],dfcomp['total_deaths'],dfcomp['susceptibles'])
+                    plot_results(scenario_name,comp,int(num_tests_performed[j]),dfcomp['days'],dfcomp['total_isolated'],dfcomp['total_infected'],dfcomp['tested'],dfcomp['total_infected_notisolated'],dfcomp['total_confirmed'],dfcomp['total_deaths'],dfcomp['susceptibles'])
          
              
              if expert_mode:
