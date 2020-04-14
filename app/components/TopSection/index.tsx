@@ -18,13 +18,11 @@ const TopSection: React.FC = () => {
         <div className="shoutout">
           <h2>Disclaimer</h2>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
+            This web tool estimates the relative impact of different deployment
+            strategies for diagnostic tests in the current acute phase of the
+            COVID-19 pandemic. The tool is not intended to replace detailed
+            epidemiological models or the estimates of deaths and of epidemic
+            duration coming from such models.
           </p>
           <button className="btn">Read All</button>
         </div>
