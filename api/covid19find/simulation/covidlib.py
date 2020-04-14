@@ -11,7 +11,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
-         expert_mode=True
+         expert_mode=False
          simsfile = 'compart_params.csv'
          
          initial_betafile = 'initial_betas.csv'
