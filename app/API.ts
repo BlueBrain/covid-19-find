@@ -12,7 +12,7 @@ export type SimulationParams = {
   hospitalTestsProportion: number;
   highContactTestsProportion: number;
   restOfPopulationTestsProportion: number;
-  hospitalEmployment: null; // TODO: change this because model doesnt use it
+  hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
   sensitivityRDT: number;
   sensitivityXray: number;

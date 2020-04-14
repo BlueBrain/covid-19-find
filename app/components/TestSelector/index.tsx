@@ -5,54 +5,54 @@ import useFormInput from '../../hooks/useFormInput';
 import './test-selector.less';
 
 export type TestSelectorVales = {
-  sensitivity_PCR?: number;
-  sensitivity_RDT?: number;
-  sensitivity_xray?: number;
-  selectivity_PCR?: number;
-  selectivity_RDT?: number;
-  selectivity_xray?: number;
-  num_tests_PCR?: number;
-  num_tests_RDT?: number;
-  num_tests_xray?: number;
+  sensitivityPCR?: number;
+  sensitivityRDT?: number;
+  sensitivityXray?: number;
+  specificityPCR?: number;
+  specificityRDT?: number;
+  specificityXray?: number;
+  numTestsPCR?: number;
+  numTestsRDT?: number;
+  numTestsXray?: number;
 };
 
 const TestSelector: React.FC<TestSelectorVales & {
   onSubmit?: (values: TestSelectorVales) => void;
 }> = ({
-  sensitivity_PCR,
-  sensitivity_RDT,
-  sensitivity_xray,
-  selectivity_PCR,
-  selectivity_RDT,
-  selectivity_xray,
-  num_tests_PCR,
-  num_tests_RDT,
-  num_tests_xray,
+  sensitivityPCR,
+  sensitivityRDT,
+  sensitivityXray,
+  specificityPCR,
+  specificityRDT,
+  specificityXray,
+  numTestsPCR,
+  numTestsRDT,
+  numTestsXray,
   onSubmit,
 }) => {
-  const PCRsSensitivity = useFormInput(sensitivity_PCR);
-  const PCRtotal = useFormInput(num_tests_PCR);
-  const rapidTestKitTotal = useFormInput(num_tests_RDT);
-  const chestXRayTotal = useFormInput(num_tests_xray);
-  const rapidTestKitsSensitivity = useFormInput(sensitivity_RDT);
-  const xRaysSensitivity = useFormInput(sensitivity_xray);
-  const PCRsSelectivity = useFormInput(selectivity_PCR);
-  const rapidTestKitsSelectivity = useFormInput(selectivity_RDT);
-  const xRaysSelectivity = useFormInput(selectivity_xray);
+  const sensitivityPCRInput = useFormInput(sensitivityPCR);
+  const sensitivityRDTInput = useFormInput(sensitivityRDT);
+  const sensitivityXrayInput = useFormInput(sensitivityXray);
+  const specificityPCRInput = useFormInput(specificityPCR);
+  const specificityRDTInput = useFormInput(specificityRDT);
+  const specificityXrayInput = useFormInput(specificityXray);
+  const numTestsPCRInput = useFormInput(numTestsPCR);
+  const numTestsRDTInput = useFormInput(numTestsRDT);
+  const numTestsXrayInput = useFormInput(numTestsXray);
 
   const handleSubmit = e => {
     e.preventDefault();
     onSubmit &&
       onSubmit({
-        sensitivity_PCR: PCRsSensitivity.value,
-        sensitivity_RDT: rapidTestKitsSensitivity.value,
-        sensitivity_xray: xRaysSensitivity.value,
-        selectivity_PCR: PCRsSelectivity.value,
-        selectivity_RDT: rapidTestKitsSelectivity.value,
-        selectivity_xray: xRaysSelectivity.value,
-        num_tests_PCR: PCRtotal.value,
-        num_tests_RDT: rapidTestKitTotal.value,
-        num_tests_xray: chestXRayTotal.value,
+        sensitivityPCR: sensitivityPCRInput.value,
+        sensitivityRDT: sensitivityRDTInput.value,
+        sensitivityXray: sensitivityXrayInput.value,
+        specificityPCR: specificityPCRInput.value,
+        specificityRDT: specificityRDTInput.value,
+        specificityXray: specificityXrayInput.value,
+        numTestsPCR: numTestsPCRInput.value,
+        numTestsRDT: numTestsRDTInput.value,
+        numTestsXray: numTestsXrayInput.value,
       });
   };
 
@@ -78,7 +78,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   <br />
                   per day
                   <input
-                    {...PCRtotal}
+                    {...numTestsPCRInput}
                     placeholder={'Enter... [0-100]'}
                     style={{
                       width: '200px',
@@ -90,7 +90,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
                   <input
-                    {...PCRsSensitivity}
+                    {...sensitivityPCRInput}
                     step="0.01"
                     min="0"
                     max="1"
@@ -98,7 +98,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   />
                   <label className="label-mini">Specificity</label>
                   <input
-                    {...PCRsSelectivity}
+                    {...specificityPCRInput}
                     step="0.01"
                     min="0"
                     max="1"

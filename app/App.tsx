@@ -19,7 +19,7 @@ const DEFAULT_PARAMS: SimulationParams = {
   hospitalTestsProportion: 0.5,
   highContactTestsProportion: 0.5,
   restOfPopulationTestsProportion: 0,
-  hospitalEmployment: null,
+  hospitalEmployment: 4,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
   sensitivityXray: 0.9,
