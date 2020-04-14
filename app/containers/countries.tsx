@@ -1,25 +1,22 @@
 import * as React from 'react';
 import useAPI from '../hooks/useAPI';
 
-import CountrySelector, {
-  CountryParams,
-} from '../components/CountrySelector';
+import CountrySelector from '../components/CountrySelector';
 import CovidResults, { CovidData } from '../components/CovidResults';
+import { CountryResponse, SimulationParams } from '../API';
 
-const Countries: React.FC<CountryParams & {
-  onSubmit?: (value: CountryParams) => void;
+const Countries: React.FC<SimulationParams & {
+  onSubmit?: (value: CountryResponse) => void;
 }> = ({
   onSubmit,
-  total_pop,
-  pop_hospitals,
-  pop_high_contact,
-  prop_urban,
-  prop_isolated,
-  degraded,
-  ge_65,
-  prop_tests_hospitals,
-  prop_tests_high_contact,
-  prop_tests_rest_of_population,
+  population,
+  hospitalBeds,
+  highContactPopulation,
+  urbanPopulationProportion,
+  remoteAreasPopulationProportion,
+  urbanPopulationInDegradedHousingProportion,
+  over65Proportion,
+  hospitalEmployment,
 }) => {
   const [, defaultCountryCode] = navigator.language.split('-');
   const [countries, setCountries] = React.useState([]);
@@ -27,7 +24,7 @@ const Countries: React.FC<CountryParams & {
     loading: boolean;
     error: Error | null;
     data: {
-      countryInfo: CountryParams;
+      countryInfo: CountryResponse;
       covidData: CovidData;
     } | null;
   }>({
@@ -74,7 +71,6 @@ const Countries: React.FC<CountryParams & {
   const open = !countryInfo.loading;
 
   const countryLabel = countries.find(
-    // @ts-ignore reverse this so that the API returns better formatted data
     entry => entry.countryCode === countryInfo?.data?.countryInfo?.countryCode,
   )?.name;
 
@@ -84,20 +80,17 @@ const Countries: React.FC<CountryParams & {
         <CountrySelector
           countries={countries}
           onSubmit={onSubmit}
-          countryInfo={
-            { 
-              total_pop,
-              pop_hospitals,
-              pop_high_contact,
-              prop_urban,
-              prop_isolated,
-              degraded,
-              ge_65,
-              prop_tests_hospitals,
-              prop_tests_high_contact,
-              prop_tests_rest_of_population
-              ...countryInfo?.data?.countryInfo
-            }}
+          countryInfo={{
+            population,
+            hospitalBeds,
+            highContactPopulation,
+            urbanPopulationProportion,
+            remoteAreasPopulationProportion,
+            urbanPopulationInDegradedHousingProportion,
+            over65Proportion,
+            hospitalEmployment,
+            ...countryInfo?.data?.countryInfo,
+          }}
           onClickSelectCountry={loadCountryData}
           defaultCountryCode={defaultCountryCode}
         />

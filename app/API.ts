@@ -1,27 +1,27 @@
 import { apiBase } from './config';
 import csv from 'csvtojson';
-import { CountryParams } from './components/CountrySelector';
 
 export type SimulationParams = {
-  total_pop: number;
-  pop_hospitals: number;
-  pop_high_contact: number;
-  prop_urban: number;
-  prop_isolated: number;
-  degraded: number;
-  ge_65: number;
-  prop_tests_hospitals: number;
-  prop_tests_high_contact: number;
-  prop_tests_rest_of_population: number;
-  sensitivity_PCR: number;
-  sensitivity_RDT: number;
-  sensitivity_xray: number;
-  selectivity_PCR: number;
-  selectivity_RDT: number;
-  selectivity_xray: number;
-  num_tests_PCR: number;
-  num_tests_RDT: number;
-  num_tests_xray: number;
+  population: number;
+  hospitalBeds: number;
+  highContactPopulation: number;
+  urbanPopulationProportion: number;
+  remoteAreasPopulationProportion: number;
+  urbanPopulationInDegradedHousingProportion: number;
+  over65Proportion: number;
+  hospitalTestsProportion: number;
+  highContactTestsProportion: number;
+  restOfPopulationTestsProportion: number;
+  hospitalEmployment: null; // TODO: change this because model doesnt use it
+  sensitivityPCR: number;
+  sensitivityRDT: number;
+  sensitivityXray: number;
+  specificityPCR: number;
+  specificityRDT: number;
+  specificityXray: number;
+  numTestsPCR: number;
+  numTestsRDT: number;
+  numTestsXray: number;
 };
 
 export type SimulationResponse = {
@@ -69,11 +69,11 @@ export type CountryResponse = {
   highContactPopulation: number | null;
   hospitalBeds: number | null;
   hospitalEmployment: number | null;
-  over65Percentage: number | null;
+  over65Proportion: number | null;
   population: number | null;
-  remoteAreasPopulationPercentage: number | null;
-  urbanPopulationInDegradedHousingPercentage: number | null;
-  urbanPopulationPercentage: number | null;
+  remoteAreasPopulationProportion: number | null;
+  urbanPopulationInDegradedHousingProportion: number | null;
+  urbanPopulationProportion: number | null;
 };
 
 export default class API {
@@ -86,25 +86,10 @@ export default class API {
     return fetch(`${this.base}/countries`).then(response => response.json());
   }
 
-  country(countryCode: string): Promise<CountryParams> {
-    return fetch(`${this.base}/countries/${countryCode}`)
-      .then(response => response.json())
-      .then((response: CountryResponse) => {
-        return {
-          total_pop: response.population,
-          pop_hospitals: response.hospitalEmployment,
-          pop_high_contact: response.highContactPopulation,
-          prop_urban: response.urbanPopulationPercentage,
-          prop_isolated: response.remoteAreasPopulationPercentage,
-          degraded: response.urbanPopulationInDegradedHousingPercentage,
-          ge_65: response.over65Percentage,
-          countryCode: response.countryCode,
-          // TODO: reverse this and add these features
-          // prop_tests_hospitals,
-          // prop_tests_high_contact,
-          // prop_tests_rest_of_population,
-        };
-      });
+  country(countryCode: string): Promise<CountryResponse> {
+    return fetch(`${this.base}/countries/${countryCode}`).then(response =>
+      response.json(),
+    );
   }
 
   countryCovidData(countryCode: string) {
