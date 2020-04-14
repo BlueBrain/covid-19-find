@@ -1,16 +1,21 @@
 import * as React from 'react';
 
-const useFormInput = initialValue => {
+const useFormInput = (initialValue: any, placeholder?: any) => {
   const [value, setValue] = React.useState(initialValue);
 
   const onHandleChange = e => {
-    setValue(e.target.value);
+    setValue(e ? e.target.value : value);
+  };
+
+  const changeValue = (value: any) => {
+    setValue(value);
   };
 
   return {
     value,
+    changeValue,
     onChange: onHandleChange,
-    placeholder: 'Enter... [1-100]',
+    placeholder: placeholder || 'Enter... [1-100]',
   };
 };
 

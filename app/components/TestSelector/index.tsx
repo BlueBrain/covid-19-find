@@ -4,34 +4,71 @@ import useFormInput from '../../hooks/useFormInput';
 
 import './test-selector.less';
 
-const TestSelector: React.FC = () => {
-  const PCRsSensitivity = useFormInput('');
-  const PCRtotal = useFormInput('');
-  const rapidTestKitTotal = useFormInput('');
-  const chestXRayTotal = useFormInput('');
-  const rapidTestKitsSensitivity = useFormInput('');
-  const xRaysSensitivity = useFormInput('');
-  const PCRsSelectivity = useFormInput('');
-  const rapidTestKitsSelectivity = useFormInput('');
-  const xRaysSelectivity = useFormInput('');
+export type TestSelectorVales = {
+  sensitivity_PCR?: number;
+  sensitivity_RDT?: number;
+  sensitivity_xray?: number;
+  selectivity_PCR?: number;
+  selectivity_RDT?: number;
+  selectivity_xray?: number;
+  num_tests_PCR?: number;
+  num_tests_RDT?: number;
+  num_tests_xray?: number;
+};
 
-  const onClickSubmit = data => {
-    console.log('clicked');
+const TestSelector: React.FC<TestSelectorVales & {
+  onSubmit?: (values: TestSelectorVales) => void;
+}> = ({
+  sensitivity_PCR,
+  sensitivity_RDT,
+  sensitivity_xray,
+  selectivity_PCR,
+  selectivity_RDT,
+  selectivity_xray,
+  num_tests_PCR,
+  num_tests_RDT,
+  num_tests_xray,
+  onSubmit,
+}) => {
+  const PCRsSensitivity = useFormInput(sensitivity_PCR);
+  const PCRtotal = useFormInput(num_tests_PCR);
+  const rapidTestKitTotal = useFormInput(num_tests_RDT);
+  const chestXRayTotal = useFormInput(num_tests_xray);
+  const rapidTestKitsSensitivity = useFormInput(sensitivity_RDT);
+  const xRaysSensitivity = useFormInput(sensitivity_xray);
+  const PCRsSelectivity = useFormInput(selectivity_PCR);
+  const rapidTestKitsSelectivity = useFormInput(selectivity_RDT);
+  const xRaysSelectivity = useFormInput(selectivity_xray);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    onSubmit &&
+      onSubmit({
+        sensitivity_PCR: PCRsSensitivity.value,
+        sensitivity_RDT: rapidTestKitsSensitivity.value,
+        sensitivity_xray: xRaysSensitivity.value,
+        selectivity_PCR: PCRsSelectivity.value,
+        selectivity_RDT: rapidTestKitsSelectivity.value,
+        selectivity_xray: xRaysSelectivity.value,
+        num_tests_PCR: PCRtotal.value,
+        num_tests_RDT: rapidTestKitTotal.value,
+        num_tests_xray: chestXRayTotal.value,
+      });
   };
 
   return (
-    <section>
-      <div className="test-selector action-box">
-        <div className="title">
-          <div className="number">
-            <span>2</span>
+    <form className="tests-form" onSubmit={handleSubmit}>
+      <section>
+        <div className="test-selector action-box">
+          <div className="title">
+            <div className="number">
+              <span>2</span>
+            </div>
+            <h2 className="underline">
+              Select and view <em>test availabilities</em>
+            </h2>
           </div>
-          <h2 className="underline">
-            Select and view <em>test availabilities</em>
-          </h2>
-        </div>
-        <div className="container">
-          <form className="tests-form">
+          <div className="container">
             <div className="tests-form-container">
               <div className="input test-box">
                 <p className="test-description">
@@ -47,13 +84,26 @@ const TestSelector: React.FC = () => {
                       width: '200px',
                       margin: '1rem auto',
                     }}
+                    required
                   />
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
-                  <input {...PCRsSensitivity} />
+                  <input
+                    {...PCRsSensitivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                   <label className="label-mini">Specificity</label>
-                  <input {...PCRsSelectivity} />
+                  <input
+                    {...PCRsSelectivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                 </div>
               </div>
               <div className="input test-box">
@@ -70,13 +120,26 @@ const TestSelector: React.FC = () => {
                       width: '200px',
                       margin: '1rem auto',
                     }}
+                    required
                   />
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
-                  <input {...rapidTestKitsSensitivity} />
+                  <input
+                    {...rapidTestKitsSensitivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                   <label className="label-mini">Specificity</label>
-                  <input {...rapidTestKitsSelectivity} />
+                  <input
+                    {...rapidTestKitsSelectivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                 </div>
               </div>
               <div className="input test-box">
@@ -87,32 +150,45 @@ const TestSelector: React.FC = () => {
                   <br />
                   per day
                   <input
-                    {...rapidTestKitTotal}
+                    {...chestXRayTotal}
                     placeholder={'Enter... [0-100]'}
                     style={{
                       width: '200px',
                       margin: '1rem auto',
                     }}
+                    required
                   ></input>
                 </p>
                 <div className="test-input">
                   <label className="label-mini">Sensitivity</label>
-                  <input {...xRaysSensitivity} />
+                  <input
+                    {...xRaysSensitivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                   <label className="label-mini">Specificity</label>
-                  <input {...xRaysSelectivity} />
+                  <input
+                    {...xRaysSelectivity}
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    required
+                  />
                 </div>
               </div>
             </div>
-          </form>
+          </div>
+          <div className="submit-button">
+            <button className="action submit-button" type="submit">
+              Submit
+            </button>
+          </div>
         </div>
-        <div className="submit-button">
-          <button className="action submit-button" onClick={onClickSubmit}>
-            Submit
-          </button>
-        </div>
-      </div>
-      <div className="triangle"></div>
-    </section>
+        <div className="triangle"></div>
+      </section>
+    </form>
   );
 };
 

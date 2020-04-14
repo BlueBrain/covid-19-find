@@ -1,5 +1,6 @@
 import { apiBase } from './config';
 import csv from 'csvtojson';
+import { CountryParams } from './components/CountrySelector';
 
 export type SimulationParams = {
   total_pop: number;
@@ -63,6 +64,18 @@ export type Scenarios = {
   }[];
 }[];
 
+export type CountryResponse = {
+  countryCode: string;
+  highContactPopulation: number | null;
+  hospitalBeds: number | null;
+  hospitalEmployment: number | null;
+  over65Percentage: number | null;
+  population: number | null;
+  remoteAreasPopulationPercentage: number | null;
+  urbanPopulationInDegradedHousingPercentage: number | null;
+  urbanPopulationPercentage: number | null;
+};
+
 export default class API {
   base: string;
   constructor() {
@@ -70,14 +83,28 @@ export default class API {
   }
 
   countries() {
-    console.log('countries!', `${this.base}/countries`);
     return fetch(`${this.base}/countries`).then(response => response.json());
   }
 
-  country(countryCode: string) {
-    return fetch(`${this.base}/countries/${countryCode}`).then(response =>
-      response.json(),
-    );
+  country(countryCode: string): Promise<CountryParams> {
+    return fetch(`${this.base}/countries/${countryCode}`)
+      .then(response => response.json())
+      .then((response: CountryResponse) => {
+        return {
+          total_pop: response.population,
+          pop_hospitals: response.hospitalEmployment,
+          pop_high_contact: response.highContactPopulation,
+          prop_urban: response.urbanPopulationPercentage,
+          prop_isolated: response.remoteAreasPopulationPercentage,
+          degraded: response.urbanPopulationInDegradedHousingPercentage,
+          ge_65: response.over65Percentage,
+          countryCode: response.countryCode,
+          // TODO: reverse this and add these features
+          // prop_tests_hospitals,
+          // prop_tests_high_contact,
+          // prop_tests_rest_of_population,
+        };
+      });
   }
 
   countryCovidData(countryCode: string) {

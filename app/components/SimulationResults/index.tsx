@@ -24,9 +24,7 @@ const SimulationResults: React.FC<{
   const open = !loading;
 
   const selectedScenario = (data || [])[selectedScenarioIndex];
-  console.log({ data, selectedScenario });
 
-  const keys = ['num_deaths', 'num_confirmed', 'num_recovered'];
   const labels = union(
     ...(data || []).map(entry => entry.data.map(entry => entry.days)),
   );
@@ -104,6 +102,7 @@ const SimulationResults: React.FC<{
             </ul>
           )}
         </div>
+        <div className="triangle primary"></div>
       </div>
       <div
         className={`results-drop primary ${open ? 'open' : ''}`}
