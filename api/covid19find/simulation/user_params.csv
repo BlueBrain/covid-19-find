@@ -1,15 +1,14 @@
 ﻿compartment,Hospitals,Other high contact,Rest of population
-total_pop,12050000,,
-init_pop,50000,4800000,7200000
-prop_urban,0.4,,
-degraded,0.4,,
+total_pop,50000,,
+init_pop,50000,0,0
+prop_urban,0,,
+degraded,0,,
 ge_65,0.045,,
 high_contact,0.3,,
 isolated_area,0.2,,
-init_infected,100,5000,4000
 prop_tests,0.5,0.5,0
 Testkits,PCR,RDT,Chest x_rays
 sensitivity,0.95,0.85,0.9
-selectivity,0.95,0.9,0.9
-num_tests,1000,1000,1000
+specificity,1,1,1
+num_tests,0,0,0
 test_symptomatic_only,TRUE,TRUE,TRUE
