@@ -127,7 +127,7 @@ class Country:
 
     def search_avail_stats(self):
         subs = {}
-        datasets = [total_pop, pcnt_urban, None, age_distr, hospital_beds, None, None]
+        datasets = [config.total_pop, config.pcnt_urban, None, config.age_distr, config.hospital_beds, None, None]
         attrs = ["pop", "urban", "degraded", "overX", "hosp_beds", "high_contact", "remote"]
         for data, attr in zip(datasets, attrs):
             subs[attr] = (str(self.year), getattr(self, attr))
