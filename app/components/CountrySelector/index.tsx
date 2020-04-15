@@ -23,7 +23,6 @@ const CountrySelector: React.FC<{
   onClickSelectCountry: (country: any) => void;
   countryInfo: CountrySelectorResponse;
 }> = ({ countries, onSubmit, countryInfo = {}, onClickSelectCountry }) => {
-  console.log({ countryInfo });
   const population = useFormInput(countryInfo.population, null, true);
   const urbanPopulationProportion = useFormInput(
     countryInfo.urbanPopulationProportion,
@@ -86,7 +85,6 @@ const CountrySelector: React.FC<{
     const defaultCountry = countries.find(
       country => country.countryCode === countryInfo.countryCode,
     );
-    console.log({ defaultCountry });
     if (defaultCountry) {
       markSelectedCountry(defaultCountry);
     }
@@ -94,9 +92,6 @@ const CountrySelector: React.FC<{
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log({
-      hospitalStaffPerBed,
-    });
     onSubmit &&
       onSubmit({
         countryCode: country.countryCode,

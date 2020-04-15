@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as queryString from 'query-string';
-
 export type QueryParams = {
   [key: string]: any;
 };
@@ -18,11 +17,20 @@ export default function useQueryString() {
         skipNull: true,
       })}`,
     );
+    let myEvent = new Event('popstate');
+    window.dispatchEvent(myEvent);
+  };
+
+  const listenToPopstate = () => {
+    setQueryParams(queryString.parse(location.search) || {});
   };
 
   React.useEffect(() => {
-    setQueryParams(queryString.parse(location.search) || {});
-  }, [location.search]);
+    window.addEventListener('popstate', listenToPopstate);
+    return () => {
+      window.removeEventListener('popstate', listenToPopstate);
+    };
+  });
 
   return [queryParams, setQueryString] as [
     QueryParams,

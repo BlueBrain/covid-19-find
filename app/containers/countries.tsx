@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { omitBy, isNil } from 'lodash';
 import useAPI from '../hooks/useAPI';
 
 import CountrySelector, {
@@ -43,7 +44,6 @@ const Countries: React.FC<{
 
   const loadCountryData = async (countryCode: string) => {
     try {
-      console.log(countryCode);
       setCountryInfo({
         loading: true,
         error: null,
@@ -87,7 +87,7 @@ const Countries: React.FC<{
           onSubmit={onSubmit}
           countryInfo={{
             ...values,
-            ...countryInfo?.data?.countryInfo,
+            ...omitBy(countryInfo?.data?.countryInfo || {}, isNil),
           }}
           onClickSelectCountry={selectCountry}
         />

@@ -6,7 +6,7 @@ import FAQ from '../components/FAQ';
 const Contact: React.FC = () => {
   const handleGetInTouchForm = input => {
     console.log(input);
-    // do smth with it
+    // TODO do smth with it
   };
 
   return (

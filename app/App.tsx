@@ -44,13 +44,14 @@ const App: React.FC = () => {
   }, []);
 
   const handleSubmit = changedValues => {
+    console.log('handle submit!', changedValues);
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
   };
 
-  console.log({ queryParams });
+  console.log('App Reload', { queryParams });
 
   return (
     <div>
