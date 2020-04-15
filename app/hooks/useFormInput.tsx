@@ -1,21 +1,26 @@
 import * as React from 'react';
 
-const useFormInput = (initialValue: any, placeholder?: any) => {
+const useFormInput = (
+  initialValue: any,
+  placeholder?: any,
+  override?: boolean,
+) => {
   const [value, setValue] = React.useState(initialValue);
 
   const onHandleChange = e => {
     setValue(e ? e.target.value : value);
   };
 
-  const changeValue = (value: any) => {
-    setValue(value);
-  };
+  React.useEffect(() => {
+    if (override) {
+      setValue(initialValue);
+    }
+  }, [initialValue, override]);
 
   return {
-    value,
-    changeValue,
+    value: value || '',
     onChange: onHandleChange,
-    placeholder: placeholder || 'Enter... [1-100]',
+    placeholder: placeholder || 'Enter... ',
   };
 };
 

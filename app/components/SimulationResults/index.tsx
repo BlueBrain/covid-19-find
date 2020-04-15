@@ -147,6 +147,9 @@ const SimulationResults: React.FC<{
                                 display: true,
                                 labelString: 'People',
                               },
+                              gridLines: {
+                                color: '#00000005',
+                              },
                             },
                           ],
                           xAxes: [
@@ -155,8 +158,19 @@ const SimulationResults: React.FC<{
                                 display: true,
                                 labelString: 'Days',
                               },
+                              gridLines: {
+                                color: '#00000005',
+                              },
                             },
                           ],
+                        },
+                        elements: {
+                          point: {
+                            radius: 0,
+                          },
+                          line: {
+                            borderWidth: 1,
+                          },
                         },
                       }}
                       data={{
@@ -187,6 +201,15 @@ const SimulationResults: React.FC<{
                   </div>
                 );
               })}
+            </div>
+            <div className="disclaimer">
+              <p>
+                This web tool estimates the relative impact of different
+                deployment strategies for diagnostic tests in the current acute
+                phase of the COVID-19 pandemic. The tool is not intended to
+                replace detailed epidemiological models or the estimates of
+                deaths and of epidemic duration coming from such models.
+              </p>
             </div>
           </>
         )}

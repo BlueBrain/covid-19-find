@@ -16,7 +16,15 @@ const Hero: React.FC = () => {
           country-specific allocation of <br />
           resoures
         </h2>
-        <a href="#country-selection">
+        <a
+          href="#country-selection"
+          onClick={e => {
+            e.preventDefault();
+            document.querySelector('#country-select-form').scrollIntoView({
+              behavior: 'smooth',
+            });
+          }}
+        >
           <button className="btn icon">
             Start Simulation{'  '}
             <i className="icon-play">

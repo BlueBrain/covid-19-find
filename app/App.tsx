@@ -1,4 +1,5 @@
 import * as React from 'react';
+import useQueryString from './hooks/useQuerySring';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TopSection from './components/TopSection';
@@ -9,18 +10,15 @@ import About from './components/About';
 import { SimulationParams } from './API';
 import Contact from './containers/contact';
 
-const DEFAULT_PARAMS: SimulationParams = {
-  population: 80000000,
-  hospitalBeds: 10000,
-  highContactPopulation: 1000000,
-  urbanPopulationProportion: 0.46,
-  remoteAreasPopulationProportion: 0.1,
-  urbanPopulationInDegradedHousingProportion: 0.1,
-  over65Proportion: 0.25,
-  hospitalTestsProportion: 0.5,
-  highContactTestsProportion: 0.5,
-  restOfPopulationTestsProportion: 0,
-  hospitalEmployment: 4,
+const DEFAULT_PARAMS = {
+  countryCode: null,
+  population: null,
+  hospitalBeds: null,
+  highContactPopulation: null,
+  urbanPopulationProportion: null,
+  hospitalStaffPerBed: 4,
+  urbanPopulationInDegradedHousingProportion: null,
+  hospitalEmployment: null,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
   sensitivityXray: 0.9,
@@ -33,14 +31,27 @@ const DEFAULT_PARAMS: SimulationParams = {
 };
 
 const App: React.FC = () => {
-  const [values, setValues] = React.useState<SimulationParams>(DEFAULT_PARAMS);
+  const [queryParams, setQueryParams] = useQueryString();
+
+  React.useEffect(() => {
+    // Implement default values
+    const [, countryCode] = navigator.language.split('-');
+    setQueryParams({
+      ...DEFAULT_PARAMS,
+      countryCode,
+      ...queryParams,
+    });
+  }, []);
 
   const handleSubmit = changedValues => {
-    setValues({
-      ...values,
+    console.log('handle submit!', changedValues);
+    setQueryParams({
+      ...queryParams,
       ...changedValues,
     });
   };
+
+  console.log('App Reload', { queryParams });
 
   return (
     <div>
@@ -48,9 +59,12 @@ const App: React.FC = () => {
       <Hero />
       <main>
         <TopSection />
-        <Countries {...values} onSubmit={handleSubmit} />
-        <TestSelector {...values} onSubmit={handleSubmit} />
-        <Simulation simulationParams={values} />
+        <Countries
+          values={queryParams as SimulationParams}
+          onSubmit={handleSubmit}
+        />
+        <TestSelector {...queryParams} onSubmit={handleSubmit} />
+        <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
         <Contact />
       </main>
