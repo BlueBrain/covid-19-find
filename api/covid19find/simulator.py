@@ -1,24 +1,18 @@
 from .simulation.covidlib import run_simulation
-from io import StringIO
 
 
 class Simulator:
 
-    def run(self, total_pop, hospital_beds, pop_high_contact, prop_urban, prop_isolated, degraded, ge_65,
-            prop_tests_hospitals, prop_tests_high_contact, prop_tests_rest_of_population, sensitivity_PCR,
+    def run(self, total_pop, hospital_beds, staff_per_bed, pop_high_contact, prop_urban, degraded, sensitivity_PCR,
             sensitivity_RDT, sensitivity_xray, specificity_PCR, specificity_RDT, specificity_xray,
             num_tests_PCR, num_tests_RDT, num_tests_xray):
         result = run_simulation(
             total_pop=total_pop,
             hospital_beds=hospital_beds,
+            staff_per_bed=staff_per_bed,
             pop_high_contact=pop_high_contact,
             prop_urban=prop_urban,
-            prop_isolated=prop_isolated,
             degraded=degraded,
-            ge_65=ge_65,
-            prop_tests_hospitals=prop_tests_hospitals,
-            prop_tests_high_contact=prop_tests_high_contact,
-            prop_tests_rest_of_population=prop_tests_rest_of_population,
             sensitivity_PCR=sensitivity_PCR,
             sensitivity_RDT=sensitivity_RDT,
             sensitivity_xray=sensitivity_xray,
