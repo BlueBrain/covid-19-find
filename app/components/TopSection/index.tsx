@@ -26,7 +26,6 @@ const TopSection: React.FC = () => {
               replace detailed epidemiological models or the estimates of deaths
               and of epidemic duration coming from such models.
             </p>
-            <button className="btn">Read All</button>
           </div>
         </div>
       </div>

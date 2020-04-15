@@ -18,13 +18,14 @@
   }
 
   h2 {
-    margin-top: 0;
+    margin: 0;
   }
 
   p {
     .roboto-light;
     font-size: 1.2rem;
     line-height: 1.5rem;
+    margin-top: 0;
   }
 
   .content {
@@ -52,30 +53,40 @@
 
   .bbp-logo,
   .find-logo {
-    height: 120px;
-    width: 120px;
+    height: 180px;
+    width: 180px;
     display: block;
     margin-bottom: 1rem;
 
     @media @small {
+      height: 120px;
+      width: 120px;
+    }
+
+    @media (max-width: 385px) {
       height: 80px;
       width: 80px;
     }
   }
 
+  .bbp-logo {
+    height: auto;
+  }
+
   .connection-image {
-    width: 240px;
-    height: 240px;
+    width: 180px;
+    height: 180px;
     margin-right: 60px;
 
     @media @small {
-      height: 160px;
-      width: 160px;
+      height: 120px;
+      width: 120px;
     }
 
-    @media (max-width: 550px) {
-      height: 100px;
-      width: 100px;
+    @media (max-width: 385px) {
+      height: 80px;
+      width: 80px;
+      margin-right: 20px;
     }
   }
 }
