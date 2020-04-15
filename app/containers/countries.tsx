@@ -1,24 +1,18 @@
 import * as React from 'react';
 import useAPI from '../hooks/useAPI';
 
-import CountrySelector from '../components/CountrySelector';
+import CountrySelector, {
+  CountrySelectorResponse,
+} from '../components/CountrySelector';
 import CovidResults, { CovidData } from '../components/CovidResults';
 import { CountryResponse, SimulationParams } from '../API';
 
-const Countries: React.FC<SimulationParams & {
-  onSubmit?: (value: CountryResponse) => void;
-}> = ({
-  onSubmit,
-  population,
-  hospitalBeds,
-  highContactPopulation,
-  urbanPopulationProportion,
-  remoteAreasPopulationProportion,
-  urbanPopulationInDegradedHousingProportion,
-  over65Proportion,
-  hospitalEmployment,
-}) => {
-  const [, defaultCountryCode] = navigator.language.split('-');
+const Countries: React.FC<{
+  onSubmit?: (
+    value: CountrySelectorResponse | { countryCode?: string | null },
+  ) => void;
+  values: SimulationParams & { countryCode?: string | null };
+}> = ({ onSubmit, values }) => {
   const [countries, setCountries] = React.useState([]);
   const [countryInfo, setCountryInfo] = React.useState<{
     loading: boolean;
@@ -41,8 +35,15 @@ const Countries: React.FC<SimulationParams & {
       .catch(console.error);
   }, []);
 
+  React.useEffect(() => {
+    if (values.countryCode) {
+      loadCountryData(values.countryCode);
+    }
+  }, [values.countryCode]);
+
   const loadCountryData = async (countryCode: string) => {
     try {
+      console.log(countryCode);
       setCountryInfo({
         loading: true,
         error: null,
@@ -68,6 +69,10 @@ const Countries: React.FC<SimulationParams & {
     }
   };
 
+  const selectCountry = (countryCode: string) => {
+    onSubmit({ countryCode });
+  };
+
   const open = !countryInfo.loading;
 
   const countryLabel = countries.find(
@@ -81,18 +86,10 @@ const Countries: React.FC<SimulationParams & {
           countries={countries}
           onSubmit={onSubmit}
           countryInfo={{
-            population,
-            hospitalBeds,
-            highContactPopulation,
-            urbanPopulationProportion,
-            remoteAreasPopulationProportion,
-            urbanPopulationInDegradedHousingProportion,
-            over65Proportion,
-            hospitalEmployment,
+            ...values,
             ...countryInfo?.data?.countryInfo,
           }}
-          onClickSelectCountry={loadCountryData}
-          defaultCountryCode={defaultCountryCode}
+          onClickSelectCountry={selectCountry}
         />
       </div>
       <div
@@ -106,7 +103,6 @@ const Countries: React.FC<SimulationParams & {
             <CovidResults
               data={countryInfo.data.covidData}
               countryLabel={
-                // @ts-ignore remove this with better formatted data
                 countryLabel || countryInfo?.data?.countryInfo.countryCode
               }
             />

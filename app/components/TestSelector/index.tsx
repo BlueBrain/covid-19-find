@@ -30,15 +30,15 @@ const TestSelector: React.FC<TestSelectorVales & {
   numTestsXray,
   onSubmit,
 }) => {
-  const sensitivityPCRInput = useFormInput(sensitivityPCR);
-  const sensitivityRDTInput = useFormInput(sensitivityRDT);
-  const sensitivityXrayInput = useFormInput(sensitivityXray);
-  const specificityPCRInput = useFormInput(specificityPCR);
-  const specificityRDTInput = useFormInput(specificityRDT);
-  const specificityXrayInput = useFormInput(specificityXray);
-  const numTestsPCRInput = useFormInput(numTestsPCR);
-  const numTestsRDTInput = useFormInput(numTestsRDT);
-  const numTestsXrayInput = useFormInput(numTestsXray);
+  const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
+  const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
+  const sensitivityXrayInput = useFormInput(sensitivityXray, null, true);
+  const specificityPCRInput = useFormInput(specificityPCR, null, true);
+  const specificityRDTInput = useFormInput(specificityRDT, null, true);
+  const specificityXrayInput = useFormInput(specificityXray, null, true);
+  const numTestsPCRInput = useFormInput(numTestsPCR, null, true);
+  const numTestsRDTInput = useFormInput(numTestsRDT, null, true);
+  const numTestsXrayInput = useFormInput(numTestsXray, null, true);
 
   const handleSubmit = e => {
     e.preventDefault();

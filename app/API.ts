@@ -6,12 +6,14 @@ export type SimulationParams = {
   hospitalBeds: number;
   highContactPopulation: number;
   urbanPopulationProportion: number;
-  remoteAreasPopulationProportion: number;
+  hospitalStaffPerBed: number;
+  // remoteAreasPopulationProportion: number;
   urbanPopulationInDegradedHousingProportion: number;
-  over65Proportion: number;
-  hospitalTestsProportion: number;
-  highContactTestsProportion: number;
-  restOfPopulationTestsProportion: number;
+  // over65Proportion: number;
+  // hospitalTestsProportion: number;
+  // highContactTestsProportion: number;
+  // restOfPopulationTestsProportion: number;
+
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
   sensitivityRDT: number;
