@@ -58,7 +58,7 @@ def test_class(code, year, age):
 
 
 if __name__ == "__main__":
-    code = 756
+    code = 380
     year = 2020
     age = 65
     test_class(code, year, age)
