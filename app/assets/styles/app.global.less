@@ -313,6 +313,14 @@ section.input {
 }
 
 .contact {
+  @media @large {
+    padding: 0;
+  }
+
+  @media @small {
+    padding: 0 3rem;
+  }
+
   .container {
     background-color: @light-background-color;
     padding: 2rem;
@@ -321,5 +329,11 @@ section.input {
     @media (max-width: 525px) {
       padding: 1rem 2.5rem 1rem 1rem;
     }
+  }
+
+  p {
+    .roboto-light;
+    font-size: 1.2rem;
+    line-height: 1.5rem;
   }
 }
