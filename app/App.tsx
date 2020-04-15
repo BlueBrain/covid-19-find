@@ -7,7 +7,7 @@ import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import About from './components/About';
 import { SimulationParams } from './API';
-import Contact from './components/Contact';
+import Contact from './containers/contact';
 
 const DEFAULT_PARAMS: SimulationParams = {
   population: 80000000,

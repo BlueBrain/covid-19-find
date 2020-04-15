@@ -1,10 +1,13 @@
 import * as React from 'react';
 
-import GetInTouchForm from './GetInTouchForm';
-
-import './contact.less';
+import GetInTouchForm from '../components/GetInTouchForm';
 
 const Contact: React.FC = () => {
+  const handleGetInTouchForm = input => {
+    console.log(input);
+    // do smth with it
+  };
+
   return (
     <section className="contact">
       <div className="content">
@@ -16,7 +19,7 @@ const Contact: React.FC = () => {
           asperiores. Quia, ducimus.
         </p>
         <div className="container">
-          <GetInTouchForm />
+          <GetInTouchForm onSubmit={handleGetInTouchForm} />
         </div>
         <div className="container">
           <em>FAQ</em>
