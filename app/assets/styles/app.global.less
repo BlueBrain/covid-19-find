@@ -252,6 +252,10 @@ textarea {
   .result {
     display: flex;
     flex-direction: row;
+
+    @media @small {
+      flex-direction: column;
+    }
   }
   &.open {
     margin-top: 0;
@@ -259,6 +263,11 @@ textarea {
   }
   &.primary {
     border: 2px solid #00a5b1;
+  }
+
+  @media @small {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -285,11 +294,24 @@ section.input {
 .stats {
   width: 40%;
   text-align: center;
+
   &.horizontal {
     display: flex;
     width: 100%;
     justify-content: space-around;
   }
+
+  @media @small {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  @media (max-width: 580px) {
+    flex-direction: column;
+  }
+
   h3 {
     color: #697881;
     font-weight: bold;
@@ -308,6 +330,10 @@ section.input {
       display: block;
       content: '';
       margin: 0.5rem auto;
+    }
+
+    @media (max-width: 580px) {
+      margin: 1rem;
     }
   }
 }
