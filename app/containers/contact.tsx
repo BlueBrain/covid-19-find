@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import GetInTouchForm from '../components/GetInTouchForm';
+import FAQ from '../components/FAQ';
 
 const Contact: React.FC = () => {
   const handleGetInTouchForm = input => {
@@ -22,8 +23,7 @@ const Contact: React.FC = () => {
           <GetInTouchForm onSubmit={handleGetInTouchForm} />
         </div>
         <div className="container">
-          <em>FAQ</em>
-          <p>Coming soon</p>
+          <FAQ />
         </div>
         <div className="container">
           <em>User Feedback</em>
