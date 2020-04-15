@@ -104,10 +104,16 @@ const CountrySelector: React.FC<{
         urbanPopulationInDegradedHousingProportion:
           urbanPopulationInDegradedHousingProportion.value,
       });
+
+    if (e.target.checkValidity()) {
+      document.querySelector('#tests-form')?.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} id="country-select-form">
       <div className="country-selector">
         <div className="title">
           <div className="number">

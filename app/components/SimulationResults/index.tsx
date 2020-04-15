@@ -202,6 +202,15 @@ const SimulationResults: React.FC<{
                 );
               })}
             </div>
+            <div className="disclaimer">
+              <p>
+                This web tool estimates the relative impact of different
+                deployment strategies for diagnostic tests in the current acute
+                phase of the COVID-19 pandemic. The tool is not intended to
+                replace detailed epidemiological models or the estimates of
+                deaths and of epidemic duration coming from such models.
+              </p>
+            </div>
           </>
         )}
       </div>
