@@ -1,4 +1,6 @@
 @import '../../assets/styles/config/_fonts.less';
+@import '../../assets/styles/config/_colors.less';
+@import '../../assets/styles/config/_queries.less';
 
 html,
 body {
@@ -201,7 +203,8 @@ main {
   }
 }
 
-input {
+input,
+textarea {
   .font-default();
   display: block;
   margin-top: 5px;
@@ -306,5 +309,31 @@ section.input {
       content: '';
       margin: 0.5rem auto;
     }
+  }
+}
+
+.contact {
+  @media @large {
+    padding: 0;
+  }
+
+  @media @small {
+    padding: 0 3rem;
+  }
+
+  .container {
+    background-color: @light-background-color;
+    padding: 2rem;
+    margin: 2rem 0;
+
+    @media (max-width: 525px) {
+      padding: 1rem 2.5rem 1rem 1rem;
+    }
+  }
+
+  p {
+    .roboto-light;
+    font-size: 1.2rem;
+    line-height: 1.5rem;
   }
 }
