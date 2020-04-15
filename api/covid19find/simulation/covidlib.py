@@ -57,7 +57,6 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
    #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
          p['total_pop'][0]=total_pop
          p['init_pop'][0]=hospital_beds*staff_per_bed
-         print ('hospital beds=', hospital_beds, 'staff per bed=', staff_per_bed, 'hospital pop=',p['init_pop'][0])
          p['high_contact'][0]=pop_high_contact
          p['prop_urban'][0]=prop_urban
          p['degraded'][0]=degraded
@@ -102,7 +101,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
          
          final_beta=calibratebeta(num_compartments, final_beta, p['init_pop'], float(p['beta_post_inversion'][0]))
          
-         print ('initial beta=',initial_beta, 'final beta=', final_beta)
+  
         
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
