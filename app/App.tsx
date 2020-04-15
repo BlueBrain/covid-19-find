@@ -7,6 +7,7 @@ import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import About from './components/About';
 import { SimulationParams } from './API';
+import Contact from './components/Contact';
 
 const DEFAULT_PARAMS: SimulationParams = {
   population: 80000000,
@@ -51,6 +52,7 @@ const App: React.FC = () => {
         <TestSelector {...values} onSubmit={handleSubmit} />
         <Simulation simulationParams={values} />
         <About />
+        <Contact />
       </main>
     </div>
   );
