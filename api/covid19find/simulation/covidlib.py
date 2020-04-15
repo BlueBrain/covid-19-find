@@ -7,8 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isolated,degraded,ge_65, \
-                   prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
+def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded, \
+                   staff_per_bed,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
          expert_mode=True
@@ -56,15 +56,11 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          p['testkits']=['PCR','RDT','Chest xrays']
    #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
          p['total_pop'][0]=total_pop
-         p['init_pop'][0]=hospital_beds*float(p['staff_per_bed'][0])
+         p['init_pop'][0]=hospital_beds*staff_per_bed
+         print ('hospital beds=', hospital_beds, 'staff per bed=', staff_per_bed, 'hospital pop=',p['init_pop'][0])
          p['high_contact'][0]=pop_high_contact
          p['prop_urban'][0]=prop_urban
-         p['isolated_area'][0]=prop_isolated
          p['degraded'][0]=degraded
-         p['ge_65'][0]=ge_65
- #        p['prop_tests'][0]=prop_tests_hospitals
- #        p['prop_tests'][1]=prop_tests_high_contact
-  #       p['prop_tests'][2]=prop_tests_rest_of_population
          p['sensitivity'][0]=sensitivity_PCR
          p['sensitivity'][1]=sensitivity_RDT
          p['sensitivity'][2]=sensitivity_xray
@@ -95,7 +91,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          
         
          initial_beta=calibratebeta(num_compartments, initial_beta, p['init_pop'], float(p['beta_pre_inversion'][0]))
-    #     print ('transformed betas=', initial_beta)
+    
                
          beta_table = pd.read_csv(final_betafile,header=None)
          (rows,cols) = beta_table.shape
@@ -105,6 +101,8 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
                final_beta[i-1,j-1] = beta_table.iloc[i,j]
          
          final_beta=calibratebeta(num_compartments, final_beta, p['init_pop'], float(p['beta_post_inversion'][0]))
+         
+         print ('initial beta=',initial_beta, 'final beta=', final_beta)
         
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
