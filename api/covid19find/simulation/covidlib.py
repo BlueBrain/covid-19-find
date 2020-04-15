@@ -11,7 +11,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
                    prop_tests_hospitals, prop_tests_high_contact,prop_tests_rest_of_population,sensitivity_PCR, \
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray):
-         expert_mode=False
+         expert_mode=True
          simsfile = 'compart_params.csv'
          
          initial_betafile = 'initial_betas.csv'
@@ -81,7 +81,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          other_high_risk=int(p['init_pop'][1] )                  
          p['init_pop'][1]=high_risk_urban+other_high_risk
          p['init_pop'][2]=int(p['total_pop'][0])-int(p['init_pop'][0])-int(p['init_pop'][1])
-         print('init_pops=',p['init_pop'])
+   
          num_testkit_types=int(p['num_testkit_types'][0])
          
          
@@ -109,10 +109,10 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
          num_scenarios=rows-1
-         total_tests_by_scenario=np.zeros(num_scenarios+1)
-         total_deaths_by_scenario=np.zeros(num_scenarios+1)
-         max_infected_by_scenario=np.zeros(num_scenarios+1)
-         max_isolated_by_scenario=np.zeros(num_scenarios+1)
+         total_tests_by_scenario=np.zeros(num_scenarios)
+         total_deaths_by_scenario=np.zeros(num_scenarios)
+         max_infected_by_scenario=np.zeros(num_scenarios)
+         max_isolated_by_scenario=np.zeros(num_scenarios)
          
          scenarios=[]
          for i in range(0,num_scenarios+1):
@@ -163,16 +163,16 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
              if expert_mode:
                  plot_results(scenario_name,'ALL',dfsumcomp['new_tested'],dfsum['days'],dfsum['total_isolated'],dfsum['total_infected'],dfsum['tested'],dfsum['total_infected_notisolated'],dfsum['total_confirmed'],dfsum['total_deaths'],dfsum['susceptibles'])
                  print('************')
-             total_tests_by_scenario[i]=dfsumcomp['new_tested'].sum()
-             total_deaths_by_scenario[i]=dfsumcomp['new_deaths'].sum()
-             max_infected_by_scenario[i]=dfsum['total_infected'].max()
-             max_isolated_by_scenario[i]=dfsum['total_isolated'].max()
+             total_tests_by_scenario[i-1]=dfsumcomp['new_tested'].sum()
+             total_deaths_by_scenario[i-1]=dfsumcomp['new_deaths'].sum()
+             max_infected_by_scenario[i-1]=dfsum['total_infected'].max()
+             max_isolated_by_scenario[i-1]=dfsum['total_isolated'].max()
              if expert_mode:
-                 print('Total tested  =',total_tests_by_scenario[i])
+                 print('Total tested  =',total_tests_by_scenario[i-1])
              
-                 print('Max infected=',max_infected_by_scenario[i])
-                 print('Max isolated=',max_isolated_by_scenario[i])
-                 print('Total deaths=',total_deaths_by_scenario[i])
+                 print('Max infected=',max_infected_by_scenario[i-1])
+                 print('Max isolated=',max_isolated_by_scenario[i-1])
+                 print('Total deaths=',total_deaths_by_scenario[i-1])
                  print('************')
                  print('')
          if expert_mode:
@@ -182,23 +182,23 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,prop_isol
              print('')
              print ('Total tests')
              print('')
-             for i in range(1,num_scenarios+1):
+             for i in range(0,num_scenarios):
                  print('Scenario ',i,total_tests_by_scenario[i])
              print('')
              print('Total Deaths')
              print('')
             
-             for i in range(1,num_scenarios+1):
+             for i in range(0,num_scenarios):
                  print('Scenario ',i,total_deaths_by_scenario[i])
              print('')
              print('Max infections')
              print('')
-             for i in range(1,num_scenarios+1):
+             for i in range(0,num_scenarios):
                 print('Scenario ',i,max_infected_by_scenario[i])
              print('')
              print('Max isolated')
              print('')
-             for i in range(1,num_scenarios+1):
+             for i in range(0,num_scenarios):
                 print('Scenario ',i,max_isolated_by_scenario[i])
            
              #=============================================================================
@@ -251,9 +251,7 @@ def simulate(num_compartments,params,beta, final_beta):
     init_pop[0]=int(params['init_pop'][0])
     init_pop[1]=int(params['init_pop'][1])
     init_pop[2]=int(params['init_pop'][2])
-    print('population hospitals=',init_pop[0])
-    print('population high risk=', init_pop[1])
-    print('rest of population=',init_pop[2])
+   
  # =============================================================================
   # Initialize arrays storing time series
     days=np.zeros(num_days)

@@ -36,5 +36,11 @@ dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_sce
                    sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
                    num_tests_PCR,num_tests_RDT,num_tests_xray)
 print('total deaths by scenario')
-for i in range (1,len(total_deaths_by_scenario)):
+for i in range (0,len(total_deaths_by_scenario)):
     print ('scenario: ',i,': ', total_deaths_by_scenario[i])
+print('total tests by scenario')
+for i in range (0,len(total_tests_by_scenario)):
+    print ('scenario: ',i,': ', total_tests_by_scenario[i])
+print('Max infected by scenario')
+for i in range (0,len(max_infected_by_scenario)):
+    print ('scenario: ',i,': ', max_infected_by_scenario[i])
