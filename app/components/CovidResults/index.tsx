@@ -74,6 +74,9 @@ const CovidResults: React.FC<{
                     display: true,
                     labelString: 'People',
                   },
+                  gridLines: {
+                    color: '#00000005',
+                  },
                 },
               ],
               xAxes: [
@@ -82,8 +85,19 @@ const CovidResults: React.FC<{
                     display: true,
                     labelString: 'Days',
                   },
+                  gridLines: {
+                    color: '#00000005',
+                  },
                 },
               ],
+            },
+            elements: {
+              point: {
+                radius: 0,
+              },
+              line: {
+                borderWidth: 1,
+              },
             },
           }}
           data={{
