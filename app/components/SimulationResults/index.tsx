@@ -69,8 +69,6 @@ const SimulationResults: React.FC<{
     },
   ];
   const datasets = (data || []).map((entry, index) => {
-    console.log('data', data);
-
     return {
       label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
       data: entry.data.reduce((memo, entry) => {
