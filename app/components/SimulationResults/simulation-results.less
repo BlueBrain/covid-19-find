@@ -1,13 +1,23 @@
+@import '../../assets/styles/config/_fonts.less';
+
 ul.scenarios {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
+
   .scenario button {
     padding: 1rem;
     border-radius: 2px;
     margin-right: 1rem;
+
+    @media (max-width: 450px) {
+      padding: 1rem 0.5rem;
+      margin: 0 0.5rem 0 0;
+      font-size: 12px;
+    }
   }
+
   .scenario.selected button {
     background-color: #fff6;
   }
@@ -21,4 +31,16 @@ ul.scenarios {
     width: 50%;
     margin-top: 1rem;
   }
+}
+
+.scenario-description,
+.disclaimer-text {
+  .roboto-light;
+  margin: 1rem;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+}
+
+.disclaimer-text {
+  margin-top: 2rem;
 }

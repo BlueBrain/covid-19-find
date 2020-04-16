@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Scenarios } from '../../API';
-import { union, keyBy } from 'lodash';
+import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
 import Color from 'color';
@@ -24,6 +24,24 @@ const SimulationResults: React.FC<{
   const open = !loading;
 
   const selectedScenario = (data || [])[selectedScenarioIndex];
+
+  const descriptions = [
+    {
+      name: 'Baseline',
+      description:
+        'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
+    },
+    {
+      name: 'Identify/isolate infected people',
+      description:
+        'In this scenario, 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers whose work requires a high level of contact with the public; people living in degraded housing in large cities). Tests are limited to individuals already showing symptoms. The goal is to identify and isolate the highest possible number of infected people, helping to slow down or reverse the course of the epidemic',
+    },
+    {
+      name: 'Protect hospital capabilities',
+      description:
+        'In this scenario, all available tests are used to test hospital staff, if possible repeatedly.  Tests are limited to individuals already showing symptoms. The goal is to reduce the burden of the epidemic on hospital staff, preserving the capabilities necessary to help others.',
+    },
+  ];
 
   const labels = union(
     ...(data || []).map(entry => entry.data.map(entry => entry.days)),
@@ -111,6 +129,12 @@ const SimulationResults: React.FC<{
       >
         {selectedScenario && (
           <>
+            <div className="scenario-description">
+              <h2 className="underline">
+                {descriptions[selectedScenarioIndex].name}
+              </h2>
+              <p>{descriptions[selectedScenarioIndex].description}</p>
+            </div>
             <div className="stats horizontal">
               <h3>
                 {Math.ceil(selectedScenario.maxInfected).toLocaleString()}
@@ -203,7 +227,7 @@ const SimulationResults: React.FC<{
               })}
             </div>
             <div className="disclaimer">
-              <p>
+              <p className="disclaimer-text">
                 This web tool estimates the relative impact of different
                 deployment strategies for diagnostic tests in the current acute
                 phase of the COVID-19 pandemic. The tool is not intended to
