@@ -7,13 +7,7 @@ export type SimulationParams = {
   highContactPopulation: number;
   urbanPopulationProportion: number;
   hospitalStaffPerBed: number;
-  // remoteAreasPopulationProportion: number;
   urbanPopulationInDegradedHousingProportion: number;
-  // over65Proportion: number;
-  // hospitalTestsProportion: number;
-  // highContactTestsProportion: number;
-  // restOfPopulationTestsProportion: number;
-
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
   sensitivityRDT: number;
@@ -101,9 +95,16 @@ export default class API {
   }
 
   async simulation(simulationParams: SimulationParams): Promise<Scenarios> {
+    const formattedParams = {
+      ...simulationParams,
+      urbanPopulationProportion:
+        simulationParams.urbanPopulationProportion / 100,
+      urbanPopulationInDegradedHousingProportion:
+        simulationParams.urbanPopulationInDegradedHousingProportion / 100,
+    };
     const formData = new FormData();
-    Object.keys(simulationParams).forEach(key => {
-      formData.append(key, simulationParams[key]);
+    Object.keys(formattedParams).forEach(key => {
+      formData.append(key, formattedParams[key]);
     });
     const response = await fetch(`${this.base}/simulation`, {
       method: 'POST',
