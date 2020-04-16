@@ -14,8 +14,8 @@ const About: React.FC = () => {
       <div className="half image-container">
         <img className="connection-image" src={connectionImage} />
         <div>
-          <img className="bbp-logo" src={bbpLogo} />
           <img className="find-logo" src={findLogo} />
+          <img className="bbp-logo" src={bbpLogo} />
         </div>
       </div>
       <div className="half content">

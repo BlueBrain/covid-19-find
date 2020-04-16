@@ -47,46 +47,65 @@
 
     @media @small {
       margin-top: 2rem;
-      justify-content: center;
+      justify-content: flex-start;
+      padding-right: 0;
     }
   }
 
   .bbp-logo,
   .find-logo {
-    height: 180px;
-    width: 180px;
+    height: 125px;
+    width: 125px;
     display: block;
-    margin-bottom: 1rem;
 
     @media @small {
-      height: 120px;
-      width: 120px;
+      display: inline;
+    }
+  }
+
+  .find-logo {
+    margin-bottom: 2rem;
+
+    @media @small {
+      margin-bottom: 0;
+      margin-right: 2rem;
     }
 
-    @media (max-width: 385px) {
+    @media (max-width: 515px) {
       height: 80px;
       width: 80px;
+    }
+
+    @media (max-width: 360px) {
+      margin-right: 1rem;
     }
   }
 
   .bbp-logo {
     height: auto;
+
+    @media @small {
+      height: 125px;
+      width: auto;
+    }
+
+    @media (max-width: 515px) {
+      height: 80px;
+    }
   }
 
   .connection-image {
-    width: 180px;
-    height: 180px;
-    margin-right: 60px;
+    width: 125px;
+    height: 125px;
+    margin-right: 2rem;
 
-    @media @small {
-      height: 120px;
-      width: 120px;
-    }
-
-    @media (max-width: 385px) {
+    @media (max-width: 515px) {
       height: 80px;
       width: 80px;
-      margin-right: 20px;
+    }
+
+    @media (max-width: 360px) {
+      margin-right: 1rem;
     }
   }
 }
