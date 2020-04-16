@@ -22,7 +22,10 @@ const About: React.FC = () => {
         <h2 className="title underline">About</h2>
         <p>
           The aim of the{' '}
-          <a href="https://www.epfl.ch/research/domains/bluebrain/">
+          <a
+            target="_blank"
+            href="https://www.epfl.ch/research/domains/bluebrain/"
+          >
             EPFL Blue Brain Project
           </a>
           , a Swiss brain research initiative founded and directed by Professor
@@ -40,7 +43,10 @@ const About: React.FC = () => {
             <p>
               Blue Brain has deployed its computing expertise and resources to
               support FIND in the development of this web platform, as part of{' '}
-              <a href="https://www.epfl.ch/research/domains/bluebrain/blue-brain-and-covid-19/">
+              <a
+                target="_blank"
+                href="https://www.epfl.ch/research/domains/bluebrain/blue-brain-and-covid-19/"
+              >
                 Blue Brain’s COVID-19 effort
               </a>
               .
