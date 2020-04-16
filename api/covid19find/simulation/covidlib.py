@@ -360,7 +360,7 @@ def simulate(num_compartments,params,beta, final_beta):
           # Put all positive cases into isolation
            #print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t-1,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)   
         #   print('true_positives=', true_positives,'false positives', false_positives)     
-           newisolated[t-1,i] = true_positives #+false_positives
+           newisolated[t-1,i] = true_positives+false_positives
            newisolatedinfected[t-1,i] = true_positives
       #     newrecovered[t-1,i] = 0
      #      if t >= recovery_period:
