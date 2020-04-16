@@ -27,7 +27,7 @@ def create_app():
     country_repo = CountryRepository()
 
     scheduler = BackgroundScheduler(timezone=utc)
-    scheduler.add_job(func=update_covid_data, trigger="cron", hour="5")
+    scheduler.add_job(func=update_covid_data, trigger='interval', hours=2)
 
     def not_found_if_none(data, country_code):
         if data is None:
