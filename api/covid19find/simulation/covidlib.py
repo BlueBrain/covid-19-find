@@ -390,8 +390,8 @@ def simulate(num_compartments,params,beta, final_beta):
            tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t-1,i]  # JPV changed
            if t >= recovery_period:
-              isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i] - newisolated[t-recovery_period-1,i] #fin qui
-              isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i] - newisolatedinfected[t-recovery_period,i] # JPV changed
+              isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i] - isolated[t-1,i]*gamma-isolated[t-1,i]*tau
+              isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]- isolated[t-1,i]*gamma-isolated[t-1,i]*tau  # JPV changed
            else:
               isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i]
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]
