@@ -212,12 +212,10 @@ def simulate(num_compartments,params,beta, final_beta):
     alpha_post_inversion = float(params['alpha_post_inversion'][0])
     latent_period =  int(params['latent_period'][0])
     incubation_period =  int(params['incubation_period'][0])
-    infective_period = int(params['infective_period'][0])
-    confirmation_rate = float(params['confirmation_rate'][0])
-    gamma = float(params['gamma'][0])
+    infection_fatality_rate=float(params['infection_fatality_rate'][0])
     recovery_period = int(params['recovery_period'] [0])
-    tau = float(params['tau'][0])
-    death_period = int(params['death_period'][0])
+    tau = infection_fatality_rate/recovery_period
+    gamma = (1-infection_fatality_rate)/recovery_period
     test_start = int(params['test_start'][0])
     num_testkit_types=int(params['num_testkit_types'][0])
     test_symptomatic_only = params['test_symptomatic_only'][0].upper() == 'TRUE'
@@ -500,7 +498,6 @@ def calibratebeta(n,beta,pops,targetbeta):
     adjust=targetbeta/b
     beta=beta*adjust
     new_b=aggregatebeta(n,beta,pops)
-    print ('b=',b,'targetbeta=', targetbeta,'new b=',new_b)
     
     return beta
 
