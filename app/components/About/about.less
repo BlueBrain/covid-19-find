@@ -18,13 +18,14 @@
   }
 
   h2 {
-    margin-top: 0;
+    margin: 0;
   }
 
   p {
     .roboto-light;
     font-size: 1.2rem;
     line-height: 1.5rem;
+    margin-top: 0;
   }
 
   .content {
@@ -46,36 +47,65 @@
 
     @media @small {
       margin-top: 2rem;
-      justify-content: center;
+      justify-content: flex-start;
+      padding-right: 0;
     }
   }
 
   .bbp-logo,
   .find-logo {
-    height: 120px;
-    width: 120px;
+    height: 125px;
+    width: 125px;
     display: block;
-    margin-bottom: 1rem;
 
     @media @small {
+      display: inline;
+    }
+  }
+
+  .find-logo {
+    margin-bottom: 2rem;
+
+    @media @small {
+      margin-bottom: 0;
+      margin-right: 2rem;
+    }
+
+    @media (max-width: 515px) {
       height: 80px;
       width: 80px;
+    }
+
+    @media (max-width: 360px) {
+      margin-right: 1rem;
+    }
+  }
+
+  .bbp-logo {
+    height: auto;
+
+    @media @small {
+      height: 125px;
+      width: auto;
+    }
+
+    @media (max-width: 515px) {
+      height: 80px;
     }
   }
 
   .connection-image {
-    width: 240px;
-    height: 240px;
-    margin-right: 60px;
+    width: 125px;
+    height: 125px;
+    margin-right: 2rem;
 
-    @media @small {
-      height: 160px;
-      width: 160px;
+    @media (max-width: 515px) {
+      height: 80px;
+      width: 80px;
     }
 
-    @media (max-width: 550px) {
-      height: 100px;
-      width: 100px;
+    @media (max-width: 360px) {
+      margin-right: 1rem;
     }
   }
 }
