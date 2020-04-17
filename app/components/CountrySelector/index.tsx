@@ -2,9 +2,10 @@ import * as React from 'react';
 import World from '@svg-maps/world';
 import { SVGMap } from 'react-svg-map';
 import { IoIosArrowDown, IoIosInformationCircleOutline } from 'react-icons/io';
-
 import useFormInput from '../../hooks/useFormInput';
 import ReactTooltip from 'react-tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import './country-selector.less';
 
@@ -24,7 +25,14 @@ const CountrySelector: React.FC<{
   onSubmit?: (value: CountrySelectorResponse) => void;
   onClickSelectCountry: (country: any) => void;
   countryInfo: CountrySelectorResponse;
-}> = ({ countries, onSubmit, countryInfo = {}, onClickSelectCountry }) => {
+  loading: boolean;
+}> = ({
+  countries,
+  onSubmit,
+  countryInfo = {},
+  onClickSelectCountry,
+  loading,
+}) => {
   const population = useFormInput(countryInfo.population, null, true);
   const urbanPopulationProportion = useFormInput(
     countryInfo.urbanPopulationProportion,
@@ -228,7 +236,11 @@ const CountrySelector: React.FC<{
           </div>
         </div>
       </div>
-      <div className="triangle"></div>
+      <div className="triangle">
+        <div className={`loader ${loading ? 'loading' : ''}`}>
+          <FontAwesomeIcon icon={faSpinner} pulse />
+        </div>
+      </div>
     </form>
   );
 };

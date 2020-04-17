@@ -90,6 +90,7 @@ const Countries: React.FC<{
             ...omitBy(countryInfo?.data?.countryInfo || {}, isNil),
           }}
           onClickSelectCountry={selectCountry}
+          loading={countryInfo.loading}
         />
       </div>
       <div

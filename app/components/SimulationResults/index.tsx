@@ -169,7 +169,7 @@ const SimulationResults: React.FC<{
                             {
                               scaleLabel: {
                                 display: true,
-                                labelString: 'People',
+                                labelString: 'Number of People',
                               },
                               gridLines: {
                                 color: '#00000005',
