@@ -21,7 +21,7 @@ sensitivity_xray=0.9
 specificity_PCR=0.95
 specificity_RDT=0.90
 specificity_xray=0.90
-num_tests_PCR=2000
+num_tests_PCR=20000
 num_tests_RDT=0
 num_tests_xray=0
 #Instead of giving hospital employment it now uses hospital beds
