@@ -56,11 +56,6 @@ const TestSelector: React.FC<TestSelectorVales & {
         numTestsRDT: numTestsRDTInput.value,
         numTestsXray: numTestsXrayInput.value,
       });
-    if (e.target.checkValidity()) {
-      document.querySelector('#simulation-results')?.scrollIntoView({
-        behavior: 'smooth',
-      });
-    }
   };
 
   return (

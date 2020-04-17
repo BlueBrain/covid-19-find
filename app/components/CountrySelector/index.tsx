@@ -114,12 +114,6 @@ const CountrySelector: React.FC<{
         urbanPopulationInDegradedHousingProportion:
           urbanPopulationInDegradedHousingProportion.value,
       });
-
-    if (e.target.checkValidity()) {
-      document.querySelector('#tests-form')?.scrollIntoView({
-        behavior: 'smooth',
-      });
-    }
   };
 
   return (
