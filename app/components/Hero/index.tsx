@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
         <h2 className="subtitle underline">
           Strategy Proposals for <br />
           country-specific allocation of <br />
-          resoures
+          resources
         </h2>
         <a
           href="#country-selection"
