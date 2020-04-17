@@ -45,6 +45,7 @@ const SimulationResults: React.FC<{
     },
   ];
 
+  console.log({ data });
   const labels = union(
     ...(data || []).map(entry => entry.data.map(entry => entry.days)),
   );
@@ -65,8 +66,8 @@ const SimulationResults: React.FC<{
       color: colors.turqouise,
     },
     {
-      title: 'Isolated',
-      key: 'num_isolated',
+      title: 'Infected in Hospitals',
+      key: 'num_infected',
       color: colors.aubergine,
     },
   ];
@@ -79,6 +80,12 @@ const SimulationResults: React.FC<{
           ...(memo[key] || {}),
         };
         graphs.forEach(graph => {
+          if (
+            graph.key === 'num_infected' &&
+            entry.compartment !== 'Hospitals'
+          ) {
+            return;
+          }
           day[graph.key] = (day[graph.key] || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
