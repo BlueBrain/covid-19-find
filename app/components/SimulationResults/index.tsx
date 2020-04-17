@@ -211,13 +211,17 @@ const SimulationResults: React.FC<{
                               selected
                                 ? graph.color
                                 : Color(graph.color)
-                                    .alpha(0.4)
+                                    .alpha(0.2)
                                     .toString(),
                             ],
                             backgroundColor: [
-                              Color(graph.color)
-                                .alpha(0.2)
-                                .toString(),
+                              selected
+                                ? Color(graph.color)
+                                    .alpha(0.2)
+                                    .toString()
+                                : Color(graph.color)
+                                    .alpha(0)
+                                    .toString(),
                             ],
                           };
                         }),
