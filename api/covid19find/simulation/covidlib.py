@@ -57,7 +57,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
    #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
          p['total_pop'][0]=total_pop
          p['init_pop'][0]=hospital_beds*staff_per_bed
-         p['high_contact'][0]=pop_high_contact
+ #        p['high_contact'][0]=pop_high_contact
          p['prop_urban'][0]=prop_urban
          p['degraded'][0]=degraded
          p['sensitivity'][0]=sensitivity_PCR
@@ -73,7 +73,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
          
          #define size of compartments   
          high_risk_urban=int(p['total_pop'][0])*float(p['prop_urban'][0])*float(p['degraded'][0])
-         other_high_risk=int(p['init_pop'][1] )                  
+         other_high_risk=pop_high_contact                
          p['init_pop'][1]=high_risk_urban+other_high_risk
          p['init_pop'][2]=int(p['total_pop'][0])-int(p['init_pop'][0])-int(p['init_pop'][1])
    
