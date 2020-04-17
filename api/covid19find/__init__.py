@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, Response, send_from_directory, request
+from flask import Flask, Response, send_from_directory, request, make_response
 from werkzeug.exceptions import BadRequestKeyError
 from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import utc
@@ -85,8 +85,10 @@ def create_app():
 
     @app.route('/')
     def index():
-        return send_from_directory(static_files_dir,
-                                   'index.html', as_attachment=False)
+        response = make_response(send_from_directory(static_files_dir,
+                                                     'index.html', as_attachment=False))
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+        return response
 
     @app.route('/<path:filename>')
     def static_files(filename):
