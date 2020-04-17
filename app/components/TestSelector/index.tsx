@@ -67,7 +67,7 @@ const TestSelector: React.FC<TestSelectorVales & {
               <span>2</span>
             </div>
             <h2 className="underline">
-              Select and view <em>test availabilities</em>
+              Enter your <em>test availabilities</em>
             </h2>
           </div>
           <div className="container">
