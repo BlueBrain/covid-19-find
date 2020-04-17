@@ -90,13 +90,10 @@ const Countries: React.FC<{
             ...omitBy(countryInfo?.data?.countryInfo || {}, isNil),
           }}
           onClickSelectCountry={selectCountry}
+          loading={countryInfo.loading}
         />
       </div>
-      <div
-        className={`results-drop ${open ? 'open' : ''}`}
-        // To prevent flashing
-        style={{ minHeight: 443 }}
-      >
+      <div className={`results-drop ${open ? 'open' : ''}`}>
         {!!countryInfo &&
           !!countryInfo?.data &&
           !!countryInfo.data.covidData.timeseries && (

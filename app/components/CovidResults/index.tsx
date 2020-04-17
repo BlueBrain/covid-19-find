@@ -4,6 +4,7 @@ import Color from 'color';
 import colors from '../../colors';
 
 import './covid-results';
+import ReactTooltip from 'react-tooltip';
 
 export type CovidData = {
   currentActive: number;
@@ -61,9 +62,14 @@ const CovidResults: React.FC<{
             title="data from Johns Hopkins University"
             href="https://coronavirus.jhu.edu/map.html"
             target="_blank"
+            data-tip
+            data-for="jh-tooltip"
           >
             *
           </a>
+          <ReactTooltip id="jh-tooltip">
+            <p>data from Johns Hopkins University</p>
+          </ReactTooltip>
         </h3>
         <Line
           options={{
@@ -72,7 +78,7 @@ const CovidResults: React.FC<{
                 {
                   scaleLabel: {
                     display: true,
-                    labelString: 'People',
+                    labelString: 'Number of People',
                   },
                   gridLines: {
                     color: '#00000005',

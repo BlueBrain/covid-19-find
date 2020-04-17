@@ -245,6 +245,18 @@ textarea {
   &.primary {
     border-top: 50px solid #00a5b1;
   }
+  .loader {
+    position: absolute;
+    top: -3rem;
+    font-size: 2rem;
+    left: -1rem;
+    color: white;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    &.loading {
+      opacity: 1;
+    }
+  }
 }
 
 .results-drop {
@@ -260,7 +272,6 @@ textarea {
   position: relative;
   top: -36px;
   padding-top: 6em;
-  z-index: -1;
   opacity: 0;
   transition: all ease-in 500ms;
   .result {

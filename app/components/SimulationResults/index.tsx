@@ -5,6 +5,8 @@ import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
 import Color from 'color';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 export type SimulationResultsData = any;
 
@@ -21,7 +23,7 @@ const SimulationResults: React.FC<{
   data: Scenarios | null;
 }> = ({ loading, error, data }) => {
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
-  const open = !loading;
+  const open = !!data;
 
   const selectedScenario = (data || [])[selectedScenarioIndex];
 
@@ -120,13 +122,13 @@ const SimulationResults: React.FC<{
             </ul>
           )}
         </div>
-        <div className="triangle primary"></div>
+        <div className="triangle primary">
+          <div className={`loader ${loading ? 'loading' : ''}`}>
+            <FontAwesomeIcon icon={faSpinner} pulse />
+          </div>
+        </div>
       </div>
-      <div
-        className={`results-drop primary ${open ? 'open' : ''}`}
-        // To prevent flashing
-        style={{ minHeight: 443 }}
-      >
+      <div className={`results-drop primary ${open ? 'open' : ''}`}>
         {selectedScenario && (
           <>
             <div className="scenario-description">
@@ -169,7 +171,7 @@ const SimulationResults: React.FC<{
                             {
                               scaleLabel: {
                                 display: true,
-                                labelString: 'People',
+                                labelString: 'Number of People',
                               },
                               gridLines: {
                                 color: '#00000005',
@@ -209,13 +211,17 @@ const SimulationResults: React.FC<{
                               selected
                                 ? graph.color
                                 : Color(graph.color)
-                                    .alpha(0.4)
+                                    .alpha(0.2)
                                     .toString(),
                             ],
                             backgroundColor: [
-                              Color(graph.color)
-                                .alpha(0.2)
-                                .toString(),
+                              selected
+                                ? Color(graph.color)
+                                    .alpha(0.2)
+                                    .toString()
+                                : Color(graph.color)
+                                    .alpha(0)
+                                    .toString(),
                             ],
                           };
                         }),

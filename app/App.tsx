@@ -44,14 +44,39 @@ const App: React.FC = () => {
   }, []);
 
   const handleSubmit = changedValues => {
-    console.log('handle submit!', changedValues);
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
-  };
 
-  console.log('App Reload', { queryParams });
+    const forms: HTMLFormElement[] = [
+      document.querySelector('#country-select-form'),
+      document.querySelector('#tests-form'),
+    ];
+
+    // Validate forms, and scroll to the next if valid
+    // If any form is invalid, will scroll to that form
+    // and report the invalidity
+    for (let i = 0; i <= forms.length; i++) {
+      const form = forms[i];
+      if (form.checkValidity()) {
+        if (i == 1) {
+          return document.querySelector('#simulation-results')?.scrollIntoView({
+            behavior: 'smooth',
+          });
+        }
+        forms[i + 1]?.scrollIntoView({
+          behavior: 'smooth',
+        });
+      } else {
+        form.reportValidity();
+        form.scrollIntoView({
+          behavior: 'smooth',
+        });
+        break;
+      }
+    }
+  };
 
   return (
     <div>
