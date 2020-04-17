@@ -27,9 +27,18 @@ ul.scenarios {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
+
+  @media (max-width: 750px) {
+    display: block;
+  }
+
   .chart {
     width: 50%;
     margin-top: 1rem;
+
+    @media (max-width: 750px) {
+      width: 100%;
+    }
   }
 }
 
