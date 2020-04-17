@@ -7,6 +7,7 @@ import colors from '../../colors';
 import Color from 'color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 export type SimulationResultsData = any;
 
@@ -24,6 +25,9 @@ const SimulationResults: React.FC<{
 }> = ({ loading, error, data }) => {
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
   const open = !!data;
+
+  const screenWidth = useWindowWidth();
+  const isMobile = screenWidth.width < 400;
 
   const selectedScenario = (data || [])[selectedScenarioIndex];
 
@@ -172,7 +176,10 @@ const SimulationResults: React.FC<{
                   <div className="chart" key={`chart-${graph.title}`}>
                     <h3 className="title">{graph.title}</h3>
                     <Line
+                      width={null}
+                      height={null}
                       options={{
+                        aspectRatio: isMobile ? 1 : 2,
                         scales: {
                           yAxes: [
                             {

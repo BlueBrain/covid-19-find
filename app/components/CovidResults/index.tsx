@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Line } from 'react-chartjs-2';
 import Color from 'color';
 import colors from '../../colors';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 import './covid-results';
 import ReactTooltip from 'react-tooltip';
@@ -35,6 +36,9 @@ const CovidResults: React.FC<{
     }
     return true;
   });
+
+  const screenWidth = useWindowWidth();
+  const isMobile = screenWidth.width < 500;
 
   return (
     <div className="result covid-results">
@@ -72,7 +76,10 @@ const CovidResults: React.FC<{
           </ReactTooltip>
         </h3>
         <Line
+          width={null}
+          height={null}
           options={{
+            aspectRatio: isMobile ? 1 : 2,
             scales: {
               yAxes: [
                 {
