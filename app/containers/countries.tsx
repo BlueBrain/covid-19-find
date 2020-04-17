@@ -70,7 +70,15 @@ const Countries: React.FC<{
   };
 
   const selectCountry = (countryCode: string) => {
-    onSubmit({ countryCode });
+    onSubmit({
+      countryCode,
+      highContactPopulation: null,
+      hospitalBeds: null,
+      hospitalEmployment: null,
+      population: null,
+      urbanPopulationInDegradedHousingProportion: null,
+      urbanPopulationProportion: null,
+    });
   };
 
   const open = !countryInfo.loading;

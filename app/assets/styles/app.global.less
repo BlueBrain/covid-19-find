@@ -138,6 +138,10 @@ main {
     max-width: 1200px;
     position: relative;
     display: flex;
+    @media @small {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
 
@@ -268,7 +272,7 @@ textarea {
   border-top-color: rgb(105, 120, 129);
   border-top-style: solid;
   border-top-width: 2px;
-  border-top: 0;
+  border-top: none;
   position: relative;
   top: -36px;
   padding-top: 6em;
@@ -288,6 +292,7 @@ textarea {
   }
   &.primary {
     border: 2px solid #00a5b1;
+    border-top: none;
   }
 
   @media @small {
