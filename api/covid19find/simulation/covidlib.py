@@ -90,7 +90,7 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
             for j in range(1,num_compartments+1):
                initial_beta[i-1,j-1] = beta_table.iloc[i,j]
          
-         beta_original=initial_beta
+         beta_original=initial_beta.copy()
         
          initial_beta=calibratebeta(num_compartments, initial_beta, p['init_pop'], float(p['beta_pre_inversion'][0]))
     
@@ -104,7 +104,8 @@ def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded,
          
          final_beta=calibratebeta(num_compartments, final_beta, p['init_pop'], float(p['beta_post_inversion'][0]))
          
-        
+         print('original beta=', beta_original, 'initial beta=', initial_beta)
+         
          scenarios_table= pd.read_csv(scenariosfile,header=None)
          (rows,cols)=scenarios_table.shape
          num_scenarios=rows-1

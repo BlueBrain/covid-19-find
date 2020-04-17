@@ -1,4 +1,4 @@
 Scenario,Hospitals,Other high contact,Rest of population
 No testing,0,0,0
 50 % in hospitals,0.5,0.5,0
-all in hospitals,0.3333,0.3333,0.3333
+all in hospitals,1,0,0

@@ -10,7 +10,7 @@ Created on Fri Apr 10 09:25:47 2020
 import covidlib as cl
 #fictitious everyone in hospitals
 total_pop=60462000
-hospital_beds=180000
+hospital_beds=120000
 pop_high_contact=10000000
 prop_urban=0.7
 degraded=0.1
@@ -21,7 +21,7 @@ sensitivity_xray=0.9
 specificity_PCR=0.95
 specificity_RDT=0.90
 specificity_xray=0.90
-num_tests_PCR=20000
+num_tests_PCR=5000
 num_tests_RDT=0
 num_tests_xray=0
 #Instead of giving hospital employment it now uses hospital beds
