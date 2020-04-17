@@ -181,7 +181,7 @@ const CountrySelector: React.FC<{
             </div>
             <div className="form-column">
               <label>Population size</label>
-              <input {...population} required />
+              <input {...population} required min="0" type="number" />
               <label>
                 % urban population in
                 <br />
