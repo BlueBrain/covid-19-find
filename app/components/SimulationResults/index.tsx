@@ -45,7 +45,6 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  console.log({ data });
   const labels = union(
     ...(data || []).map(entry => entry.data.map(entry => entry.days)),
   );
@@ -70,6 +69,11 @@ const SimulationResults: React.FC<{
       key: 'num_infected',
       color: colors.aubergine,
     },
+    {
+      title: 'Infected in all Categories',
+      key: 'num_infected',
+      color: colors.aubergine,
+    },
   ];
   const datasets = (data || []).map((entry, index) => {
     return {
@@ -82,11 +86,13 @@ const SimulationResults: React.FC<{
         graphs.forEach(graph => {
           if (
             graph.key === 'num_infected' &&
+            graph.title.includes('Hospitals') &&
             entry.compartment !== 'Hospitals'
           ) {
+            // dont't add up things just for the hospital compartment
             return;
           }
-          day[graph.key] = (day[graph.key] || 0) + Number(entry[graph.key]);
+          day[graph.title] = (day[graph.title] || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -212,7 +218,7 @@ const SimulationResults: React.FC<{
                           return {
                             label: dataset.label,
                             data: Object.values(dataset.data).map(
-                              values => values[graph.key],
+                              values => values[graph.title],
                             ),
                             borderColor: [
                               selected
