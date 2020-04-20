@@ -65,6 +65,10 @@ const App: React.FC = () => {
       const form = forms[i];
       if (form.checkValidity() && form.dataset.dirty) {
         if (i == forms.length - 1) {
+          // Show results if all are valid
+          forms.forEach(form => {
+            delete form.dataset.dirty;
+          });
           return results?.scrollIntoView({
             behavior: 'smooth',
           });
