@@ -43,6 +43,17 @@ class CovidDataRepository:
             summed_country_data[country] = country_data
         return summed_country_data
 
+    def __add_new_values(self, timeseries_data):
+        timeseries_data[0]["newConfirmed"] = timeseries_data[0]["totalConfirmed"]
+        timeseries_data[0]["newDeaths"] = timeseries_data[0]["totalDeaths"]
+        timeseries_data[0]["newRecovered"] = timeseries_data[0]["totalRecovered"]
+        for i in range(1, len(timeseries_data)):
+            timeseries_data[i]["newConfirmed"] = timeseries_data[i]["totalConfirmed"] - timeseries_data[i - 1][
+                "totalConfirmed"]
+            timeseries_data[i]["newDeaths"] = timeseries_data[i]["totalDeaths"] - timeseries_data[i - 1]["totalDeaths"]
+            timeseries_data[i]["newRecovered"] = timeseries_data[i]["totalRecovered"] - timeseries_data[i - 1][
+                "totalRecovered"]
+
     def update_data(self):
         os.makedirs(self.data_dir, exist_ok=True)
         os.makedirs(self.raw_data_dir, exist_ok=True)
@@ -73,6 +84,7 @@ class CovidDataRepository:
                     "totalRecovered": recovered,
                     "currentActive": confirmed - deaths - recovered
                 })
+            self.__add_new_values(country_timeseries_data)
             last_data = country_timeseries_data[-1]
             merged_data[country.replace('*', '')] = {
                 "totalConfirmed": last_data["totalConfirmed"],
