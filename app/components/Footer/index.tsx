@@ -7,6 +7,7 @@ const logo = require('../../assets/images/logo_header.svg');
 
 const Header: React.FC = () => {
   const version = useVersion();
+
   return (
     <footer>
       <div className="footer-container">
