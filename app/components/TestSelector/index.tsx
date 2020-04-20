@@ -44,6 +44,7 @@ const TestSelector: React.FC<TestSelectorVales & {
 
   const handleSubmit = e => {
     e.preventDefault();
+    e.target.dataset.dirty = true;
     onSubmit &&
       onSubmit({
         sensitivityPCR: sensitivityPCRInput.value,
@@ -59,7 +60,7 @@ const TestSelector: React.FC<TestSelectorVales & {
   };
 
   return (
-    <form className="tests-form" onSubmit={handleSubmit} id="tests-form">
+    <form className="tests-form" id="tests-form" onSubmit={handleSubmit}>
       <section>
         <div className="test-selector action-box">
           <div className="title">
