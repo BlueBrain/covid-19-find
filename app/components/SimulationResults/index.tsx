@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import { Scenarios } from '../../API';
 import { union } from 'lodash';
 import './simulation-results.less';
@@ -104,6 +104,8 @@ const SimulationResults: React.FC<{
     };
   });
 
+  console.log({ datasets });
+
   return (
     <section className="input" id="simulation-results">
       <div className="action-box primary">
@@ -179,75 +181,167 @@ const SimulationResults: React.FC<{
             <div className="charts">
               {graphs.map(graph => {
                 return (
-                  <div className="chart" key={`chart-${graph.title}`}>
-                    <h3 className="title">{graph.title}</h3>
-                    <Line
-                      width={null}
-                      height={null}
-                      options={{
-                        aspectRatio: isMobile ? 1 : 2,
-                        scales: {
-                          yAxes: [
+                  <div className="groups">
+                    <div className="chart" key={`chart-${graph.title}`}>
+                      <h3 className="title">{graph.title}</h3>
+                      <Line
+                        width={null}
+                        height={null}
+                        options={{
+                          aspectRatio: isMobile ? 1 : 2,
+                          scales: {
+                            yAxes: [
+                              {
+                                scaleLabel: {
+                                  display: true,
+                                  labelString: 'Number of People',
+                                },
+                                gridLines: {
+                                  color: '#00000005',
+                                },
+                              },
+                            ],
+                            xAxes: [
+                              {
+                                scaleLabel: {
+                                  display: true,
+                                  labelString: 'Days',
+                                },
+                                gridLines: {
+                                  color: '#00000005',
+                                },
+                              },
+                            ],
+                          },
+                          elements: {
+                            point: {
+                              radius: 0,
+                            },
+                            line: {
+                              borderWidth: 1,
+                            },
+                          },
+                        }}
+                        data={{
+                          datasets: datasets.map((dataset, index) => {
+                            const selected = selectedScenarioIndex === index;
+                            return {
+                              label: dataset.label,
+                              data: Object.values(dataset.data).map(
+                                values => values[graph.title],
+                              ),
+                              borderColor: [
+                                selected
+                                  ? graph.color
+                                  : Color(graph.color)
+                                      .alpha(0.2)
+                                      .toString(),
+                              ],
+                              backgroundColor: [
+                                selected
+                                  ? Color(graph.color)
+                                      .alpha(0.2)
+                                      .toString()
+                                  : Color(graph.color)
+                                      .alpha(0)
+                                      .toString(),
+                              ],
+                            };
+                          }),
+                          labels,
+                        }}
+                      />
+                    </div>
+
+                    <div className="chart" key={`chart-total-${graph.title}`}>
+                      <h3 className="title">Total {graph.title}</h3>
+                      <Bar
+                        width={null}
+                        height={null}
+                        options={{
+                          legend: {
+                            display: false,
+                          },
+                          aspectRatio: isMobile ? 1 : 2,
+                          scales: {
+                            yAxes: [
+                              {
+                                scaleLabel: {
+                                  display: true,
+                                  labelString: 'Number of People',
+                                },
+                                gridLines: {
+                                  color: '#00000005',
+                                },
+                                ticks: {
+                                  beginAtZero: true,
+                                },
+                              },
+                            ],
+                            xAxes: [
+                              {
+                                scaleLabel: {
+                                  display: false,
+                                },
+                                gridLines: {
+                                  color: '#00000005',
+                                },
+                              },
+                            ],
+                          },
+                          elements: {
+                            point: {
+                              radius: 0,
+                            },
+                            bar: {
+                              borderWidth: 2,
+                            },
+                          },
+                        }}
+                        data={{
+                          datasets: [
                             {
-                              scaleLabel: {
-                                display: true,
-                                labelString: 'Number of People',
-                              },
-                              gridLines: {
-                                color: '#00000005',
-                              },
+                              label: `Total ${graph.title}`,
+                              barPercentage: 0.25,
+                              // barThickness: 6,
+                              // maxBarThickness: 8,
+                              data: datasets.map((dataset, index) => {
+                                const values = (
+                                  Object.values(dataset.data) || []
+                                ).reduce((memo, entry) => {
+                                  return entry[graph.title] + memo;
+                                }, 0);
+                                return Math.ceil(values as number);
+                              }),
+                              backgroundColor: datasets.map(
+                                (dataset, index) => {
+                                  const selected =
+                                    selectedScenarioIndex === index;
+                                  return selected
+                                    ? Color(graph.color)
+                                        .alpha(0.5)
+                                        .toString()
+                                    : Color(graph.color)
+                                        .alpha(0.2)
+                                        .toString();
+                                },
+                              ),
+                              borderWidth: 1,
+                              borderColor: datasets.map((dataset, index) => {
+                                const selected =
+                                  selectedScenarioIndex === index;
+                                return selected
+                                  ? graph.color
+                                  : Color(graph.color)
+                                      .alpha(0.2)
+                                      .toString();
+                              }),
                             },
                           ],
-                          xAxes: [
-                            {
-                              scaleLabel: {
-                                display: true,
-                                labelString: 'Days',
-                              },
-                              gridLines: {
-                                color: '#00000005',
-                              },
-                            },
-                          ],
-                        },
-                        elements: {
-                          point: {
-                            radius: 0,
-                          },
-                          line: {
-                            borderWidth: 1,
-                          },
-                        },
-                      }}
-                      data={{
-                        datasets: datasets.map((dataset, index) => {
-                          const selected = selectedScenarioIndex === index;
-                          return {
-                            label: dataset.label,
-                            data: Object.values(dataset.data).map(
-                              values => values[graph.title],
-                            ),
-                            borderColor: [
-                              selected
-                                ? graph.color
-                                : Color(graph.color)
-                                    .alpha(0.2)
-                                    .toString(),
-                            ],
-                            backgroundColor: [
-                              selected
-                                ? Color(graph.color)
-                                    .alpha(0.2)
-                                    .toString()
-                                : Color(graph.color)
-                                    .alpha(0)
-                                    .toString(),
-                            ],
-                          };
-                        }),
-                        labels,
-                      }}
-                    />
+                          labels: datasets.map(scenarios => scenarios.label),
+                        }}
+                      />
+                    </div>
                   </div>
                 );
               })}
