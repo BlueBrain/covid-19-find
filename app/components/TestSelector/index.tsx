@@ -73,7 +73,7 @@ const TestSelector: React.FC<TestSelectorVales & {
           <div className="container">
             <div className="tests-form-container">
               <div className="input test-box">
-                <p className="test-description">
+                <div className="test-description">
                   Maximal deployment
                   <br />
                   <a data-tip data-for="pcr-tooltip">
@@ -97,74 +97,69 @@ const TestSelector: React.FC<TestSelectorVales & {
                   </ReactTooltip>
                   <br />
                   per day
-                  <input
-                    {...numTestsPCRInput}
-                    style={{
-                      width: '200px',
-                      margin: '1rem auto',
-                    }}
-                    min="0"
-                    type="number"
-                    required
-                  />
-                </p>
+                  <input {...numTestsPCRInput} min="0" type="number" required />
+                </div>
                 <div className="test-input">
-                  <a data-tip data-for="sensitivity-tooltip">
-                    <label className="label-mini">
-                      Sensitivity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <ReactTooltip id="sensitivity-tooltip">
-                    <p>
-                      The sensitivity of a diagnostic test represents the
-                      proportion of infections the test is capable of detecting.
-                      A test with a sensitivity of 1.0 will detect all
-                      infections present in a patient group. A test with a
-                      sensitivity of 0.85 will detect just 85% of infections.
-                      The remaining 15% (“false negatives”) will continue to
-                      spread the infection in the community. For this reason, it
-                      is important that a test designed to identify and isolate
-                      infected people should have a high sensitivity.
-                    </p>
-                  </ReactTooltip>
-                  <input
-                    {...sensitivityPCRInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
-                  <a data-tip data-for="specificity-tooltip">
-                    <label className="label-mini">
-                      Specificity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <ReactTooltip id="specificity-tooltip">
-                    <p>
-                      The specificity of a diagnostic test represents the
-                      percentage of healthy people who are correctly identified
-                      as not having the condition being tested for. A test with
-                      a specificity of 1.0 will never give a positive result for
-                      a person who does not have the infection. A test with a
-                      specificity of 0.85 will give correct results for just 85%
-                      of healthy people. The remaining 15% will be false
-                      positives. False positive results have a negative impact
-                      on the individuals concerned (anxiety, social isolation,
-                      loss of work), and places a heavy burden on the health
-                      service that has to treat them as if they were sick. For
-                      this reason it is important that tests should have high
-                      specificity.
-                    </p>
-                  </ReactTooltip>
-                  <input
-                    {...specificityPCRInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
+                  <div>
+                    <a data-tip data-for="sensitivity-tooltip">
+                      <label className="label-mini">
+                        Sensitivity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <ReactTooltip id="sensitivity-tooltip">
+                      <p>
+                        The sensitivity of a diagnostic test represents the
+                        proportion of infections the test is capable of
+                        detecting. A test with a sensitivity of 1.0 will detect
+                        all infections present in a patient group. A test with a
+                        sensitivity of 0.85 will detect just 85% of infections.
+                        The remaining 15% (“false negatives”) will continue to
+                        spread the infection in the community. For this reason,
+                        it is important that a test designed to identify and
+                        isolate infected people should have a high sensitivity.
+                      </p>
+                    </ReactTooltip>
+                    <input
+                      {...sensitivityPCRInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <a data-tip data-for="specificity-tooltip">
+                      <label className="label-mini">
+                        Specificity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <ReactTooltip id="specificity-tooltip">
+                      <p>
+                        The specificity of a diagnostic test represents the
+                        percentage of healthy people who are correctly
+                        identified as not having the condition being tested for.
+                        A test with a specificity of 1.0 will never give a
+                        positive result for a person who does not have the
+                        infection. A test with a specificity of 0.85 will give
+                        correct results for just 85% of healthy people. The
+                        remaining 15% will be false positives. False positive
+                        results have a negative impact on the individuals
+                        concerned (anxiety, social isolation, loss of work), and
+                        places a heavy burden on the health service that has to
+                        treat them as if they were sick. For this reason it is
+                        important that tests should have high specificity.
+                      </p>
+                    </ReactTooltip>
+                    <input
+                      {...specificityPCRInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               <div className="input test-box">
@@ -192,44 +187,39 @@ const TestSelector: React.FC<TestSelectorVales & {
                   </ReactTooltip>
                   <br />
                   per day
-                  <input
-                    {...numTestsRDTInput}
-                    style={{
-                      width: '200px',
-                      margin: '1rem auto',
-                    }}
-                    min="0"
-                    type="number"
-                    required
-                  />
+                  <input {...numTestsRDTInput} min="0" type="number" required />
                 </p>
                 <div className="test-input">
-                  <a data-tip data-for="sensitivity-tooltip">
-                    <label className="label-mini">
-                      Sensitivity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <input
-                    {...sensitivityRDTInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
-                  <a data-tip data-for="specificity-tooltip">
-                    <label className="label-mini">
-                      Specificity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <input
-                    {...specificityRDTInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
+                  <div>
+                    <a data-tip data-for="sensitivity-tooltip">
+                      <label className="label-mini">
+                        Sensitivity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <input
+                      {...sensitivityRDTInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <a data-tip data-for="specificity-tooltip">
+                      <label className="label-mini">
+                        Specificity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <input
+                      {...specificityRDTInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               <div className="input test-box">
@@ -254,42 +244,42 @@ const TestSelector: React.FC<TestSelectorVales & {
                   per day
                   <input
                     {...numTestsXrayInput}
-                    style={{
-                      width: '200px',
-                      margin: '1rem auto',
-                    }}
                     min="0"
                     type="number"
                     required
                   ></input>
                 </p>
                 <div className="test-input">
-                  <a data-tip data-for="sensitivity-tooltip">
-                    <label className="label-mini">
-                      Sensitivity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <input
-                    {...sensitivityXrayInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
-                  <a data-tip data-for="specificity-tooltip">
-                    <label className="label-mini">
-                      Specificity <IoIosInformationCircleOutline />
-                    </label>
-                  </a>
-                  <input
-                    {...specificityXrayInput}
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    type="number"
-                    required
-                  />
+                  <div>
+                    <a data-tip data-for="sensitivity-tooltip">
+                      <label className="label-mini">
+                        Sensitivity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <input
+                      {...sensitivityXrayInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <a data-tip data-for="specificity-tooltip">
+                      <label className="label-mini">
+                        Specificity <IoIosInformationCircleOutline />
+                      </label>
+                    </a>
+                    <input
+                      {...specificityXrayInput}
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      type="number"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             </div>
