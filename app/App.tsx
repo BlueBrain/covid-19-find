@@ -9,6 +9,7 @@ import Simulation from './containers/simulation';
 import About from './components/About';
 import { SimulationParams } from './API';
 import Contact from './containers/contact';
+import Footer from './components/Footer';
 
 const DEFAULT_PARAMS = {
   countryCode: null,
@@ -92,6 +93,7 @@ const App: React.FC = () => {
         <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
         <Contact />
+        <Footer />
       </main>
     </div>
   );
