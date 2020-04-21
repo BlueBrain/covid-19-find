@@ -104,8 +104,6 @@ const SimulationResults: React.FC<{
     };
   });
 
-  console.log({ datasets });
-
   return (
     <section className="input" id="simulation-results">
       <div className="action-box primary">
@@ -151,10 +149,174 @@ const SimulationResults: React.FC<{
         {selectedScenario && (
           <>
             <div className="scenario-description">
-              <h2 className="underline">
-                {descriptions[selectedScenarioIndex].name}
-              </h2>
-              <p>{descriptions[selectedScenarioIndex].description}</p>
+              <div className="half">
+                <h2 className="underline">
+                  {descriptions[selectedScenarioIndex].name}
+                </h2>
+                <p>{descriptions[selectedScenarioIndex].description}</p>
+              </div>
+              <div className="half">
+                <div className="comparison">
+                  <div
+                    className="chart"
+                    key={`chart-cross-scenario-comparison`}
+                  >
+                    <h3 className="title">Cross-Scenario Comparison</h3>
+                    <Bar
+                      width={null}
+                      height={null}
+                      options={{
+                        tooltips: {
+                          callbacks: {
+                            label: (tooltipItem, data) => {
+                              const label =
+                                data.datasets[tooltipItem.datasetIndex].label ||
+                                '';
+                              return `${label}: ${tooltipItem.yLabel?.toLocaleString()}`;
+                            },
+                          },
+                        },
+                        hover: {
+                          animationDuration: 0,
+                        },
+                        animation: {
+                          duration: 1,
+                          onComplete: function() {
+                            // write label on top of Bar
+                            const chartInstance = this.chart,
+                              ctx = chartInstance.ctx;
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = '#697881';
+                            ctx.textBaseline = 'bottom';
+
+                            this.data.datasets.forEach((dataset, i) => {
+                              const meta = chartInstance.controller.getDatasetMeta(
+                                i,
+                              );
+                              meta.data.forEach(bar => {
+                                const label = dataset.label.replace(
+                                  'Scenario ',
+                                  '',
+                                );
+                                ctx.fillText(
+                                  label,
+                                  bar._model.x,
+                                  bar._model.y - 5,
+                                );
+                              });
+                            });
+                          },
+                        },
+                        aspectRatio: isMobile ? 1 : 2,
+                        scales: {
+                          yAxes: [
+                            {
+                              scaleLabel: {
+                                display: true,
+                                labelString: 'Number of People',
+                              },
+                              gridLines: {
+                                color: '#00000005',
+                              },
+                              ticks: {
+                                beginAtZero: true,
+                                // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                  return value?.toLocaleString();
+                                },
+                              },
+                              // type: 'logarithmic',
+                            },
+                          ],
+                          xAxes: [
+                            {
+                              gridLines: {
+                                color: '#00000005',
+                              },
+                              ticks: {
+                                maxRotation: isMobile ? 90 : 0, // angle in degrees
+                              },
+                            },
+                          ],
+                        },
+                        elements: {
+                          point: {
+                            radius: 0,
+                          },
+                          bar: {
+                            borderWidth: 2,
+                          },
+                        },
+                        legend: {
+                          display: false,
+                        },
+                      }}
+                      data={{
+                        datasets: datasets.map(dataset => {
+                          const totalDeaths = Object.values(
+                            dataset.data,
+                          ).reduce(
+                            (memo: number, entry: { Deaths: number }) =>
+                              Math.ceil(memo + entry.Deaths),
+                            0,
+                          );
+                          const totalInfected = Object.values(
+                            dataset.data,
+                          ).reduce(
+                            (
+                              memo: number,
+                              entry: { 'Infected Population-wide': number },
+                            ) =>
+                              Math.ceil(
+                                memo + entry['Infected Population-wide'],
+                              ),
+                            0,
+                          );
+                          const totalHosptialInfected = Object.values(
+                            dataset.data,
+                          ).reduce(
+                            (
+                              memo: number,
+                              entry: { 'Infected in Hospitals': number },
+                            ) =>
+                              Math.ceil(memo + entry['Infected in Hospitals']),
+                            0,
+                          );
+                          return {
+                            label: dataset.label,
+                            data: [
+                              totalDeaths,
+                              totalInfected,
+                              totalHosptialInfected,
+                            ],
+                            backgroundColor: [
+                              Color(colors.pomegranate)
+                                .alpha(0.5)
+                                .toString(),
+                              Color(colors.aubergine)
+                                .alpha(0.5)
+                                .toString(),
+                              Color(colors.aubergine)
+                                .alpha(0.5)
+                                .toString(),
+                            ],
+                            borderColor: [
+                              Color(colors.pomegranate).toString(),
+                              Color(colors.aubergine).toString(),
+                              Color(colors.aubergine).toString(),
+                            ],
+                          };
+                        }),
+                        labels: [
+                          'Total Deaths',
+                          'Total Infected',
+                          'Total Infected in Hospitals',
+                        ],
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="stats horizontal">
               <h3>
@@ -177,171 +339,96 @@ const SimulationResults: React.FC<{
                 <br />
                 <span className="subtitle"> Total Tests</span>
               </h3>
-            </div>
+            </div>{' '}
             <div className="charts">
               {graphs.map(graph => {
                 return (
-                  <div className="groups">
-                    <div className="chart" key={`chart-${graph.title}`}>
-                      <h3 className="title">{graph.title}</h3>
-                      <Line
-                        width={null}
-                        height={null}
-                        options={{
-                          aspectRatio: isMobile ? 1 : 2,
-                          scales: {
-                            yAxes: [
-                              {
-                                scaleLabel: {
-                                  display: true,
-                                  labelString: 'Number of People',
-                                },
-                                gridLines: {
-                                  color: '#00000005',
-                                },
-                              },
-                            ],
-                            xAxes: [
-                              {
-                                scaleLabel: {
-                                  display: true,
-                                  labelString: 'Days',
-                                },
-                                gridLines: {
-                                  color: '#00000005',
-                                },
-                              },
-                            ],
-                          },
-                          elements: {
-                            point: {
-                              radius: 0,
-                            },
-                            line: {
-                              borderWidth: 1,
+                  <div className="chart" key={`chart-${graph.title}`}>
+                    <h3 className="title">{graph.title}</h3>
+                    <Line
+                      width={null}
+                      height={null}
+                      options={{
+                        tooltips: {
+                          callbacks: {
+                            label: (tooltipItem, data) => {
+                              const label =
+                                data.datasets[tooltipItem.datasetIndex].label ||
+                                '';
+                              return `${label}: ${tooltipItem.yLabel?.toLocaleString()}`;
                             },
                           },
-                        }}
-                        data={{
-                          datasets: datasets.map((dataset, index) => {
-                            const selected = selectedScenarioIndex === index;
-                            return {
-                              label: dataset.label,
-                              data: Object.values(dataset.data).map(
-                                values => values[graph.title],
-                              ),
-                              borderColor: [
-                                selected
-                                  ? graph.color
-                                  : Color(graph.color)
-                                      .alpha(0.2)
-                                      .toString(),
-                              ],
-                              backgroundColor: [
-                                selected
-                                  ? Color(graph.color)
-                                      .alpha(0.2)
-                                      .toString()
-                                  : Color(graph.color)
-                                      .alpha(0)
-                                      .toString(),
-                              ],
-                            };
-                          }),
-                          labels,
-                        }}
-                      />
-                    </div>
-
-                    <div className="chart" key={`chart-total-${graph.title}`}>
-                      <h3 className="title">Total {graph.title}</h3>
-                      <Bar
-                        width={null}
-                        height={null}
-                        options={{
-                          legend: {
-                            display: false,
-                          },
-                          aspectRatio: isMobile ? 1 : 2,
-                          scales: {
-                            yAxes: [
-                              {
-                                scaleLabel: {
-                                  display: true,
-                                  labelString: 'Number of People',
-                                },
-                                gridLines: {
-                                  color: '#00000005',
-                                },
-                                ticks: {
-                                  beginAtZero: true,
-                                },
-                              },
-                            ],
-                            xAxes: [
-                              {
-                                scaleLabel: {
-                                  display: false,
-                                },
-                                gridLines: {
-                                  color: '#00000005',
-                                },
-                              },
-                            ],
-                          },
-                          elements: {
-                            point: {
-                              radius: 0,
-                            },
-                            bar: {
-                              borderWidth: 2,
-                            },
-                          },
-                        }}
-                        data={{
-                          datasets: [
+                        },
+                        aspectRatio: isMobile ? 1 : 2,
+                        scales: {
+                          yAxes: [
                             {
-                              label: `Total ${graph.title}`,
-                              barPercentage: 0.25,
-                              // barThickness: 6,
-                              // maxBarThickness: 8,
-                              data: datasets.map((dataset, index) => {
-                                const values = (
-                                  Object.values(dataset.data) || []
-                                ).reduce((memo, entry) => {
-                                  return entry[graph.title] + memo;
-                                }, 0);
-                                return Math.ceil(values as number);
-                              }),
-                              backgroundColor: datasets.map(
-                                (dataset, index) => {
-                                  const selected =
-                                    selectedScenarioIndex === index;
-                                  return selected
-                                    ? Color(graph.color)
-                                        .alpha(0.5)
-                                        .toString()
-                                    : Color(graph.color)
-                                        .alpha(0.2)
-                                        .toString();
+                              scaleLabel: {
+                                display: true,
+                                labelString: 'Number of People',
+                              },
+                              gridLines: {
+                                color: '#00000005',
+                              },
+                              ticks: {
+                                beginAtZero: true,
+                                // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                  return value?.toLocaleString();
                                 },
-                              ),
-                              borderWidth: 1,
-                              borderColor: datasets.map((dataset, index) => {
-                                const selected =
-                                  selectedScenarioIndex === index;
-                                return selected
-                                  ? graph.color
-                                  : Color(graph.color)
-                                      .alpha(0.2)
-                                      .toString();
-                              }),
+                              },
                             },
                           ],
-                          labels: datasets.map(scenarios => scenarios.label),
-                        }}
-                      />
-                    </div>
+                          xAxes: [
+                            {
+                              scaleLabel: {
+                                display: true,
+                                labelString: 'Days',
+                              },
+                              gridLines: {
+                                color: '#00000005',
+                              },
+                            },
+                          ],
+                        },
+                        elements: {
+                          point: {
+                            radius: 0,
+                          },
+                          line: {
+                            borderWidth: 1,
+                          },
+                        },
+                      }}
+                      data={{
+                        datasets: datasets.map((dataset, index) => {
+                          const selected = selectedScenarioIndex === index;
+                          return {
+                            label: dataset.label,
+                            data: Object.values(dataset.data).map(
+                              values => values[graph.title],
+                            ),
+                            borderColor: [
+                              selected
+                                ? graph.color
+                                : Color(graph.color)
+                                    .alpha(0.2)
+                                    .toString(),
+                            ],
+                            backgroundColor: [
+                              selected
+                                ? Color(graph.color)
+                                    .alpha(0.2)
+                                    .toString()
+                                : Color(graph.color)
+                                    .alpha(0)
+                                    .toString(),
+                            ],
+                          };
+                        }),
+                        labels,
+                      }}
+                    />
                   </div>
                 );
               })}
