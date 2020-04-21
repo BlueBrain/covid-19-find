@@ -27,6 +27,7 @@ jobs:
           cmd: version --patch --no-git-tag-version
       - name: Commit files
         run: |
+          git config --local user.name "GitHub Action"
           git add package.json
           git commit -m "Version {{ cat package.json |  jq -r .version }}"
       - name: Push changes
