@@ -15,6 +15,9 @@ export type CovidData = {
     totalConfirmed: number;
     totalDeaths: number;
     totalRecovered: number;
+    newConfirmed: number;
+    newDeaths: number;
+    newRecovered: number;
   }[];
   totalConfirmed: number;
   totalDeaths: number;
@@ -25,17 +28,21 @@ const CovidResults: React.FC<{
   data: CovidData;
   countryLabel: string;
 }> = ({ data, countryLabel }) => {
-  let firstActiveDay = 0;
-  const chartData = data.timeseries.filter((entry, index) => {
-    if (!firstActiveDay) {
-      if (!!entry.currentActive) {
-        firstActiveDay = index;
-        return true;
-      }
-      return !!entry.currentActive;
-    }
-    return true;
-  });
+  // TODO filter by first active Day
+  // let firstActiveDay = 0;
+  // const chartData = data.timeseries.filter((entry, index) => {
+  //   if (!firstActiveDay) {
+  //     if (!!entry.currentActive) {
+  //       firstActiveDay = index;
+  //       return true;
+  //     }
+  //     return !!entry.currentActive;
+  //   }
+  //   return true;
+  // });
+  const chartData = data.timeseries.slice(
+    Math.max(data.timeseries.length - 7, 1),
+  );
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 500;
@@ -90,6 +97,13 @@ const CovidResults: React.FC<{
                   gridLines: {
                     color: '#00000005',
                   },
+                  ticks: {
+                    beginAtZero: true,
+                    // Include a dollar sign in the ticks
+                    callback: value => {
+                      return value?.toLocaleString();
+                    },
+                  },
                 },
               ],
               xAxes: [
@@ -116,19 +130,19 @@ const CovidResults: React.FC<{
           data={{
             backgroundColor: '#fff',
             datasets: [
+              // {
+              //   label: 'Current Active',
+              //   data: chartData.map(entry => entry.currentActive),
+              //   borderColor: [colors.aubergine],
+              //   backgroundColor: [
+              //     Color(colors.aubergine)
+              //       .alpha(0.2)
+              //       .toString(),
+              //   ],
+              // },
               {
-                label: 'Current Active',
-                data: chartData.map(entry => entry.currentActive),
-                borderColor: [colors.aubergine],
-                backgroundColor: [
-                  Color(colors.aubergine)
-                    .alpha(0.2)
-                    .toString(),
-                ],
-              },
-              {
-                label: 'Total Confirmed',
-                data: chartData.map(entry => entry.totalConfirmed),
+                label: 'New Cases',
+                data: chartData.map(entry => entry.newConfirmed),
 
                 borderColor: [colors.blueGray],
                 backgroundColor: [
@@ -138,8 +152,8 @@ const CovidResults: React.FC<{
                 ],
               },
               {
-                label: 'Total Deaths',
-                data: chartData.map(entry => entry.totalDeaths),
+                label: 'New Deaths',
+                data: chartData.map(entry => entry.newDeaths),
                 borderColor: [colors.pomegranate],
 
                 backgroundColor: [
@@ -149,8 +163,8 @@ const CovidResults: React.FC<{
                 ],
               },
               {
-                label: 'Total Recovered',
-                data: chartData.map(entry => entry.totalRecovered),
+                label: 'New Recovered',
+                data: chartData.map(entry => entry.newRecovered),
                 borderColor: [colors.turqouise],
                 backgroundColor: [
                   Color(colors.turqouise)
@@ -162,6 +176,41 @@ const CovidResults: React.FC<{
             labels: chartData.map(entry => entry.date),
           }}
         />
+      </div>
+      <div className="stats">
+        <h3>
+          {(
+            chartData[0].newConfirmed -
+            chartData[chartData.length - 1].newConfirmed / 7
+          )?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+          <br />
+          <span className="subtitle"> Daily New Cases</span>
+        </h3>
+        <h3>
+          {(
+            chartData[0].newDeaths -
+            chartData[chartData.length - 1].newDeaths / 7
+          )?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+          <br />
+          <span className="subtitle">Daily New Deaths</span>
+        </h3>
+        <h3>
+          {(
+            chartData[0].newRecovered -
+            chartData[chartData.length - 1].newRecovered / 7
+          )?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+          <br />
+          <span className="subtitle"> Daily New Recovered</span>
+        </h3>
       </div>
     </div>
   );
