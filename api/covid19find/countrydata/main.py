@@ -1,71 +1,64 @@
 from Countries import Country
 
 
+def print_message(message, value):
+    for k, (m, v) in enumerate(zip(message, value)):
+        if k == len(message)-1: end = '\n'
+        else: end = ', '
+        try:
+            print((m + " %.2f") % v, end = end)
+        except TypeError:
+            print((m + " %s") % v, end = end)
+
+
 def test_class(code, year, age):
     country = Country(code, year, age)
+
     print("\nExact data for %s in %s:" % (country.name, country.year))
-    try:
-        print("Total population: %.2f" % country.get_population())
-    except TypeError:
-        print("Total population: %s" % country.get_population())
-    try:
-        print("Hospital beds: %.2f" % country.get_hosp_beds())
-    except TypeError:
-        print("Hospital beds: %s" % country.get_hosp_beds())
-    try:
-        print("Percent urbanized: %.2f" % country.get_pcnt_urban())
-    except TypeError:
-        print("Percent urbanized: %s" % country.get_pcnt_urban())
-    try:
-        print("Percent degraded: %.2f" % country.get_pcnt_degraded())
-    except TypeError:
-        print("Percent degraded: %s" % country.get_pcnt_degraded())
-    try:
-        print("Number over %i: %.2f" % (age, country.get_overX()))
-    except TypeError:
-        print("Number over %i: %s" % (age, country.get_overX()))
+    print_message(["Total population:"], [country.get_population()])
+    print_message(["Hospital beds per 1000:"], [country.get_hosp_beds()])
+    print_message(["Total hospital beds:"], [country.get_total_beds()])
+    print_message(["Percent urbanized:"], [country.get_pcnt_urban()])
+    print_message(["Percent degraded:"], [country.get_pcnt_degraded()])
+    print_message(["Population over %i:" % int(age)], [country.get_overX()])
 
     nearest = country.search_avail_stats()
     print("\nNearest available data for %s:" % country.name)
-    try:
-        print("population: %i, year: %s" % (nearest["pop"][1], nearest["pop"][0]))
-    except TypeError:
-        print("population: %s, year: %s" % (nearest["pop"][1], nearest["pop"][0]))
-    try:
-        print("percent urbanized: %.2f, year: %s" % (nearest["urban"][1], nearest["urban"][0]))
-    except TypeError:
-        print("percent urbanized: %s, year: %s" % (nearest["urban"][1], nearest["urban"][0]))
-    try:
-        print("degraded: %.2f, year: %s" % (nearest["degraded"][1], nearest["degraded"][0]))
-    except TypeError:
-        print("degraded: %s, year: %s" % (nearest["degraded"][1], nearest["degraded"][0]))
-    try:
-        print("over %i: %i, year: %s" % (country.age, nearest["overX"][1], nearest["overX"][0]))
-    except TypeError:
-        print("over %i: %s, year: %s" % (country.age, nearest["overX"][1], nearest["overX"][0]))
-    try:
-        print("hospital beds per 1000: %.2f, year: %s" % (nearest["hosp_beds"][1], nearest["hosp_beds"][0]))
-    except TypeError:
-        print("hospital beds per 1000: %s, year: %s" % (nearest["hosp_beds"][1], nearest["hosp_beds"][0]))
-    try:
-        print("high contact population: %.2f, year: %s" % (nearest["high_contact"][1], nearest["high_contact"][0]))
-    except TypeError:
-        print("high contact population: %s, year: %s" % (nearest["high_contact"][1], nearest["high_contact"][0]))
-    try:
-        print("remote population: %.2f, year: %s" % (nearest["remote"][1], nearest["remote"][0]))
-    except TypeError:
-        print("remote population: %s, year: %s" % (nearest["remote"][1], nearest["remote"][0]))
+    print_message(["Total population:", "year:"], [nearest["pop"][0], nearest["pop"][1]])
+    print_message(["Hospital beds per 1000:", "year:"], [nearest["hosp_beds"][0], nearest["hosp_beds"][1]])
+    print_message(["Total hospital beds:"], [(nearest["pop"][0] / 1000.0)*nearest["hosp_beds"][0]])
+    print_message(["Percent urbanized:", "year:"], [nearest["urban"][0], nearest["urban"][1]])
+    print_message(["Percent degraded:", "year:"], [nearest["degraded"][0], nearest["degraded"][1]])
+    print_message(["Population over %i:" % int(age), "year:"], [nearest["overX"][0], nearest["overX"][1]])
+    print_message(["High contact:", "year:"], [nearest["high_contact"][0], nearest["high_contact"][1]])
+    print_message(["Remote:", "year:"], [nearest["remote"][0], nearest["remote"][1]])
 
 
 if __name__ == "__main__":
-    code = 380
-    year = 2020
-    age = 65
+    code = '756' #That's switzerland
+    year = '2020'
+    age = '65'
     test_class(code, year, age)
 
     print('\n##################################\n')
 
-    code = 4
-    year = 2020
-    age = 65
+    code = '4'
+    year = '2020'
+    age = '65'
     test_class(code, year, age)
+
+    print('\n##################################\n')
+
+    code = '276'
+    year = '2020'
+    age = '65'
+    test_class(code, year, age)
+
+    print('\n##################################\n')
+
+    code = '032'
+    year = '2020'
+    age = '65'
+    test_class(code, year, age)
+
+    print('\n##################################\n')

@@ -1,7 +1,7 @@
 import os
 import sys
 import glob
-from .config import *
+from . import config
 import pycountry
 import pandas as pd
 
@@ -85,17 +85,17 @@ class Country:
         self.degraded = None
 
     def __init__(self, code, year, age=None):
-        self.code = code
-        self.year = year
-        self.age = age
+        self.code = int(code)
+        self.year = int(year)
+        self.age = int(age)
         assert pycountry.countries.get(numeric=str(self.code).zfill(3)) is not None
 
-        self.set_name(total_pop)
-        self.set_population(total_pop)
-        self.set_pcnt_urban(pcnt_urban)
+        self.set_name(config.total_pop)
+        self.set_population(config.total_pop)
+        self.set_pcnt_urban(config.pcnt_urban)
         self.set_pcnt_degraded()
-        self.set_overX(age_distr)
-        self.set_hosp_beds(hospital_beds)
+        self.set_overX(config.age_distr)
+        self.set_hosp_beds(config.hospital_beds)
         self.set_high_contact()
         self.set_remote()
 
@@ -105,7 +105,7 @@ class Country:
         df = data["data"]
         df = df.loc[df[key] == self.code]
         if df.empty:
-            return (self.year, getattr(self, attr))
+            return (getattr(self, attr), str(self.year))
         if attr == "overX":
             age_key = data["age"]
             year_key = data["year"]
@@ -114,23 +114,29 @@ class Country:
             closest_year = df.loc[idx]["Time"]
             df = df.loc[df[year_key] == closest_year]
             df = df[df[age_key] >= self.age]
-            return (closest_year, df[pop_key].sum() * units)
+            return (df[pop_key].sum() * units, str(closest_year))
         try:
             col = df.T[:str(year)]
         except KeyError:
             col = df.T
         closest_year = col.last_valid_index()
         if not closest_year:
-            return None
+            return (None, None)
         val = int(col.loc[closest_year].values[0])
-        return (closest_year, val * units)
+        return (val * units, str(closest_year))
+
+    def get_total_beds(self):
+        if self.pop is None or self.hosp_beds is None:
+            return None
+        else:
+            return (self.pop / 1000.0) * self.hosp_beds
 
     def search_avail_stats(self):
         subs = {}
         datasets = [config.total_pop, config.pcnt_urban, None, config.age_distr, config.hospital_beds, None, None]
         attrs = ["pop", "urban", "degraded", "overX", "hosp_beds", "high_contact", "remote"]
         for data, attr in zip(datasets, attrs):
-            subs[attr] = (str(self.year), getattr(self, attr))
+            subs[attr] = (getattr(self, attr), str(self.year))
             if getattr(self, attr) is None:
                 if data is not None:
                     subs[attr] = self._find_nearest(data, self.year, attr)

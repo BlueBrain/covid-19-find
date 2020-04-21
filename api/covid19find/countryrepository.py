@@ -25,19 +25,21 @@ class CountryRepository:
         if pcountry is None:
             return None
         country = Country(int(pcountry.numeric), 2020, age=65)
+        nearest = country.search_avail_stats()
         over65percentage = None
-        over65count = country.get_overX()
+        over65count = nearest["overX"][0]
+        population = nearest["pop"][0]
         if over65count is not None:
-            over65percentage = over65count / country.get_population()
+            over65percentage = over65count / population
 
         return {
             "countryCode": country_code,
-            "population": country.get_population(),
-            "urbanPopulationProportion": country.get_pcnt_urban(),
-            "urbanPopulationInDegradedHousingProportion": country.get_pcnt_degraded(),
+            "population": population,
+            "urbanPopulationProportion": nearest["urban"][0],
+            "urbanPopulationInDegradedHousingProportion": nearest["degraded"][0],
             "over65Proportion": over65percentage,
             "hospitalEmployment": None,
-            "hospitalBeds": country.get_hosp_beds(),
-            "highContactPopulation": country.get_high_contact(),
-            "remoteAreasPopulationProportion": country.get_remote()
+            "hospitalBeds": (population / 1000.0) * nearest["hosp_beds"][0],
+            "highContactPopulation": nearest["high_contact"][0],
+            "remoteAreasPopulationProportion": nearest["remote"][0]
         }
