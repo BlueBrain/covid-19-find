@@ -183,8 +183,8 @@ const CovidResults: React.FC<{
             chartData[0].newConfirmed -
             chartData[chartData.length - 1].newConfirmed / 7
           )?.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            // minimumFractionDigits: 2,
+            maximumFractionDigits: 0,
           })}
           <br />
           <span className="subtitle"> Daily New Cases</span>
@@ -194,8 +194,8 @@ const CovidResults: React.FC<{
             chartData[0].newDeaths -
             chartData[chartData.length - 1].newDeaths / 7
           )?.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            // minimumFractionDigits: 2,
+            maximumFractionDigits: 0,
           })}
           <br />
           <span className="subtitle">Daily New Deaths</span>
@@ -205,8 +205,8 @@ const CovidResults: React.FC<{
             chartData[0].newRecovered -
             chartData[chartData.length - 1].newRecovered / 7
           )?.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            // minimumFractionDigits: 2,
+            maximumFractionDigits: 0,
           })}
           <br />
           <span className="subtitle"> Daily New Recovered</span>
