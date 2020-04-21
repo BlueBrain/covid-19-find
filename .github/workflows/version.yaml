@@ -1,0 +1,36 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    branches:
+      - master
+
+name: Update version
+
+jobs:
+  build:
+    name: Update version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install # will run `yarn install` command
+      - name: Build frontend
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: build # will run `yarn build`
+      - name: Update version
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: version --patch # will run `yarn version --patch`
+      - name: Commit files
+        run: |
+          git add package.json
+          git commit -m "Version {{ cat package.json |  jq -r .version }}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          tags: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
