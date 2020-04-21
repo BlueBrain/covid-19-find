@@ -74,7 +74,7 @@ const SimulationResults: React.FC<{
       color: colors.aubergine,
     },
     {
-      title: 'Infected in all Categories',
+      title: 'Infected Population-wide',
       key: 'num_infected',
       color: colors.aubergine,
     },

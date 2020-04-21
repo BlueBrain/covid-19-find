@@ -102,6 +102,7 @@ const CountrySelector: React.FC<{
 
   const handleSubmit = e => {
     e.preventDefault();
+    e.target.dataset.dirty = true;
     onSubmit &&
       onSubmit({
         countryCode: country.countryCode,
@@ -117,7 +118,7 @@ const CountrySelector: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} id="country-select-form">
+    <form id="country-select-form" onSubmit={handleSubmit}>
       <div className="country-selector">
         <div className="title">
           <div className="number">
