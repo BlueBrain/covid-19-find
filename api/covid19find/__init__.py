@@ -28,6 +28,7 @@ def create_app():
 
     scheduler = BackgroundScheduler(timezone=utc)
     scheduler.add_job(func=update_covid_data, trigger='interval', hours=2)
+    scheduler.start()
 
     def not_found_if_none(data, country_code):
         if data is None:
