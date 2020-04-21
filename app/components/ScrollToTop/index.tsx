@@ -4,7 +4,7 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 
 import './scroll-to-top.less';
 
-const ScrollToTop: React.FC<{ showAtPercentageHeight: number }> = ({
+const ScrollToTop: React.FC<{ showAtPercentageHeight?: number }> = ({
   showAtPercentageHeight = 20,
 }) => {
   const [visible, setVisible] = React.useState(false);
