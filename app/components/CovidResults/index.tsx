@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
+import ReactTooltip from 'react-tooltip';
 import Color from 'color';
+
 import colors from '../../colors';
 import useWindowWidth from '../../hooks/useWindowWidth';
 
 import './covid-results';
-import ReactTooltip from 'react-tooltip';
 
 const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
   const valuesToAverage = [];
