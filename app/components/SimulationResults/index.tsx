@@ -35,7 +35,7 @@ const SimulationResults: React.FC<{
     {
       name: 'Baseline',
       description:
-        'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
+        'This imaginary scenario shows the predicted course of the epidemic, with no Intervention of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
     },
     {
       name: 'Identify/isolate infected people',
@@ -79,6 +79,7 @@ const SimulationResults: React.FC<{
       color: colors.aubergine,
     },
   ];
+
   const datasets = (data || []).map((entry, index) => {
     return {
       label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
@@ -96,7 +97,8 @@ const SimulationResults: React.FC<{
             // dont't add up things just for the hospital compartment
             return;
           }
-          day[graph.title] = (day[graph.title] || 0) + Number(entry[graph.key]);
+          day[graph.title] =
+            (Number(day[graph.title]) || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -257,7 +259,7 @@ const SimulationResults: React.FC<{
                             dataset.data,
                           ).reduce(
                             (memo: number, entry: { Deaths: number }) =>
-                              Math.ceil(memo + entry.Deaths),
+                              memo + entry.Deaths,
                             0,
                           );
                           const totalInfected = Object.values(
@@ -266,10 +268,8 @@ const SimulationResults: React.FC<{
                             (
                               memo: number,
                               entry: { 'Infected Population-wide': number },
-                            ) =>
-                              Math.ceil(
-                                memo + entry['Infected Population-wide'],
-                              ),
+                            ) => memo + entry['Infected Population-wide'],
+
                             0,
                           );
                           const totalHosptialInfected = Object.values(
@@ -278,8 +278,7 @@ const SimulationResults: React.FC<{
                             (
                               memo: number,
                               entry: { 'Infected in Hospitals': number },
-                            ) =>
-                              Math.ceil(memo + entry['Infected in Hospitals']),
+                            ) => memo + entry['Infected in Hospitals'],
                             0,
                           );
                           return {
@@ -322,7 +321,7 @@ const SimulationResults: React.FC<{
               <h3>
                 {Math.ceil(selectedScenario.maxInfected).toLocaleString()}
                 <br />
-                <span className="subtitle">Max Infected</span>
+                <span className="subtitle">Max Infected at Peak</span>
               </h3>
               <h3>
                 {Math.ceil(selectedScenario.totalDeaths).toLocaleString()}
