@@ -9,16 +9,19 @@ import ReactTooltip from 'react-tooltip';
 
 const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
   const valuesToAverage = [];
-  for (let i = index - 7; i <= index; i++) {
+  for (let i = index - 7; i < index; i++) {
     if (i >= 0) {
       valuesToAverage.push(array[i][key]);
     }
   }
 
-  return (
-    valuesToAverage[0] -
-    valuesToAverage[valuesToAverage.length - 1] / valuesToAverage.length
-  );
+  const average =
+    valuesToAverage.length > 1
+      ? valuesToAverage.reduce((memo, entry) => memo + entry, 0) /
+        valuesToAverage.length
+      : valuesToAverage[0];
+
+  return average;
 };
 
 export type CovidData = {
@@ -42,7 +45,6 @@ const CovidResults: React.FC<{
   data: CovidData;
   countryLabel: string;
 }> = ({ data, countryLabel }) => {
-  // TODO filter by first active Day
   let firstActiveDay = 0;
   const chartData = data.timeseries.filter((entry, index) => {
     if (!firstActiveDay) {
@@ -54,9 +56,6 @@ const CovidResults: React.FC<{
     }
     return true;
   });
-  // const chartData = data.timeseries.slice(
-  //   Math.max(data.timeseries.length - 7, 1),
-  // );
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 500;
