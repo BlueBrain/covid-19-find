@@ -7,6 +7,20 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 import './covid-results';
 import ReactTooltip from 'react-tooltip';
 
+const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
+  const valuesToAverage = [];
+  for (let i = index - 7; i <= index; i++) {
+    if (i >= 0) {
+      valuesToAverage.push(array[i][key]);
+    }
+  }
+
+  return (
+    valuesToAverage[0] -
+    valuesToAverage[valuesToAverage.length - 1] / valuesToAverage.length
+  );
+};
+
 export type CovidData = {
   currentActive: number;
   timeseries: {
@@ -29,20 +43,20 @@ const CovidResults: React.FC<{
   countryLabel: string;
 }> = ({ data, countryLabel }) => {
   // TODO filter by first active Day
-  // let firstActiveDay = 0;
-  // const chartData = data.timeseries.filter((entry, index) => {
-  //   if (!firstActiveDay) {
-  //     if (!!entry.currentActive) {
-  //       firstActiveDay = index;
-  //       return true;
-  //     }
-  //     return !!entry.currentActive;
-  //   }
-  //   return true;
-  // });
-  const chartData = data.timeseries.slice(
-    Math.max(data.timeseries.length - 7, 1),
-  );
+  let firstActiveDay = 0;
+  const chartData = data.timeseries.filter((entry, index) => {
+    if (!firstActiveDay) {
+      if (!!entry.currentActive) {
+        firstActiveDay = index;
+        return true;
+      }
+      return !!entry.currentActive;
+    }
+    return true;
+  });
+  // const chartData = data.timeseries.slice(
+  //   Math.max(data.timeseries.length - 7, 1),
+  // );
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 500;
@@ -142,7 +156,9 @@ const CovidResults: React.FC<{
               // },
               {
                 label: 'New Cases',
-                data: chartData.map(entry => entry.newConfirmed),
+                data: chartData.map(
+                  makeSlidingAverage(chartData, 'newConfirmed'),
+                ),
 
                 borderColor: [colors.blueGray],
                 backgroundColor: [
@@ -153,7 +169,7 @@ const CovidResults: React.FC<{
               },
               {
                 label: 'New Deaths',
-                data: chartData.map(entry => entry.newDeaths),
+                data: chartData.map(makeSlidingAverage(chartData, 'newDeaths')),
                 borderColor: [colors.pomegranate],
 
                 backgroundColor: [
@@ -164,7 +180,9 @@ const CovidResults: React.FC<{
               },
               {
                 label: 'New Recovered',
-                data: chartData.map(entry => entry.newRecovered),
+                data: chartData.map(
+                  makeSlidingAverage(chartData, 'newRecovered'),
+                ),
                 borderColor: [colors.turqouise],
                 backgroundColor: [
                   Color(colors.turqouise)
@@ -176,41 +194,6 @@ const CovidResults: React.FC<{
             labels: chartData.map(entry => entry.date),
           }}
         />
-      </div>
-      <div className="stats">
-        <h3>
-          {(
-            chartData[0].newConfirmed -
-            chartData[chartData.length - 1].newConfirmed / 7
-          )?.toLocaleString(undefined, {
-            // minimumFractionDigits: 2,
-            maximumFractionDigits: 0,
-          })}
-          <br />
-          <span className="subtitle"> Daily New Cases</span>
-        </h3>
-        <h3>
-          {(
-            chartData[0].newDeaths -
-            chartData[chartData.length - 1].newDeaths / 7
-          )?.toLocaleString(undefined, {
-            // minimumFractionDigits: 2,
-            maximumFractionDigits: 0,
-          })}
-          <br />
-          <span className="subtitle">Daily New Deaths</span>
-        </h3>
-        <h3>
-          {(
-            chartData[0].newRecovered -
-            chartData[chartData.length - 1].newRecovered / 7
-          )?.toLocaleString(undefined, {
-            // minimumFractionDigits: 2,
-            maximumFractionDigits: 0,
-          })}
-          <br />
-          <span className="subtitle"> Daily New Recovered</span>
-        </h3>
       </div>
     </div>
   );
