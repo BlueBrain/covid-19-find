@@ -174,7 +174,10 @@ const SimulationResults: React.FC<{
                               const label =
                                 data.datasets[tooltipItem.datasetIndex].label ||
                                 '';
-                              return `${label}: ${tooltipItem.yLabel?.toLocaleString()}`;
+                              return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                undefined,
+                                { maximumFractionDigits: 0 },
+                              )}`;
                             },
                           },
                         },
@@ -224,7 +227,9 @@ const SimulationResults: React.FC<{
                                 beginAtZero: true,
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {
-                                  return value?.toLocaleString();
+                                  return value?.toLocaleString(undefined, {
+                                    maximumFractionDigits: 0,
+                                  });
                                 },
                               },
                               // type: 'logarithmic',
@@ -319,22 +324,30 @@ const SimulationResults: React.FC<{
             </div>
             <div className="stats horizontal">
               <h3>
-                {Math.ceil(selectedScenario.maxInfected).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.maxInfected,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle">Max Infected at Peak</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.totalDeaths).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.totalDeaths,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle">Total Deaths</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.maxIsolated).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.maxIsolated,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle">Max Isolated</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.totalTests).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.totalTests,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle"> Total Tests</span>
               </h3>
@@ -354,7 +367,10 @@ const SimulationResults: React.FC<{
                               const label =
                                 data.datasets[tooltipItem.datasetIndex].label ||
                                 '';
-                              return `${label}: ${tooltipItem.yLabel?.toLocaleString()}`;
+                              return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                undefined,
+                                { maximumFractionDigits: 0 },
+                              )}`;
                             },
                           },
                         },
@@ -373,7 +389,9 @@ const SimulationResults: React.FC<{
                                 beginAtZero: true,
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {
-                                  return value?.toLocaleString();
+                                  return value?.toLocaleString(undefined, {
+                                    maximumFractionDigits: 0,
+                                  });
                                 },
                               },
                             },
