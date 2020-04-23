@@ -80,6 +80,24 @@ const SimulationResults: React.FC<{
     },
   ];
 
+  const comparisons = [
+    {
+      key: 'totalDeaths',
+      title: 'Total Deaths',
+      color: colors.pomegranate,
+    },
+    {
+      key: 'totalInfected',
+      title: 'Total Infected',
+      color: colors.aubergine,
+    },
+    {
+      key: 'totalHospitalInfected',
+      title: 'Total Infected in Hospitals',
+      color: colors.aubergine,
+    },
+  ];
+
   const datasets = (data || []).map((entry, index) => {
     return {
       label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
@@ -151,174 +169,128 @@ const SimulationResults: React.FC<{
         {selectedScenario && (
           <>
             <div className="scenario-description">
-              <div className="half">
-                <h2 className="underline">
-                  {descriptions[selectedScenarioIndex].name}
-                </h2>
-                <p>{descriptions[selectedScenarioIndex].description}</p>
-              </div>
-              <div className="half">
-                <div className="comparison">
-                  <div
-                    className="chart"
-                    key={`chart-cross-scenario-comparison`}
-                  >
-                    <h3 className="title">Cross-Scenario Comparison</h3>
-                    <Bar
-                      width={null}
-                      height={null}
-                      options={{
-                        tooltips: {
-                          callbacks: {
-                            label: (tooltipItem, data) => {
-                              const label =
-                                data.datasets[tooltipItem.datasetIndex].label ||
-                                '';
-                              return `${label}: ${tooltipItem.yLabel?.toLocaleString(
-                                undefined,
-                                { maximumFractionDigits: 0 },
-                              )}`;
-                            },
-                          },
-                        },
-                        hover: {
-                          animationDuration: 0,
-                        },
-                        animation: {
-                          duration: 1,
-                          onComplete: function() {
-                            // write label on top of Bar
-                            const chartInstance = this.chart,
-                              ctx = chartInstance.ctx;
-                            ctx.textAlign = 'center';
-                            ctx.fillStyle = '#697881';
-                            ctx.textBaseline = 'bottom';
+              <h2 className="underline">
+                {descriptions[selectedScenarioIndex].name}
+              </h2>
+              <p>{descriptions[selectedScenarioIndex].description}</p>{' '}
+            </div>
+            <div className="comparison">
+              <div className="chart" key={`chart-cross-scenario-comparison`}>
+                <h3 className="title">Cross-Scenario Comparison</h3>
+                <div className="flex">
+                  {comparisons.map(({ key, title, color }) => {
+                    const data = datasets.map(dataset => {
+                      const totalDeaths = Object.values(dataset.data).reduce(
+                        (memo: number, entry: { Deaths: number }) =>
+                          memo + entry.Deaths,
+                        0,
+                      );
+                      const totalInfected = Object.values(dataset.data).reduce(
+                        (
+                          memo: number,
+                          entry: { 'Infected Population-wide': number },
+                        ) => memo + entry['Infected Population-wide'],
 
-                            this.data.datasets.forEach((dataset, i) => {
-                              const meta = chartInstance.controller.getDatasetMeta(
-                                i,
-                              );
-                              meta.data.forEach(bar => {
-                                const label = dataset.label.replace(
-                                  'Scenario ',
-                                  '',
-                                );
-                                ctx.fillText(
-                                  label,
-                                  bar._model.x,
-                                  bar._model.y - 5,
-                                );
-                              });
-                            });
-                          },
-                        },
-                        aspectRatio: isMobile ? 1 : 2,
-                        scales: {
-                          yAxes: [
-                            {
-                              scaleLabel: {
-                                display: true,
-                                labelString: 'Number of People',
-                              },
-                              gridLines: {
-                                color: '#00000005',
-                              },
-                              ticks: {
-                                beginAtZero: true,
-                                // Include a dollar sign in the ticks
-                                callback: function(value, index, values) {
-                                  return value?.toLocaleString(undefined, {
-                                    maximumFractionDigits: 0,
-                                  });
+                        0,
+                      );
+                      const totalHospitalInfected = Object.values(
+                        dataset.data,
+                      ).reduce(
+                        (
+                          memo: number,
+                          entry: { 'Infected in Hospitals': number },
+                        ) => memo + entry['Infected in Hospitals'],
+                        0,
+                      );
+
+                      const data = {
+                        totalDeaths,
+                        totalInfected,
+                        totalHospitalInfected,
+                      };
+                      return data;
+                    });
+                    return (
+                      <div className="graph">
+                        <Bar
+                          width={null}
+                          height={null}
+                          options={{
+                            tooltips: {
+                              callbacks: {
+                                label: (tooltipItem, data) => {
+                                  const label =
+                                    data.datasets[tooltipItem.datasetIndex]
+                                      .label || '';
+                                  return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                    undefined,
+                                    { maximumFractionDigits: 0 },
+                                  )}`;
                                 },
                               },
-                              // type: 'logarithmic',
                             },
-                          ],
-                          xAxes: [
-                            {
-                              gridLines: {
-                                color: '#00000005',
+                            aspectRatio: isMobile ? 1 : 2,
+                            scales: {
+                              yAxes: [
+                                {
+                                  scaleLabel: {
+                                    display: true,
+                                    labelString: title,
+                                  },
+                                  gridLines: {
+                                    color: '#00000005',
+                                  },
+                                  ticks: {
+                                    // beginAtZero: true,
+                                    // Include a dollar sign in the ticks
+                                    callback: function(value, index, values) {
+                                      return value?.toLocaleString(undefined, {
+                                        maximumFractionDigits: 0,
+                                      });
+                                    },
+                                  },
+                                },
+                              ],
+                              xAxes: [
+                                {
+                                  gridLines: {
+                                    color: '#00000005',
+                                  },
+                                  ticks: {
+                                    maxRotation: isMobile ? 90 : 0, // angle in degrees
+                                  },
+                                },
+                              ],
+                            },
+                            elements: {
+                              point: {
+                                radius: 0,
                               },
-                              ticks: {
-                                maxRotation: isMobile ? 90 : 0, // angle in degrees
+                              bar: {
+                                borderWidth: 2,
                               },
                             },
-                          ],
-                        },
-                        elements: {
-                          point: {
-                            radius: 0,
-                          },
-                          bar: {
-                            borderWidth: 2,
-                          },
-                        },
-                        legend: {
-                          display: false,
-                        },
-                      }}
-                      data={{
-                        datasets: datasets.map(dataset => {
-                          const totalDeaths = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (memo: number, entry: { Deaths: number }) =>
-                              memo + entry.Deaths,
-                            0,
-                          );
-                          const totalInfected = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (
-                              memo: number,
-                              entry: { 'Infected Population-wide': number },
-                            ) => memo + entry['Infected Population-wide'],
-
-                            0,
-                          );
-                          const totalHosptialInfected = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (
-                              memo: number,
-                              entry: { 'Infected in Hospitals': number },
-                            ) => memo + entry['Infected in Hospitals'],
-                            0,
-                          );
-                          return {
-                            label: dataset.label,
-                            data: [
-                              totalDeaths,
-                              totalInfected,
-                              totalHosptialInfected,
-                            ],
-                            backgroundColor: [
-                              Color(colors.pomegranate)
-                                .alpha(0.5)
-                                .toString(),
-                              Color(colors.aubergine)
-                                .alpha(0.5)
-                                .toString(),
-                              Color(colors.aubergine)
-                                .alpha(0.5)
-                                .toString(),
-                            ],
-                            borderColor: [
-                              Color(colors.pomegranate).toString(),
-                              Color(colors.aubergine).toString(),
-                              Color(colors.aubergine).toString(),
-                            ],
-                          };
-                        }),
-                        labels: [
-                          'Total Deaths',
-                          'Total Infected',
-                          'Total Infected in Hospitals',
-                        ],
-                      }}
-                    />
-                  </div>
+                            legend: {
+                              display: false,
+                            },
+                          }}
+                          data={{
+                            datasets: datasets.map((dataset, index) => {
+                              return {
+                                label: dataset.label,
+                                data: data.map(entry => entry[key]),
+                                backgroundColor: Color(color)
+                                  .alpha(0.5)
+                                  .toString(),
+                                borderColor: Color(color).toString(),
+                              };
+                            }),
+                            labels: datasets.map(dataset => dataset.label),
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
