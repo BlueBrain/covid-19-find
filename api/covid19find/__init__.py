@@ -23,11 +23,11 @@ def create_app():
         app.logger.info("Updating COVID-19 data")
         data_repo.update_data()
 
-    update_covid_data()
     country_repo = CountryRepository()
 
     scheduler = BackgroundScheduler(timezone=utc)
     scheduler.add_job(func=update_covid_data, trigger='interval', hours=2)
+    scheduler.add_job(func=update_covid_data)
     scheduler.start()
 
     def not_found_if_none(data, country_code):

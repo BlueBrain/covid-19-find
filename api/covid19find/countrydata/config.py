@@ -9,7 +9,7 @@ total_pop_file = os.path.join(path_prefix, 'data/total_pop.csv')
 age_distr_file = os.path.join(path_prefix, 'data/age_distr.csv')
 pcnt_urban_file = os.path.join(path_prefix, 'data/pcnt_urban.csv')
 hospital_beds_file = os.path.join(path_prefix, 'data/hospital_beds.csv')
-pop_15_to_64_file = os.path.join(path_prefix, 'data/15_64.csv')
+pop_15_to_64_file = os.path.join(path_prefix, 'data/15_to_64.csv')
 
 
 def convert_to_numeric(country_key, data):
