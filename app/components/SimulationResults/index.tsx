@@ -275,16 +275,16 @@ const SimulationResults: React.FC<{
                             },
                           }}
                           data={{
-                            datasets: datasets.map((dataset, index) => {
-                              return {
-                                label: dataset.label,
+                            datasets: [
+                              {
+                                label: key,
                                 data: data.map(entry => entry[key]),
                                 backgroundColor: Color(color)
                                   .alpha(0.5)
                                   .toString(),
                                 borderColor: Color(color).toString(),
-                              };
-                            }),
+                              },
+                            ],
                             labels: datasets.map(dataset => dataset.label),
                           }}
                         />
