@@ -35,6 +35,7 @@ class CountryRepository:
         return {
             "countryCode": country_code,
             "population": population,
+            "activePopulation": nearest["active_pop"][0],
             "urbanPopulationProportion": nearest["urban"][0],
             "urbanPopulationInDegradedHousingProportion": nearest["degraded"][0],
             "over65Proportion": over65percentage,

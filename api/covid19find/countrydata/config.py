@@ -9,7 +9,7 @@ total_pop_file = os.path.join(path_prefix, 'data/total_pop.csv')
 age_distr_file = os.path.join(path_prefix, 'data/age_distr.csv')
 pcnt_urban_file = os.path.join(path_prefix, 'data/pcnt_urban.csv')
 hospital_beds_file = os.path.join(path_prefix, 'data/hospital_beds.csv')
-pop_15_to_64 = os.path.join(path_prefix, 'data/15_64.csv')
+pop_15_to_64_file = os.path.join(path_prefix, 'data/15_64.csv')
 
 
 def convert_to_numeric(country_key, data):
@@ -43,7 +43,7 @@ age_distr = {"country": "LocID",
 active_pop = {"country": "Country Code",
             "name": "Country Name",
             "units": 1e-2,
-            "data": convert_to_numeric("Country Code", pd.read_csv(pop_15_to_64))}
+            "data": convert_to_numeric("Country Code", pd.read_csv(pop_15_to_64_file))}
 
 pcnt_urban = {"country": "Country Code",
              "name": "Country Name",
