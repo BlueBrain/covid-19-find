@@ -1,0 +1,35 @@
+num_days,200,,
+p_positive_if_symptomatic,0.9,,
+background_rate_symptomatic,0.02,,
+latent_period,3,,
+incubation_period,7,,
+recovery_period,10,,
+inversion_date,45,,
+test_start,45,,
+beta_pre_inversion,0.28,,
+beta_post_inversion_1,0.09,,
+beta_post_inversion_2,0.06,,
+alpha_post_inversion,35,,
+intervention_threshold_1,5000
+intervention_threshold_2,1000
+intervention_threshold_3,500
+confirmation_rate,0.2,,
+infection_fatality_rate,0.01,,
+lower_bound_beta,0.04,,
+total_pop,50000,,
+prop_urban,0,,
+degraded,0,,
+ge_65,0.045,,
+high_contact,0.3,,
+isolated_area,0.2,,
+num_compartments,3,,
+compartment,Hospitals,Other high contact ,Rest of population
+init_pop,50000,0,0
+init_infected,1,1,1
+prop_tests,0.5,0.5,0
+num_testkit_types,3,,
+testkits,PCR,RDT,Chest x_rays
+sensitivity,0.95,0.85,0.9
+specificity,0.95,0.8,0.9
+num_tests,0,0,0
+test_symptomatic_only,TRUE,TRUE,TRUE
