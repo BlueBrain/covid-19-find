@@ -8,7 +8,7 @@ import {
   IoIosAdd,
 } from 'react-icons/io';
 
-import { Scenario } from '../../API';
+import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
   useCheckbox,
@@ -67,6 +67,19 @@ const ScenarioEditor: React.FC<{
       });
   };
 
+  const interventionTypes = [
+    { value: InterventionType.LOCKDOWN, label: 'Lockdown' },
+    { value: InterventionType.MILD, label: 'Mild' },
+    { value: InterventionType.NONE, label: 'None' },
+  ];
+
+  const interventionTimings = [
+    { value: InterventionTiming.NEVER, label: 'never' },
+    { value: InterventionTiming.GT10, label: '>10' },
+    { value: InterventionTiming.GT50, label: '>50' },
+    { value: InterventionTiming.GT500, label: '>500' },
+  ];
+
   return (
     <form id={`scenario-editor-${scenario.name}`} onSubmit={handleSubmit}>
       <div className="form-column">
@@ -74,6 +87,29 @@ const ScenarioEditor: React.FC<{
         <input {...name} type="text" required />
         <label>description</label>
         <textarea {...description} />
+        <label>Intervention Type</label>
+        <select onChange={interventionType.onChange}>
+          {interventionTypes.map(({ value, label }) => {
+            return (
+              <option value={value} selected={interventionType.value === value}>
+                {label}
+              </option>
+            );
+          })}
+        </select>
+        <label>Intervention Timings</label>
+        <select onChange={interventionTiming.onChange}>
+          {interventionTimings.map(({ value, label }) => {
+            return (
+              <option
+                value={value}
+                selected={interventionTiming.value === value}
+              >
+                {label}
+              </option>
+            );
+          })}
+        </select>
         <label>Test Symptomatic Only?</label>
         <input
           onChange={testSymptomaticOnly.onChange}
@@ -126,17 +162,46 @@ const ScenarioEditor: React.FC<{
 
 const ScenarioList: React.FC<{
   scenarios: Scenario[];
-  onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
+  onSubmit?: (
+    scenarioListSubmit: { scenarios: Scenario[] },
+    skipScroll: boolean,
+  ) => void;
 }> = ({ scenarios = [], onSubmit }) => {
   const [visible, setVisible] = React.useState(false);
 
-  // const removeScenario = (index: number) => e => {
-  //   const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
-  //   onSubmit &&
-  //     onSubmit({
-  //       scenarios: newScenarios,
-  //     });
-  // };
+  const removeScenario = (index: number) => e => {
+    const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
+    onSubmit &&
+      onSubmit(
+        {
+          scenarios: newScenarios,
+        },
+        true,
+      );
+  };
+
+  const addScenario = () => {
+    const newScenarios = [
+      ...scenarios,
+      {
+        name: 'New Scenario',
+        description: '',
+        interventionType: InterventionType.LOCKDOWN,
+        interventionTiming: InterventionTiming.GT10,
+        testSymptomaticOnly: true,
+        hospitalTestProportion: 0,
+        otherHighContactPopulationTestProportion: 0,
+        restOfPopulationTestProportion: 0,
+      },
+    ];
+    onSubmit &&
+      onSubmit(
+        {
+          scenarios: newScenarios,
+        },
+        true,
+      );
+  };
 
   return (
     <div className="scenario-editor">
@@ -152,18 +217,28 @@ const ScenarioList: React.FC<{
                 return (
                   <Tab>
                     {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
-                    {/* <button type="button" onClick={removeScenario(index)}>
+                    <button
+                      className="small"
+                      type="button"
+                      onClick={removeScenario(index)}
+                    >
                       <IoIosClose />
-                    </button> */}
+                    </button>
                   </Tab>
                 );
               })}
+              {scenarios.length < 3 && (
+                <button className="small" type="button" onClick={addScenario}>
+                  Add Scenario
+                  <IoIosAdd />
+                </button>
+              )}
             </TabList>
             {scenarios.map((scenario, index) => {
               const handleSubmit = changedScenario => {
                 const newScenarios = scenarios;
                 newScenarios[index] = changedScenario;
-                onSubmit && onSubmit({ scenarios: newScenarios });
+                onSubmit && onSubmit({ scenarios: newScenarios }, false);
               };
 
               return (

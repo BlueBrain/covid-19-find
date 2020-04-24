@@ -58,11 +58,15 @@ const App: React.FC = () => {
     });
   }, []);
 
-  const handleSubmit = changedValues => {
+  const handleSubmit = (changedValues, skipScroll = false) => {
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
+
+    if (skipScroll) {
+      return;
+    }
 
     const forms: HTMLFormElement[] = [
       document.querySelector('#country-select-form'),
