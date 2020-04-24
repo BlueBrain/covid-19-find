@@ -1,4 +1,10 @@
-Scenario,Hospitals,Other high contact,Rest of population
-No testing,0,0,0
-50 % in hospitals,0.5,0.5,0
-all in hospitals,1,0,0
+SCENARIO1,No testing,,,
+SCENARIO1,prop_tests,0,0,0
+SCENARIO1,init_infected,1,1,1
+SCENARIO1,symptomatic_only,True,True,True
+SCENARIO2,50 % in hospitals,,,
+SCENARIO2,prop_tests,0.5,0.5,0
+SCENARIO2,init_infected,1,1,1
+SCENARIO3,all in hospitals,,,
+SCENARIO3,prop_tests,1,0,0
+SCENARIO3,init_infected,1,1,1
