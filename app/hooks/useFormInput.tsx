@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const useFormInput = (
+export const useFormInput = (
   initialValue: any,
   placeholder?: any,
   override?: boolean,
@@ -9,6 +9,54 @@ const useFormInput = (
 
   const onHandleChange = e => {
     setValue(e ? e.target.value : value);
+  };
+
+  React.useEffect(() => {
+    if (override) {
+      setValue(initialValue);
+    }
+  }, [initialValue, override]);
+
+  return {
+    value: value || 0,
+    onChange: onHandleChange,
+    placeholder: placeholder || 'Enter... ',
+  };
+};
+
+export const useTextInput = (
+  initialValue: any,
+  placeholder?: any,
+  override?: boolean,
+) => {
+  const [value, setValue] = React.useState(initialValue);
+
+  const onHandleChange = e => {
+    setValue(e ? e.target.value : value);
+  };
+
+  React.useEffect(() => {
+    if (override) {
+      setValue(initialValue);
+    }
+  }, [initialValue, override]);
+
+  return {
+    value: value || '',
+    onChange: onHandleChange,
+    placeholder: placeholder || 'Enter... ',
+  };
+};
+
+export const useCheckbox = (
+  initialValue: any,
+  placeholder?: any,
+  override?: boolean,
+) => {
+  const [value, setValue] = React.useState(initialValue);
+
+  const onHandleChange = e => {
+    setValue(e ? e.target.checked : value);
   };
 
   React.useEffect(() => {

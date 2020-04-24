@@ -31,6 +31,7 @@ const TestSelector: React.FC<TestSelectorVales & {
   numTestsRDT,
   numTestsXray,
   onSubmit,
+  children,
 }) => {
   const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
   const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
@@ -285,6 +286,7 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div>
             </div>
           </div>
+          <div>{children}</div>
           <div className="submit-button">
             <button className="action submit-button" type="submit">
               Submit

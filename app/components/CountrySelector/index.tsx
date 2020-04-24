@@ -180,7 +180,13 @@ const CountrySelector: React.FC<{
                   may be higher or lower than this number.
                 </p>
               </ReactTooltip>
-              <input {...hospitalStaffPerBed} required min="0" type="number" />
+              <input
+                {...hospitalStaffPerBed}
+                required
+                min="0"
+                step="0.01"
+                type="number"
+              />
             </div>
             <div className="form-column">
               <label>Population size</label>
