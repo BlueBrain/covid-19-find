@@ -16,9 +16,10 @@ export enum InterventionTiming {
 
 export const DEFAULT_SCENARIO_LIST: Scenario[] = [
   {
-    name: 'No Testing',
+    name: 'Baseline',
     interventionType: InterventionType.LOCKDOWN,
-    description: '',
+    description:
+      'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
     interventionTiming: InterventionTiming.NEVER,
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
@@ -28,7 +29,8 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
   {
     name: 'Test High Exposure Groups',
     interventionType: InterventionType.LOCKDOWN,
-    description: '',
+    description:
+      'In this scenario, 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers whose work requires a high level of contact with the public; people living in degraded housing in large cities). Tests are limited to individuals already showing symptoms. The goal is to identify and isolate the highest possible number of infected people, helping to slow down or reverse the course of the epidemic',
     interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 50,
@@ -38,7 +40,8 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
   {
     name: 'Protect Hospital Capacity',
     interventionType: InterventionType.LOCKDOWN,
-    description: '',
+    description:
+      'In this scenario, all available tests are used to test hospital staff, if possible repeatedly.  Tests are limited to individuals already showing symptoms. The goal is to reduce the burden of the epidemic on hospital staff, preserving the capabilities necessary to help others.',
     interventionTiming: InterventionTiming.GT500,
     testSymptomaticOnly: true,
     hospitalTestProportion: 100,

@@ -13,6 +13,7 @@ import useFormInput, {
 } from '../../hooks/useFormInput';
 
 import './scenario-editor.less';
+import { toLetters } from '../SimulationResults';
 
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
@@ -66,53 +67,57 @@ const ScenarioEditor: React.FC<{
 
   return (
     <form id={`scenario-editor-${scenario.name}`} onSubmit={handleSubmit}>
-      <label>Name</label>
-      <input {...name} type="text" required />
-      <label>description</label>
-      <textarea {...description} />
-      <label>Test Symptomatic Only?</label>
-      <input
-        onChange={testSymptomaticOnly.onChange}
-        checked={testSymptomaticOnly.value}
-        type="checkbox"
-      />
-      <label>
-        Proportion of tests for
-        <br />
-        hospital staff
-      </label>
-      <input
-        {...hospitalTestProportion}
-        min="0"
-        max="100"
-        type="number"
-        required
-      />
-      <label>
-        Proportion of tests for other
-        <br />
-        highly exposed groups
-      </label>
-      <input
-        {...otherHighContactPopulationTestProportion}
-        min="0"
-        max="100"
-        type="number"
-        required
-      />
-      <label>
-        Proportion of tests for
-        <br />
-        rest of population
-      </label>
-      <input
-        {...restOfPopulationTestProportion}
-        min="0"
-        max="100"
-        type="number"
-        required
-      />
-      <button type="submit">Save</button>
+      <div className="form-column">
+        <label>Name</label>
+        <input {...name} type="text" required />
+        <label>description</label>
+        <textarea {...description} />
+        <label>Test Symptomatic Only?</label>
+        <input
+          onChange={testSymptomaticOnly.onChange}
+          checked={testSymptomaticOnly.value}
+          type="checkbox"
+        />
+      </div>
+      <div className="form-column">
+        <label>
+          Proportion of tests for
+          <br />
+          hospital staff
+        </label>
+        <input
+          {...hospitalTestProportion}
+          min="0"
+          max="100"
+          type="number"
+          required
+        />
+        <label>
+          Proportion of tests for other
+          <br />
+          highly exposed groups
+        </label>
+        <input
+          {...otherHighContactPopulationTestProportion}
+          min="0"
+          max="100"
+          type="number"
+          required
+        />
+        <label>
+          Proportion of tests for
+          <br />
+          rest of population
+        </label>
+        <input
+          {...restOfPopulationTestProportion}
+          min="0"
+          max="100"
+          type="number"
+          required
+        />
+        <button type="submit">Save</button>
+      </div>
     </form>
   );
 };
@@ -124,7 +129,7 @@ const ScenarioList: React.FC<{
   const [visible, setVisible] = React.useState(false);
   return (
     <div className="scenario-editor">
-      <h3 onClick={() => setVisible(!visible)}>
+      <h3 className="collapse" onClick={() => setVisible(!visible)}>
         {visible ? <IoIosRemoveCircleOutline /> : <IoIosAddCircleOutline />}{' '}
         Advanced parameters
       </h3>
@@ -132,8 +137,12 @@ const ScenarioList: React.FC<{
         <div className="scenario-list">
           <Tabs>
             <TabList>
-              {scenarios.map(scenario => {
-                return <Tab>{scenario.name}</Tab>;
+              {scenarios.map((scenario, index) => {
+                return (
+                  <Tab>
+                    {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}
+                  </Tab>
+                );
               })}
             </TabList>
             {scenarios.map((scenario, index) => {
@@ -145,7 +154,6 @@ const ScenarioList: React.FC<{
 
               return (
                 <TabPanel>
-                  <h2>{scenario.name}</h2>
                   <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
                 </TabPanel>
               );
