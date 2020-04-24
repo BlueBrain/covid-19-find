@@ -7,7 +7,7 @@ country_repo = CountryRepository()
 class TestCountryRepository:
 
     def test_country_details_CH(self):
-        assert country_repo.country_details("CH") == {'activePopulation': 5712300,
+        assert country_repo.country_details("CH") == {'activePopulationProportion': 0.66,
                                                       'countryCode': 'CH',
                                                       'highContactPopulation': None,
                                                       'hospitalBeds': 34620,
@@ -18,7 +18,7 @@ class TestCountryRepository:
                                                       'urbanPopulationProportion': 0.73}
 
     def test_country_details_AR(self):
-        assert country_repo.country_details("AR") == {'activePopulation': 28925440,
+        assert country_repo.country_details("AR") == {'activePopulationProportion': 0.64,
                                                       'countryCode': 'AR',
                                                       'highContactPopulation': None,
                                                       'hospitalBeds': 225980,
@@ -29,7 +29,7 @@ class TestCountryRepository:
                                                       'urbanPopulationProportion': 0.91}
 
     def test_country_details_EG(self):
-        assert country_repo.country_details("EG") == {'activePopulation': 61400400,
+        assert country_repo.country_details("EG") == {'activePopulationProportion': 0.6,
                                                       'countryCode': 'EG',
                                                       'highContactPopulation': None,
                                                       'hospitalBeds': 102334,
