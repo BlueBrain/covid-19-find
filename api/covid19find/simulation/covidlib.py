@@ -44,13 +44,16 @@ def get_beta(betafile, n, pops, targetbeta):
          result = calibratebeta(n, beta, pops, targetbeta)
          return result
 
-def run_simulation(fixed_params, scenarios):
+def run_simulation(fixed_params, **kwargs):
 
          sysfile = 'system_params.csv'
          initial_betafile = 'initial_betas.csv'
          final_betafile = 'final_betas.csv'
          scenariosfile='scenarios.csv'
-         
+         if len(kwargs)>0:
+             scenarios=kwargs['scenarios']
+         else:
+             scenarios=[]
          p = get_system_params(sysfile)
          num_compartments = int(p['num_compartments'][0])
          num_testkit_types=int(p['num_testkit_types'][0])

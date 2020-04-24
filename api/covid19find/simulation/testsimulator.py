@@ -47,6 +47,8 @@ scenario_params[2]={'intervention_type':2, \
 #Instead of giving hospital employment it now uses hospital beds
 dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\
                    cl.run_simulation(fixed_params,scenarios=scenario_params )
+#dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\
+ #                  cl.run_simulation(fixed_params )
 print ('total deaths by scenario')
 for i in range (0,len(total_deaths_by_scenario)):
     print ('scenario: ',i,': ', total_deaths_by_scenario[i])
