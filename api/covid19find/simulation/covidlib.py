@@ -7,133 +7,198 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-def run_simulation(total_pop,hospital_beds,pop_high_contact,prop_urban,degraded, \
-                   staff_per_bed,sensitivity_PCR, \
-                   sensitivity_RDT,sensitivity_xray,specificity_PCR,specificity_RDT,specificity_xray, \
-                   num_tests_PCR,num_tests_RDT,num_tests_xray):
-         expert_mode=True
-         simsfile = 'compart_params.csv'
-         
-         initial_betafile = 'initial_betas.csv'
-         final_betafile = 'final_betas.csv'
-#         testkitfile='test_kits.csv'
-         userparsfile='user_params.csv'
-         scenariosfile='scenarios.csv'
-         
- # =============================================================================
- #         if len(sys.argv) > 1:
- #            simsfile = sys.argv[1]
- #         if len(sys.argv) > 2:
- #            userparsfile = sys.argv[2]
- #         if len(sys.argv) > 3:
- #            betafile = sys.argv[3]
- #         if len(sys.argv) > 4:
- #            testkitfile = sys.argv[4]
- #         if len(sys.argv) > 5:
- #            scenariosfile = sys.argv[5]
- # =============================================================================
-         
-         sims = pd.read_csv(simsfile,header=None)
-         (rows,cols) = sims.shape
-         num_compartments = cols-1
-         num_tests_performed=np.zeros(num_compartments)
+def get_system_params(sysfile):
          
          p = {}
-         for i in range(0,rows):
-            p[sims.iloc[i,0]] = []
-            for j in range(1,cols):
-               p[sims.iloc[i,0]].append(sims.iloc[i,j])
-               
-         userpars = pd.read_csv(userparsfile,header=None)
-         (rows,cols) = userpars.shape
-         for i in range(0,rows):
-            p[userpars.iloc[i,0]] = []
-            for j in range(1,cols):
-               p[userpars.iloc[i,0]].append(userpars.iloc[i,j])
 
+         sysp = pd.read_csv(sysfile,header=None)
+         (rows,cols) = sysp.shape
+         nonblanks = 1
+         for i in range(0,rows):
+            param_name = sysp.iloc[i,0]
+            if param_name == 'num_compartments':
+               num_compartments = int(sysp.iloc[i,1])
+               nonblanks = num_compartments
+            if param_name == 'num_testkit_types':
+               num_testkit_types = int(sysp.iloc[i,1])
+               nonblanks = num_testkit_types
+            p[param_name] = []
+            countnonblanks = 0
+            for j in range(1,cols):
+               val = sysp.iloc[i,j]
+               p[param_name].append(val)
+               if not pd.isnull(val):
+                  countnonblanks = countnonblanks+1
+            if (param_name != 'num_compartments') and (param_name != 'num_testkit_types') and countnonblanks != nonblanks:
+               print("Warning: variable ",param_name," does not have enough values")
+
+         return p
+
+def get_beta(betafile, n, pops, targetbeta):
+         beta_table = pd.read_csv(betafile,header=None)
+         (rows,cols) = beta_table.shape
+         beta = np.zeros((n,n))
+         for i in range(1,n+1):
+            for j in range(1,n+1):
+               beta[i-1,j-1] = beta_table.iloc[i,j]
+         result = calibratebeta(n, beta, pops, targetbeta)
+         return result
+
+def run_simulation(fixed_params, scenarios):
+
+         sysfile = 'system_params.csv'
+         initial_betafile = 'initial_betas.csv'
+         final_betafile = 'final_betas.csv'
+         scenariosfile='scenarios.csv'
          
-         p['compartment']=['Hospitals','Other high contact ','Rest of population']
+         p = get_system_params(sysfile)
+         num_compartments = int(p['num_compartments'][0])
+         num_testkit_types=int(p['num_testkit_types'][0])
+         
+#     These are defined in compartment parameters - no need to define here:
+#     p['compartment']=['Hospitals','Other high contact ','Rest of population']
+#     p['init_infected']=[100,100,100]
+
          p['testkits']=['PCR','RDT','Chest xrays']
-   #      p['init_infected']=[100,100,100]  These are define in compartment parameters - no need to define here
-         p['total_pop'][0]=total_pop
-         p['init_pop'][0]=hospital_beds*staff_per_bed
- #        p['high_contact'][0]=pop_high_contact
-         p['prop_urban'][0]=prop_urban
-         p['degraded'][0]=degraded
-         p['sensitivity'][0]=sensitivity_PCR
-         p['sensitivity'][1]=sensitivity_RDT
-         p['sensitivity'][2]=sensitivity_xray
-         p['specificity'][0]=specificity_PCR
-         p['specificity'][1]=specificity_RDT
-         p['specificity'][2]=specificity_xray
-         p['num_tests'][0]=num_tests_PCR
-         p['num_tests'][1]=num_tests_RDT
-         p['num_tests'][2]=num_tests_xray
+         p['sensitivity'][0]=fixed_params['sensitivity_PCR']
+         p['sensitivity'][1]=fixed_params['sensitivity_RDT']
+         p['sensitivity'][2]=fixed_params['sensitivity_xray']
+         p['specificity'][0]=fixed_params['specificity_PCR']
+         p['specificity'][1]=fixed_params['specificity_RDT']
+         p['specificity'][2]=fixed_params['specificity_xray']
+         p['num_tests'][0]=fixed_params['num_tests_PCR']
+         p['num_tests'][1]=fixed_params['num_tests_RDT']
+         p['num_tests'][2]=fixed_params['num_tests_xray']
  #        p['test_symptomatic_only']=['true','true','true']
          
          #define size of compartments   
-         high_risk_urban=int(p['total_pop'][0])*float(p['prop_urban'][0])*float(p['degraded'][0])
-         other_high_risk=pop_high_contact                
-         p['init_pop'][1]=high_risk_urban+other_high_risk
-         p['init_pop'][2]=int(p['total_pop'][0])-int(p['init_pop'][0])-int(p['init_pop'][1])
-   
-         num_testkit_types=int(p['num_testkit_types'][0])
-         
-         
-         
-         beta_table = pd.read_csv(initial_betafile,header=None)
-         (rows,cols) = beta_table.shape
-         initial_beta = np.zeros((num_compartments,num_compartments))
-         for i in range(1,num_compartments+1):
-            for j in range(1,num_compartments+1):
-               initial_beta[i-1,j-1] = beta_table.iloc[i,j]
-         
-         beta_original=initial_beta.copy()
-        
-         initial_beta=calibratebeta(num_compartments, initial_beta, p['init_pop'], float(p['beta_pre_inversion'][0]))
-    
-               
-         beta_table = pd.read_csv(final_betafile,header=None)
-         (rows,cols) = beta_table.shape
-         final_beta = np.zeros((num_compartments,num_compartments))
-         for i in range(1,num_compartments+1):
-            for j in range(1,num_compartments+1):
-               final_beta[i-1,j-1] = beta_table.iloc[i,j]
-         
-         final_beta=calibratebeta(num_compartments, final_beta, p['init_pop'], float(p['beta_post_inversion'][0]))
-         
-         print('original beta=', beta_original, 'initial beta=', initial_beta)
-         
+         hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
+         high_risk_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+         other_high_contact=fixed_params['total_pop']*fixed_params['prop_15_64']*fixed_params['prop_woh']
+         p['init_pop'][0]=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
+         p['init_pop'][1]=high_risk_urban+other_high_contact
+         p['init_pop'][2]=fixed_params['total_pop']-hosp_staff-int(p['init_pop'][1])
+         #read in any advanced settings
+# =============================================================================
+#          p['intervention_type']=intervention_type
+#          p['intervention_timing']=intervention_timing
+#          p['symptomatic_only']=symptomatic_only
+#          p['prop_hospital']=prop_hospital
+#          p['prop_other_hc']=prop_other_hc
+# =============================================================================
+# =============================================================================
+#          else: #defaults
+#              p['intervention_type']=2
+#              p['intervention_timing']=2
+#              p['symptomatic_only']=True
+#              p['prop_hospitals']=0.5
+#              p['prop_other_hc']=0.5
+# =============================================================================
+#  Since intervention type can be defined differently for different scenarios this stuff will now be defined in process_scenarios
+# =============================================================================
+# 
+#          pre_beta = float(p['beta_pre_inversion'][0])
+#          #fix post intervention beta according to type of intervention
+#          if intervention_type==0:
+#              post_beta = float(p['beta_pre_inversion'][0])
+#          else:
+#              if intervention_type==1:
+#                  post_beta=float(p['beta_post_inversion_1'][0])
+#              else:
+#                  post_beta=float(p['beta_post_inversion_2'][0])
+#          initial_beta = get_beta(initial_betafile, num_compartments, p['init_pop'], pre_beta)
+#          final_beta = get_beta(final_betafile, num_compartments, p['init_pop'], post_beta)
+# 
+# =============================================================================
+         results = process_scenarios(num_compartments,p,scenarios,scenariosfile)
+         return results
+
+def process_scenarios(num_compartments,p,scenarios,scenariosfile):
+         initial_betafile = 'initial_betas.csv'
+         final_betafile = 'final_betas.csv'
+         scenariosfile='scenarios.csv'
+         num_tests_performed=np.zeros(num_compartments)
+         expert_mode=True
+#read default values for scenarios - these may be richer than the values defined by the expert user
          scenarios_table= pd.read_csv(scenariosfile,header=None)
+# read in user defined values
+         for i in range(0, len(scenarios)):
+             prop_hospital=float(scenarios[i]['prop_hospital'])
+             prop_other_hc=float(scenarios[i]['prop_other_hc'])
+             intervention_type=scenarios[i]['intervention_type']
+             intervention_timing=scenarios[i]['intervention_timing']
+             symptomatic_only=scenarios[i]['symptomatic_only']
+             prop_rop=1-(prop_hospital+prop_other_hc)
+             name_row= pd.Series(['SCENARIO'+str(i+1),'SCENARIO'+str(i+1),None,None,None],index=[0,1,2,3,4])
+             props_row= pd.Series(['SCENARIO'+str(i+1),'prop_tests',prop_hospital, prop_other_hc, prop_rop],index=[0,1,2,3,4])
+             intervention_type_row= pd.Series(['SCENARIO'+str(i+1),'intervention_type',intervention_type,None,None],index=[0,1,2,3,4])
+             intervention_timing_row=pd.Series(['SCENARIO'+str(i+1),'intervention_timing',intervention_timing,None,None],index=[0,1,2,3,4])
+             symptomatic_only_row=pd.Series(['SCENARIO'+str(i+1),'symptomatic_only',symptomatic_only,None,None],index=[0,1,2,3,4])
+   #          custom_dict_2={0:'CUSTOM',1:'init_infected',2:1,3: 1,4: 1}
+   #          scenarios_table=scenarios_table.append(name_row,ignore_index=True)
+             scenarios_table=scenarios_table.append(props_row,ignore_index=True)
+             scenarios_table=scenarios_table.append(intervention_type_row,ignore_index=True)
+             scenarios_table=scenarios_table.append(intervention_timing_row,ignore_index=True)
+             scenarios_table=scenarios_table.append(symptomatic_only_row,ignore_index=True)
          (rows,cols)=scenarios_table.shape
-         num_scenarios=rows-1
+  #       print ('scenarios table=', scenarios_table, 'rows=', rows, 'cols=',cols)
+         scenarios=[]
+         scenario_labels={}
+         scenario_params={}
+         for i in range(0,rows):
+             key = scenarios_table.iloc[i,0]
+             if key in scenario_params:
+                temp=[scenarios_table.iloc[i,1]]
+                for j in range(2,cols):
+                    temp.append(scenarios_table.iloc[i,j])
+                scenario_params[key].append(temp)
+             else: # first instance of scenario key contains name
+                scenario_labels[key] = scenarios_table.iloc[i,1]
+                scenario_params[key]=[]
+                scenarios.append(key)
+         num_scenarios = len(scenario_params)
+#        print(scenarios)
+#        print(scenario_labels)
+#         print('scenario params=',scenario_params)
+
          total_tests_by_scenario=np.zeros(num_scenarios)
          total_deaths_by_scenario=np.zeros(num_scenarios)
          max_infected_by_scenario=np.zeros(num_scenarios)
          max_isolated_by_scenario=np.zeros(num_scenarios)
-         
-         scenarios=[]
-         for i in range(0,num_scenarios+1):
-             aline=[]
-             for j in range(0,cols):
-                 aline.append(scenarios_table.iloc[i,j])
-             scenarios.append(aline)
+
          scenario_names=[]
          dataframes=[]
+
          for i in range(1,num_scenarios+1):
-             scenario_name='SCENARIO'+str(i)+': '+str(scenarios[i][0])
+             key = scenarios[i-1]
+      #       print('i=',i,'key=',key)
+             scenario_name=str(key)+': '+scenario_labels[key]
              scenario_names.append(scenario_name)
              if expert_mode:
                  print ('*************')
-                 print ('SCENARIO ',i,': ', scenarios[i][0])
+                 print ('SCENARIO ',str(i),': ',scenario_labels[key])
                  print ('*************')
              filename = scenario_name+'_out.csv'
-             p['scenario_name']=scenario_name
-             for j in range(1, num_compartments+1):
-               target=scenarios[i][j]
-               p['prop_tests'][j-1]=target
-    #           print('prop tests for scenario ',j,' set to', p['prop_tests'][j-1])
-         
+             p['scenario_name']=scenario_name # JPV: not sure why you need this
+             for param_with_vals in scenario_params[key]:
+        #        print('param_with_vals=', param_with_vals)
+                param = param_with_vals[0]
+       #         print('param=',param)
+                num_vals = len(param_with_vals)
+                for j in range(1, num_vals):
+                  target=param_with_vals[j]
+                  p[param][j-1]=target
+             pre_beta = float(p['beta_pre_inversion'][0])
+#          #fix post intervention beta according to type of intervention
+             if p['intervention_type']==0:
+               post_beta = float(p['beta_pre_inversion'][0])
+             else:
+              if p['intervention_type']==1:
+               post_beta=float(p['beta_post_inversion_1'][0])
+              else:
+               post_beta=float(p['beta_post_inversion_2'][0])
+             initial_beta = get_beta(initial_betafile, num_compartments, p['init_pop'], pre_beta)
+             final_beta = get_beta(final_betafile, num_compartments, p['init_pop'], post_beta)
              beta=initial_beta.copy() #this is essential - otherwise the beta gets modified inside the simulation
 
              df = simulate(num_compartments,p,beta,final_beta)
@@ -219,9 +284,14 @@ def simulate(num_compartments,params,beta, final_beta):
     gamma = (1-infection_fatality_rate)/recovery_period
     test_start = int(params['test_start'][0])
     num_testkit_types=int(params['num_testkit_types'][0])
-    test_symptomatic_only = params['test_symptomatic_only'][0].upper() == 'TRUE'
+    print('symptomatic only=',params['symptomatic_only'][0])
+    test_symptomatic_only = params['symptomatic_only'][0].upper() == 'TRUE'  #There is a system parameter which defines this differentéy
     p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'][0])
     background_rate_symptomatic=float(params['background_rate_symptomatic'][0])
+    intervention_timing=int(params['intervention_timing'][0])
+    intervention_threshold_1=int(params['intervention_threshold_1'][0])
+    intervention_threshold_2=int(params['intervention_threshold_2'][0])
+    intervention_threshold_3=int(params['intervention_threshold_3'][0])
     compartment = []
     init_pop = np.zeros(num_days)
     init_infected = np.zeros(num_days)
@@ -234,6 +304,8 @@ def simulate(num_compartments,params,beta, final_beta):
          init_infected[i] = params['init_infected'][i] 
          prop_tests[i]=float(params['prop_tests'][i])
     for k in range(0,num_testkit_types):
+         sensitivity[k]=float(params['sensitivity'][k])
+         specificity[k]=float(params['specificity'][k])
          num_tests[k]=int(params['num_tests'][k])
  # ############
  # In this version of the code there are only 3 compartments. 
@@ -294,11 +366,25 @@ def simulate(num_compartments,params,beta, final_beta):
     totalisolated=np.zeros(num_compartments)
    
      # calculate new infections day by day for each compartment
-  #  print ('test_symptomatic_only',test_symptomatic_only)
+    if intervention_timing==0:
+        intervention_threshold=float('inf')
+    else:
+        if intervention_timing==1:
+            intervention_threshold=intervention_threshold_1
+        else:
+            if intervention_timing==2:
+                intervention_threshold=intervention_threshold_2
+            else:
+                intervention_threshold=intervention_threshold_3
     for t in range(1,num_days):
        days[t]=t
        #adjust value of betas - we assume they fall linearly with time after the intervention until they reach a lower bound
-       if t > inversion_date:
+ #      if t > inversion_date:
+       total_deaths=0
+       #adds up total number of confirmed cases. If greater than a threshold starts intervention
+       for i in range(0,num_compartments):
+           total_deaths=total_deaths+deaths[t-1,i]
+       if total_deaths>=intervention_threshold:  #intervention happens when number of deaths passes a threshold
            for i in range (0,num_compartments):
                for j in range(0,num_compartments):
                    if beta[i,j]-alpha[i,j] > final_beta[i,j]:
@@ -329,8 +415,8 @@ def simulate(num_compartments,params,beta, final_beta):
                tests_available=prop_tests[i]*num_tests[k]
    #            print ('compartment=',i,' test_type=',k,'prop_tests=', prop_tests[i],'num_tests=',num_tests[k],'tests_available=',tests_available)
                if tests_available>0:
-                   true_positive_rate=float(params['sensitivity'][k])
-                   false_positive_rate=1-float(params['specificity'][k])
+                   true_positive_rate=sensitivity[k]
+                   false_positive_rate=1-specificity[k]
                    if t < test_start:
                       newtested[t-1,i] = 0
                       newisolated[t-1,i] = 0
@@ -341,7 +427,11 @@ def simulate(num_compartments,params,beta, final_beta):
                       else:
                          newtested[t-1,i] = population[t-1,i]
                    if test_symptomatic_only:
-                         total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-1,i]
+                       #CAUTION THIS IS NEW CODE
+                         if t>incubation_period:
+                             total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-incubation_period,i]
+                         else:
+                             total_symptomatic=population[t-1,i]*background_rate_symptomatic
                          if total_symptomatic<tests_available:
                              newtested[t-1,i]=total_symptomatic
                          p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
@@ -516,7 +606,3 @@ def aggregatebeta(n,betas,pops):
    aggb = total/P
    return aggb
      
-
- 
-    
-    
