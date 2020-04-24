@@ -7,6 +7,8 @@ import useFormInput, {
   useTextInput,
 } from '../../hooks/useFormInput';
 
+import './scenario-editor.less';
+
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
   onSubmit?: (scenario: Scenario) => void;
@@ -115,27 +117,29 @@ const ScenarioList: React.FC<{
   onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
   return (
-    <Tabs>
-      <TabList>
-        {scenarios.map(scenario => {
-          return <Tab>{scenario.name}</Tab>;
-        })}
-      </TabList>
-      {scenarios.map((scenario, index) => {
-        const handleSubmit = changedScenario => {
-          const newScenarios = scenarios;
-          newScenarios[index] = changedScenario;
-          onSubmit && onSubmit({ scenarios: newScenarios });
-        };
+    <div className="scenario-list">
+      <Tabs>
+        <TabList>
+          {scenarios.map(scenario => {
+            return <Tab>{scenario.name}</Tab>;
+          })}
+        </TabList>
+        {scenarios.map((scenario, index) => {
+          const handleSubmit = changedScenario => {
+            const newScenarios = scenarios;
+            newScenarios[index] = changedScenario;
+            onSubmit && onSubmit({ scenarios: newScenarios });
+          };
 
-        return (
-          <TabPanel>
-            <h2>{scenario.name}</h2>
-            <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
-          </TabPanel>
-        );
-      })}
-    </Tabs>
+          return (
+            <TabPanel>
+              <h2>{scenario.name}</h2>
+              <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
+            </TabPanel>
+          );
+        })}
+      </Tabs>
+    </div>
   );
 };
 
