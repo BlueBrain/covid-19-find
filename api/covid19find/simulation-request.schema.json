@@ -9,6 +9,7 @@
     "highContactPopulation",
     "urbanPopulationProportion",
     "urbanPopulationInDegradedHousingProportion",
+    "activePopulation",
     "sensitivityPCR",
     "sensitivityRDT",
     "sensitivityXray",
@@ -22,6 +23,10 @@
   "type": "object",
   "properties": {
     "population": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "activePopulation": {
       "type": "integer",
       "minimum": 0
     },
@@ -91,7 +96,7 @@
     },
     "scenarios": {
       "type": "array",
-      "minItems": 3,
+      "minItems": 1,
       "maxItems": 3,
       "items": {
         "type": "object",

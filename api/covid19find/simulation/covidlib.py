@@ -6,7 +6,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import os
 
+cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
 def get_system_params(sysfile):
          
          p = {}
@@ -46,10 +48,10 @@ def get_beta(betafile, n, pops, targetbeta):
 
 def run_simulation(fixed_params, **kwargs):
 
-         sysfile = 'system_params.csv'
-         initial_betafile = 'initial_betas.csv'
-         final_betafile = 'final_betas.csv'
-         scenariosfile='scenarios.csv'
+         sysfile = os.path.join(cl_path_prefix, 'system_params.csv')
+         initial_betafile = os.path.join(cl_path_prefix, 'initial_betas.csv')
+         final_betafile =  os.path.join(cl_path_prefix, 'final_betas.csv')
+         scenariosfile= os.path.join(cl_path_prefix, 'scenarios.csv')
          if len(kwargs)>0:
              scenarios=kwargs['scenarios']
          else:
@@ -117,11 +119,11 @@ def run_simulation(fixed_params, **kwargs):
          return results
 
 def process_scenarios(num_compartments,p,scenarios,scenariosfile):
-         initial_betafile = 'initial_betas.csv'
-         final_betafile = 'final_betas.csv'
-         scenariosfile='scenarios.csv'
+         initial_betafile = os.path.join(cl_path_prefix, 'initial_betas.csv')
+         final_betafile = os.path.join(cl_path_prefix, 'final_betas.csv')
+         scenariosfile= os.path.join(cl_path_prefix, 'scenarios.csv')
          num_tests_performed=np.zeros(num_compartments)
-         expert_mode=True
+         expert_mode=False
 #read default values for scenarios - these may be richer than the values defined by the expert user
          scenarios_table= pd.read_csv(scenariosfile,header=None)
 # read in user defined values
@@ -611,7 +613,7 @@ def aggregatebeta(n,betas,pops):
 
 def getscenarios():
 
-    scenariosfile='scenarios.csv'
+    scenariosfile= os.path.join(cl_path_prefix, 'scenarios.csv')
     scenarios_table= pd.read_csv(scenariosfile,header=None)
     scenarios=[]
     scenario_labels={}

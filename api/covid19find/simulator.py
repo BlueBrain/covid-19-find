@@ -2,26 +2,65 @@ from .simulation.covidlib import run_simulation
 
 
 class Simulator:
+    TIMING_PARAMS = {
+        "never": 0,
+        ">500": 1,
+        ">50": 2,
+        ">10": 3
+    }
+    INTERVENTION_PARAMS = {
+        "no_intervention": 0,
+        "mild_intervention": 1,
+        "lockdown": 2
+    }
 
-    def run(self, total_pop, hospital_beds, staff_per_bed, pop_high_contact, prop_urban, degraded, sensitivity_PCR,
-            sensitivity_RDT, sensitivity_xray, specificity_PCR, specificity_RDT, specificity_xray,
-            num_tests_PCR, num_tests_RDT, num_tests_xray):
-        result = run_simulation(
-            total_pop=total_pop,
-            hospital_beds=hospital_beds,
-            staff_per_bed=staff_per_bed,
-            pop_high_contact=pop_high_contact,
-            prop_urban=prop_urban,
-            degraded=degraded,
-            sensitivity_PCR=sensitivity_PCR,
-            sensitivity_RDT=sensitivity_RDT,
-            sensitivity_xray=sensitivity_xray,
-            specificity_PCR=specificity_PCR,
-            specificity_RDT=specificity_RDT,
-            specificity_xray=specificity_xray,
-            num_tests_PCR=num_tests_PCR,
-            num_tests_RDT=num_tests_RDT,
-            num_tests_xray=num_tests_xray)
+    @staticmethod
+    def get_fixed_parameters(parameters):
+        return {
+            "total_pop": parameters["population"],
+            "hospital_beds": parameters["hospitalBeds"],
+            "prop_15_64": parameters["activePopulation"],
+            "prop_urban": parameters["urbanPopulationProportion"],
+            "prop_below_pl": parameters["urbanPopulationInDegradedHousingProportion"],
+            "prop_woh": 0.4,
+            "staff_per_bed": parameters["hospitalStaffPerBed"],
+            "sensitivity_PCR": parameters["sensitivityPCR"],
+            "sensitivity_RDT": parameters["sensitivityRDT"],
+            "sensitivity_xray": parameters["sensitivityXray"],
+            "specificity_PCR": parameters["specificityPCR"],
+            "specificity_RDT": parameters["specificityRDT"],
+            "specificity_xray": parameters["specificityXray"],
+            "num_tests_PCR": parameters["numTestsPCR"],
+            "num_tests_RDT": parameters["numTestsRDT"],
+            "num_tests_xray": parameters["numTestsXray"]
+        }
+
+    @staticmethod
+    def get_scenario_parameters(parameters):
+        if "scenarios" in parameters:
+            return list(map(Simulator.__map_scenario, parameters["scenarios"]))
+        else:
+            return None
+
+    @staticmethod
+    def __map_scenario(input_scenario):
+        return {
+            "intervention_type": Simulator.INTERVENTION_PARAMS[input_scenario["interventionType"]],
+            "intervention_timing": Simulator.TIMING_PARAMS[input_scenario["interventionTiming"]],
+            "symptomatic_only": str(input_scenario["testSymptomaticOnly"]),
+            "prop_hospital": input_scenario["hospitalTestProportion"],
+            "prop_other_hc": input_scenario["otherHighContactPopulationTestProportion"],
+            "prop_rop": input_scenario["restOfPopulationTestProportion"]
+        }
+
+    def run(self, parameters):
+        scenarios = self.get_scenario_parameters(parameters)
+        print(scenarios)
+        if scenarios is not None:
+            result = run_simulation(self.get_fixed_parameters(parameters), scenarios=scenarios)
+        else:
+            result = run_simulation(self.get_fixed_parameters(parameters))
+
         scenario_data = []
         scenario_dfs = result[0]
         scenario_total_tests = result[1]

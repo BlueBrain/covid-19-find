@@ -57,21 +57,7 @@ def create_app():
         request_data = request.get_json()
         return {
             "scenarios": Simulator().run(
-                total_pop=request_data["population"],
-                hospital_beds=request_data["hospitalBeds"],
-                staff_per_bed=request_data["hospitalStaffPerBed"],
-                pop_high_contact=request_data["highContactPopulation"],
-                prop_urban=request_data["urbanPopulationProportion"],
-                degraded=request_data["urbanPopulationInDegradedHousingProportion"],
-                sensitivity_PCR=request_data["sensitivityPCR"],
-                sensitivity_RDT=request_data["sensitivityRDT"],
-                sensitivity_xray=request_data["sensitivityXray"],
-                specificity_PCR=request_data["specificityPCR"],
-                specificity_RDT=request_data["specificityRDT"],
-                specificity_xray=request_data["specificityXray"],
-                num_tests_PCR=request_data["numTestsPCR"],
-                num_tests_RDT=request_data["numTestsRDT"],
-                num_tests_xray=request_data["numTestsXray"]
+               request_data
             )
         }
 
