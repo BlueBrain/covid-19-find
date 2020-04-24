@@ -49,7 +49,7 @@ class CountryRepository:
         active_population_proportion = None
         active_population_count = nearest["active_pop"][0]
         if active_population_count is not None:
-            active_population_proportion = active_population_count / active_population_proportion
+            active_population_proportion = active_population_count / population
         return {
             "countryCode": country_code,
             "population": self.__int_or_none(population),
