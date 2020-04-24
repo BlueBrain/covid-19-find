@@ -46,10 +46,14 @@ class CountryRepository:
         if over65count is not None:
             over65proportion = over65count / population
 
+        active_population_proportion = None
+        active_population_count = nearest["active_pop"][0]
+        if active_population_count is not None:
+            active_population_proportion = active_population_count / active_population_proportion
         return {
             "countryCode": country_code,
             "population": self.__int_or_none(population),
-            "activePopulation": self.__int_or_none(nearest["active_pop"][0]),
+            "activePopulationProportion": active_population_proportion,
             "urbanPopulationProportion": self.__percentage_to_proportion_or_none(nearest["urban"][0]),
             "urbanPopulationInDegradedHousingProportion": self.__percentage_to_proportion_or_none(
                 nearest["degraded"][0]),

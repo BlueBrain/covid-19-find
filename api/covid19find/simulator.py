@@ -19,7 +19,7 @@ class Simulator:
         return {
             "total_pop": parameters["population"],
             "hospital_beds": parameters["hospitalBeds"],
-            "prop_15_64": parameters["activePopulation"],
+            "prop_15_64": parameters["activePopulationProportion"],
             "prop_urban": parameters["urbanPopulationProportion"],
             "prop_below_pl": parameters["urbanPopulationInDegradedHousingProportion"],
             "prop_woh": 0.4,

@@ -9,7 +9,7 @@
     "highContactPopulation",
     "urbanPopulationProportion",
     "urbanPopulationInDegradedHousingProportion",
-    "activePopulation",
+    "activePopulationProportion",
     "sensitivityPCR",
     "sensitivityRDT",
     "sensitivityXray",
@@ -26,9 +26,10 @@
       "type": "integer",
       "minimum": 0
     },
-    "activePopulation": {
-      "type": "integer",
-      "minimum": 0
+    "activePopulationProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
     },
     "hospitalBeds": {
       "type": "integer",
