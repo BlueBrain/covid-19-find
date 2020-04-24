@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Longitude and Latitude Values",
+  "description": "A geographical coordinate.",
+  "required": [
+    "population",
+    "hospitalBeds",
+    "hospitalStaffPerBed",
+    "highContactPopulation",
+    "urbanPopulationProportion",
+    "urbanPopulationInDegradedHousingProportion",
+    "sensitivityPCR",
+    "sensitivityRDT",
+    "sensitivityXray",
+    "specificityPCR",
+    "specificityRDT",
+    "specificityXray",
+    "numTestsPCR",
+    "numTestsRDT",
+    "numTestsXray"
+  ],
+  "type": "object",
+  "properties": {
+    "population": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hospitalBeds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hospitalStaffPerBed": {
+      "type": "number",
+      "minimum": 0
+    },
+    "highContactPopulation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "urbanPopulationProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "urbanPopulationInDegradedHousingProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sensitivityPCR": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sensitivityRDT": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sensitivityXray": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "specificityPCR": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "specificityRDT": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "specificityXray": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "numTestsPCR": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "numTestsRDT": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "numTestsXray": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "interventionType",
+          "interventionTiming",
+          "testSymptomaticOnly",
+          "hospitalTestProportion",
+          "otherHighContactPopulationTestProportion",
+          "restOfPopulationTestProportion"
+        ],
+        "properties": {
+          "interventionType": {
+            "type": "string",
+            "enum": [
+              "no_intervention",
+              "mild_intervention",
+              "lockdown"
+            ]
+          },
+          "interventionTiming": {
+            "type": "string",
+            "enum": [
+              "never",
+              ">10",
+              ">50",
+              ">500"
+            ]
+          },
+          "testSymptomaticOnly": {
+            "type": "boolean"
+          },
+          "hospitalTestProportion": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "otherHighContactPopulationTestProportion": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "restOfPopulationTestProportion": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    }
+  }
+}

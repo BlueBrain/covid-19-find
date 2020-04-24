@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, Response, send_from_directory, request, make_response
-from werkzeug.exceptions import BadRequestKeyError
+from flask_expects_json import expects_json
 from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import utc
 import json
@@ -47,36 +47,33 @@ def create_app():
     def country_details(country_code):
         return not_found_if_none(country_repo.country_details(country_code), country_code)
 
+    with open(
+            os.path.join(os.path.abspath(os.path.dirname(__file__)), "simulation-request.schema.json")) as schema_file:
+        schema = json.load(schema_file)
+
     @app.route("/api/simulation", methods=['POST'])
+    @expects_json(schema)
     def run_simulation():
-        try:
-            return {
-                "scenarios": Simulator().run(
-                    total_pop=int(request.form["population"]),
-                    hospital_beds=int(request.form["hospitalBeds"]),
-                    staff_per_bed=float(request.form["hospitalStaffPerBed"]),
-                    pop_high_contact=int(request.form["highContactPopulation"]),
-                    prop_urban=float(request.form["urbanPopulationProportion"]),
-                    degraded=float(request.form["urbanPopulationInDegradedHousingProportion"]),
-                    sensitivity_PCR=float(request.form["sensitivityPCR"]),
-                    sensitivity_RDT=float(request.form["sensitivityRDT"]),
-                    sensitivity_xray=float(request.form["sensitivityXray"]),
-                    specificity_PCR=float(request.form["specificityPCR"]),
-                    specificity_RDT=float(request.form["specificityRDT"]),
-                    specificity_xray=float(request.form["specificityXray"]),
-                    num_tests_PCR=int(request.form["numTestsPCR"]),
-                    num_tests_RDT=int(request.form["numTestsRDT"]),
-                    num_tests_xray=int(request.form["numTestsXray"])
-                )
-            }
-        except BadRequestKeyError as bke:
-            return Response(
-                json.dumps({
-                    "status": 400,
-                    "error": "Missing form parameter: '" + bke.args[0] + "'."
-                }),
-                status=400
+        request_data = request.get_json()
+        return {
+            "scenarios": Simulator().run(
+                total_pop=request_data["population"],
+                hospital_beds=request_data["hospitalBeds"],
+                staff_per_bed=request_data["hospitalStaffPerBed"],
+                pop_high_contact=request_data["highContactPopulation"],
+                prop_urban=request_data["urbanPopulationProportion"],
+                degraded=request_data["urbanPopulationInDegradedHousingProportion"],
+                sensitivity_PCR=request_data["sensitivityPCR"],
+                sensitivity_RDT=request_data["sensitivityRDT"],
+                sensitivity_xray=request_data["sensitivityXray"],
+                specificity_PCR=request_data["specificityPCR"],
+                specificity_RDT=request_data["specificityRDT"],
+                specificity_xray=request_data["specificityXray"],
+                num_tests_PCR=request_data["numTestsPCR"],
+                num_tests_RDT=request_data["numTestsRDT"],
+                num_tests_xray=request_data["numTestsXray"]
             )
+        }
 
     @app.route("/api/covid19data/<country_code>")
     def country_covid19_data(country_code):

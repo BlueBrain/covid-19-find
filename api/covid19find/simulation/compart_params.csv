@@ -1,0 +1,17 @@
+compartment,Hospitals,Other high contact,Rest of population
+num_days,200,,
+init_infected,1,1,1
+p_positive_if_symptomatic,0.9,,
+background_rate_symptomatic,0.02,,
+latent_period,3,,
+incubation_period,7,,
+recovery_period,10,,
+inversion_date,45,,
+test_start,45,,
+beta_pre_inversion,0.35,,
+beta_post_inversion,0.06,,
+alpha_post_inversion,35,,
+confirmation_rate,0.2,,
+infection_fatality_rate,0.015,,
+num_testkit_types,3,,
+lower_bound_beta,0.04,,
