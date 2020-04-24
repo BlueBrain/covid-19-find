@@ -17,11 +17,11 @@ const DEFAULT_PARAMS = {
   countryCode: null,
   population: null,
   hospitalBeds: null,
-  highContactPopulation: null,
+  workingOutsideHomeProportion: null,
   urbanPopulationProportion: null,
   hospitalStaffPerBed: 2.5,
   activePopulationProportion: null,
-  urbanPopulationInDegradedHousingProportion: null,
+  belowPovertyLineProportion: null,
   hospitalEmployment: null,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
@@ -110,11 +110,14 @@ const App: React.FC = () => {
           onSubmit={handleSubmit}
         />
         <TestSelector {...queryParams} onSubmit={handleSubmit}>
-          <ScenarioEditor scenarios={queryParams.scenarios} />
+          <ScenarioEditor
+            scenarios={queryParams.scenarios}
+            onSubmit={handleSubmit}
+          />
         </TestSelector>
         <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
-        <Contact />
+        {/* <Contact /> */}
         <Footer />
       </main>
       <ScrollToTop />

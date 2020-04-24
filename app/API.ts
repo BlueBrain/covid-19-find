@@ -64,11 +64,11 @@ export type Scenario = {
 export type SimulationParams = {
   population: number;
   hospitalBeds: number;
-  highContactPopulation: number;
+  workingOutsideHomeProportion: number;
   urbanPopulationProportion: number;
   hospitalStaffPerBed: number;
   activePopulationProportion: number;
-  urbanPopulationInDegradedHousingProportion: number;
+  belowPovertyLineProportion: number;
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
   sensitivityRDT: number;
@@ -130,7 +130,7 @@ export type CountryResponse = {
   over65Proportion: number | null;
   population: number | null;
   remoteAreasPopulationProportion: number | null;
-  urbanPopulationInDegradedHousingProportion: number | null;
+  belowPovertyLineProportion: number | null;
   urbanPopulationProportion: number | null;
 };
 
@@ -165,8 +165,10 @@ export default class API {
       ...simulationParams,
       urbanPopulationProportion:
         simulationParams.urbanPopulationProportion / 100,
-      urbanPopulationInDegradedHousingProportion:
-        simulationParams.urbanPopulationInDegradedHousingProportion / 100,
+      belowPovertyLineProportion:
+        simulationParams.belowPovertyLineProportion / 100,
+      workingOutsideHomeProportion:
+        simulationParams.workingOutsideHomeProportion / 100,
       activePopulationProportion:
         simulationParams.activePopulationProportion / 100,
       scenarios: simulationParams.scenarios.map(scenario => {

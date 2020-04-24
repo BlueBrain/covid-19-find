@@ -4,16 +4,18 @@ import 'react-tabs/style/react-tabs.css';
 import {
   IoIosAddCircleOutline,
   IoIosRemoveCircleOutline,
+  IoIosClose,
+  IoIosAdd,
 } from 'react-icons/io';
 
 import { Scenario } from '../../API';
+import { toLetters } from '../SimulationResults';
 import useFormInput, {
   useCheckbox,
   useTextInput,
 } from '../../hooks/useFormInput';
 
 import './scenario-editor.less';
-import { toLetters } from '../SimulationResults';
 
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
@@ -127,6 +129,15 @@ const ScenarioList: React.FC<{
   onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
   const [visible, setVisible] = React.useState(false);
+
+  // const removeScenario = (index: number) => e => {
+  //   const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
+  //   onSubmit &&
+  //     onSubmit({
+  //       scenarios: newScenarios,
+  //     });
+  // };
+
   return (
     <div className="scenario-editor">
       <h3 className="collapse" onClick={() => setVisible(!visible)}>
@@ -140,7 +151,10 @@ const ScenarioList: React.FC<{
               {scenarios.map((scenario, index) => {
                 return (
                   <Tab>
-                    {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}
+                    {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
+                    {/* <button type="button" onClick={removeScenario(index)}>
+                      <IoIosClose />
+                    </button> */}
                   </Tab>
                 );
               })}

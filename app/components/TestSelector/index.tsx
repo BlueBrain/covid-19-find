@@ -286,12 +286,12 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div>
             </div>
           </div>
-          <div>{children}</div>
           <div className="submit-button">
             <button className="action submit-button" type="submit">
               Submit
             </button>
           </div>
+          <div>{children}</div>
         </div>
         <div className="triangle"></div>
       </section>

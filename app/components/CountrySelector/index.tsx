@@ -13,8 +13,8 @@ export type CountrySelectorResponse = {
   countryCode: string;
   population: number | null;
   hospitalBeds: number | null;
-  highContactPopulation: number | null;
-  urbanPopulationInDegradedHousingProportion: number | null;
+  workingOutsideHomeProportion: number | null;
+  belowPovertyLineProportion: number | null;
   urbanPopulationProportion: number | null;
   hospitalStaffPerBed: number | null;
   hospitalEmployment: number | null;
@@ -45,8 +45,8 @@ const CountrySelector: React.FC<{
     null,
     true,
   );
-  const urbanPopulationInDegradedHousingProportion = useFormInput(
-    countryInfo.urbanPopulationInDegradedHousingProportion,
+  const belowPovertyLineProportion = useFormInput(
+    countryInfo.belowPovertyLineProportion,
     'Enter... [1 - 100]',
     true,
   );
@@ -56,8 +56,8 @@ const CountrySelector: React.FC<{
     null,
     true,
   );
-  const highContactPopulation = useFormInput(
-    countryInfo.highContactPopulation,
+  const workingOutsideHomeProportion = useFormInput(
+    countryInfo.workingOutsideHomeProportion,
     null,
     true,
   );
@@ -116,10 +116,9 @@ const CountrySelector: React.FC<{
         hospitalEmployment: hospitalEmployment.value,
         hospitalBeds: hospitalBeds.value,
         hospitalStaffPerBed: hospitalStaffPerBed.value,
-        highContactPopulation: highContactPopulation.value,
+        workingOutsideHomeProportion: workingOutsideHomeProportion.value,
         urbanPopulationProportion: urbanPopulationProportion.value,
-        urbanPopulationInDegradedHousingProportion:
-          urbanPopulationInDegradedHousingProportion.value,
+        belowPovertyLineProportion: belowPovertyLineProportion.value,
         activePopulationProportion: activePopulationProportion.value,
       });
   };
@@ -199,25 +198,23 @@ const CountrySelector: React.FC<{
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
               <label>
-                % urban population in
+                % population below the
                 <br />
-                degraded housing
+                poverty line
               </label>
               <input
-                {...urbanPopulationInDegradedHousingProportion}
+                {...belowPovertyLineProportion}
                 required
                 min="0"
                 max="100"
                 type="number"
               />
-              <a data-tip data-for="highContactPopulation-tooltip">
+              <a data-tip data-for="workingOutsideHomeProportion-tooltip">
                 <label>
-                  population high
-                  <br />
-                  contact occupations <IoIosInformationCircleOutline />
+                  % people working outside <IoIosInformationCircleOutline />
                 </label>
               </a>
-              <ReactTooltip id="highContactPopulation-tooltip">
+              <ReactTooltip id="workingOutsideHomeProportion-tooltip">
                 <p>
                   This number represents the % of the population whose
                   occupation requires an unavoidably high level of contact with
@@ -229,9 +226,10 @@ const CountrySelector: React.FC<{
                 </p>
               </ReactTooltip>
               <input
-                {...highContactPopulation}
+                {...workingOutsideHomeProportion}
                 required
                 min="0"
+                max="100"
                 type="number"
               />
               <label>% Active Population</label>
