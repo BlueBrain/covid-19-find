@@ -18,6 +18,7 @@ export type CountrySelectorResponse = {
   urbanPopulationProportion: number | null;
   hospitalStaffPerBed: number | null;
   hospitalEmployment: number | null;
+  activePopulation: number | null;
 };
 
 const CountrySelector: React.FC<{
@@ -57,6 +58,11 @@ const CountrySelector: React.FC<{
   );
   const highContactPopulation = useFormInput(
     countryInfo.highContactPopulation,
+    null,
+    true,
+  );
+  const activePopulation = useFormInput(
+    countryInfo.activePopulation,
     null,
     true,
   );
@@ -114,6 +120,7 @@ const CountrySelector: React.FC<{
         urbanPopulationProportion: urbanPopulationProportion.value,
         urbanPopulationInDegradedHousingProportion:
           urbanPopulationInDegradedHousingProportion.value,
+        activePopulation: activePopulation.value,
       });
   };
 
@@ -227,6 +234,8 @@ const CountrySelector: React.FC<{
                 min="0"
                 type="number"
               />
+              <label>Active Population</label>
+              <input {...activePopulation} required min="0" type="number" />
             </div>
           </div>
           <div className="world">

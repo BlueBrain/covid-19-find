@@ -64,6 +64,7 @@ export type SimulationParams = {
   highContactPopulation: number;
   urbanPopulationProportion: number;
   hospitalStaffPerBed: number;
+  activePopulation: number;
   urbanPopulationInDegradedHousingProportion: number;
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
@@ -141,9 +142,12 @@ export default class API {
   }
 
   country(countryCode: string): Promise<CountryResponse> {
-    return fetch(`${this.base}/countries/${countryCode}`).then(response =>
-      response.json(),
-    );
+    return fetch(`${this.base}/countries/${countryCode}`)
+      .then(response => response.json())
+      .then(response => ({
+        ...response,
+        urbanPopulationProportion: response.urbanPopulationProportion * 100,
+      }));
   }
 
   countryCovidData(countryCode: string) {
