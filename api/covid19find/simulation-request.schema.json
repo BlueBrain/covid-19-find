@@ -6,9 +6,9 @@
     "population",
     "hospitalBeds",
     "hospitalStaffPerBed",
-    "highContactPopulation",
+    "workingOutsideHomeProportion",
     "urbanPopulationProportion",
-    "urbanPopulationInDegradedHousingProportion",
+    "belowPovertyLineProportion",
     "activePopulationProportion",
     "sensitivityPCR",
     "sensitivityRDT",
@@ -39,16 +39,17 @@
       "type": "number",
       "minimum": 0
     },
-    "highContactPopulation": {
-      "type": "integer",
-      "minimum": 0
+    "workingOutsideHomeProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
     },
     "urbanPopulationProportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1
     },
-    "urbanPopulationInDegradedHousingProportion": {
+    "belowPovertyLineProportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1
