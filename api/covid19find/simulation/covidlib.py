@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def get_system_params(sysfile):
-
+         
          p = {}
 
          sysp = pd.read_csv(sysfile,header=None)
@@ -44,13 +44,16 @@ def get_beta(betafile, n, pops, targetbeta):
          result = calibratebeta(n, beta, pops, targetbeta)
          return result
 
-def run_simulation(fixed_params, scenarios):
+def run_simulation(fixed_params, **kwargs):
 
          sysfile = 'system_params.csv'
          initial_betafile = 'initial_betas.csv'
          final_betafile = 'final_betas.csv'
          scenariosfile='scenarios.csv'
-
+         if len(kwargs)>0:
+             scenarios=kwargs['scenarios']
+         else:
+             scenarios=[]
          p = get_system_params(sysfile)
          num_compartments = int(p['num_compartments'][0])
          num_testkit_types=int(p['num_testkit_types'][0])
@@ -96,7 +99,7 @@ def run_simulation(fixed_params, scenarios):
 # =============================================================================
 #  Since intervention type can be defined differently for different scenarios this stuff will now be defined in process_scenarios
 # =============================================================================
-#
+# 
 #          pre_beta = float(p['beta_pre_inversion'][0])
 #          #fix post intervention beta according to type of intervention
 #          if intervention_type==0:
@@ -108,7 +111,7 @@ def run_simulation(fixed_params, scenarios):
 #                  post_beta=float(p['beta_post_inversion_2'][0])
 #          initial_beta = get_beta(initial_betafile, num_compartments, p['init_pop'], pre_beta)
 #          final_beta = get_beta(final_betafile, num_compartments, p['init_pop'], post_beta)
-#
+# 
 # =============================================================================
          results = process_scenarios(num_compartments,p,scenarios,scenariosfile)
          return results
@@ -605,4 +608,48 @@ def aggregatebeta(n,betas,pops):
      total = total + col_sum*pops[j]
    aggb = total/P
    return aggb
-     
+
+def getscenarios():
+
+    scenariosfile='scenarios.csv'
+    scenarios_table= pd.read_csv(scenariosfile,header=None)
+    scenarios=[]
+    scenario_labels={}
+    scenario_params={}
+
+    p={}
+    (rows,cols)=scenarios_table.shape
+    for i in range(0,rows):
+        key = scenarios_table.iloc[i,0]
+        if key in scenario_params:
+           temp=[scenarios_table.iloc[i,1]]
+           for j in range(2,cols):
+               temp.append(scenarios_table.iloc[i,j])
+           scenario_params[key].append(temp)
+        else: # first instance of scenario key contains name
+           scenario_labels[key] = scenarios_table.iloc[i,1]
+           scenario_params[key]=[]
+           scenarios.append(key)
+    num_scenarios = len(scenario_params)
+    scenario_names=[]
+    scenario_array=[]
+
+    print('scenario_array=',scenario_array)
+    for i in range(1,num_scenarios+1):
+             row_dict={}
+             key = scenarios[i-1]
+             scenario_name=str(key)+': '+scenario_labels[key]
+             scenario_names.append(scenario_name)
+             for param_with_vals in scenario_params[key]:
+                param = param_with_vals[0]
+                print ('scenario',i, 'param', param)
+                if param =='prop_tests':
+                    row_dict.update({'prop_hospitals':float(param_with_vals[1])})
+                    row_dict.update({'prop_other_hc':float(param_with_vals[2])})
+                else:
+                    if param in ['intervention_type','intervention_timing','symptomatic_only']:
+                        value=param_with_vals[1]
+                        row_dict.update({param:value})
+
+             scenario_array.append(row_dict)
+    return(scenario_array)
