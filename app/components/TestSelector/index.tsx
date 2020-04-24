@@ -5,7 +5,6 @@ import useFormInput from '../../hooks/useFormInput';
 import './test-selector.less';
 import ReactTooltip from 'react-tooltip';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
-import ScenarioEditor from '../ScenarioEditor';
 
 export type TestSelectorVales = {
   sensitivityPCR?: number;
@@ -32,6 +31,7 @@ const TestSelector: React.FC<TestSelectorVales & {
   numTestsRDT,
   numTestsXray,
   onSubmit,
+  children,
 }) => {
   const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
   const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
@@ -286,9 +286,7 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div>
             </div>
           </div>
-          {/* <div>
-            <ScenarioEditor />
-          </div> */}
+          <div>{children}</div>
           <div className="submit-button">
             <button className="action submit-button" type="submit">
               Submit

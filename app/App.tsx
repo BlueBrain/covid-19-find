@@ -11,6 +11,7 @@ import { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
 import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import ScenarioEditor from './components/ScenarioEditor';
 
 const DEFAULT_PARAMS = {
   countryCode: null,
@@ -18,7 +19,7 @@ const DEFAULT_PARAMS = {
   hospitalBeds: null,
   highContactPopulation: null,
   urbanPopulationProportion: null,
-  hospitalStaffPerBed: 4,
+  hospitalStaffPerBed: 2.5,
   urbanPopulationInDegradedHousingProportion: null,
   hospitalEmployment: null,
   sensitivityPCR: 0.95,
@@ -107,7 +108,9 @@ const App: React.FC = () => {
           values={queryParams as SimulationParams}
           onSubmit={handleSubmit}
         />
-        <TestSelector {...queryParams} onSubmit={handleSubmit} />
+        <TestSelector {...queryParams} onSubmit={handleSubmit}>
+          <ScenarioEditor scenarios={queryParams.scenarios} />
+        </TestSelector>
         <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
         <Contact />
