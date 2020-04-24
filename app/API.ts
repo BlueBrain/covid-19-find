@@ -64,7 +64,7 @@ export type SimulationParams = {
   highContactPopulation: number;
   urbanPopulationProportion: number;
   hospitalStaffPerBed: number;
-  activePopulation: number;
+  activePopulationProportion: number;
   urbanPopulationInDegradedHousingProportion: number;
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
@@ -147,6 +147,7 @@ export default class API {
       .then(response => ({
         ...response,
         urbanPopulationProportion: response.urbanPopulationProportion * 100,
+        activePopulationProportion: response.activePopulationProportion * 100,
       }));
   }
 
@@ -163,6 +164,8 @@ export default class API {
         simulationParams.urbanPopulationProportion / 100,
       urbanPopulationInDegradedHousingProportion:
         simulationParams.urbanPopulationInDegradedHousingProportion / 100,
+      activePopulationProportion:
+        simulationParams.activePopulationProportion / 100,
       scenarios: simulationParams.scenarios.map(scenario => {
         return {
           ...scenario,

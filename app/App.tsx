@@ -20,6 +20,7 @@ const DEFAULT_PARAMS = {
   highContactPopulation: null,
   urbanPopulationProportion: null,
   hospitalStaffPerBed: 2.5,
+  activePopulationProportion: null,
   urbanPopulationInDegradedHousingProportion: null,
   hospitalEmployment: null,
   sensitivityPCR: 0.95,

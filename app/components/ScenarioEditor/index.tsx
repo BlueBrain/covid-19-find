@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import {
+  IoIosAddCircleOutline,
+  IoIosRemoveCircleOutline,
+} from 'react-icons/io';
+
 import { Scenario } from '../../API';
 import useFormInput, {
   useCheckbox,
@@ -116,29 +121,38 @@ const ScenarioList: React.FC<{
   scenarios: Scenario[];
   onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
+  const [visible, setVisible] = React.useState(false);
   return (
-    <div className="scenario-list">
-      <Tabs>
-        <TabList>
-          {scenarios.map(scenario => {
-            return <Tab>{scenario.name}</Tab>;
-          })}
-        </TabList>
-        {scenarios.map((scenario, index) => {
-          const handleSubmit = changedScenario => {
-            const newScenarios = scenarios;
-            newScenarios[index] = changedScenario;
-            onSubmit && onSubmit({ scenarios: newScenarios });
-          };
+    <div className="scenario-editor">
+      <h3 onClick={() => setVisible(!visible)}>
+        {visible ? <IoIosRemoveCircleOutline /> : <IoIosAddCircleOutline />}{' '}
+        Advanced parameters
+      </h3>
+      {visible && (
+        <div className="scenario-list">
+          <Tabs>
+            <TabList>
+              {scenarios.map(scenario => {
+                return <Tab>{scenario.name}</Tab>;
+              })}
+            </TabList>
+            {scenarios.map((scenario, index) => {
+              const handleSubmit = changedScenario => {
+                const newScenarios = scenarios;
+                newScenarios[index] = changedScenario;
+                onSubmit && onSubmit({ scenarios: newScenarios });
+              };
 
-          return (
-            <TabPanel>
-              <h2>{scenario.name}</h2>
-              <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
-            </TabPanel>
-          );
-        })}
-      </Tabs>
+              return (
+                <TabPanel>
+                  <h2>{scenario.name}</h2>
+                  <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
+                </TabPanel>
+              );
+            })}
+          </Tabs>
+        </div>
+      )}
     </div>
   );
 };
