@@ -44,7 +44,12 @@ const Simulation: React.FC<{ simulationParams?: SimulationParams }> = ({
       });
   }, [simulationParams]);
 
-  return <SimulationResults {...simulationData} />;
+  return (
+    <SimulationResults
+      {...simulationData}
+      scenarios={simulationParams.scenarios}
+    />
+  );
 };
 
 export default Simulation;

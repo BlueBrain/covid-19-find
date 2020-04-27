@@ -31,6 +31,7 @@ const TestSelector: React.FC<TestSelectorVales & {
   numTestsRDT,
   numTestsXray,
   onSubmit,
+  children,
 }) => {
   const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
   const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
@@ -290,6 +291,7 @@ const TestSelector: React.FC<TestSelectorVales & {
               Submit
             </button>
           </div>
+          <div>{children}</div>
         </div>
         <div className="triangle"></div>
       </section>

@@ -72,11 +72,11 @@ const Countries: React.FC<{
   const selectCountry = (countryCode: string) => {
     onSubmit({
       countryCode,
-      highContactPopulation: null,
+      workingOutsideHomeProportion: null,
       hospitalBeds: null,
       hospitalEmployment: null,
       population: null,
-      urbanPopulationInDegradedHousingProportion: null,
+      belowPovertyLineProportion: null,
       urbanPopulationProportion: null,
     });
   };

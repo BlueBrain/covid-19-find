@@ -16,6 +16,7 @@ def test_class(code, year, age):
 
     print("\nExact data for %s in %s:" % (country.name, country.year))
     print_message(["Total population:"], [country.get_population()])
+    print_message(["Active population:"], [country.get_active_pop()])
     print_message(["Hospital beds per 1000:"], [country.get_hosp_beds()])
     print_message(["Total hospital beds:"], [country.get_total_beds()])
     print_message(["Percent urbanized:"], [country.get_pcnt_urban()])
@@ -25,6 +26,7 @@ def test_class(code, year, age):
     nearest = country.search_avail_stats()
     print("\nNearest available data for %s:" % country.name)
     print_message(["Total population:", "year:"], [nearest["pop"][0], nearest["pop"][1]])
+    print_message(["Active population:", "year:"], [nearest["active_pop"][0], nearest["active_pop"][1]])
     print_message(["Hospital beds per 1000:", "year:"], [nearest["hosp_beds"][0], nearest["hosp_beds"][1]])
     print_message(["Total hospital beds:"], [(nearest["pop"][0] / 1000.0)*nearest["hosp_beds"][0]])
     print_message(["Percent urbanized:", "year:"], [nearest["urban"][0], nearest["urban"][1]])

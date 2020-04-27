@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
-import { Scenarios } from '../../API';
+import { Scenarios, Scenario } from '../../API';
 import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
@@ -11,7 +11,7 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 
 export type SimulationResultsData = any;
 
-function toLetters(num: number): string {
+export function toLetters(num: number): string {
   var mod = num % 26,
     pow = (num / 26) | 0,
     out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
@@ -22,7 +22,8 @@ const SimulationResults: React.FC<{
   loading: boolean;
   error: Error | null;
   data: Scenarios | null;
-}> = ({ loading, error, data }) => {
+  scenarios: Scenario[];
+}> = ({ loading, error, data, scenarios }) => {
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
   const open = !!data;
 
@@ -30,24 +31,6 @@ const SimulationResults: React.FC<{
   const isMobile = screenWidth.width < 400;
 
   const selectedScenario = (data || [])[selectedScenarioIndex];
-
-  const descriptions = [
-    {
-      name: 'Baseline',
-      description:
-        'This imaginary scenario shows the predicted course of the epidemic, with no Intervention of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
-    },
-    {
-      name: 'Identify/isolate infected people',
-      description:
-        'In this scenario, 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers whose work requires a high level of contact with the public; people living in degraded housing in large cities). Tests are limited to individuals already showing symptoms. The goal is to identify and isolate the highest possible number of infected people, helping to slow down or reverse the course of the epidemic',
-    },
-    {
-      name: 'Protect hospital capabilities',
-      description:
-        'In this scenario, all available tests are used to test hospital staff, if possible repeatedly.  Tests are limited to individuals already showing symptoms. The goal is to reduce the burden of the epidemic on hospital staff, preserving the capabilities necessary to help others.',
-    },
-  ];
 
   const labels = union(
     ...(data || []).map(entry => entry.data.map(entry => entry.days)),
@@ -170,9 +153,9 @@ const SimulationResults: React.FC<{
           <>
             <div className="scenario-description">
               <h2 className="underline">
-                {descriptions[selectedScenarioIndex].name}
+                {scenarios[selectedScenarioIndex].name}
               </h2>
-              <p>{descriptions[selectedScenarioIndex].description}</p>{' '}
+              <p>{scenarios[selectedScenarioIndex].description}</p>{' '}
             </div>
             <div className="comparison">
               <div className="chart" key={`chart-cross-scenario-comparison`}>

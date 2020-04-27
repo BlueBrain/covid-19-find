@@ -7,19 +7,21 @@ import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import About from './components/About';
-import { SimulationParams } from './API';
+import { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
 import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import ScenarioEditor from './components/ScenarioEditor';
 
 const DEFAULT_PARAMS = {
   countryCode: null,
   population: null,
   hospitalBeds: null,
-  highContactPopulation: null,
+  workingOutsideHomeProportion: null,
   urbanPopulationProportion: null,
-  hospitalStaffPerBed: 4,
-  urbanPopulationInDegradedHousingProportion: null,
+  hospitalStaffPerBed: 2.5,
+  activePopulationProportion: null,
+  belowPovertyLineProportion: null,
   hospitalEmployment: null,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
@@ -30,14 +32,25 @@ const DEFAULT_PARAMS = {
   numTestsPCR: 1000,
   numTestsRDT: 1000,
   numTestsXray: 1000,
+  scenarios: DEFAULT_SCENARIO_LIST,
 };
 
 const App: React.FC = () => {
-  const [queryParams, setQueryParams] = useQueryString();
+  const [queryParams, setQueryParams] = useQueryString({
+    // nested values edgecase
+    // to prevent [object Object] in url
+    scenarios: {
+      parse: entry => JSON.parse(entry),
+      stringify: entry => JSON.stringify(entry),
+    },
+  });
+
+  console.log({ queryParams });
 
   React.useEffect(() => {
     // Implement default values
     const [, countryCode] = navigator.language.split('-');
+
     setQueryParams({
       ...DEFAULT_PARAMS,
       countryCode,
@@ -45,11 +58,15 @@ const App: React.FC = () => {
     });
   }, []);
 
-  const handleSubmit = changedValues => {
+  const handleSubmit = (changedValues, skipScroll = false) => {
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
+
+    if (skipScroll) {
+      return;
+    }
 
     const forms: HTMLFormElement[] = [
       document.querySelector('#country-select-form'),
@@ -96,10 +113,15 @@ const App: React.FC = () => {
           values={queryParams as SimulationParams}
           onSubmit={handleSubmit}
         />
-        <TestSelector {...queryParams} onSubmit={handleSubmit} />
+        <TestSelector {...queryParams} onSubmit={handleSubmit}>
+          <ScenarioEditor
+            scenarios={queryParams.scenarios}
+            onSubmit={handleSubmit}
+          />
+        </TestSelector>
         <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
-        <Contact />
+        {/* <Contact /> */}
         <Footer />
       </main>
       <ScrollToTop />

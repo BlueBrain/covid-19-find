@@ -28,6 +28,19 @@ class Country:
             #print("Population data not available for %s in %i" % (self.name, self.year))
             self.pop = None
 
+    def set_active_pop(self, data):
+        key = data["country"]
+        units = data["units"]
+        df = data["data"]
+        try:
+            df = df.loc[df[key] == self.code]
+            active_pop = df[str(self.year)].values
+            active_pop = int(active_pop[0])
+            self.active_pop = active_pop * units * self.pop  # multiply by total pop since dataset is in % of total pop
+        except KeyError:
+            #print("Population data not available for %s in %i" % (self.name, self.year))
+            self.active_pop = None
+
     def set_pcnt_urban(self, data):
         key = data["country"]
         units = data["units"]
@@ -92,6 +105,7 @@ class Country:
 
         self.set_name(config.total_pop)
         self.set_population(config.total_pop)
+        self.set_active_pop(config.active_pop)
         self.set_pcnt_urban(config.pcnt_urban)
         self.set_pcnt_degraded()
         self.set_overX(config.age_distr)
@@ -123,7 +137,10 @@ class Country:
         if not closest_year:
             return (None, None)
         val = int(col.loc[closest_year].values[0])
-        return (val * units, str(closest_year))
+        if attr == "active_pop":
+            return (val * units * self.pop, str(closest_year))
+        else:
+            return (val * units, str(closest_year))
 
     def get_total_beds(self):
         if self.pop is None or self.hosp_beds is None:
@@ -133,8 +150,8 @@ class Country:
 
     def search_avail_stats(self):
         subs = {}
-        datasets = [config.total_pop, config.pcnt_urban, None, config.age_distr, config.hospital_beds, None, None]
-        attrs = ["pop", "urban", "degraded", "overX", "hosp_beds", "high_contact", "remote"]
+        datasets = [config.total_pop, config.active_pop, config.pcnt_urban, None, config.age_distr, config.hospital_beds, None, None]
+        attrs = ["pop", "active_pop", "urban", "degraded", "overX", "hosp_beds", "high_contact", "remote"]
         for data, attr in zip(datasets, attrs):
             subs[attr] = (getattr(self, attr), str(self.year))
             if getattr(self, attr) is None:
@@ -144,6 +161,9 @@ class Country:
 
     def get_population(self):
         return self.pop
+
+    def get_active_pop(self):
+        return self.active_pop
 
     def get_pcnt_urban(self):
         return self.urban
