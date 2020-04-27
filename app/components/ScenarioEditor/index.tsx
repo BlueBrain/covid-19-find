@@ -99,7 +99,7 @@ const ScenarioEditor: React.FC<{
             );
           })}
         </select>
-        <label>Intervention Timings</label>
+        <label>Number of deaths before intervention</label>
         <select onChange={interventionTiming.onChange}>
           {interventionTimings.map(({ value, label }) => {
             return (
@@ -156,7 +156,7 @@ const ScenarioEditor: React.FC<{
           type="number"
           required
         />
-        <button type="submit">Save</button>
+        <button type="submit">Submit</button>
       </div>
     </form>
   );
