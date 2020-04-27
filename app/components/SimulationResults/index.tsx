@@ -165,7 +165,7 @@ const SimulationResults: React.FC<{
                     const data = datasets.map(dataset => {
                       const totalDeaths = Object.values(dataset.data).reduce(
                         (memo: number, entry: { Deaths: number }) =>
-                          memo + entry.Deaths,
+                          memo + entry['New Deaths'],
                         0,
                       );
                       const totalInfected = Object.values(dataset.data).reduce(
@@ -185,7 +185,6 @@ const SimulationResults: React.FC<{
                         ) => memo + entry['Infected in Hospitals'],
                         0,
                       );
-
                       const data = {
                         totalDeaths,
                         totalInfected,

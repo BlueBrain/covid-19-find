@@ -124,11 +124,11 @@ const App: React.FC = () => {
         <Countries
           values={queryParams as SimulationParams}
           onSubmit={values => {
-            // Reset scenarios if country code changes.
+            // Reset all values if country code is changed
             if (values.countryCode !== queryParams.countryCode) {
               handleSubmit({
-                ...values,
-                scenarios: DEFAULT_PARAMS.scenarios,
+                ...DEFAULT_PARAMS,
+                countryCode: values.countryCode,
               });
               return;
             }

@@ -18,7 +18,7 @@ export const useFormInput = (
   }, [initialValue, override]);
 
   return {
-    value: value,
+    value: value || '',
     onChange: onHandleChange,
     placeholder: placeholder || 'Enter... ',
   };
