@@ -127,7 +127,8 @@ def process_scenarios(num_compartments,p,scenarios,scenariosfile):
 #read default values for scenarios - these may be richer than the values defined by the expert user
          scenarios_table= pd.read_csv(scenariosfile,header=None)
 # read in user defined values
-         for i in range(0, len(scenarios)):
+         num_scenarios=len(scenarios)
+         for i in range(0, num_scenarios):
              prop_hospital=float(scenarios[i]['prop_hospital'])
              prop_other_hc=float(scenarios[i]['prop_other_hc'])
              intervention_type=scenarios[i]['intervention_type']
@@ -161,7 +162,6 @@ def process_scenarios(num_compartments,p,scenarios,scenariosfile):
                 scenario_labels[key] = scenarios_table.iloc[i,1]
                 scenario_params[key]=[]
                 scenarios.append(key)
-         num_scenarios = len(scenario_params)
 #        print(scenarios)
 #        print(scenario_labels)
 #         print('scenario params=',scenario_params)
