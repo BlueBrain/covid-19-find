@@ -59,16 +59,16 @@ const App: React.FC = () => {
   // Key presses
   // Don't allow enter to submit form
   React.useEffect(() => {
-    const handleEnterPress = (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault(); 
+    const handleEnterPress = event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
       }
-    }
+    };
     window.addEventListener('keydown', handleEnterPress);
     return () => {
-      window.removeEventListener('keydown', handleEnterPress)
-    }
-  }, [])
+      window.removeEventListener('keydown', handleEnterPress);
+    };
+  }, []);
 
   const handleSubmit = (changedValues, skipScroll = false) => {
     setQueryParams({
@@ -128,7 +128,7 @@ const App: React.FC = () => {
             if (values.countryCode !== queryParams.countryCode) {
               handleSubmit({
                 ...values,
-                scenarios: DEFAULT_PARAMS.scenarios;
+                scenarios: DEFAULT_PARAMS.scenarios,
               });
               return;
             }
