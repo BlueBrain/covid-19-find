@@ -144,16 +144,6 @@ const CovidResults: React.FC<{
           data={{
             backgroundColor: '#fff',
             datasets: [
-              // {
-              //   label: 'Current Active',
-              //   data: chartData.map(entry => entry.currentActive),
-              //   borderColor: [colors.aubergine],
-              //   backgroundColor: [
-              //     Color(colors.aubergine)
-              //       .alpha(0.2)
-              //       .toString(),
-              //   ],
-              // },
               {
                 label: 'New Cases',
                 data: chartData.map(

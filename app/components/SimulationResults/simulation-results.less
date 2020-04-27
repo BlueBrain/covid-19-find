@@ -23,7 +23,8 @@ ul.scenarios {
   }
 }
 
-.charts {
+.charts,
+.groups {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
@@ -42,6 +43,18 @@ ul.scenarios {
   }
 }
 
+.scenario-description {
+  @media (max-width: 750px) {
+    display: block;
+  }
+  .comparison {
+    margin-left: 2em;
+    @media (max-width: 750px) {
+      margin: 0;
+    }
+  }
+}
+
 .scenario-description,
 .disclaimer-text {
   .roboto-light;
@@ -52,4 +65,13 @@ ul.scenarios {
 
 .disclaimer-text {
   margin-top: 2rem;
+}
+
+.comparison {
+  .graph {
+    max-width: 33%;
+    @media (max-width: 750px) {
+      max-width: 100%;
+    }
+  }
 }
