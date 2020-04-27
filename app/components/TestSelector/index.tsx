@@ -35,13 +35,13 @@ const TestSelector: React.FC<TestSelectorVales & {
 }) => {
   const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
   const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
-  const sensitivityXrayInput = useFormInput(sensitivityXray, null, true);
+  // const sensitivityXrayInput = useFormInput(sensitivityXray, null, true);
   const specificityPCRInput = useFormInput(specificityPCR, null, true);
   const specificityRDTInput = useFormInput(specificityRDT, null, true);
-  const specificityXrayInput = useFormInput(specificityXray, null, true);
+  // const specificityXrayInput = useFormInput(specificityXray, null, true);
   const numTestsPCRInput = useFormInput(numTestsPCR, null, true);
   const numTestsRDTInput = useFormInput(numTestsRDT, null, true);
-  const numTestsXrayInput = useFormInput(numTestsXray, null, true);
+  // const numTestsXrayInput = useFormInput(numTestsXray, null, true);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -50,13 +50,13 @@ const TestSelector: React.FC<TestSelectorVales & {
       onSubmit({
         sensitivityPCR: sensitivityPCRInput.value,
         sensitivityRDT: sensitivityRDTInput.value,
-        sensitivityXray: sensitivityXrayInput.value,
+        // sensitivityXray: sensitivityXrayInput.value,
         specificityPCR: specificityPCRInput.value,
         specificityRDT: specificityRDTInput.value,
-        specificityXray: specificityXrayInput.value,
+        // specificityXray: specificityXrayInput.value,
         numTestsPCR: numTestsPCRInput.value,
         numTestsRDT: numTestsRDTInput.value,
-        numTestsXray: numTestsXrayInput.value,
+        // numTestsXray: numTestsXrayInput.value,
       });
   };
 
@@ -224,7 +224,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                   </div>
                 </div>
               </div>
-              <div className="input test-box">
+              {/* <div className="input test-box">
                 <p className="test-description">
                   Maximal deployment of
                   <br />
@@ -283,7 +283,7 @@ const TestSelector: React.FC<TestSelectorVales & {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="submit-button">

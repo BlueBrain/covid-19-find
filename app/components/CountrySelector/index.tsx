@@ -198,7 +198,7 @@ const CountrySelector: React.FC<{
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
               <label>
-                % population below the
+                % urban population below the
                 <br />
                 poverty line
               </label>
@@ -211,7 +211,8 @@ const CountrySelector: React.FC<{
               />
               <a data-tip data-for="workingOutsideHomeProportion-tooltip">
                 <label>
-                  % people working outside <IoIosInformationCircleOutline />
+                  % people working outside home{' '}
+                  <IoIosInformationCircleOutline />
                 </label>
               </a>
               <ReactTooltip id="workingOutsideHomeProportion-tooltip">

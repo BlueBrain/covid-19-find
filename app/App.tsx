@@ -25,13 +25,13 @@ const DEFAULT_PARAMS = {
   hospitalEmployment: null,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
-  sensitivityXray: 0.9,
+  sensitivityXray: 0,
   specificityPCR: 0.95,
   specificityRDT: 0.9,
-  specificityXray: 0.9,
+  specificityXray: 0,
   numTestsPCR: 1000,
   numTestsRDT: 1000,
-  numTestsXray: 1000,
+  numTestsXray: 0,
   scenarios: DEFAULT_SCENARIO_LIST,
 };
 
@@ -45,8 +45,6 @@ const App: React.FC = () => {
     },
   });
 
-  console.log({ queryParams });
-
   React.useEffect(() => {
     // Implement default values
     const [, countryCode] = navigator.language.split('-');
@@ -56,6 +54,20 @@ const App: React.FC = () => {
       countryCode,
       ...queryParams,
     });
+  }, []);
+
+  // Key presses
+  // Don't allow enter to submit form
+  React.useEffect(() => {
+    const handleEnterPress = event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', handleEnterPress);
+    return () => {
+      window.removeEventListener('keydown', handleEnterPress);
+    };
   }, []);
 
   const handleSubmit = (changedValues, skipScroll = false) => {
@@ -111,7 +123,18 @@ const App: React.FC = () => {
         <TopSection />
         <Countries
           values={queryParams as SimulationParams}
-          onSubmit={handleSubmit}
+          onSubmit={values => {
+            // Reset scenarios if country code changes.
+            if (values.countryCode !== queryParams.countryCode) {
+              handleSubmit({
+                ...values,
+                scenarios: DEFAULT_PARAMS.scenarios,
+              });
+              return;
+            }
+
+            handleSubmit(values);
+          }}
         />
         <TestSelector {...queryParams} onSubmit={handleSubmit}>
           <ScenarioEditor

@@ -37,17 +37,17 @@ const SimulationResults: React.FC<{
   );
   const graphs = [
     {
-      title: 'Deaths',
+      title: 'New Deaths',
       key: 'new_deaths',
       color: colors.pomegranate,
     },
     {
-      title: 'Confirmed',
+      title: 'New Confirmed',
       key: 'num_confirmed',
       color: colors.blueGray,
     },
     {
-      title: 'Recovered',
+      title: 'New Recovered',
       key: 'num_recovered',
       color: colors.turqouise,
     },
