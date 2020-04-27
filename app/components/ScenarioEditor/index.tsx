@@ -17,6 +17,8 @@ import useFormInput, {
 
 import './scenario-editor.less';
 
+const MAX_SCENARIOS = 3;
+
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
   onSubmit?: (scenario: Scenario) => void;
@@ -227,7 +229,7 @@ const ScenarioList: React.FC<{
                   </Tab>
                 );
               })}
-              {scenarios.length < 3 && (
+              {scenarios.length < MAX_SCENARIOS && (
                 <button className="small" type="button" onClick={addScenario}>
                   Add Scenario
                   <IoIosAdd />

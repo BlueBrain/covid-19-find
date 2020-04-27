@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import { Scenarios, Scenario } from '../../API';
 import { union } from 'lodash';
 import './simulation-results.less';
@@ -62,6 +62,25 @@ const SimulationResults: React.FC<{
       color: colors.aubergine,
     },
   ];
+
+  const comparisons = [
+    {
+      key: 'totalDeaths',
+      title: 'Total Deaths',
+      color: colors.pomegranate,
+    },
+    {
+      key: 'totalInfected',
+      title: 'Total Infected',
+      color: colors.aubergine,
+    },
+    {
+      key: 'totalHospitalInfected',
+      title: 'Total Infected in Hospitals',
+      color: colors.aubergine,
+    },
+  ];
+
   const datasets = (data || []).map((entry, index) => {
     return {
       label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
@@ -79,7 +98,8 @@ const SimulationResults: React.FC<{
             // dont't add up things just for the hospital compartment
             return;
           }
-          day[graph.title] = (day[graph.title] || 0) + Number(entry[graph.key]);
+          day[graph.title] =
+            (Number(day[graph.title]) || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -135,30 +155,158 @@ const SimulationResults: React.FC<{
               <h2 className="underline">
                 {scenarios[selectedScenarioIndex].name}
               </h2>
-              <p>{scenarios[selectedScenarioIndex].description}</p>
+              <p>{scenarios[selectedScenarioIndex].description}</p>{' '}
+            </div>
+            <div className="comparison">
+              <div className="chart" key={`chart-cross-scenario-comparison`}>
+                <h3 className="title">Cross-Scenario Comparison</h3>
+                <div className="flex">
+                  {comparisons.map(({ key, title, color }) => {
+                    const data = datasets.map(dataset => {
+                      const totalDeaths = Object.values(dataset.data).reduce(
+                        (memo: number, entry: { Deaths: number }) =>
+                          memo + entry.Deaths,
+                        0,
+                      );
+                      const totalInfected = Object.values(dataset.data).reduce(
+                        (
+                          memo: number,
+                          entry: { 'Infected Population-wide': number },
+                        ) => memo + entry['Infected Population-wide'],
+
+                        0,
+                      );
+                      const totalHospitalInfected = Object.values(
+                        dataset.data,
+                      ).reduce(
+                        (
+                          memo: number,
+                          entry: { 'Infected in Hospitals': number },
+                        ) => memo + entry['Infected in Hospitals'],
+                        0,
+                      );
+
+                      const data = {
+                        totalDeaths,
+                        totalInfected,
+                        totalHospitalInfected,
+                      };
+                      return data;
+                    });
+                    return (
+                      <div className="graph">
+                        <Bar
+                          width={null}
+                          height={null}
+                          options={{
+                            tooltips: {
+                              callbacks: {
+                                label: (tooltipItem, data) => {
+                                  const label =
+                                    data.datasets[tooltipItem.datasetIndex]
+                                      .label || '';
+                                  return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                    undefined,
+                                    { maximumFractionDigits: 0 },
+                                  )}`;
+                                },
+                              },
+                            },
+                            aspectRatio: isMobile ? 1 : 2,
+                            scales: {
+                              yAxes: [
+                                {
+                                  scaleLabel: {
+                                    display: true,
+                                    labelString: title,
+                                  },
+                                  gridLines: {
+                                    color: '#00000005',
+                                  },
+                                  ticks: {
+                                    // beginAtZero: true,
+                                    // Include a dollar sign in the ticks
+                                    callback: function(value, index, values) {
+                                      return value?.toLocaleString(undefined, {
+                                        maximumFractionDigits: 0,
+                                      });
+                                    },
+                                  },
+                                },
+                              ],
+                              xAxes: [
+                                {
+                                  gridLines: {
+                                    color: '#00000005',
+                                  },
+                                  ticks: {
+                                    maxRotation: isMobile ? 90 : 0, // angle in degrees
+                                  },
+                                },
+                              ],
+                            },
+                            elements: {
+                              point: {
+                                radius: 0,
+                              },
+                              bar: {
+                                borderWidth: 2,
+                              },
+                            },
+                            legend: {
+                              display: false,
+                            },
+                          }}
+                          data={{
+                            datasets: [
+                              {
+                                label: key,
+                                data: data.map(entry => entry[key]),
+                                backgroundColor: Color(color)
+                                  .alpha(0.5)
+                                  .toString(),
+                                borderColor: Color(color).toString(),
+                              },
+                            ],
+                            labels: datasets.map(dataset => dataset.label),
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
             <div className="stats horizontal">
               <h3>
-                {Math.ceil(selectedScenario.maxInfected).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.maxInfected,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
-                <span className="subtitle">Max Infected</span>
+                <span className="subtitle">Max Infected at Peak</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.totalDeaths).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.totalDeaths,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle">Total Deaths</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.maxIsolated).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.maxIsolated,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle">Max Isolated</span>
               </h3>
               <h3>
-                {Math.ceil(selectedScenario.totalTests).toLocaleString()}
+                {Math.ceil(
+                  selectedScenario.totalTests,
+                ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 <br />
                 <span className="subtitle"> Total Tests</span>
               </h3>
-            </div>
+            </div>{' '}
             <div className="charts">
               {graphs.map(graph => {
                 return (
@@ -168,6 +316,19 @@ const SimulationResults: React.FC<{
                       width={null}
                       height={null}
                       options={{
+                        tooltips: {
+                          callbacks: {
+                            label: (tooltipItem, data) => {
+                              const label =
+                                data.datasets[tooltipItem.datasetIndex].label ||
+                                '';
+                              return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                undefined,
+                                { maximumFractionDigits: 0 },
+                              )}`;
+                            },
+                          },
+                        },
                         aspectRatio: isMobile ? 1 : 2,
                         scales: {
                           yAxes: [
@@ -178,6 +339,15 @@ const SimulationResults: React.FC<{
                               },
                               gridLines: {
                                 color: '#00000005',
+                              },
+                              ticks: {
+                                beginAtZero: true,
+                                // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                  return value?.toLocaleString(undefined, {
+                                    maximumFractionDigits: 0,
+                                  });
+                                },
                               },
                             },
                           ],
