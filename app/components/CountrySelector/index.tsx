@@ -198,9 +198,9 @@ const CountrySelector: React.FC<{
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
               <label>
-                % urban population below the
+                % urban population below
                 <br />
-                poverty line
+                the poverty line
               </label>
               <input
                 {...belowPovertyLineProportion}
