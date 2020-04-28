@@ -20,7 +20,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
-    interventionTiming: InterventionTiming.NEVER,
+    interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
     otherHighContactPopulationTestProportion: 0,
