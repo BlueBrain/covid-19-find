@@ -1,5 +1,5 @@
 on: pull_request
-name: Build Frontent
+name: Build Frontend
 
 jobs:
   build:

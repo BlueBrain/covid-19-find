@@ -53,12 +53,12 @@ const SimulationResults: React.FC<{
     },
     {
       title: 'Infected in Hospitals',
-      key: 'num_infected',
+      key: 'total_infected',
       color: colors.aubergine,
     },
     {
       title: 'Infected Population-wide',
-      key: 'num_infected',
+      key: 'total_infected',
       color: colors.aubergine,
     },
   ];
@@ -91,7 +91,7 @@ const SimulationResults: React.FC<{
         };
         graphs.forEach(graph => {
           if (
-            graph.key === 'num_infected' &&
+            graph.key === 'total_infected' &&
             graph.title.includes('Hospitals') &&
             entry.compartment !== 'Hospitals'
           ) {
