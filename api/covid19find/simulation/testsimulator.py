@@ -9,7 +9,7 @@ Created on Fri Apr 10 09:25:47 2020
 
 import covidlib as cl
 #fictitious everyone in hospitals
-num_scenarios=2
+num_scenarios=3
 fixed_params={'total_pop':109000000, \
     'hospital_beds':180000, \
     'prop_15_64': 0.66, \
@@ -38,17 +38,15 @@ scenario_params[1]={'intervention_type':2, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  
-# =============================================================================
-# scenario_params[2]={'intervention_type':2, \
-#     'intervention_timing':2, \
-#     'symptomatic_only':'TRUE', \
-#     'prop_hospital': 1.0, \
-#     'prop_other_hc':0.0}
-# =============================================================================
+scenario_params[2]={'intervention_type':2, \
+    'intervention_timing':2, \
+    'symptomatic_only':'TRUE', \
+    'prop_hospital': 1.0, \
+    'prop_other_hc':0.0}
     #proportion of tests given to other high contact populations
 #Instead of giving hospital employment it now uses hospital beds
-#scenario_array=cl.getscenarios()
-#print('final scenario array=',scenario_array)
+scenario_array=cl.getscenarios()
+print('final scenario array=',scenario_array)
 dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\
                    cl.run_simulation(fixed_params,scenarios=scenario_params )
 #dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\

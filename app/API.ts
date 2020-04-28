@@ -20,7 +20,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
-    interventionTiming: InterventionTiming.NEVER,
+    interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
     otherHighContactPopulationTestProportion: 0,
@@ -42,7 +42,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'In this scenario, all available tests are used to test hospital staff, if possible repeatedly.  Tests are limited to individuals already showing symptoms. The goal is to reduce the burden of the epidemic on hospital staff, preserving the capabilities necessary to help others.',
-    interventionTiming: InterventionTiming.GT500,
+    interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 100,
     otherHighContactPopulationTestProportion: 0,
