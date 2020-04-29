@@ -53,6 +53,10 @@ class CountryRepository:
         active_population_count = nearest["active_pop"][0]
         if active_population_count is not None:
             active_population_proportion = active_population_count / population
+        hospital_beds_per_1000 = nearest["hosp_beds"][0]
+        hospital_beds = None
+        if population is not None and hospital_beds_per_1000 is not None:
+            hospital_beds = (population / 1000.0) * hospital_beds_per_1000
         return {
             "countryCode": country_code,
             "population": self.__int_or_none(population),
@@ -61,7 +65,7 @@ class CountryRepository:
             "urbanPopulationInDegradedHousingProportion": self.__percentage_to_proportion_or_none(
                 nearest["degraded"][0]),
             "over65Proportion": over65proportion,
-            "hospitalBeds": self.__int_or_none((population / 1000.0) * nearest["hosp_beds"][0]),
+            "hospitalBeds": hospital_beds,
             "highContactPopulation": self.__int_or_none(nearest["high_contact"][0]),
             "remoteAreasPopulationProportion": self.__percentage_to_proportion_or_none(nearest["remote"][0])
         }

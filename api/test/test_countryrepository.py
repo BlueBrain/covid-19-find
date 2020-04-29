@@ -41,3 +41,14 @@ class TestCountryRepository:
 
     def test_country_details_AD(self):
         assert country_repo.country_details("AD") == None
+
+    def test_country_details_BQ(self):
+        assert country_repo.country_details("BQ") == {'activePopulationProportion': None,
+                                                      'countryCode': 'BQ',
+                                                      'highContactPopulation': None,
+                                                      'hospitalBeds': None,
+                                                      'over65Proportion': None,
+                                                      'population': 26000,
+                                                      'remoteAreasPopulationProportion': None,
+                                                      'urbanPopulationInDegradedHousingProportion': None,
+                                                      'urbanPopulationProportion': None}
