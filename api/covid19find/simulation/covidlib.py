@@ -641,7 +641,6 @@ def getscenarios():
     scenario_names=[]
     scenario_array=[]
 
-    print('scenario_array=',scenario_array)
     for i in range(1,num_scenarios+1):
              row_dict={}
              key = scenarios[i-1]
@@ -649,7 +648,6 @@ def getscenarios():
              scenario_names.append(scenario_name)
              for param_with_vals in scenario_params[key]:
                 param = param_with_vals[0]
-                print ('scenario',i, 'param', param)
                 if param =='prop_tests':
                     row_dict.update({'prop_hospitals':float(param_with_vals[1])})
                     row_dict.update({'prop_other_hc':float(param_with_vals[2])})

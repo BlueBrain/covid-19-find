@@ -51,14 +51,22 @@ def create_app():
             os.path.join(os.path.abspath(os.path.dirname(__file__)), "simulation-request.schema.json")) as schema_file:
         schema = json.load(schema_file)
 
+    simulator = Simulator()
+
     @app.route("/api/simulation", methods=['POST'])
     @expects_json(schema)
     def run_simulation():
         request_data = request.get_json()
         return {
-            "scenarios": Simulator().run(
-               request_data
+            "scenarios": simulator.run(
+                request_data
             )
+        }
+
+    @app.route("/api/scenarios")
+    def fetch_scenarios():
+        return {
+            "scenarios": simulator.default_scenarios()
         }
 
     @app.route("/api/covid19data/<country_code>")
