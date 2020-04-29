@@ -287,7 +287,7 @@ def simulate(num_compartments,params,beta, final_beta):
     recovery_period = int(params['recovery_period'] [0])
     tau = infection_fatality_rate/recovery_period
     gamma = (1-infection_fatality_rate)/recovery_period
-    test_start = int(params['test_start'][0])
+    test_start = int(params['test_start'][0])  #This parameter is not currently used. Tests start at the same time as the intervention
     num_testkit_types=int(params['num_testkit_types'][0])
     print('symptomatic only=',params['symptomatic_only'][0])
     test_symptomatic_only = params['symptomatic_only'][0].upper() == 'TRUE'  #There is a system parameter which defines this differentéy
@@ -384,6 +384,7 @@ def simulate(num_compartments,params,beta, final_beta):
                 intervention_threshold=intervention_threshold_2
             else:
                 intervention_threshold=intervention_threshold_3
+    test_started=False
     for t in range(1,num_days):
        days[t]=t
        #adjust value of betas - we assume they fall linearly with time after the intervention until they reach a lower bound
@@ -399,6 +400,7 @@ def simulate(num_compartments,params,beta, final_beta):
                        beta[i,j]=beta[i,j]-alpha[i,j]
                    else:
                        beta[i,j] = final_beta[i,j]
+           test_started=True
        # add up number of new infected for each compartment - total correct at end of loops
        for i in range(0,num_compartments): #this is the compartment doing the infecting
            newinfected[t,i]=0
@@ -425,40 +427,39 @@ def simulate(num_compartments,params,beta, final_beta):
                if tests_available>0:
                    true_positive_rate=sensitivity[k]
                    false_positive_rate=1-specificity[k]
-                   if t < test_start:
+                   if not(test_started):
                       newtested[t-1,i] = 0
                       newisolated[t-1,i] = 0
                       newisolatedinfected[t-1,i] =  0
-                   else:
+                   else: #tests have started
                       if population[t-1,i] >= tests_available:
                          newtested[t-1,i] = tests_available
                       else:
                          newtested[t-1,i] = population[t-1,i]
-                   if test_symptomatic_only:
-                       #CAUTION THIS IS NEW CODE
-                         if t>incubation_period:
-                             total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-incubation_period,i]
-                         else:
-                             total_symptomatic=population[t-1,i]*background_rate_symptomatic
-                         if total_symptomatic<tests_available:
-                             newtested[t-1,i]=total_symptomatic
-                         p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
-                         true_positives = true_positives+newtested[t-1,i] * p_positive_if_symptomatic * true_positive_rate
-                         false_positives = false_positives+newtested[t-1,i] * (1-p_positive_if_symptomatic) * false_positive_rate
+                      if test_symptomatic_only:
+                           #CAUTION THIS IS NEW CODE
+                             if t>incubation_period:
+                                 total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-incubation_period,i]
+                             else:
+                                 total_symptomatic=population[t-1,i]*background_rate_symptomatic
+                             if total_symptomatic<tests_available:
+                                 newtested[t-1,i]=total_symptomatic
+                             p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
+                             true_positives = true_positives+newtested[t-1,i] * p_positive_if_symptomatic * true_positive_rate
+                             false_positives = false_positives+newtested[t-1,i] * (1-p_positive_if_symptomatic) * false_positive_rate
                      
-                   else: #also testing non-symptomatic
-                     true_positives = true_positives+newtested[t-1,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
-                     
-                     if true_positives>infectednotisolated[t-1,i]:
-                         true_positives=infectednotisolated[t-1,i]
-                     false_positives=false_positives+newtested[t-1,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
+                      else: #also testing non-symptomatic
+                         true_positives = true_positives+newtested[t-1,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
+                         if true_positives>infectednotisolated[t-1,i]:
+                             true_positives=infectednotisolated[t-1,i]
+                         false_positives=false_positives+newtested[t-1,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
         
    #                  print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)   
           # Put all positive cases into isolation
            #print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t-1,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)   
         #   print('true_positives=', true_positives,'false positives', false_positives)     
-           newisolated[t-1,i] = true_positives+false_positives
-           newisolatedinfected[t-1,i] = true_positives
+                      newisolated[t-1,i] = true_positives+false_positives
+                      newisolatedinfected[t-1,i] = true_positives
       #     newrecovered[t-1,i] = 0
      #      if t >= recovery_period:
      #         newrecovered[t-1,i] = newinfected[t-recovery_period-1,i]*gamma
