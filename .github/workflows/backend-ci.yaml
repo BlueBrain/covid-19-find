@@ -12,6 +12,10 @@ jobs:
       run:
         working-directory: api
     steps:
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.x
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
