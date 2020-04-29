@@ -10,12 +10,12 @@ Created on Fri Apr 10 09:25:47 2020
 import covidlib as cl
 #fictitious everyone in hospitals
 num_scenarios=3
-fixed_params={'total_pop':109000000, \
-    'hospital_beds':180000, \
+fixed_params={'total_pop':8655000, \
+    'hospital_beds':34620, \
     'prop_15_64': 0.66, \
-    'prop_urban': 0.5, \
-    'prop_below_pl':0.4, \
-    'prop_woh':0.4, \
+    'prop_urban': 0.73, \
+    'prop_below_pl':0.1, \
+    'prop_woh':0.3, \
     'staff_per_bed':2.5,\
     'sensitivity_PCR':0.95,\
     'sensitivity_RDT':0.85,\
@@ -23,9 +23,9 @@ fixed_params={'total_pop':109000000, \
     'specificity_PCR':0.95,\
     'specificity_RDT':0.90,\
     'specificity_xray':0.90,\
-    'num_tests_PCR':10000,\
-    'num_tests_RDT':10000,\
-    'num_tests_xray':10000}
+    'num_tests_PCR':3470,\
+    'num_tests_RDT':0,\
+    'num_tests_xray':0}
 #advanced settings
 scenario_params=[None]*num_scenarios
 scenario_params[0]={'intervention_type':2, \
