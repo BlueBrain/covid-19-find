@@ -113,7 +113,9 @@ const Countries: React.FC<{
             />
           )}
         {/* TODO do something on error */}
-        {!!countryInfo && !!countryInfo.error && countryInfo.error.message}
+        {!!countryInfo && !!countryInfo.error && (
+          <h3>No Covid-19 Case Data found for this country.</h3>
+        )}
       </div>
     </section>
   );
