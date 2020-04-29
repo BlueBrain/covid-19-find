@@ -1,4 +1,4 @@
-from .simulation.covidlib import run_simulation
+from .simulation.covidlib import run_simulation, getscenarios
 
 
 class Simulator:
@@ -13,6 +13,9 @@ class Simulator:
         "mild_intervention": 1,
         "lockdown": 2
     }
+
+    REVERSE_TIMING_PARAMS = {v: k for k, v in TIMING_PARAMS.items()}
+    REVERSE_INTERVENTION_PARAMS = {v: k for k, v in INTERVENTION_PARAMS.items()}
 
     @staticmethod
     def get_fixed_parameters(parameters):
@@ -78,3 +81,24 @@ class Simulator:
                 }
             )
         return scenario_data
+
+    @staticmethod
+    def __reverse_map_scenario(covidlib_scenario):
+        if covidlib_scenario["symptomatic_only"].lower() == "true":
+            test_symptomatic_only = True
+        elif covidlib_scenario["symptomatic_only"].lower() == "false":
+            test_symptomatic_only = False
+        else:
+            test_symptomatic_only = None
+        return {
+            "interventionType": Simulator.REVERSE_INTERVENTION_PARAMS[int(covidlib_scenario["intervention_type"])],
+            "interventionTiming": Simulator.REVERSE_TIMING_PARAMS[int(covidlib_scenario["intervention_timing"])],
+            "testSymptomaticOnly": test_symptomatic_only,
+            "hospitalTestProportion": covidlib_scenario["prop_hospitals"],
+            "otherHighContactPopulationTestProportion": covidlib_scenario["prop_other_hc"],
+            "restOfPopulationTestProportion": 1 - covidlib_scenario["prop_hospitals"] - covidlib_scenario[
+                "prop_other_hc"]
+        }
+
+    def default_scenarios(self):
+        return list(map(Simulator.__reverse_map_scenario, getscenarios()))
