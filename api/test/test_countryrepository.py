@@ -38,3 +38,6 @@ class TestCountryRepository:
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
                                                       'urbanPopulationProportion': 0.42}
+
+    def test_country_details_AD(self):
+        assert country_repo.country_details("AD") == None
