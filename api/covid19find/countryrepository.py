@@ -39,7 +39,10 @@ class CountryRepository:
         if pcountry is None:
             return None
         country = Country(int(pcountry.numeric), 2020, age=65)
-        nearest = country.search_avail_stats()
+        try:
+            nearest = country.search_avail_stats()
+        except ValueError:
+            return None
         over65proportion = None
         over65count = nearest["overX"][0]
         population = nearest["pop"][0]
