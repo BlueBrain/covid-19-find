@@ -246,7 +246,7 @@ const CountrySelector: React.FC<{
           <div className="world">
             <SVGMap map={World} />
             <button className="action" type="submit">
-              Submit
+              Enter
             </button>
           </div>
         </div>

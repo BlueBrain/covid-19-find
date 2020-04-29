@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Line } from 'react-chartjs-2';
 import ReactTooltip from 'react-tooltip';
 import Color from 'color';
+import moment from 'moment';
 
 import colors from '../../colors';
 import useWindowWidth from '../../hooks/useWindowWidth';
@@ -67,17 +68,17 @@ const CovidResults: React.FC<{
         <h3>
           {data.totalConfirmed.toLocaleString()}
           <br />
-          <span className="subtitle"> Coronavirus Cases</span>
+          <span className="subtitle"> COVID-19 Positive Tests</span>
         </h3>
         <h3>
           {data.totalDeaths.toLocaleString()}
           <br />
-          <span className="subtitle">Deaths</span>
+          <span className="subtitle">Deaths attributed to COVID-19</span>
         </h3>
         <h3>
           {data.totalRecovered.toLocaleString()}
           <br />
-          <span className="subtitle"> Recovered</span>
+          <span className="subtitle"> People Recovered from COVID-19</span>
         </h3>
       </div>
       <div className="chart">
@@ -93,7 +94,7 @@ const CovidResults: React.FC<{
             *
           </a>
           <ReactTooltip id="jh-tooltip">
-            <p>data from Johns Hopkins University</p>
+            <p>case data from Johns Hopkins University</p>
           </ReactTooltip>
         </h3>
         <Line
@@ -128,6 +129,13 @@ const CovidResults: React.FC<{
                   },
                   gridLines: {
                     color: '#00000005',
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    // Include a dollar sign in the ticks
+                    callback: value => {
+                      return moment(value).format('DD MMM');
+                    },
                   },
                 },
               ],

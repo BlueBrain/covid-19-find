@@ -85,8 +85,6 @@ const App: React.FC = () => {
       document.querySelector('#tests-form'),
     ];
 
-    const results = document.querySelector('#simulation-results');
-
     // Validate forms, and scroll to the next if valid
     // If any form is invalid, will scroll to that form
     // and report the invalidity
@@ -98,18 +96,10 @@ const App: React.FC = () => {
           forms.forEach(form => {
             delete form.dataset.dirty;
           });
-          return results?.scrollIntoView({
-            behavior: 'smooth',
-          });
+          return;
         }
-        forms[i + 1]?.scrollIntoView({
-          behavior: 'smooth',
-        });
       } else {
         form.reportValidity();
-        form.scrollIntoView({
-          behavior: 'smooth',
-        });
         break;
       }
     }

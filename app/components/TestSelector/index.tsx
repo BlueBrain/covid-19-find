@@ -288,7 +288,7 @@ const TestSelector: React.FC<TestSelectorVales & {
           </div>
           <div className="submit-button">
             <button className="action submit-button" type="submit">
-              Submit
+              Enter
             </button>
           </div>
           <div>{children}</div>
