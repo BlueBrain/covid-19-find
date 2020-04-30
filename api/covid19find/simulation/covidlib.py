@@ -290,7 +290,8 @@ def simulate(num_compartments,params,beta, final_beta):
     test_start = int(params['test_start'][0])  #This parameter is not currently used. Tests start at the same time as the intervention
     num_testkit_types=int(params['num_testkit_types'][0])
     print('symptomatic only=',params['symptomatic_only'][0])
-    test_symptomatic_only = params['symptomatic_only'][0].upper() == 'TRUE'  #There is a system parameter which defines this differentéy
+    test_symptomatic_only = params['symptomatic_only'][0].upper() == 'TRUE' 
+    no_testing=params['no_testing'][0].upper()=='TRUE'  #used to switch off testing in scenario 0
     p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'][0])
     background_rate_symptomatic=float(params['background_rate_symptomatic'][0])
     intervention_timing=int(params['intervention_timing'][0])
@@ -374,6 +375,8 @@ def simulate(num_compartments,params,beta, final_beta):
     totalisolated=np.zeros(num_compartments)
    
      # calculate new infections day by day for each compartment
+    if params['intervention_type'][0]==0:  #with no intervention intervention will never start
+        intervention_timing=0
     if intervention_timing==0:
         intervention_threshold=float('inf')
     else:
@@ -385,6 +388,9 @@ def simulate(num_compartments,params,beta, final_beta):
             else:
                 intervention_threshold=intervention_threshold_3
     test_started=False
+    total_testkits=0
+    for k in range(0,num_testkit_types):
+        total_testkits=total_testkits+num_tests[k]
     for t in range(1,num_days):
        days[t]=t
        #adjust value of betas - we assume they fall linearly with time after the intervention until they reach a lower bound
@@ -418,74 +424,82 @@ def simulate(num_compartments,params,beta, final_beta):
              if newinfected[t-1,i]>susceptibles[t-1,i]:
                  newinfected[t-1,i]=susceptibles[t-1,i]
      
-       for i in range(0,num_compartments): 
+       for i in range(0,num_compartments): #now we do testing for each compartment
            true_positives=0
            false_positives=0
-           for k in range(0,num_testkit_types): #accumulate true and false positives across different kinds of tests
-               tests_available=prop_tests[i]*num_tests[k]
-   #            print ('compartment=',i,' test_type=',k,'prop_tests=', prop_tests[i],'num_tests=',num_tests[k],'tests_available=',tests_available)
-               if tests_available>0:
-                   true_positive_rate=sensitivity[k]
-                   false_positive_rate=1-specificity[k]
-                   if not(test_started):
-                      newtested[t-1,i] = 0
+           accum_tests_performed=0
+           if not(test_started) or no_testing:
+                      tests_performed = 0
                       newisolated[t-1,i] = 0
                       newisolatedinfected[t-1,i] =  0
-                   else: #tests have started
-                      if population[t-1,i] >= tests_available:
-                         newtested[t-1,i] = tests_available
-                      else:
-                         newtested[t-1,i] = population[t-1,i]
-                      if test_symptomatic_only:
-                           #CAUTION THIS IS NEW CODE
+           else: #tests have started
+               for k in range(0,num_testkit_types): #k loop starts here accumulate true and false positives across different kinds of tests. 
+                   tests_available=prop_tests[i]*num_tests[k]
+   #            print ('compartment=',i,' test_type=',k,'prop_tests=', prop_tests[i],'num_tests=',num_tests[k],'tests_available=',tests_available)
+                   if tests_available>0:
+                       true_positive_rate=sensitivity[k]
+                       false_positive_rate=1-specificity[k]
+                       if population[t-1,i] >= tests_available:
+                         tests_performed = tests_available
+                       else:
+                         tests_performed = population[t-1,i] 
+                       if test_symptomatic_only: 
                              if t>incubation_period:
                                  total_symptomatic=population[t-1,i]*background_rate_symptomatic+infectednotisolated[t-incubation_period,i]
+                                 
                              else:
                                  total_symptomatic=population[t-1,i]*background_rate_symptomatic
-                             if total_symptomatic<tests_available:
-                                 newtested[t-1,i]=total_symptomatic
+                             total_symptomatic_for_test=total_symptomatic*num_tests[k]/total_testkits
+                             if total_symptomatic_for_test<tests_available:
+                                 tests_performed=total_symptomatic_for_test
+    #                         print ('compartment',i,'prop testsi',prop_tests[i],'testkit type=',k,'available=', tests_available,'symptomatic',total_symptomatic,'tested=',tests_performed)
                              p_positive_if_symptomatic=infectednotisolated[t-1,i]/total_symptomatic
-                             true_positives = true_positives+newtested[t-1,i] * p_positive_if_symptomatic * true_positive_rate
-                             false_positives = false_positives+newtested[t-1,i] * (1-p_positive_if_symptomatic) * false_positive_rate
+                             true_positives = true_positives+tests_performed * p_positive_if_symptomatic * true_positive_rate
+                             false_positives = false_positives+tests_performed * (1-p_positive_if_symptomatic) * false_positive_rate
                      
-                      else: #also testing non-symptomatic
-                         true_positives = true_positives+newtested[t-1,i] * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
+                       else: #also testing non-symptomatic
+                         true_positives = true_positives+tests_performed * infectednotisolated[t-1,i]/population[t-1,i] * true_positive_rate
                          if true_positives>infectednotisolated[t-1,i]:
                              true_positives=infectednotisolated[t-1,i]
-                         false_positives=false_positives+newtested[t-1,i] * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
-        
+                         false_positives=false_positives+tests_performed * (1-infectednotisolated[t-1,i]/population[t-1,i]) * false_positive_rate
+                       accum_tests_performed=accum_tests_performed+tests_performed
+                      
    #                  print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate)   
           # Put all positive cases into isolation
            #print('true_positives=', true_positives,'false positives=', false_positives,'new tested',newtested[t-1,i],'infected not isolated',infectednotisolated[t-1,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)   
         #   print('true_positives=', true_positives,'false positives', false_positives)     
-                      newisolated[t-1,i] = true_positives+false_positives
-                      newisolatedinfected[t-1,i] = true_positives
+                      
       #     newrecovered[t-1,i] = 0
      #      if t >= recovery_period:
      #         newrecovered[t-1,i] = newinfected[t-recovery_period-1,i]*gamma
+     # k loop ends here - carry on looping through compartments
+           newtested[t-1,i]=accum_tests_performed
+           tested[t,i] = tested[t-1,i] + newtested[t-1,i]
+           newisolated[t-1,i] = true_positives+false_positives
+           newisolatedinfected[t-1,i] = true_positives  
            newrecovered[t-1,i]=infected[t-1,i]*gamma  
            newdeaths[t,i] = 0
-   #        if t >= death_period:
+               #        if t >= death_period:
            newdeaths[t-1,i] = infected[t-1,i]*tau
            newconfirmed[t-1,i] = newisolated[t-1,i]
            infected[t,i] = infected[t-1,i]+newinfected[t-1,i]-newrecovered[t-1,i]-newdeaths[t-1,i]
            if infected[t,i]<0:
                infected[t,i]=0
            recovered[t,i] = recovered[t-1,i]+newrecovered[t-1,i]
-    #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
+           #       susceptibles[t,i] = susceptibles[t-1,i]-newinfected[t-1,i]-newdeaths[t-1,i]-newrecovered[t-1,i] #added recovered
            deaths[t,i] = deaths[t-1,i]+newdeaths[t-1,i]
            population[t,i] = population[t-1,i]-newdeaths[t-1,i]
-           
+                       
            susceptibles[t,i]=population[t,i]-infected[t,i]-recovered[t,i] 
-          
-     
-     #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
+                      
+                 
+                 #      susceptibles[t,i]=population[t,i]-isolated[t,i]-recovered[t,i]  #this is an accounting identity
            if susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
-               susceptibles[t,i]=0 
-    #       print ('t=',t,'susceptibles',susceptibles[t,i],'infected=',infected[t,i],'recovered', recovered[t,i],'population=',population[t,i],'susceptible_prop=',susceptible_prop[t,i])
+              susceptibles[t,i]=0 
+                #       print ('t=',t,'susceptibles',susceptibles[t,i],'infected=',infected[t,i],'recovered', recovered[t,i],'population=',population[t,i],'susceptible_prop=',susceptible_prop[t,i])
            susceptible_prop[t,i] = susceptibles[t,i]/population[t,i] #another accounting identity
-  #         if i==0:
-           tested[t,i] = tested[t-1,i] + newtested[t-1,i]
+              #         if i==0:
+ #          tested[t,i] = tested[t-1,i] + newtested[t-1,i]
            confirmed[t,i]=confirmed[t-1,i] + newconfirmed[t-1,i]  # JPV changed
            if t >= recovery_period:
               isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i] - isolated[t-1,i]*gamma-isolated[t-1,i]*tau
@@ -493,10 +507,10 @@ def simulate(num_compartments,params,beta, final_beta):
            else:
               isolated[t,i] = isolated[t-1,i] + newisolated[t-1,i]
               isolatedinfected[t,i] = isolatedinfected[t-1,i] + newisolatedinfected[t-1,i]
-  #         print('t=',t,'infected=',infected[t,i],'isolated=',isolated[t,i])   
+              #         print('t=',t,'infected=',infected[t,i],'isolated=',isolated[t,i])   
            if infected[t,i] - isolated[t,i] > 0:
               infectednotisolated[t,i] = infected[t,i] - (isolated[t,i]) #accounting identity            
-            
+                        
            else:
               infectednotisolated[t,i] = 0
  

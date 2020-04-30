@@ -14,7 +14,7 @@ intervention_threshold_1,500
 intervention_threshold_2,50
 intervention_threshold_3,10
 confirmation_rate,0.2,,
-infection_fatality_rate,0.01,,
+infection_fatality_rate,0.015,,
 lower_bound_beta,0.04,,
 total_pop,50000,,
 prop_urban,0,,
@@ -35,3 +35,4 @@ num_tests,10000,0,0
 symptomatic_only,TRUE,TRUE,TRUE
 intervention_type,2,2,2
 intervention_timing,0,2,2
+no_testing,FALSE
