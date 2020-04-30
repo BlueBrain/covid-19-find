@@ -12,6 +12,7 @@ import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
   useCheckbox,
+  useSelectInput,
   useTextInput,
 } from '../../hooks/useFormInput';
 
@@ -26,9 +27,13 @@ const ScenarioEditor: React.FC<{
   onSubmit?: (scenario: Scenario) => void;
 }> = ({ scenario, onSubmit }) => {
   const name = useTextInput(scenario.name, null, true);
-  const interventionType = useFormInput(scenario.interventionType, null, true);
+  const interventionType = useSelectInput(
+    scenario.interventionType,
+    null,
+    true,
+  );
   const description = useTextInput(scenario.description, null, true);
-  const interventionTiming = useFormInput(
+  const interventionTiming = useSelectInput(
     scenario.interventionTiming,
     null,
     true,
@@ -95,6 +100,9 @@ const ScenarioEditor: React.FC<{
         <Select
           onChange={interventionType.onChange}
           options={interventionTypes}
+          value={interventionTypes.find(
+            ({ value }) => value === interventionType.value,
+          )}
           // @ts-ignore
           theme={theme => ({
             ...theme,
@@ -120,6 +128,9 @@ const ScenarioEditor: React.FC<{
         />
         <label>Number of deaths before intervention</label>
         <Select
+          value={interventionTimings.find(
+            ({ value }) => value === interventionTiming.value,
+          )}
           onChange={interventionTiming.onChange}
           options={interventionTimings}
           // @ts-ignore
