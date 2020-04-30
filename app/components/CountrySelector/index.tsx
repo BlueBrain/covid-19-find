@@ -1,11 +1,15 @@
 import * as React from 'react';
-import World from '@svg-maps/world';
 import { SVGMap } from 'react-svg-map';
-import { IoIosArrowDown, IoIosInformationCircleOutline } from 'react-icons/io';
-import useFormInput from '../../hooks/useFormInput';
+import Select from 'react-select';
+import { IoIosInformationCircleOutline } from 'react-icons/io';
 import ReactTooltip from 'react-tooltip';
+import World from '@svg-maps/world';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import Color from 'color';
+
+import colors from '../../colors';
+import useFormInput from '../../hooks/useFormInput';
 
 import './country-selector.less';
 
@@ -66,52 +70,16 @@ const CountrySelector: React.FC<{
     null,
     true,
   );
-  const [showCountries, setShowCountries] = React.useState(false);
-  const [country, setCountry] = React.useState({
-    name: '',
-    countryCode: '',
-  });
-
-  const selectCountry = selectedCountry => {
-    const countryId = markSelectedCountry(selectedCountry);
-    onClickSelectCountry(countryId);
+  const selectCountry = ({ value, label }) => {
+    onClickSelectCountry(value);
   };
-
-  const markSelectedCountry = selectedCountry => {
-    if (country.countryCode !== '') {
-      const previousCountry = document.getElementById(
-        country.countryCode.toLowerCase(),
-      );
-      previousCountry?.removeAttribute('class');
-    }
-
-    const countryId = selectedCountry.countryCode;
-    const area = document.getElementById(countryId.toLowerCase());
-
-    if (area) {
-      area.setAttribute('class', 'selected');
-    }
-
-    setCountry(selectedCountry);
-    setShowCountries(false);
-    return countryId;
-  };
-
-  React.useEffect(() => {
-    const defaultCountry = countries.find(
-      country => country.countryCode === countryInfo.countryCode,
-    );
-    if (defaultCountry) {
-      markSelectedCountry(defaultCountry);
-    }
-  }, [countryInfo.countryCode, countries]);
 
   const handleSubmit = e => {
     e.preventDefault();
     e.target.dataset.dirty = true;
     onSubmit &&
       onSubmit({
-        countryCode: country.countryCode,
+        countryCode: countryInfo.countryCode,
         population: population.value,
         hospitalEmployment: hospitalEmployment.value,
         hospitalBeds: hospitalBeds.value,
@@ -122,6 +90,11 @@ const CountrySelector: React.FC<{
         activePopulationProportion: activePopulationProportion.value,
       });
   };
+
+  const countrySelectOptions = countries.map(country => ({
+    value: country.countryCode,
+    label: country.name,
+  }));
 
   return (
     <form id="country-select-form" onSubmit={handleSubmit}>
@@ -138,25 +111,35 @@ const CountrySelector: React.FC<{
           <div className="input">
             <div className="form-column">
               <label>Country name</label>
-              <div
-                className="country-info-select"
-                onClick={() => setShowCountries(!showCountries)}
-              >
-                <span>{country.name || 'Select'}</span>
-                {country.name === '' && <IoIosArrowDown />}
-              </div>
-              {showCountries && (
-                <div className="countries-list">
-                  {countries.map(country => (
-                    <p
-                      onClick={() => selectCountry(country)}
-                      key={country.countryCode}
-                    >
-                      {country.name}
-                    </p>
-                  ))}
-                </div>
-              )}
+              <Select
+                // @ts-ignore
+                theme={theme => ({
+                  ...theme,
+                  borderRadius: '10px',
+                  colors: {
+                    ...theme.colors,
+                    primary25: Color(colors.turqouise)
+                      .alpha(0.25)
+                      .toString(),
+                    primary: colors.turqouise,
+                  },
+                })}
+                styles={{
+                  valueContainer: defaults => ({
+                    ...defaults,
+                    height: '39px',
+                  }),
+                  container: defaults => ({
+                    ...defaults,
+                    margin: '5px 0 10px 0',
+                  }),
+                }}
+                value={countrySelectOptions.filter(
+                  ({ value }) => value === countryInfo.countryCode,
+                )}
+                options={countrySelectOptions}
+                onChange={selectCountry}
+              />
               <label>% population in urban areas</label>
               <input
                 {...urbanPopulationProportion}

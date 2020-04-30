@@ -72,4 +72,28 @@ export const useCheckbox = (
   };
 };
 
+export const useSelectInput = (
+  initialValue: any,
+  placeholder?: any,
+  override?: boolean,
+) => {
+  const [value, setValue] = React.useState(initialValue);
+
+  const onHandleChange = ({ value: newValue }) => {
+    setValue(newValue);
+  };
+
+  React.useEffect(() => {
+    if (override) {
+      setValue(initialValue);
+    }
+  }, [initialValue, override]);
+
+  return {
+    value: value || '',
+    onChange: onHandleChange,
+    placeholder: placeholder || 'Enter... ',
+  };
+};
+
 export default useFormInput;

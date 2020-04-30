@@ -7,15 +7,18 @@ import {
   IoIosClose,
   IoIosAdd,
 } from 'react-icons/io';
-
+import Select from 'react-select';
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
   useCheckbox,
+  useSelectInput,
   useTextInput,
 } from '../../hooks/useFormInput';
 
 import './scenario-editor.less';
+import Color from 'color';
+import colors from '../../colors';
 
 const MAX_SCENARIOS = 3;
 
@@ -24,9 +27,13 @@ const ScenarioEditor: React.FC<{
   onSubmit?: (scenario: Scenario) => void;
 }> = ({ scenario, onSubmit }) => {
   const name = useTextInput(scenario.name, null, true);
-  const interventionType = useFormInput(scenario.interventionType, null, true);
+  const interventionType = useSelectInput(
+    scenario.interventionType,
+    null,
+    true,
+  );
   const description = useTextInput(scenario.description, null, true);
-  const interventionTiming = useFormInput(
+  const interventionTiming = useSelectInput(
     scenario.interventionTiming,
     null,
     true,
@@ -90,28 +97,65 @@ const ScenarioEditor: React.FC<{
         <label>description</label>
         <textarea {...description} />
         <label>Intervention Type</label>
-        <select onChange={interventionType.onChange}>
-          {interventionTypes.map(({ value, label }) => {
-            return (
-              <option value={value} selected={interventionType.value === value}>
-                {label}
-              </option>
-            );
+        <Select
+          onChange={interventionType.onChange}
+          options={interventionTypes}
+          value={interventionTypes.find(
+            ({ value }) => value === interventionType.value,
+          )}
+          // @ts-ignore
+          theme={theme => ({
+            ...theme,
+            borderRadius: '10px',
+            colors: {
+              ...theme.colors,
+              primary25: Color(colors.turqouise)
+                .alpha(0.25)
+                .toString(),
+              primary: colors.turqouise,
+            },
           })}
-        </select>
+          styles={{
+            valueContainer: defaults => ({
+              ...defaults,
+              height: '39px',
+            }),
+            container: defaults => ({
+              ...defaults,
+              margin: '5px 0 10px 0',
+            }),
+          }}
+        />
         <label>Number of deaths before intervention</label>
-        <select onChange={interventionTiming.onChange}>
-          {interventionTimings.map(({ value, label }) => {
-            return (
-              <option
-                value={value}
-                selected={interventionTiming.value === value}
-              >
-                {label}
-              </option>
-            );
+        <Select
+          value={interventionTimings.find(
+            ({ value }) => value === interventionTiming.value,
+          )}
+          onChange={interventionTiming.onChange}
+          options={interventionTimings}
+          // @ts-ignore
+          theme={theme => ({
+            ...theme,
+            borderRadius: '10px',
+            colors: {
+              ...theme.colors,
+              primary25: Color(colors.turqouise)
+                .alpha(0.25)
+                .toString(),
+              primary: colors.turqouise,
+            },
           })}
-        </select>
+          styles={{
+            valueContainer: defaults => ({
+              ...defaults,
+              height: '39px',
+            }),
+            container: defaults => ({
+              ...defaults,
+              margin: '5px 0 10px 0',
+            }),
+          }}
+        />
         <label>Test Symptomatic Only?</label>
         <input
           onChange={testSymptomaticOnly.onChange}
