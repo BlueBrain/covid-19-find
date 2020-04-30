@@ -59,7 +59,33 @@ const ScenarioEditor: React.FC<{
     true,
   );
 
+  const testNumberValidity = () => {
+    const cumulative = Array.from(
+      document.querySelectorAll<HTMLInputElement>('.proportion-test'),
+    ).reduce((memo, element) => {
+      const cumulative = (Number(element.value) || 0) + memo;
+      const devalidify = () => {
+        document
+          .querySelectorAll<HTMLInputElement>('.proportion-test')
+          .forEach(element => {
+            element.setCustomValidity('');
+          });
+        element.removeEventListener('input', devalidify);
+      };
+      if (cumulative > 100) {
+        element.setCustomValidity('Proportions must not exceed 100');
+        element.addEventListener('input', devalidify);
+      }
+      return cumulative;
+    }, 0);
+    return cumulative > 100;
+  };
+
   const handleSubmit = e => {
+    if (testNumberValidity()) {
+      return;
+    }
+
     e.preventDefault();
     e.target.dataset.dirty = true;
     onSubmit &&
@@ -170,6 +196,7 @@ const ScenarioEditor: React.FC<{
           hospital staff
         </label>
         <input
+          className="proportion-test"
           {...hospitalTestProportion}
           min="0"
           max="100"
@@ -182,6 +209,7 @@ const ScenarioEditor: React.FC<{
           highly exposed groups
         </label>
         <input
+          className="proportion-test"
           {...otherHighContactPopulationTestProportion}
           min="0"
           max="100"
@@ -194,6 +222,7 @@ const ScenarioEditor: React.FC<{
           rest of population
         </label>
         <input
+          className="proportion-test"
           {...restOfPopulationTestProportion}
           min="0"
           max="100"
