@@ -60,7 +60,7 @@ const getInTouchForm: React.FC<GetInTouchFormProps> = ({ onSubmit }) => {
           <p>Thank you! You message was submitted succesfully.</p>
         ) : (
           <button type="submit" onClick={onClickSubmit} disabled={disabled}>
-            Submit
+            Enter
           </button>
         )}
       </form>
