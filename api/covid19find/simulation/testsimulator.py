@@ -15,7 +15,7 @@ fixed_params={'total_pop':8655000, \
     'prop_15_64': 0.66, \
     'prop_urban': 0.73, \
     'prop_below_pl':0.1, \
-    'prop_woh':0.3, \
+    'prop_woh':0.4, \
     'staff_per_bed':2.5,\
     'sensitivity_PCR':0.95,\
     'sensitivity_RDT':0.85,\
@@ -23,7 +23,7 @@ fixed_params={'total_pop':8655000, \
     'specificity_PCR':0.95,\
     'specificity_RDT':0.90,\
     'specificity_xray':0.90,\
-    'num_tests_PCR':3470,\
+    'num_tests_PCR':3000,\
     'num_tests_RDT':0,\
     'num_tests_xray':0}
 #advanced settings
@@ -42,7 +42,7 @@ scenario_params[2]={'intervention_type':2, \
     'intervention_timing':2, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 1.0, \
-    'prop_other_hc':0.0}
+    'prop_other_hc':0.0}  
     #proportion of tests given to other high contact populations
 #Instead of giving hospital employment it now uses hospital beds
 scenario_array=cl.getscenarios()
