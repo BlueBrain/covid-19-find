@@ -144,6 +144,10 @@ export default class API {
     return fetch(`${this.base}/countries`).then(response => response.json());
   }
 
+  scenarios() {
+    return fetch(`${this.base}/scenarios`).then(response => response.json());
+  }
+
   country(countryCode: string): Promise<CountryResponse> {
     return fetch(`${this.base}/countries/${countryCode}`)
       .then(response => response.json())

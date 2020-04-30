@@ -7,7 +7,7 @@ import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import About from './components/About';
-import { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
+import API, { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
 import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -44,16 +44,35 @@ const App: React.FC = () => {
       stringify: entry => JSON.stringify(entry),
     },
   });
+  const [scenarios, setScenarios] = React.useState([]);
 
   React.useEffect(() => {
-    // Implement default values
+    const api = new API();
     const [, countryCode] = navigator.language.split('-');
 
-    setQueryParams({
-      ...DEFAULT_PARAMS,
-      countryCode,
-      ...queryParams,
-    });
+    // Fetch default scenarios from API
+    api
+      .scenarios()
+      .then(({ scenarios }) => {
+        // Implement default values
+        setQueryParams({
+          ...DEFAULT_PARAMS,
+          scenarios: scenarios.map((scenario, index) => ({
+            ...DEFAULT_SCENARIO_LIST[index],
+            ...scenario,
+          })),
+          countryCode,
+          ...queryParams,
+        });
+      })
+      .catch(error => {
+        console.warn('Could not load default scenarios');
+        setQueryParams({
+          ...DEFAULT_PARAMS,
+          countryCode,
+          ...queryParams,
+        });
+      });
   }, []);
 
   // Key presses
