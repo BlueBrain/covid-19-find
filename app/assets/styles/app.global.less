@@ -59,17 +59,12 @@ em {
 
 form:invalid {
   button[type='submit'] {
-    color: rgba(255, 255, 255, 0.75);
-    opacity: 0.7;
-    filter: opacity(79%) blur(2px) grayscale(20%);
     cursor: not-allowed;
-    background: #00a5b1;
     color: #fff;
-
-    &:hover {
-      background: #00a5b1;
-      color: #fff;
-    }
+    border-color: #fff;
+    background: transparent;
+    border-width: 1px;
+    border-style: solid;
   }
 }
 
@@ -79,6 +74,12 @@ form:valid {
     cursor: pointer;
     opacity: 1;
     filter: none;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #00a5b1;
+    &:hover {
+      border-color: #fff;
+    }
   }
 }
 
@@ -113,6 +114,7 @@ button {
 
   &:hover {
     color: #00a5b1;
+    border-color: #fff;
     background: #fff;
   }
 
@@ -140,7 +142,6 @@ button {
   &:hover {
     border-color: #00a5b1;
     color: #00a5b1;
-    background: rgba(255, 255, 255, 0.8);
   }
 
   &.icon {
