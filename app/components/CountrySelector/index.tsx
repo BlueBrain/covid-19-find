@@ -124,6 +124,16 @@ const CountrySelector: React.FC<{
                     primary: colors.turqouise,
                   },
                 })}
+                styles={{
+                  valueContainer: defaults => ({
+                    ...defaults,
+                    height: '39px',
+                  }),
+                  container: defaults => ({
+                    ...defaults,
+                    margin: '5px 0 10px 0',
+                  }),
+                }}
                 value={countrySelectOptions.filter(
                   ({ value }) => value === countryInfo.countryCode,
                 )}

@@ -107,6 +107,16 @@ const ScenarioEditor: React.FC<{
               primary: colors.turqouise,
             },
           })}
+          styles={{
+            valueContainer: defaults => ({
+              ...defaults,
+              height: '39px',
+            }),
+            container: defaults => ({
+              ...defaults,
+              margin: '5px 0 10px 0',
+            }),
+          }}
         />
         <label>Number of deaths before intervention</label>
         <Select
@@ -124,6 +134,16 @@ const ScenarioEditor: React.FC<{
               primary: colors.turqouise,
             },
           })}
+          styles={{
+            valueContainer: defaults => ({
+              ...defaults,
+              height: '39px',
+            }),
+            container: defaults => ({
+              ...defaults,
+              margin: '5px 0 10px 0',
+            }),
+          }}
         />
         <label>Test Symptomatic Only?</label>
         <input
