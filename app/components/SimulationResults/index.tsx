@@ -70,14 +70,14 @@ const SimulationResults: React.FC<{
       color: colors.pomegranate,
     },
     {
-      key: 'totalInfected',
-      title: 'Total Infected',
+      key: 'maxInfected',
+      title: 'Peak Infected',
       color: colors.aubergine,
     },
     {
-      key: 'totalHospitalInfected',
-      title: 'Total Infected in Hospitals',
-      color: colors.aubergine,
+      key: 'maxIsolated',
+      title: 'Peak Isolated',
+      color: colors.turqouise,
     },
   ];
 
@@ -166,41 +166,7 @@ const SimulationResults: React.FC<{
                   >
                     <h3 className="title">Cross-Scenario Comparison</h3>
                     <div className="flex">
-                      {comparisons.map(({ key, title, color }) => {
-                        const data = datasets.map(dataset => {
-                          const totalDeaths = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (memo: number, entry: { Deaths: number }) =>
-                              memo + entry['New Deaths'],
-                            0,
-                          );
-                          const totalInfected = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (
-                              memo: number,
-                              entry: { 'Infected Population-wide': number },
-                            ) => memo + entry['Infected Population-wide'],
-
-                            0,
-                          );
-                          const totalHospitalInfected = Object.values(
-                            dataset.data,
-                          ).reduce(
-                            (
-                              memo: number,
-                              entry: { 'Infected in Hospitals': number },
-                            ) => memo + entry['Infected in Hospitals'],
-                            0,
-                          );
-                          const data = {
-                            totalDeaths,
-                            totalInfected,
-                            totalHospitalInfected,
-                          };
-                          return data;
-                        });
+                      {comparisons.map(({ key, title, color }, index) => {
                         return (
                           <div className="graph">
                             <Bar
@@ -210,10 +176,7 @@ const SimulationResults: React.FC<{
                                 tooltips: {
                                   callbacks: {
                                     label: (tooltipItem, data) => {
-                                      const label =
-                                        data.datasets[tooltipItem.datasetIndex]
-                                          .label || '';
-                                      return `${label}: ${tooltipItem.yLabel?.toLocaleString(
+                                      return `${title}: ${tooltipItem.yLabel?.toLocaleString(
                                         undefined,
                                         { maximumFractionDigits: 0 },
                                       )}`;
@@ -234,11 +197,7 @@ const SimulationResults: React.FC<{
                                       ticks: {
                                         // beginAtZero: true,
                                         // Include a dollar sign in the ticks
-                                        callback: function(
-                                          value,
-                                          index,
-                                          values,
-                                        ) {
+                                        callback: function(value) {
                                           return value?.toLocaleString(
                                             undefined,
                                             {
@@ -276,7 +235,7 @@ const SimulationResults: React.FC<{
                                 datasets: [
                                   {
                                     label: key,
-                                    data: data.map(entry => entry[key]),
+                                    data: data.map(scenario => scenario[key]),
                                     backgroundColor: Color(color)
                                       .alpha(0.5)
                                       .toString(),
