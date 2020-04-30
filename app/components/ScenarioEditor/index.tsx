@@ -7,7 +7,7 @@ import {
   IoIosClose,
   IoIosAdd,
 } from 'react-icons/io';
-
+import Select from 'react-select';
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
@@ -16,6 +16,8 @@ import useFormInput, {
 } from '../../hooks/useFormInput';
 
 import './scenario-editor.less';
+import Color from 'color';
+import colors from '../../colors';
 
 const MAX_SCENARIOS = 3;
 
@@ -90,28 +92,39 @@ const ScenarioEditor: React.FC<{
         <label>description</label>
         <textarea {...description} />
         <label>Intervention Type</label>
-        <select onChange={interventionType.onChange}>
-          {interventionTypes.map(({ value, label }) => {
-            return (
-              <option value={value} selected={interventionType.value === value}>
-                {label}
-              </option>
-            );
+        <Select
+          onChange={interventionType.onChange}
+          options={interventionTypes}
+          // @ts-ignore
+          theme={theme => ({
+            ...theme,
+            borderRadius: '10px',
+            colors: {
+              ...theme.colors,
+              primary25: Color(colors.turqouise)
+                .alpha(0.25)
+                .toString(),
+              primary: colors.turqouise,
+            },
           })}
-        </select>
+        />
         <label>Number of deaths before intervention</label>
-        <select onChange={interventionTiming.onChange}>
-          {interventionTimings.map(({ value, label }) => {
-            return (
-              <option
-                value={value}
-                selected={interventionTiming.value === value}
-              >
-                {label}
-              </option>
-            );
+        <Select
+          onChange={interventionTiming.onChange}
+          options={interventionTimings}
+          // @ts-ignore
+          theme={theme => ({
+            ...theme,
+            borderRadius: '10px',
+            colors: {
+              ...theme.colors,
+              primary25: Color(colors.turqouise)
+                .alpha(0.25)
+                .toString(),
+              primary: colors.turqouise,
+            },
           })}
-        </select>
+        />
         <label>Test Symptomatic Only?</label>
         <input
           onChange={testSymptomaticOnly.onChange}
