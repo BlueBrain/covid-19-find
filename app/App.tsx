@@ -44,7 +44,6 @@ const App: React.FC = () => {
       stringify: entry => JSON.stringify(entry),
     },
   });
-  const [scenarios, setScenarios] = React.useState([]);
 
   React.useEffect(() => {
     const api = new API();
@@ -60,6 +59,11 @@ const App: React.FC = () => {
           scenarios: scenarios.map((scenario, index) => ({
             ...DEFAULT_SCENARIO_LIST[index],
             ...scenario,
+            hospitalTestProportion: scenario.hospitalTestProportion * 100,
+            otherHighContactPopulationTestProportion:
+              scenario.otherHighContactPopulationTestProportion * 100,
+            restOfPopulationTestProportion:
+              scenario.restOfPopulationTestProportion * 100,
           })),
           countryCode,
           ...queryParams,
