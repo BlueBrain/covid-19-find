@@ -9,7 +9,7 @@ test_start,45,,
 beta_pre_inversion,0.34,,
 beta_post_inversion_1,0.09,,
 beta_post_inversion_2,0.06,,
-alpha_post_inversion,35,,
+alpha_post_inversion,15,,
 intervention_threshold_1,500
 intervention_threshold_2,50
 intervention_threshold_3,10
@@ -25,7 +25,7 @@ isolated_area,0.2,,
 num_compartments,3,,
 compartment,Hospitals,Other high contact ,Rest of population
 init_pop,50000,0,0
-init_infected,1,1,1
+init_infected,0,1,1
 prop_tests,0.5,0.5,0
 num_testkit_types,3,,
 testkits,PCR,RDT,Chest x_rays
@@ -34,5 +34,6 @@ specificity,0.95,0.8,0.9
 num_tests,10000,0,0 
 symptomatic_only,TRUE,TRUE,TRUE
 intervention_type,2,2,2
-intervention_timing,0,2,2
+intervention_timing,2,2,2
 no_testing,FALSE
+stop_intervention,1000000
