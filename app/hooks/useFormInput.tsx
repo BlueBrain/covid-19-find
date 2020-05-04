@@ -18,7 +18,10 @@ export const useFormInput = (
   }, [initialValue, override]);
 
   return {
-    value: value || '',
+    // NOTE: empty or null input must be an empty string for html5
+    // This checks to make sure the value is not 0 before
+    // marking the value as empty
+    value: value || (value === 0 ? 0 : ''),
     onChange: onHandleChange,
     placeholder: placeholder || 'Enter... ',
   };
