@@ -76,25 +76,25 @@ const TestSelector: React.FC<TestSelectorVales & {
             <div className="tests-form-container">
               <div className="input test-box">
                 <div className="test-description">
-                  Maximal deployment
+                  Maximum number of
                   <br />
                   <a data-tip data-for="pcr-tooltip">
                     <em>
-                      PCRs <IoIosInformationCircleOutline />
+                      molecular (PCR) tests <IoIosInformationCircleOutline />
                     </em>
                   </a>
+                  <br />
+                  That can be performed per day
                   <ReactTooltip id="pcr-tooltip">
                     <p>
-                      These test kits use the Polymerase Chain Reaction (PCR) to
-                      amplify fragments of viral DNA present in patient samples.
-                      PCR-based test kits have high sensitivity (they catch
-                      nearly all cases) and high specificity (they produce
-                      relatively few false positives). For this reason, they are
-                      the gold standard for COVID-19 testing. However, samples
-                      need to be tested in the laboratory. Testing requires good
-                      logistics (to bring samples to the lab), skilled staff,
-                      and expensive equipment. Even in ideal conditions response
-                      times may be relatively slow.
+                      Molecular tests, also known as polymerase chain reaction
+                      (PCR) tests, amplify fragments of viral DNA so they can be
+                      detected in patient samples. PCR-based tests have high
+                      sensitivity (they correctly identify nearly all cases) and
+                      high specificity (they rarely incorrectly indicate a
+                      negative case as positive). However, PCR testing needs to
+                      be done in a laboratory, with supporting infrastructure
+                      and skilled technicians.
                     </p>
                   </ReactTooltip>
                   <br />
@@ -166,25 +166,24 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div>
               <div className="input test-box">
                 <p className="test-description">
-                  Maximal deployment of
+                  Maximum number of
                   <br />
                   <a data-tip data-for="rdt-tooltip">
                     <em>
-                      Rapid Test Kits <IoIosInformationCircleOutline />
+                      Rapid Diagnostic Tests <IoIosInformationCircleOutline />
                     </em>
                   </a>
+                  <br />
+                  that can be performed per day
                   <ReactTooltip id="rdt-tooltip">
                     <p>
-                      These test kits test for the presence of viral antigens or
-                      antibodies. They do not require a lab and give a fast
-                      response. However, they are unable to detect early stage
-                      infections (when antibodies have yet to form) and may also
-                      give false positive results . Furthermore many test kits
-                      on the market have not yet been tested independently. RDTs
-                      may be useful for monitoring the presence of COVID-19 in
-                      the population or for identifying individuals who have
-                      acquired immunity to the virus. They are not considered as
-                      a reliable tool to identify and isolate infected people.
+                      Rapid diagnostic tests (RDTs) identify the presence of
+                      viral antigens (to determine active infection) or
+                      antibodies (to indicate previous infection) in a patient
+                      sample. Similar to pregnancy tests, they do not require a
+                      laboratory and can give a fast response. However they are
+                      not yet as accurate as molecular tests, and are not yet
+                      considered to be reliable enough for patient management
                     </p>
                   </ReactTooltip>
                   <br />
