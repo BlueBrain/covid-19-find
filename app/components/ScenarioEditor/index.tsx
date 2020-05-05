@@ -103,9 +103,11 @@ const ScenarioEditor: React.FC<{
 
   const interventionTimings = [
     { value: InterventionTiming.NEVER, label: 'never' },
+    { value: InterventionTiming.GT1, label: '>1' },
+    { value: InterventionTiming.GT5, label: '>5' },
     { value: InterventionTiming.GT10, label: '>10' },
+    { value: InterventionTiming.GT20, label: '>20' },
     { value: InterventionTiming.GT50, label: '>50' },
-    { value: InterventionTiming.GT500, label: '>500' },
   ];
 
   return (
