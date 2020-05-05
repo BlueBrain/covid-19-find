@@ -19,27 +19,27 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     name: 'Baseline',
     interventionType: InterventionType.LOCKDOWN,
     description:
-      'This imaginary scenario shows the predicted course of the epidemic, with no of any kind. By comparing it with the other scenarios you can see the significance of testing in terms of saved lives and infections.',
+      'This imaginary scenario is provided for comparison purposes. It shows the predicted course of the pandemic with a strong lockdown but no testing of any kind.',
     interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
     otherHighContactPopulationTestProportion: 0,
   },
   {
-    name: 'Test High Exposure Groups',
+    name: 'Identify and isolate positive cases',
     interventionType: InterventionType.LOCKDOWN,
     description:
-      'In this scenario, 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers whose work requires a high level of contact with the public; people living in degraded housing in large cities). Tests are limited to individuals already showing symptoms. The goal is to identify and isolate the highest possible number of infected people, helping to slow down or reverse the course of the epidemic',
+      'This scenario models the potential outcomes of a testing strategy that aims to identify and isolate the highest possible number of infected people, slowing the spread of the disease. The scenario presupposes a strong lockdown. It assumes that 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers who have a high level of contact with the public, and people living below the poverty line in large cities).  Tests are performed only on people showing symptoms. ',
     interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 50,
     otherHighContactPopulationTestProportion: 50,
   },
   {
-    name: 'Protect Hospital Capacity',
+    name: 'Protect hospital resources',
     interventionType: InterventionType.LOCKDOWN,
     description:
-      'In this scenario, all available tests are used to test hospital staff, if possible repeatedly.  Tests are limited to individuals already showing symptoms. The goal is to reduce the burden of the epidemic on hospital staff, preserving the capabilities necessary to help others.',
+      'This scenario models the potential outcomes of a testing strategy that aims to reduce the burden of the pandemic on hospital staff, preserving the capabilities necessary to help others. The scenario presupposes a strong lockdown. It assumes that all available tests are used to test hospital staff, if possible repeatedly. Tests are performed only on people showing symptoms.',
     interventionTiming: InterventionTiming.GT50,
     testSymptomaticOnly: true,
     hospitalTestProportion: 100,
