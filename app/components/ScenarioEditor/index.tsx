@@ -114,7 +114,7 @@ const ScenarioEditor: React.FC<{
   ];
 
   return (
-    <form id={`scenario-editor-${scenario.name}`} onSubmit={handleSubmit}>
+    <form id={`scenario-editor-${scenario.name}`} onChange={handleSubmit}>
       <div className="form-column">
         <label>
           <br />
@@ -271,7 +271,6 @@ const ScenarioEditor: React.FC<{
           type="number"
           required
         />
-        <button type="submit">Enter</button>
       </div>
     </form>
   );

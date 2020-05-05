@@ -285,13 +285,16 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div> */}
             </div>
           </div>
-          <div className="submit-button">
-            <button className="action submit-button" type="submit">
-              Enter
-            </button>
-          </div>
           <div>{children}</div>
+          <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
+            <div className="submit-button">
+              <button className="action submit-button" type="submit">
+                See Scenarios
+              </button>
+            </div>
+          </div>
         </div>
+
         <div className="triangle"></div>
       </section>
     </form>
