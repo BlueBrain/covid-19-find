@@ -78,20 +78,6 @@ const App: React.FC = () => {
       });
   }, []);
 
-  // Key presses
-  // Don't allow enter to submit form
-  React.useEffect(() => {
-    const handleEnterPress = event => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-      }
-    };
-    window.addEventListener('keydown', handleEnterPress);
-    return () => {
-      window.removeEventListener('keydown', handleEnterPress);
-    };
-  }, []);
-
   const handleSubmit = (changedValues, skipScroll = false) => {
     setQueryParams({
       ...queryParams,

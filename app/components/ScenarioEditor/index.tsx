@@ -10,6 +10,7 @@ import {
 } from 'react-icons/io';
 import Select from 'react-select';
 import Color from 'color';
+import Switch from 'react-switch';
 
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
@@ -238,11 +239,14 @@ const ScenarioEditor: React.FC<{
             offered to everyone in a particular sub-population.
           </p>
         </ReactTooltip>
-        <input
-          onChange={testSymptomaticOnly.onChange}
-          checked={testSymptomaticOnly.value}
-          type="checkbox"
-        />
+        <div style={{ textAlign: 'left', marginTop: '5px' }}>
+          <Switch
+            onChange={testSymptomaticOnly.onChange}
+            checked={testSymptomaticOnly.value}
+            onColor={colors.turqouise}
+            offColor={'#c3c9cc'}
+          />
+        </div>
       </div>
       <div className="form-column">
         <label>
