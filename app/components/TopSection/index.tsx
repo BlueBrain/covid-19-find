@@ -6,25 +6,34 @@ const TopSection: React.FC = () => {
   return (
     <section className="top-section">
       <div className="half content">
-        <h2 className="underline">Predictive Scenario Simulator</h2>
+        <h2 className="underline">
+          {' '}
+          COVID-19 Diagnostic Implementation Simulator{' '}
+        </h2>
         <div className="description">
-          Fill in this <em>three step process</em> to view proposed{' '}
-          <em>simulation scenarios</em> for optimal allocations of scarce
-          resources in the attempt to help predict the effects of different
-          strategies for Coronavirus testing in your country
+          This Diagnostic Implementation Simulator for SARS-CoV-2 diagnostics
+          simulates scenarios for optimal allocation of resources. It uses
+          modeling data to estimate the potential impact of deploying different
+          testing strategies for COVID-19.
+          <br />
+          <br />
+          The simulator has been developed with our partners at the{' '}
+          <a href="https://www.epfl.ch/research/domains/bluebrain/">
+            EPFL Blue Brain Project
+          </a>{' '}
+          and <a href="http://ateneo.edu/">Ateneo de Manila University</a>,
+          Manila, the Philippines.
         </div>
       </div>
       <div className="half">
         <div className="shoutout">
           <span className="gradient"></span>
           <div className="disclamer">
-            <h2>Disclaimer</h2>
+            <h2>Please Note</h2>
             <p>
-              This web tool estimates the relative impact of different
-              deployment strategies for diagnostic tests in the current acute
-              phase of the COVID-19 pandemic. The tool is not intended to
-              replace detailed epidemiological models or the estimates of deaths
-              and of epidemic duration coming from such models.
+              This tool is not intended to replace detailed epidemiological
+              models for country decision making or the estimates of deaths and
+              of epidemic duration coming from such models.
             </p>
           </div>
         </div>
