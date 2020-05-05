@@ -53,12 +53,6 @@ const ScenarioEditor: React.FC<{
     null,
     true,
   );
-  const restOfPopulationTestProportion = useFormInput(
-    scenario.restOfPopulationTestProportion,
-    null,
-    true,
-  );
-
   const testNumberValidity = () => {
     const cumulative = Array.from(
       document.querySelectorAll<HTMLInputElement>('.proportion-test'),
@@ -98,7 +92,6 @@ const ScenarioEditor: React.FC<{
         hospitalTestProportion: hospitalTestProportion.value,
         otherHighContactPopulationTestProportion:
           otherHighContactPopulationTestProportion.value,
-        restOfPopulationTestProportion: restOfPopulationTestProportion.value,
       });
   };
 
@@ -216,20 +209,7 @@ const ScenarioEditor: React.FC<{
           type="number"
           required
         />
-        <label>
-          Proportion of tests for
-          <br />
-          rest of population
-        </label>
-        <input
-          className="proportion-test"
-          {...restOfPopulationTestProportion}
-          min="0"
-          max="100"
-          type="number"
-          required
-        />
-        <button type="submit">Submit</button>
+        <button type="submit">Enter</button>
       </div>
     </form>
   );

@@ -24,7 +24,6 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
     otherHighContactPopulationTestProportion: 0,
-    restOfPopulationTestProportion: 0,
   },
   {
     name: 'Test High Exposure Groups',
@@ -35,7 +34,6 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     testSymptomaticOnly: true,
     hospitalTestProportion: 50,
     otherHighContactPopulationTestProportion: 50,
-    restOfPopulationTestProportion: 0,
   },
   {
     name: 'Protect Hospital Capacity',
@@ -46,7 +44,6 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     testSymptomaticOnly: true,
     hospitalTestProportion: 100,
     otherHighContactPopulationTestProportion: 0,
-    restOfPopulationTestProportion: 0,
   },
 ];
 
@@ -58,7 +55,6 @@ export type Scenario = {
   testSymptomaticOnly: boolean;
   hospitalTestProportion: number;
   otherHighContactPopulationTestProportion: number;
-  restOfPopulationTestProportion: number;
 };
 
 export type SimulationParams = {
@@ -181,8 +177,6 @@ export default class API {
           hospitalTestProportion: scenario.hospitalTestProportion / 100,
           otherHighContactPopulationTestProportion:
             scenario.otherHighContactPopulationTestProportion / 100,
-          restOfPopulationTestProportion:
-            scenario.restOfPopulationTestProportion / 100,
           testSymptomaticOnly: !!scenario.testSymptomaticOnly,
         };
       }),

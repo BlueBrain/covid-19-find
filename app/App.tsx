@@ -62,8 +62,6 @@ const App: React.FC = () => {
             hospitalTestProportion: scenario.hospitalTestProportion * 100,
             otherHighContactPopulationTestProportion:
               scenario.otherHighContactPopulationTestProportion * 100,
-            restOfPopulationTestProportion:
-              scenario.restOfPopulationTestProportion * 100,
           })),
           countryCode,
           ...queryParams,
