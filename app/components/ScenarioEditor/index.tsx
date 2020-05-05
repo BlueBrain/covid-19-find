@@ -116,9 +116,15 @@ const ScenarioEditor: React.FC<{
   return (
     <form id={`scenario-editor-${scenario.name}`} onSubmit={handleSubmit}>
       <div className="form-column">
-        <label>Name</label>
+        <label>
+          <br />
+          Name
+        </label>
         <input {...name} type="text" required />
-        <label>description</label>
+        <label>
+          <br />
+          description
+        </label>
         <textarea {...description} />
 
         <a data-tip data-for="interventionType-tooltip">
@@ -328,13 +334,9 @@ const ScenarioList: React.FC<{
                 return (
                   <Tab>
                     {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
-                    <button
-                      className="small"
-                      type="button"
-                      onClick={removeScenario(index)}
-                    >
+                    <span onClick={removeScenario(index)}>
                       <IoIosClose />
-                    </button>
+                    </span>
                   </Tab>
                 );
               })}
