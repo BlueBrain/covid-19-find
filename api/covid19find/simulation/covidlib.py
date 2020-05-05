@@ -207,7 +207,7 @@ def process_scenarios(num_compartments,p,scenarios,scenariosfile):
                final_betafile=lockdown_betafile
              initial_beta = get_beta(initial_betafile, num_compartments, p['init_pop'])
              final_beta = get_beta(final_betafile, num_compartments, p['init_pop'])
-             print('final beta=', final_beta)
+   #          print('final beta=', final_beta)
              beta=initial_beta.copy() #this is essential - otherwise the beta gets modified inside the simulation
 
              df = simulate(num_compartments,p,beta,final_beta)
@@ -299,9 +299,12 @@ def simulate(num_compartments,params,beta, final_beta):
     p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'][0])
     background_rate_symptomatic=float(params['background_rate_symptomatic'][0])
     intervention_timing=int(params['intervention_timing'][0])
+    intervention_threshold_0=int(params['intervention_threshold_0'][0])
     intervention_threshold_1=int(params['intervention_threshold_1'][0])
     intervention_threshold_2=int(params['intervention_threshold_2'][0])
     intervention_threshold_3=int(params['intervention_threshold_3'][0])
+    intervention_threshold_4=int(params['intervention_threshold_4'][0])
+    intervention_threshold_5=int(params['intervention_threshold_5'][0])
     compartment = []
     init_pop = np.zeros(num_days)
     init_infected = np.zeros(num_days)
@@ -336,7 +339,7 @@ def simulate(num_compartments,params,beta, final_beta):
     else:
      #   alpha=beta/alpha_post_inversion #alpha post inversion is now actually a multiplier. Name is wrong. 
         alpha=(beta-final_beta)/alpha_post_inversion #all betas should go down at same speed.
-        print ('alpha=', alpha)
+  #      print ('alpha=', alpha)
  # =============================================================================
   # Initialize arrays storing time series
     days=np.zeros(num_days)
@@ -385,7 +388,7 @@ def simulate(num_compartments,params,beta, final_beta):
     if params['intervention_type'][0]==0:  #with no intervention intervention will never start
         intervention_timing=0
     if intervention_timing==0:
-        intervention_threshold=float('inf')
+        intervention_threshold=intervention_threshold_0
     else:
         if intervention_timing==1:
             intervention_threshold=intervention_threshold_1
@@ -393,7 +396,13 @@ def simulate(num_compartments,params,beta, final_beta):
             if intervention_timing==2:
                 intervention_threshold=intervention_threshold_2
             else:
-                intervention_threshold=intervention_threshold_3
+                if intervention_timing==3:
+                    intervention_threshold=intervention_threshold_3
+                else:
+                    if intervention_timing==4:
+                        intervention_threshold=intervention_threshold_4
+                    else:
+                        intervention_threshold=intervention_threshold_5
     print ('intervention threshold=', intervention_threshold)
     test_started=False
     total_testkits=0
@@ -411,7 +420,6 @@ def simulate(num_compartments,params,beta, final_beta):
       
        if t<int(params['stop_intervention'][0]):
            if total_deaths>=intervention_threshold:  #intervention happens when number of deaths passes a threshold
-       #        print ('past theshold for intervention t=',t)
                for i in range (0,num_compartments):
                    for j in range(0,num_compartments):
                        if beta[i,j]-alpha[i,j] > final_beta[i,j]:
