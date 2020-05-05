@@ -140,7 +140,7 @@ const CountrySelector: React.FC<{
                 options={countrySelectOptions}
                 onChange={selectCountry}
               />
-              <label>% population in urban areas</label>
+              <label>Population in urban areas (%)</label>
               <input
                 {...urbanPopulationProportion}
                 required
@@ -165,8 +165,8 @@ const CountrySelector: React.FC<{
                 <p>
                   The average number of medical, nursing, administrative,
                   technical and cleaning staff per hospital bed. In the US and
-                  Europe the average is approximately 4. In other countries it
-                  may be higher or lower than this number.
+                  Europe the average is approximately 2.5 staff/bed. In other
+                  countries, it may be higher or lower than this number.
                 </p>
               </ReactTooltip>
               <input
@@ -180,11 +180,23 @@ const CountrySelector: React.FC<{
             <div className="form-column">
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
-              <label>
-                % urban population below
-                <br />
-                the poverty line
-              </label>
+
+              <a data-tip data-for="belowPovertyLineProportion-tooltip">
+                <label>
+                  Urban population below
+                  <br />
+                  the poverty line (%) <IoIosInformationCircleOutline />
+                </label>
+              </a>
+              <ReactTooltip id="belowPovertyLineProportion-tooltip">
+                <p>
+                  The percentage of the urban population living below the
+                  poverty line. Many members of this population live in
+                  conditions that make it difficult or impossible to comply with
+                  social distancing or quarantine regulations.
+                </p>
+              </ReactTooltip>
+
               <input
                 {...belowPovertyLineProportion}
                 required
@@ -194,19 +206,19 @@ const CountrySelector: React.FC<{
               />
               <a data-tip data-for="workingOutsideHomeProportion-tooltip">
                 <label>
-                  % people working outside home{' '}
+                  People working outside the home (%){' '}
                   <IoIosInformationCircleOutline />
                 </label>
               </a>
               <ReactTooltip id="workingOutsideHomeProportion-tooltip">
                 <p>
-                  This number represents the % of the population whose
-                  occupation requires an unavoidably high level of contact with
-                  other people (even in quarantine conditions). Examples include
-                  workers in essential shops, markets, factories, public
-                  transport and delivery services, doctors and dentists etc.
-                  Hospital staff are excluded (the number of hospital staff is
-                  calculated from the number of hospital beds)
+                  The percentage of the population whose occupation requires a
+                  high level of contact with other people (even in quarantine
+                  conditions), e.g. workers in essential shops, markets,
+                  factories, public transport and delivery services, doctors and
+                  dentists. Hospital staff are excluded (the number of hospital
+                  staff is calculated from the number of hospital beds for the
+                  country).
                 </p>
               </ReactTooltip>
               <input
@@ -216,7 +228,18 @@ const CountrySelector: React.FC<{
                 max="100"
                 type="number"
               />
-              <label>% Active Population</label>
+              <a data-tip data-for="activePopulationProportion-tooltip">
+                <label>
+                  Active population (%) <IoIosInformationCircleOutline />
+                </label>
+              </a>
+              <ReactTooltip id="activePopulationProportion-tooltip">
+                <p>
+                  The percentage of the population with the capability to engage
+                  in economic activity. As a default, we use the percentage of
+                  the population aged between 15 and 64 years.
+                </p>
+              </ReactTooltip>
               <input
                 {...activePopulationProportion}
                 required
