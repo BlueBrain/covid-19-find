@@ -309,7 +309,7 @@ const SimulationResults: React.FC<{
                                 {
                                   scaleLabel: {
                                     display: true,
-                                    labelString: 'Number of People',
+                                    labelString: 'Number of People (per day)',
                                   },
                                   gridLines: {
                                     color: '#00000005',
