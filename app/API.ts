@@ -67,6 +67,7 @@ export type SimulationParams = {
   hospitalStaffPerBed: number;
   activePopulationProportion: number;
   belowPovertyLineProportion: number;
+  over64Proportion: number;
   hospitalEmployment: number | null; // TODO: change this because model doesnt use it
   sensitivityPCR: number;
   sensitivityRDT: number;
@@ -125,7 +126,7 @@ export type CountryResponse = {
   highContactPopulation: number | null;
   hospitalBeds: number | null;
   hospitalEmployment: number | null;
-  over65Proportion: number | null;
+  over64Proportion: number | null;
   population: number | null;
   remoteAreasPopulationProportion: number | null;
   belowPovertyLineProportion: number | null;
@@ -151,8 +152,15 @@ export default class API {
       .then(response => response.json())
       .then(response => ({
         ...response,
-        urbanPopulationProportion: response.urbanPopulationProportion * 100,
-        activePopulationProportion: response.activePopulationProportion * 100,
+        urbanPopulationProportion: response.urbanPopulationProportion
+          ? response.urbanPopulationProportion * 100
+          : null,
+        activePopulationProportion: response.activePopulationProportion
+          ? response.activePopulationProportion * 100
+          : null,
+        over64Proportion: response.over64Proportion
+          ? response.over64Proportion * 100
+          : null,
       }));
   }
 
@@ -173,6 +181,7 @@ export default class API {
         simulationParams.workingOutsideHomeProportion / 100,
       activePopulationProportion:
         simulationParams.activePopulationProportion / 100,
+      over64Proportion: simulationParams.over64Proportion / 100,
       scenarios: simulationParams.scenarios.map(scenario => {
         return {
           ...scenario,

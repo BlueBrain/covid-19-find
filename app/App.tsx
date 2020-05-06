@@ -23,6 +23,7 @@ const DEFAULT_PARAMS = {
   activePopulationProportion: null,
   belowPovertyLineProportion: null,
   hospitalEmployment: null,
+  over64Proportion: null,
   sensitivityPCR: 0.95,
   sensitivityRDT: 0.85,
   sensitivityXray: 0,

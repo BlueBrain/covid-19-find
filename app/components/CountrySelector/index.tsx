@@ -23,6 +23,7 @@ export type CountrySelectorResponse = {
   hospitalStaffPerBed: number | null;
   hospitalEmployment: number | null;
   activePopulationProportion: number | null;
+  over64Proportion: number | null;
 };
 
 const CountrySelector: React.FC<{
@@ -62,14 +63,20 @@ const CountrySelector: React.FC<{
   );
   const workingOutsideHomeProportion = useFormInput(
     countryInfo.workingOutsideHomeProportion,
-    null,
+    'Enter... [1 - 100]',
     true,
   );
   const activePopulationProportion = useFormInput(
     countryInfo.activePopulationProportion,
-    null,
+    'Enter... [1 - 100]',
     true,
   );
+  const over64Proportion = useFormInput(
+    countryInfo.over64Proportion,
+    'Enter... [1 - 100]',
+    true,
+  );
+
   const selectCountry = ({ value, label }) => {
     onClickSelectCountry(value);
   };
@@ -88,6 +95,7 @@ const CountrySelector: React.FC<{
         urbanPopulationProportion: urbanPopulationProportion.value,
         belowPovertyLineProportion: belowPovertyLineProportion.value,
         activePopulationProportion: activePopulationProportion.value,
+        over64Proportion: over64Proportion.value,
       });
   };
 
@@ -242,6 +250,14 @@ const CountrySelector: React.FC<{
               </ReactTooltip>
               <input
                 {...activePopulationProportion}
+                required
+                min="0"
+                max="100"
+                type="number"
+              />
+              <label>Population aged > 64 years (%)</label>
+              <input
+                {...over64Proportion}
                 required
                 min="0"
                 max="100"

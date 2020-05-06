@@ -76,6 +76,7 @@ const Countries: React.FC<{
       hospitalBeds: null,
       hospitalEmployment: null,
       population: null,
+      over64Proportion: null,
       belowPovertyLineProportion: null,
       urbanPopulationProportion: null,
     });
