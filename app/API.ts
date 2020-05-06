@@ -9,9 +9,11 @@ export enum InterventionType {
 
 export enum InterventionTiming {
   NEVER = 'never',
+  GT1 = '>1',
+  GT5 = '>5',
   GT10 = '>10',
+  GT20 = '>20',
   GT50 = '>50',
-  GT500 = '>500',
 }
 
 export const DEFAULT_SCENARIO_LIST: Scenario[] = [

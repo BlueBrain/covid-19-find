@@ -3,10 +3,12 @@ from .simulation.covidlib import run_simulation, getscenarios
 
 class Simulator:
     TIMING_PARAMS = {
-        "never": 0,
-        ">500": 1,
-        ">50": 2,
-        ">10": 3
+        ">1": 0,
+        ">5": 1,
+        ">10": 2,
+        ">20": 3,
+        ">50": 4,
+        "never": 5,
     }
     INTERVENTION_PARAMS = {
         "no_intervention": 0,
@@ -53,12 +55,12 @@ class Simulator:
             "symptomatic_only": str(input_scenario["testSymptomaticOnly"]),
             "prop_hospital": input_scenario["hospitalTestProportion"],
             "prop_other_hc": input_scenario["otherHighContactPopulationTestProportion"],
-            "prop_rop": input_scenario["restOfPopulationTestProportion"]
+            "prop_rop": 1 - input_scenario["hospitalTestProportion"] - input_scenario[
+                "otherHighContactPopulationTestProportion"]
         }
 
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
-        print(scenarios)
         if scenarios is not None:
             result = run_simulation(self.get_fixed_parameters(parameters), scenarios=scenarios)
         else:

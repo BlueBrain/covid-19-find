@@ -107,8 +107,7 @@
           "interventionTiming",
           "testSymptomaticOnly",
           "hospitalTestProportion",
-          "otherHighContactPopulationTestProportion",
-          "restOfPopulationTestProportion"
+          "otherHighContactPopulationTestProportion"
         ],
         "properties": {
           "interventionType": {
@@ -123,9 +122,11 @@
             "type": "string",
             "enum": [
               "never",
+              ">1",
+              ">5",
               ">10",
-              ">50",
-              ">500"
+              ">20",
+              ">50"
             ]
           },
           "testSymptomaticOnly": {
@@ -137,11 +138,6 @@
             "maximum": 1
           },
           "otherHighContactPopulationTestProportion": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "restOfPopulationTestProportion": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
