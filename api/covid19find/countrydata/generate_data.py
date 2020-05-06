@@ -66,8 +66,9 @@ os.makedirs(data_dir, exist_ok=True)
 for c in pycountry.countries:
     try:
         country_data = country_details(c.alpha_2)
-        with open(os.path.join(data_dir, c.alpha_2 + ".json"), "w") as country_file:
-            json.dump(country_data, country_file)
+        if country_data is not None:
+            with open(os.path.join(data_dir, c.alpha_2 + ".json"), "w") as country_file:
+                json.dump(country_data, country_file)
 
     except IndexError:
         print(c.alpha_2)
