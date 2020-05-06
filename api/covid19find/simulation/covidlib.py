@@ -84,7 +84,20 @@ def run_simulation(fixed_params, **kwargs):
          p['init_pop'][0]=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
          p['init_pop'][1]=high_risk_urban+other_high_contact
          p['init_pop'][2]=fixed_params['total_pop']-hosp_staff-int(p['init_pop'][1])
+         #compute age_corrected IFR
+         prop_gt_64=fixed_params['age_gt_64']
+         prop_15_64=fixed_params['prop_15_64']
+         prop_1_14=1-(prop_gt_64+prop_15_64)
+         print ('prop_gt_64=', prop_gt_64)
+         print ('prop_15_64=', prop_15_64)
+         print ('prop_1_14=', prop_1_14)
+         IFR_1_14=float(p['IFR_1_14'][0])
+         IFR_15_64=float(p['IFR_15_64'][0])
+         IFR_gt_64=float(p['IFR_gt_64'][0])
+         p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
+         print('IFR corrected=',p['IFR_corrected'])
          #read in any advanced settings
+         
 # =============================================================================
 #          p['intervention_type']=intervention_type
 #          p['intervention_timing']=intervention_timing
@@ -287,7 +300,9 @@ def simulate(num_compartments,params,beta, final_beta):
     alpha_post_inversion = float(params['alpha_post_inversion'][0])
     latent_period =  int(params['latent_period'][0])
     incubation_period =  int(params['incubation_period'][0])
-    infection_fatality_rate=float(params['infection_fatality_rate'][0])
+    infection_fatality_rate=float(params['IFR_corrected'])
+    #infection_fatality_rate=float(params['infection_fatality_rate'][0])
+    print ('infection fatality rate begin simulate=',infection_fatality_rate)
     recovery_period = int(params['recovery_period'] [0])
     tau = infection_fatality_rate/recovery_period
     gamma = (1-infection_fatality_rate)/recovery_period
@@ -299,12 +314,12 @@ def simulate(num_compartments,params,beta, final_beta):
     p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'][0])
     background_rate_symptomatic=float(params['background_rate_symptomatic'][0])
     intervention_timing=int(params['intervention_timing'][0])
-    intervention_threshold_0=int(params['intervention_threshold_0'][0])
-    intervention_threshold_1=int(params['intervention_threshold_1'][0])
-    intervention_threshold_2=int(params['intervention_threshold_2'][0])
-    intervention_threshold_3=int(params['intervention_threshold_3'][0])
-    intervention_threshold_4=int(params['intervention_threshold_4'][0])
-    intervention_threshold_5=int(params['intervention_threshold_5'][0])
+    intervention_day_0=int(params['intervention_day_0'][0])
+    intervention_day_1=int(params['intervention_day_1'][0])
+    intervention_day_2=int(params['intervention_day_2'][0])
+    intervention_day_3=int(params['intervention_day_3'][0])
+    intervention_day_4=int(params['intervention_day_4'][0])
+   
     compartment = []
     init_pop = np.zeros(num_days)
     init_infected = np.zeros(num_days)
@@ -388,22 +403,22 @@ def simulate(num_compartments,params,beta, final_beta):
     if params['intervention_type'][0]==0:  #with no intervention intervention will never start
         intervention_timing=0
     if intervention_timing==0:
-        intervention_threshold=intervention_threshold_0
+        intervention_day=intervention_day_0 
     else:
         if intervention_timing==1:
-            intervention_threshold=intervention_threshold_1
+            intervention_day=intervention_day_1 
         else:
-            if intervention_timing==2:
-                intervention_threshold=intervention_threshold_2
+            if intervention_timing==2: #Switzerland
+                intervention_day=intervention_day_2 
             else:
                 if intervention_timing==3:
-                    intervention_threshold=intervention_threshold_3
+                    intervention_day=intervention_day_3
                 else:
                     if intervention_timing==4:
-                        intervention_threshold=intervention_threshold_4
+                        intervention_day=intervention_day_4
                     else:
-                        intervention_threshold=intervention_threshold_5
-    print ('intervention threshold=', intervention_threshold)
+                        intervention_day=intervention_day_5
+    print ('intervention threshold=', intervention_day)
     test_started=False
     total_testkits=0
     for k in range(0,num_testkit_types):
@@ -419,7 +434,7 @@ def simulate(num_compartments,params,beta, final_beta):
            total_deaths=total_deaths+deaths[t-1,i]
       
        if t<int(params['stop_intervention'][0]):
-           if total_deaths>=intervention_threshold:  #intervention happens when number of deaths passes a threshold
+           if t>=intervention_day:  #intervention happens when number of deaths passes a threshold
                for i in range (0,num_compartments):
                    for j in range(0,num_compartments):
                        if beta[i,j]-alpha[i,j] > final_beta[i,j]:
