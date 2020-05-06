@@ -18,7 +18,8 @@
     "specificityXray",
     "numTestsPCR",
     "numTestsRDT",
-    "numTestsXray"
+    "numTestsXray",
+    "over64Proportion"
   ],
   "type": "object",
   "properties": {
@@ -45,6 +46,11 @@
       "maximum": 1
     },
     "urbanPopulationProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "over64proportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1
@@ -107,8 +113,7 @@
           "interventionTiming",
           "testSymptomaticOnly",
           "hospitalTestProportion",
-          "otherHighContactPopulationTestProportion",
-          "over64Proportion"
+          "otherHighContactPopulationTestProportion"
         ],
         "properties": {
           "interventionType": {
@@ -139,11 +144,6 @@
             "maximum": 1
           },
           "otherHighContactPopulationTestProportion": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "over64proportion": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
