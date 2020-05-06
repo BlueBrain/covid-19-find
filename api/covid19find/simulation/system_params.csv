@@ -9,12 +9,15 @@ test_start,45,,
 beta_pre_inversion,0.34,,
 beta_post_inversion_1,0.09,,
 beta_post_inversion_2,0.06,,
-alpha_post_inversion,15,,
-intervention_threshold_1,500
-intervention_threshold_2,50
-intervention_threshold_3,10
+alpha_post_inversion,29,,
+intervention_threshold_0,1
+intervention_threshold_1,5
+intervention_threshold_2,10
+intervention_threshold_3,20
+intervention_threshold_4, 50
+intervention_threshold_5,1000000
 confirmation_rate,0.2,,
-infection_fatality_rate,0.015,,
+infection_fatality_rate,0.01,,
 lower_bound_beta,0.04,,
 total_pop,50000,,
 prop_urban,0,,

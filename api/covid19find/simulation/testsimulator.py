@@ -23,30 +23,30 @@ fixed_params={'total_pop':8655000, \
     'specificity_PCR':0.95,\
     'specificity_RDT':0.90,\
     'specificity_xray':0.90,\
-    'num_tests_PCR':1000,\
-    'num_tests_RDT':1000,\
+    'num_tests_PCR':3000,\
+    'num_tests_RDT':0,\
     'num_tests_xray':0}
 #advanced settings
 scenario_params=[None]*num_scenarios
 scenario_params[0]={'intervention_type':1, \
     'intervention_timing':2, \
-    'symptomatic_only':'FALSE', \
+    'symptomatic_only':'True', \
     'prop_hospital': 0.0, \
     'prop_other_hc':1.0}
 scenario_params[1]={'intervention_type':2, \
-    'intervention_timing':2, \
+    'intervention_timing':0, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  
 scenario_params[2]={'intervention_type':2, \
-    'intervention_timing':3, \
+    'intervention_timing':5, \
     'symptomatic_only':'TRUE', \
-    'prop_hospital': 1.0, \
-    'prop_other_hc':0.0}  
+    'prop_hospital': 0.5, \
+    'prop_other_hc':0.5}  
     #proportion of tests given to other high contact populations
 #Instead of giving hospital employment it now uses hospital beds
 scenario_array=cl.getscenarios()
-print('final scenario array=',scenario_array)
+#print('final scenario array=',scenario_array)
 dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\
                    cl.run_simulation(fixed_params,scenarios=scenario_params )
 #dataframes, total_tests_by_scenario,total_deaths_by_scenario,max_infected_by_scenario,max_isolated_by_scenario=\
