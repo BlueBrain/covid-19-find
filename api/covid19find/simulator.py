@@ -55,12 +55,12 @@ class Simulator:
             "symptomatic_only": str(input_scenario["testSymptomaticOnly"]),
             "prop_hospital": input_scenario["hospitalTestProportion"],
             "prop_other_hc": input_scenario["otherHighContactPopulationTestProportion"],
-            "prop_rop": input_scenario["restOfPopulationTestProportion"]
+            "prop_rop": 1 - input_scenario["hospitalTestProportion"] - input_scenario[
+                "otherHighContactPopulationTestProportion"]
         }
 
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
-        print(scenarios)
         if scenarios is not None:
             result = run_simulation(self.get_fixed_parameters(parameters), scenarios=scenarios)
         else:
