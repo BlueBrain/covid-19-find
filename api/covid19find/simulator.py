@@ -3,10 +3,12 @@ from .simulation.covidlib import run_simulation, getscenarios
 
 class Simulator:
     TIMING_PARAMS = {
-        "never": 0,
-        ">500": 1,
-        ">50": 2,
-        ">10": 3
+        ">1": 0,
+        ">5": 1,
+        ">10": 2,
+        ">20": 3,
+        ">50": 4,
+        "never": 5,
     }
     INTERVENTION_PARAMS = {
         "no_intervention": 0,

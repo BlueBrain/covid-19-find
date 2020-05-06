@@ -123,9 +123,11 @@
             "type": "string",
             "enum": [
               "never",
+              ">1",
+              ">5",
               ">10",
-              ">50",
-              ">500"
+              ">20",
+              ">50"
             ]
           },
           "testSymptomaticOnly": {
