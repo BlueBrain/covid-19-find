@@ -38,16 +38,16 @@ class CountryRepository:
 
         if pcountry is None:
             return None
-        country = Country(int(pcountry.numeric), 2020, age=65)
+        country = Country(int(pcountry.numeric), 2020, age=64)
         try:
             nearest = country.search_avail_stats()
         except ValueError:
             return None
-        over65proportion = None
-        over65count = nearest["overX"][0]
+        over64proportion = None
+        over64count = nearest["overX"][0]
         population = nearest["pop"][0]
-        if over65count is not None:
-            over65proportion = over65count / population
+        if over64count is not None:
+            over64proportion = over64count / population
 
         active_population_proportion = None
         active_population_count = nearest["active_pop"][0]
@@ -64,7 +64,7 @@ class CountryRepository:
             "urbanPopulationProportion": self.__percentage_to_proportion_or_none(nearest["urban"][0]),
             "urbanPopulationInDegradedHousingProportion": self.__percentage_to_proportion_or_none(
                 nearest["degraded"][0]),
-            "over65Proportion": over65proportion,
+            "over64Proportion": over64proportion,
             "hospitalBeds": hospital_beds,
             "highContactPopulation": self.__int_or_none(nearest["high_contact"][0]),
             "remoteAreasPopulationProportion": self.__percentage_to_proportion_or_none(nearest["remote"][0])

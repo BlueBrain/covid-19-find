@@ -25,6 +25,7 @@ class Simulator:
             "total_pop": parameters["population"],
             "hospital_beds": parameters["hospitalBeds"],
             "prop_15_64": parameters["activePopulationProportion"],
+            "age_gt_64": parameters["over64Proportion"],
             "prop_urban": parameters["urbanPopulationProportion"],
             "prop_below_pl": parameters["belowPovertyLineProportion"],
             "prop_woh": parameters["workingOutsideHomeProportion"],

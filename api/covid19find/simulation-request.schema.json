@@ -107,7 +107,8 @@
           "interventionTiming",
           "testSymptomaticOnly",
           "hospitalTestProportion",
-          "otherHighContactPopulationTestProportion"
+          "otherHighContactPopulationTestProportion",
+          "over64Proportion"
         ],
         "properties": {
           "interventionType": {
@@ -138,6 +139,11 @@
             "maximum": 1
           },
           "otherHighContactPopulationTestProportion": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "over64proportion": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
