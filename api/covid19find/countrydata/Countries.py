@@ -1,7 +1,7 @@
 import os
 import sys
 import glob
-from . import config
+import config
 import pycountry
 import pandas as pd
 
