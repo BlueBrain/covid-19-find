@@ -153,13 +153,13 @@ export default class API {
       .then(response => ({
         ...response,
         urbanPopulationProportion: response.urbanPopulationProportion
-          ? response.urbanPopulationProportion * 100
+          ? Number((response.urbanPopulationProportion * 100).toFixed(2))
           : null,
         activePopulationProportion: response.activePopulationProportion
-          ? response.activePopulationProportion * 100
+          ? Number((response.activePopulationProportion * 100).toFixed(2))
           : null,
         over64Proportion: response.over64Proportion
-          ? response.over64Proportion * 100
+          ? Number((response.over64Proportion * 100).toFixed(2))
           : null,
       }));
   }

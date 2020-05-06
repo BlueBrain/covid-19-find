@@ -154,6 +154,7 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 max="100"
+                step="0.01"
                 type="number"
               />
               <label>
@@ -210,6 +211,7 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 max="100"
+                step="0.01"
                 type="number"
               />
               <a data-tip data-for="workingOutsideHomeProportion-tooltip">
@@ -234,6 +236,7 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 max="100"
+                step="0.01"
                 type="number"
               />
               <a data-tip data-for="activePopulationProportion-tooltip">
@@ -253,6 +256,7 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 max="100"
+                step="0.01"
                 type="number"
               />
               <label>Population aged > 64 years (%)</label>
@@ -261,6 +265,7 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 max="100"
+                step="0.01"
                 type="number"
               />
             </div>
