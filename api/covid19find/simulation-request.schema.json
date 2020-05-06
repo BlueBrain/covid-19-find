@@ -18,7 +18,8 @@
     "specificityXray",
     "numTestsPCR",
     "numTestsRDT",
-    "numTestsXray"
+    "numTestsXray",
+    "over64Proportion"
   ],
   "type": "object",
   "properties": {
@@ -45,6 +46,11 @@
       "maximum": 1
     },
     "urbanPopulationProportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "over64proportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1

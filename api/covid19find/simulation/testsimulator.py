@@ -12,7 +12,8 @@ import covidlib as cl
 num_scenarios=3
 fixed_params={'total_pop':8655000, \
     'hospital_beds':34620, \
-    'prop_15_64': 0.66, \
+    'prop_15_64': 0.40, \
+    'age_gt_64':0.05 ,\
     'prop_urban': 0.73, \
     'prop_below_pl':0.05, \
     'prop_woh':0.40, \
@@ -28,18 +29,18 @@ fixed_params={'total_pop':8655000, \
     'num_tests_xray':0}
 #advanced settings
 scenario_params=[None]*num_scenarios
-scenario_params[0]={'intervention_type':1, \
+scenario_params[0]={'intervention_type':2, \
     'intervention_timing':2, \
     'symptomatic_only':'True', \
     'prop_hospital': 0.0, \
     'prop_other_hc':1.0}
 scenario_params[1]={'intervention_type':2, \
-    'intervention_timing':0, \
+    'intervention_timing':2, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  
 scenario_params[2]={'intervention_type':2, \
-    'intervention_timing':5, \
+    'intervention_timing': 3, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  

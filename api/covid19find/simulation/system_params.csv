@@ -4,18 +4,17 @@ background_rate_symptomatic,0.02,,
 latent_period,3,,
 incubation_period,7,,
 recovery_period,10,,
-inversion_date,45,,
+inversion_date,22,,
 test_start,45,,
 beta_pre_inversion,0.34,,
 beta_post_inversion_1,0.09,,
 beta_post_inversion_2,0.06,,
 alpha_post_inversion,29,,
-intervention_threshold_0,1
-intervention_threshold_1,5
-intervention_threshold_2,10
-intervention_threshold_3,20
-intervention_threshold_4, 50
-intervention_threshold_5,1000000
+intervention_day_0,17
+intervention_day_1,21
+intervention_day_2,23
+intervention_day_3,27
+intervention_day_4, 1000000
 confirmation_rate,0.2,,
 infection_fatality_rate,0.01,,
 lower_bound_beta,0.04,,
@@ -40,3 +39,7 @@ intervention_type,2,2,2
 intervention_timing,2,2,2
 no_testing,FALSE
 stop_intervention,1000000
+IFR_1_14,0.00003
+IFR_15_64,0.003
+IFR_gt_64,0.08
+IFR_corrected,0,0,0
