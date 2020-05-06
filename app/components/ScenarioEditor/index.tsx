@@ -4,10 +4,13 @@ import 'react-tabs/style/react-tabs.css';
 import {
   IoIosAddCircleOutline,
   IoIosRemoveCircleOutline,
+  IoIosInformationCircleOutline,
   IoIosClose,
   IoIosAdd,
 } from 'react-icons/io';
 import Select from 'react-select';
+import Color from 'color';
+
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
@@ -17,8 +20,8 @@ import useFormInput, {
 } from '../../hooks/useFormInput';
 
 import './scenario-editor.less';
-import Color from 'color';
 import colors from '../../colors';
+import ReactTooltip from 'react-tooltip';
 
 const MAX_SCENARIOS = 3;
 
@@ -117,7 +120,35 @@ const ScenarioEditor: React.FC<{
         <input {...name} type="text" required />
         <label>description</label>
         <textarea {...description} />
-        <label>Intervention Type</label>
+
+        <a data-tip data-for="interventionType-tooltip">
+          <label>
+            Intervention Type <IoIosInformationCircleOutline />
+          </label>
+        </a>
+        <ReactTooltip id="interventionType-tooltip">
+          {interventionType.value === InterventionType.LOCKDOWN && (
+            <p>
+              Lockdown consists of severe government-imposed measures similar to
+              those taken in China, Italy or Spain. Lockdown implies closure of
+              schools and non-essential shops, mandatory work from home whenever
+              possible, strong restrictions on movement outside the home, the
+              banning of public gatherings (religious ceremonies, sports events,
+              concerts etc.) and other similar measures. The goal is to reduce
+              R0 – the basic reproductive number – significantly below 1.
+            </p>
+          )}
+          {interventionType.value === InterventionType.MILD && (
+            <p>
+              Mild intervention consists of a mix of mandatory and voluntary
+              measures to achieve social distancing, such as those introduced in
+              Sweden. The goal is to reduce R0 – the basic reproductive number –
+              to around 1, preventing explosive growth in cases, while limiting
+              the economic impact of the measures.
+            </p>
+          )}
+        </ReactTooltip>
+
         <Select
           onChange={interventionType.onChange}
           options={interventionTypes}
@@ -147,7 +178,19 @@ const ScenarioEditor: React.FC<{
             }),
           }}
         />
-        <label>Number of deaths before intervention</label>
+        <a data-tip data-for="interventionTimings-tooltip">
+          <label>
+            Number of deaths before intervention{' '}
+            <IoIosInformationCircleOutline />
+          </label>
+        </a>
+        <ReactTooltip id="interventionTimings-tooltip">
+          <p>
+            This number is an indication of the timing of the intervention. The
+            lower the number of deaths before the intervention begins, the
+            faster the intervention.
+          </p>
+        </ReactTooltip>
         <Select
           value={interventionTimings.find(
             ({ value }) => value === interventionTiming.value,
@@ -177,7 +220,18 @@ const ScenarioEditor: React.FC<{
             }),
           }}
         />
-        <label>Test Symptomatic Only?</label>
+        <a data-tip data-for="testSymptomaticOnly-tooltip">
+          <label>
+            Test Symptomatic Only? <IoIosInformationCircleOutline />
+          </label>
+        </a>
+        <ReactTooltip id="testSymptomaticOnly-tooltip">
+          <p>
+            With this commonly adopted strategy, only individuals already
+            showing COVID-19-like symptoms are tested. Alternatively, tests are
+            offered to everyone in a particular sub-population.
+          </p>
+        </ReactTooltip>
         <input
           onChange={testSymptomaticOnly.onChange}
           checked={testSymptomaticOnly.value}

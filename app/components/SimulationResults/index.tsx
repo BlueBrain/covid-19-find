@@ -257,28 +257,35 @@ const SimulationResults: React.FC<{
                       selectedScenario.maxInfected,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Max Infected at Peak</span>
+                    <span className="subtitle">
+                      Maximum number of <br /> expected infections
+                    </span>
                   </h3>
                   <h3>
                     {Math.ceil(
                       selectedScenario.totalDeaths,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Total Deaths</span>
+                    <span className="subtitle">Total expected deaths</span>
                   </h3>
                   <h3>
                     {Math.ceil(
                       selectedScenario.maxIsolated,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Max Isolated</span>
+                    <span className="subtitle">
+                      Maximum number of <br /> people in isolation
+                    </span>
                   </h3>
                   <h3>
                     {Math.ceil(
                       selectedScenario.totalTests,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle"> Total Tests</span>
+                    <span className="subtitle">
+                      Total number of <br />
+                      tests conducted
+                    </span>
                   </h3>
                 </div>{' '}
                 <div className="charts">
@@ -309,7 +316,7 @@ const SimulationResults: React.FC<{
                                 {
                                   scaleLabel: {
                                     display: true,
-                                    labelString: 'Number of People',
+                                    labelString: 'Number of People (per day)',
                                   },
                                   gridLines: {
                                     color: '#00000005',
