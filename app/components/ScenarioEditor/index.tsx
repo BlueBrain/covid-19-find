@@ -31,6 +31,9 @@ const ScenarioEditor: React.FC<{
   onChange?: (scenario: Scenario) => void;
   disabled: boolean;
 }> = ({ scenario, onChange, disabled }) => {
+  const propRef1 = React.useRef<HTMLInputElement>(null);
+  const propRef2 = React.useRef<HTMLInputElement>(null);
+
   const name = useTextInput(scenario.name, null, true);
   const interventionType = useSelectInput(
     scenario.interventionType,
@@ -61,38 +64,27 @@ const ScenarioEditor: React.FC<{
   const scenarioFormId = `#scenario-editor-${scenario.name
     .split(' ')
     .join('-')}`;
-  const testNumberValidity = () => {
-    const cumulative = Array.from(
-      document.querySelectorAll<HTMLInputElement>(
-        `${scenarioFormId} .proportion-test`,
-      ),
-    ).reduce((memo, element) => {
-      const cumulative = (Number(element.value) || 0) + memo;
-      const devalidify = () => {
-        document
-          .querySelectorAll<HTMLInputElement>(
-            `${scenarioFormId} .proportion-test`,
-          )
-          .forEach(element => {
-            element.setCustomValidity('');
-          });
-        element.removeEventListener('input', devalidify);
-      };
-      if (cumulative > 100) {
-        element.setCustomValidity('Proportions must be less than 100');
-        element.addEventListener('input', devalidify);
-      }
-      return cumulative;
-    }, 0);
 
-    return cumulative === 100;
+  const testNumberValidity = () => {
+    if (propRef1.current && propRef2.current) {
+      if (
+        Number(propRef1.current.value) + Number(propRef2.current.value) !==
+        100
+      ) {
+        propRef1.current.setCustomValidity('Proportions must add to 100');
+        propRef2.current.setCustomValidity('Proportions must add to 100');
+      } else {
+        propRef1.current.setCustomValidity('');
+        propRef2.current.setCustomValidity('');
+      }
+    }
+    return propRef1.current?.validity && propRef2.current?.validity;
   };
 
   const handleBlur = () => {
-    if (testNumberValidity()) {
+    if (!testNumberValidity()) {
       return;
     }
-
     onChange &&
       onChange({
         name: name.value,
@@ -300,6 +292,7 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          ref={propRef1}
           onBlur={handleBlur}
           disabled={disabled}
         />
@@ -315,6 +308,7 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          ref={propRef2}
           onBlur={handleBlur}
           disabled={disabled}
         />
