@@ -6,9 +6,7 @@ import TopSection from './components/TopSection';
 import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import About from './components/About';
 import API, { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
-import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -117,8 +115,6 @@ const App: React.FC = () => {
         />
         <TestSelector {...queryParams} onSubmit={handleSubmit} />
         <Simulation simulationParams={queryParams as SimulationParams} />
-        <About />
-        {/* <Contact /> */}
         <Footer />
       </main>
       <ScrollToTop />
