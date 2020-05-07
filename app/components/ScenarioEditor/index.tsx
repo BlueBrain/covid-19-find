@@ -297,7 +297,7 @@ const ScenarioList: React.FC<{
         name: 'New Scenario',
         description: '',
         interventionType: InterventionType.LOCKDOWN,
-        interventionTiming: InterventionTiming.GT10,
+        interventionTiming: InterventionTiming.LATE,
         testSymptomaticOnly: true,
         hospitalTestProportion: 0,
         otherHighContactPopulationTestProportion: 0,
