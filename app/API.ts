@@ -188,6 +188,8 @@ export default class API {
           otherHighContactPopulationTestProportion:
             scenario.otherHighContactPopulationTestProportion / 100,
           testSymptomaticOnly: !!scenario.testSymptomaticOnly,
+          // TODO remove when not required by API
+          restOfPopulationTestProportion: 0,
         };
       }),
     };

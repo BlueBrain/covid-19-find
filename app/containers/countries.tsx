@@ -9,11 +9,18 @@ import CovidResults, { CovidData } from '../components/CovidResults';
 import { CountryResponse, SimulationParams } from '../API';
 
 const Countries: React.FC<{
+  countrySelectFormReady: boolean;
+  setCountrySelectFormReady: (value: boolean) => void;
   onSubmit?: (
     value: CountrySelectorResponse | { countryCode?: string | null },
   ) => void;
   values: SimulationParams & { countryCode?: string | null };
-}> = ({ onSubmit, values }) => {
+}> = ({
+  onSubmit,
+  values,
+  setCountrySelectFormReady,
+  countrySelectFormReady,
+}) => {
   const [countries, setCountries] = React.useState([]);
   const [countryInfo, setCountryInfo] = React.useState<{
     loading: boolean;
@@ -28,7 +35,6 @@ const Countries: React.FC<{
     data: null,
   });
   const api = useAPI();
-
   React.useEffect(() => {
     api
       .countries()
@@ -71,6 +77,7 @@ const Countries: React.FC<{
 
   // Reset county details when country code changes
   const selectCountry = (countryCode: string) => {
+    setCountrySelectFormReady(false);
     onSubmit({
       countryCode,
       workingOutsideHomeProportion: null,
@@ -89,12 +96,22 @@ const Countries: React.FC<{
     entry => entry.countryCode === countryInfo?.data?.countryInfo?.countryCode,
   )?.name;
 
+  // TODO refactor by removing presentation logic
+  // perhaps consider creating a seperate presentation component
+  // for the section types
   return (
     <section className="input" id="country-selection">
       <div className="action-box">
         <CountrySelector
           countries={countries}
-          onSubmit={onSubmit}
+          onSubmit={(values, valid) => {
+            onSubmit(values);
+            // dont show as ready until the form is valid
+            setCountrySelectFormReady(valid);
+          }}
+          onChange={() => {
+            setCountrySelectFormReady(false);
+          }}
           countryInfo={{
             ...values,
             ...omitBy(countryInfo?.data?.countryInfo || {}, isNil),
@@ -103,22 +120,24 @@ const Countries: React.FC<{
           loading={countryInfo.loading}
         />
       </div>
-      <div className={`results-drop ${open ? 'open' : ''}`}>
-        {!!countryInfo &&
-          !!countryInfo?.data &&
-          !!countryInfo.data.covidData.timeseries && (
+      {countrySelectFormReady &&
+        !!countryInfo &&
+        !!countryInfo?.data &&
+        !!countryInfo.data.covidData.timeseries && (
+          <div className={`results-drop ${open ? 'open' : ''}`}>
+            {' '}
             <CovidResults
               data={countryInfo.data.covidData}
               countryLabel={
                 countryLabel || countryInfo?.data?.countryInfo.countryCode
               }
             />
-          )}
-        {/* TODO do something on error */}
-        {!!countryInfo && !!countryInfo.error && (
-          <h3>No Covid-19 Case Data found for this country.</h3>
+          </div>
         )}
-      </div>
+      {/* TODO do something on error */}
+      {!!countryInfo && !!countryInfo.error && (
+        <h3>No Covid-19 Case Data found for this country.</h3>
+      )}
     </section>
   );
 };

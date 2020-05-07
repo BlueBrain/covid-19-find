@@ -10,6 +10,7 @@ import {
 } from 'react-icons/io';
 import Select from 'react-select';
 import Color from 'color';
+import Switch from 'react-switch';
 
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
@@ -27,8 +28,12 @@ const MAX_SCENARIOS = 3;
 
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
-  onSubmit?: (scenario: Scenario) => void;
-}> = ({ scenario, onSubmit }) => {
+  onChange?: (scenario: Scenario) => void;
+  disabled: boolean;
+}> = ({ scenario, onChange, disabled }) => {
+  const propRef1 = React.useRef<HTMLInputElement>(null);
+  const propRef2 = React.useRef<HTMLInputElement>(null);
+
   const name = useTextInput(scenario.name, null, true);
   const interventionType = useSelectInput(
     scenario.interventionType,
@@ -56,37 +61,32 @@ const ScenarioEditor: React.FC<{
     null,
     true,
   );
+  const scenarioFormId = `#scenario-editor-${scenario.name
+    .split(' ')
+    .join('-')}`;
+
   const testNumberValidity = () => {
-    const cumulative = Array.from(
-      document.querySelectorAll<HTMLInputElement>('.proportion-test'),
-    ).reduce((memo, element) => {
-      const cumulative = (Number(element.value) || 0) + memo;
-      const devalidify = () => {
-        document
-          .querySelectorAll<HTMLInputElement>('.proportion-test')
-          .forEach(element => {
-            element.setCustomValidity('');
-          });
-        element.removeEventListener('input', devalidify);
-      };
-      if (cumulative > 100) {
-        element.setCustomValidity('Proportions must not exceed 100');
-        element.addEventListener('input', devalidify);
+    if (propRef1.current && propRef2.current) {
+      if (
+        Number(propRef1.current.value) + Number(propRef2.current.value) !==
+        100
+      ) {
+        propRef1.current.setCustomValidity('Proportions must add to 100');
+        propRef2.current.setCustomValidity('Proportions must add to 100');
+      } else {
+        propRef1.current.setCustomValidity('');
+        propRef2.current.setCustomValidity('');
       }
-      return cumulative;
-    }, 0);
-    return cumulative > 100;
+    }
+    return propRef1.current?.validity && propRef2.current?.validity;
   };
 
-  const handleSubmit = e => {
-    if (testNumberValidity()) {
+  const handleBlur = () => {
+    if (!testNumberValidity()) {
       return;
     }
-
-    e.preventDefault();
-    e.target.dataset.dirty = true;
-    onSubmit &&
-      onSubmit({
+    onChange &&
+      onChange({
         name: name.value,
         interventionType: interventionType.value,
         description: description.value,
@@ -113,19 +113,49 @@ const ScenarioEditor: React.FC<{
   ];
 
   return (
-    <form id={`scenario-editor-${scenario.name}`} onSubmit={handleSubmit}>
+    <div className="scenario" id={scenarioFormId}>
       <div className="form-column">
-        <label>Name</label>
-        <input {...name} type="text" required />
-        <label>description</label>
-        <textarea {...description} />
-
+        <label>
+          <br />
+          Name
+        </label>
+        <input
+          {...name}
+          type="text"
+          required
+          disabled={disabled}
+          onBlur={handleBlur}
+        />
+        <label>
+          <br />
+          description
+        </label>
+        <textarea {...description} disabled={disabled} onBlur={handleBlur} />
+      </div>
+      <div className="form-column">
         <a data-tip data-for="interventionType-tooltip">
           <label>
             Intervention Type <IoIosInformationCircleOutline />
           </label>
         </a>
         <ReactTooltip id="interventionType-tooltip">
+          {interventionType.value === InterventionType.NONE && (
+            <p>
+              This option allows you to specify the type of government
+              government intervention.Lockdown implies severe government-imposed
+              measures similar to those taken in China, Italy or Spain: closure
+              of schools and non-essential shops, mandatory work from home
+              whenever possible, strong restrictions on movement outside the
+              home, the banning of public gatherings (religious ceremonies,
+              sports events, concerts etc.) and other similar measures. The goal
+              is to reduce R0 – the basic reproductive number – significantly
+              below 1. Mild intervention consists of a mix of mandatory and
+              voluntary measures to achieve social distancing, such as those
+              introduced in Sweden. The goal is to reduce R0 – the basic
+              reproductive number – to around 1, preventing explosive growth in
+              cases, while limiting the economic impact of the measures.
+            </p>
+          )}
           {interventionType.value === InterventionType.LOCKDOWN && (
             <p>
               Lockdown consists of severe government-imposed measures similar to
@@ -149,7 +179,9 @@ const ScenarioEditor: React.FC<{
         </ReactTooltip>
 
         <Select
+          isDisabled={disabled}
           onChange={interventionType.onChange}
+          onBlur={handleBlur}
           options={interventionTypes}
           value={interventionTypes.find(
             ({ value }) => value === interventionType.value,
@@ -179,22 +211,24 @@ const ScenarioEditor: React.FC<{
         />
         <a data-tip data-for="interventionTimings-tooltip">
           <label>
-            Number of deaths before intervention{' '}
-            <IoIosInformationCircleOutline />
+            Start of government intervention <IoIosInformationCircleOutline />
           </label>
         </a>
         <ReactTooltip id="interventionTimings-tooltip">
           <p>
-            This number is an indication of the timing of the intervention. The
-            lower the number of deaths before the intervention begins, the
-            faster the intervention.
+            This option allows you to specify how quickly the government put in
+            place measures to contain or suppress the epidemic. The timing of
+            government intervention has a major effect on the dynamics of the
+            epidemic.
           </p>
         </ReactTooltip>
         <Select
+          isDisabled={disabled}
           value={interventionTimings.find(
             ({ value }) => value === interventionTiming.value,
           )}
           onChange={interventionTiming.onChange}
+          onBlur={handleBlur}
           options={interventionTimings}
           // @ts-ignore
           theme={theme => ({
@@ -231,17 +265,24 @@ const ScenarioEditor: React.FC<{
             offered to everyone in a particular sub-population.
           </p>
         </ReactTooltip>
-        <input
-          onChange={testSymptomaticOnly.onChange}
-          checked={testSymptomaticOnly.value}
-          type="checkbox"
-        />
+        <div style={{ textAlign: 'left', marginTop: '5px' }}>
+          <Switch
+            onChange={value => {
+              testSymptomaticOnly.onChange(value);
+              handleBlur();
+            }}
+            checked={testSymptomaticOnly.value}
+            onColor={colors.turqouise}
+            offColor={'#c3c9cc'}
+            disabled={disabled}
+          />
+        </div>
       </div>
       <div className="form-column">
         <label>
           Proportion of tests for
           <br />
-          hospital staff
+          hospital staff (%)
         </label>
         <input
           className="proportion-test"
@@ -250,12 +291,23 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          ref={propRef1}
+          onBlur={handleBlur}
+          disabled={disabled}
         />
-        <label>
-          Proportion of tests for other
-          <br />
-          highly exposed groups
-        </label>
+        <a data-tip data-for="otherHighContactPopulationTestProportion-tooltip">
+          <label>
+            Proportion of tests for other
+            <br />
+            highly exposed groups (%) <IoIosInformationCircleOutline />
+          </label>
+        </a>
+        <ReactTooltip id="otherHighContactPopulationTestProportion-tooltip">
+          <p>
+            Urban population below the poverty line; people whose occupation
+            obliges them to work outside the home
+          </p>
+        </ReactTooltip>
         <input
           className="proportion-test"
           {...otherHighContactPopulationTestProportion}
@@ -263,31 +315,27 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          ref={propRef2}
+          onBlur={handleBlur}
+          disabled={disabled}
         />
-        <button type="submit">Enter</button>
       </div>
-    </form>
+    </div>
   );
 };
 
 const ScenarioList: React.FC<{
   scenarios: Scenario[];
-  onSubmit?: (
-    scenarioListSubmit: { scenarios: Scenario[] },
-    skipScroll: boolean,
-  ) => void;
+  onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
   const [visible, setVisible] = React.useState(false);
 
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
     onSubmit &&
-      onSubmit(
-        {
-          scenarios: newScenarios,
-        },
-        true,
-      );
+      onSubmit({
+        scenarios: newScenarios,
+      });
   };
 
   const addScenario = () => {
@@ -305,12 +353,9 @@ const ScenarioList: React.FC<{
       },
     ];
     onSubmit &&
-      onSubmit(
-        {
-          scenarios: newScenarios,
-        },
-        true,
-      );
+      onSubmit({
+        scenarios: newScenarios,
+      });
   };
 
   return (
@@ -325,35 +370,39 @@ const ScenarioList: React.FC<{
             <TabList>
               {scenarios.map((scenario, index) => {
                 return (
-                  <Tab>
-                    {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
-                    <button
-                      className="small"
-                      type="button"
-                      onClick={removeScenario(index)}
-                    >
-                      <IoIosClose />
-                    </button>
+                  <Tab key={`tab-${scenario.name}-${index}`}>
+                    {index === 0
+                      ? 'Baseline'
+                      : `Scenario ${toLetters(index).toLocaleUpperCase()}`}{' '}
+                    {scenarios.length > 1 && index !== 0 && (
+                      <span onClick={removeScenario(index)}>
+                        <IoIosClose />
+                      </span>
+                    )}
                   </Tab>
                 );
               })}
               {scenarios.length < MAX_SCENARIOS && (
-                <button className="small" type="button" onClick={addScenario}>
+                <a className="add-scenario" onClick={addScenario}>
                   Add Scenario
                   <IoIosAdd />
-                </button>
+                </a>
               )}
             </TabList>
             {scenarios.map((scenario, index) => {
               const handleSubmit = changedScenario => {
                 const newScenarios = scenarios;
                 newScenarios[index] = changedScenario;
-                onSubmit && onSubmit({ scenarios: newScenarios }, false);
+                onSubmit && onSubmit({ scenarios: newScenarios });
               };
 
               return (
-                <TabPanel>
-                  <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
+                <TabPanel key={`panel-${scenario.name}-${index}`}>
+                  <ScenarioEditor
+                    scenario={scenario}
+                    onChange={handleSubmit}
+                    disabled={index === 0}
+                  />
                 </TabPanel>
               );
             })}

@@ -37,27 +37,27 @@ const SimulationResults: React.FC<{
   );
   const graphs = [
     {
-      title: 'New Deaths',
+      title: 'Deaths',
       key: 'new_deaths',
       color: colors.pomegranate,
     },
     {
-      title: 'New Confirmed',
+      title: 'Confirmed Cases',
       key: 'num_confirmed',
       color: colors.blueGray,
     },
     {
-      title: 'New Recovered',
+      title: 'Recovered',
       key: 'num_recovered',
       color: colors.turqouise,
     },
     {
-      title: 'Infected in Hospitals',
+      title: 'Infected hospital staff ',
       key: 'total_infected',
       color: colors.aubergine,
     },
     {
-      title: 'Infected Population-wide',
+      title: 'Total Infections',
       key: 'total_infected',
       color: colors.aubergine,
     },
@@ -83,7 +83,10 @@ const SimulationResults: React.FC<{
 
   const datasets = (data || []).map((entry, index) => {
     return {
-      label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
+      label:
+        index === 0
+          ? 'Baseline'
+          : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
       data: entry.data.reduce((memo, entry) => {
         const key = entry.days;
         const day = {
@@ -92,7 +95,7 @@ const SimulationResults: React.FC<{
         graphs.forEach(graph => {
           if (
             graph.key === 'total_infected' &&
-            graph.title.includes('Hospitals') &&
+            graph.title.includes('hospital') &&
             entry.compartment !== 'Hospitals'
           ) {
             // dont't add up things just for the hospital compartment

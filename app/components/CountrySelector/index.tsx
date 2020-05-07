@@ -28,13 +28,15 @@ export type CountrySelectorResponse = {
 
 const CountrySelector: React.FC<{
   countries: any[];
-  onSubmit?: (value: CountrySelectorResponse) => void;
+  onSubmit?: (value: CountrySelectorResponse, valid: boolean) => void;
+  onChange?: VoidFunction;
   onClickSelectCountry: (country: any) => void;
   countryInfo: CountrySelectorResponse;
   loading: boolean;
 }> = ({
   countries,
   onSubmit,
+  onChange,
   countryInfo = {},
   onClickSelectCountry,
   loading,
@@ -82,21 +84,24 @@ const CountrySelector: React.FC<{
   };
 
   const handleSubmit = e => {
+    console.log(e.target.checkValidity());
     e.preventDefault();
-    e.target.dataset.dirty = true;
     onSubmit &&
-      onSubmit({
-        countryCode: countryInfo.countryCode,
-        population: population.value,
-        hospitalEmployment: hospitalEmployment.value,
-        hospitalBeds: hospitalBeds.value,
-        hospitalStaffPerBed: hospitalStaffPerBed.value,
-        workingOutsideHomeProportion: workingOutsideHomeProportion.value,
-        urbanPopulationProportion: urbanPopulationProportion.value,
-        belowPovertyLineProportion: belowPovertyLineProportion.value,
-        activePopulationProportion: activePopulationProportion.value,
-        over64Proportion: over64Proportion.value,
-      });
+      onSubmit(
+        {
+          countryCode: countryInfo.countryCode,
+          population: population.value,
+          hospitalEmployment: hospitalEmployment.value,
+          hospitalBeds: hospitalBeds.value,
+          hospitalStaffPerBed: hospitalStaffPerBed.value,
+          workingOutsideHomeProportion: workingOutsideHomeProportion.value,
+          urbanPopulationProportion: urbanPopulationProportion.value,
+          belowPovertyLineProportion: belowPovertyLineProportion.value,
+          activePopulationProportion: activePopulationProportion.value,
+          over64Proportion: over64Proportion.value,
+        },
+        e.target.checkValidity(),
+      );
   };
 
   const countrySelectOptions = countries.map(country => ({
@@ -105,7 +110,7 @@ const CountrySelector: React.FC<{
   }));
 
   return (
-    <form id="country-select-form" onSubmit={handleSubmit}>
+    <form id="country-select-form" onSubmit={handleSubmit} onChange={onChange}>
       <div className="country-selector">
         <div className="title">
           <div className="number">

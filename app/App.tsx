@@ -6,12 +6,9 @@ import TopSection from './components/TopSection';
 import TestSelector from './components/TestSelector';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import About from './components/About';
 import API, { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
-import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import ScenarioEditor from './components/ScenarioEditor';
 
 const DEFAULT_PARAMS = {
   countryCode: null,
@@ -46,6 +43,14 @@ const App: React.FC = () => {
     },
   });
 
+  const [
+    { countrySelectFormReady, testsFormReady },
+    setFormsReady,
+  ] = React.useState<{
+    countrySelectFormReady: boolean;
+    testsFormReady: boolean;
+  }>({ countrySelectFormReady: false, testsFormReady: false });
+
   React.useEffect(() => {
     const api = new API();
     const [, countryCode] = navigator.language.split('-');
@@ -78,53 +83,18 @@ const App: React.FC = () => {
       });
   }, []);
 
-  // Key presses
-  // Don't allow enter to submit form
-  React.useEffect(() => {
-    const handleEnterPress = event => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-      }
-    };
-    window.addEventListener('keydown', handleEnterPress);
-    return () => {
-      window.removeEventListener('keydown', handleEnterPress);
-    };
-  }, []);
-
-  const handleSubmit = (changedValues, skipScroll = false) => {
+  const handleSubmit = changedValues => {
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
-
-    if (skipScroll) {
-      return;
-    }
 
     const forms: HTMLFormElement[] = [
       document.querySelector('#country-select-form'),
       document.querySelector('#tests-form'),
     ];
 
-    // Validate forms, and scroll to the next if valid
-    // If any form is invalid, will scroll to that form
-    // and report the invalidity
-    for (let i = 0; i <= forms.length; i++) {
-      const form = forms[i];
-      if (form.checkValidity() && form.dataset.dirty) {
-        if (i == forms.length - 1) {
-          // Show results if all are valid
-          forms.forEach(form => {
-            delete form.dataset.dirty;
-          });
-          return;
-        }
-      } else {
-        form.reportValidity();
-        break;
-      }
-    }
+    forms.forEach(form => form.reportValidity());
   };
 
   return (
@@ -134,6 +104,13 @@ const App: React.FC = () => {
       <main>
         <TopSection />
         <Countries
+          countrySelectFormReady={countrySelectFormReady}
+          setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
+            setFormsReady({
+              testsFormReady,
+              countrySelectFormReady,
+            });
+          }}
           values={queryParams as SimulationParams}
           onSubmit={values => {
             // Reset all values if country code is changed
@@ -151,15 +128,25 @@ const App: React.FC = () => {
             handleSubmit(values);
           }}
         />
-        <TestSelector {...queryParams} onSubmit={handleSubmit}>
-          <ScenarioEditor
-            scenarios={queryParams.scenarios}
-            onSubmit={handleSubmit}
-          />
-        </TestSelector>
-        <Simulation simulationParams={queryParams as SimulationParams} />
-        <About />
-        {/* <Contact /> */}
+        <TestSelector
+          {...queryParams}
+          onSubmit={handleSubmit}
+          testsFormReady={testsFormReady}
+          setTestsFormReady={(testsFormReady: boolean) => {
+            setFormsReady({
+              countrySelectFormReady,
+              testsFormReady,
+            });
+          }}
+        />
+        {countrySelectFormReady && testsFormReady && (
+          <Simulation simulationParams={queryParams as SimulationParams} />
+        )}
+        {(!countrySelectFormReady || !testsFormReady) && (
+          <section>
+            <p>Please complete the steps to view simulation results</p>
+          </section>
+        )}
         <Footer />
       </main>
       <ScrollToTop />
