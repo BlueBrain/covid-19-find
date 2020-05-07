@@ -39,7 +39,7 @@ intervention_type,2,2,2
 intervention_timing,2,2,2
 no_testing,FALSE
 stop_intervention,1000000
-IFR_1_14,0.00003
-IFR_15_64,0.003
-IFR_gt_64,0.08
+IFR_1_14,0.0000297
+IFR_15_64,0.00296
+IFR_gt_64,0.03936
 IFR_corrected,0,0,0
