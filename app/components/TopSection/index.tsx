@@ -2,6 +2,9 @@ import * as React from 'react';
 
 import './top-section.less';
 
+const bbpLogo = require('../../assets/images/EPFL-BBP-logo.jpg');
+const ataneoLogo = require('../../assets/images/ateneo-logo.jpg');
+
 const TopSection: React.FC = () => {
   return (
     <section className="top-section">
@@ -18,11 +21,29 @@ const TopSection: React.FC = () => {
           <br />
           <br />
           The simulator has been developed with our partners at the{' '}
-          <a href="https://www.epfl.ch/research/domains/bluebrain/">
+          <a
+            href="https://www.epfl.ch/research/domains/bluebrain/"
+            target="_blank"
+          >
             EPFL Blue Brain Project
           </a>{' '}
-          and <a href="http://ateneo.edu/">Ateneo de Manila University</a>,
-          Manila, the Philippines.
+          and{' '}
+          <a href="http://ateneo.edu/" target="_blank">
+            Ateneo de Manila University
+          </a>
+          , Manila, the Philippines.
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <img
+            className="bbp-logo"
+            src={bbpLogo}
+            style={{ width: '100px', marginRight: '1rem' }}
+          />
+          <img
+            className="ateneo-logo"
+            src={ataneoLogo}
+            style={{ height: '100px' }}
+          />
         </div>
       </div>
       <div className="half">
