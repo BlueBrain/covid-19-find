@@ -128,6 +128,8 @@ const ScenarioEditor: React.FC<{
           description
         </label>
         <textarea {...description} disabled={disabled} />
+      </div>
+      <div className="form-column">
         <a data-tip data-for="interventionType-tooltip">
           <label>
             Intervention Type <IoIosInformationCircleOutline />
