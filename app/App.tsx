@@ -137,12 +137,7 @@ const App: React.FC = () => {
             handleSubmit(values);
           }}
         />
-        <TestSelector {...queryParams} onSubmit={handleSubmit}>
-          <ScenarioEditor
-            scenarios={queryParams.scenarios}
-            onSubmit={handleSubmit}
-          />
-        </TestSelector>
+        <TestSelector {...queryParams} onSubmit={handleSubmit} />
         <Simulation simulationParams={queryParams as SimulationParams} />
         <About />
         {/* <Contact /> */}

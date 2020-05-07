@@ -325,22 +325,18 @@ const ScenarioEditor: React.FC<{
 
 const ScenarioList: React.FC<{
   scenarios: Scenario[];
-  onSubmit?: (
-    scenarioListSubmit: { scenarios: Scenario[] },
-    skipScroll: boolean,
-  ) => void;
+  onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
+  console.log('DUCK', { scenarios });
+
   const [visible, setVisible] = React.useState(false);
 
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
     onSubmit &&
-      onSubmit(
-        {
-          scenarios: newScenarios,
-        },
-        true,
-      );
+      onSubmit({
+        scenarios: newScenarios,
+      });
   };
 
   const addScenario = () => {
@@ -358,16 +354,13 @@ const ScenarioList: React.FC<{
       },
     ];
     onSubmit &&
-      onSubmit(
-        {
-          scenarios: newScenarios,
-        },
-        true,
-      );
+      onSubmit({
+        scenarios: newScenarios,
+      });
   };
 
   return (
-    <form className="scenario-editor">
+    <div className="scenario-editor">
       <h3 className="collapse" onClick={() => setVisible(!visible)}>
         {visible ? <IoIosRemoveCircleOutline /> : <IoIosAddCircleOutline />}{' '}
         Advanced parameters
@@ -399,7 +392,7 @@ const ScenarioList: React.FC<{
               const handleSubmit = changedScenario => {
                 const newScenarios = scenarios;
                 newScenarios[index] = changedScenario;
-                onSubmit && onSubmit({ scenarios: newScenarios }, false);
+                onSubmit && onSubmit({ scenarios: newScenarios });
               };
 
               return (
@@ -415,7 +408,7 @@ const ScenarioList: React.FC<{
           </Tabs>
         </div>
       )}
-    </form>
+    </div>
   );
 };
 
