@@ -83,7 +83,10 @@ const SimulationResults: React.FC<{
 
   const datasets = (data || []).map((entry, index) => {
     return {
-      label: `Scenario ${toLetters(index + 1).toLocaleUpperCase()}`,
+      label:
+        index === 0
+          ? 'Baseline'
+          : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
       data: entry.data.reduce((memo, entry) => {
         const key = entry.days;
         const day = {

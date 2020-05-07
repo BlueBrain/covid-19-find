@@ -364,7 +364,9 @@ const ScenarioList: React.FC<{
               {scenarios.map((scenario, index) => {
                 return (
                   <Tab key={`tab-${scenario.name}-${index}`}>
-                    {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
+                    {index === 0
+                      ? 'Baseline'
+                      : `Scenario ${toLetters(index).toLocaleUpperCase()}`}{' '}
                     {scenarios.length > 1 && index !== 0 && (
                       <span onClick={removeScenario(index)}>
                         <IoIosClose />
