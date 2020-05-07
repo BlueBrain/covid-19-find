@@ -61,17 +61,17 @@ const TestSelector: React.FC<TestSelectorVales & {
   };
 
   return (
-    <form className="tests-form" id="tests-form" onSubmit={handleSubmit}>
-      <section>
-        <div className="test-selector action-box">
-          <div className="title">
-            <div className="number">
-              <span>2</span>
-            </div>
-            <h2 className="underline">
-              Enter your <em>test availabilities</em>
-            </h2>
+    <section>
+      <div className="test-selector action-box">
+        <div className="title">
+          <div className="number">
+            <span>2</span>
           </div>
+          <h2 className="underline">
+            Enter your <em>test availabilities</em>
+          </h2>
+        </div>
+        <form className="tests-form" id="tests-form" onSubmit={handleSubmit}>
           <div className="container">
             <div className="tests-form-container">
               <div className="input test-box">
@@ -285,19 +285,20 @@ const TestSelector: React.FC<TestSelectorVales & {
               </div> */}
             </div>
           </div>
-          <div>{children}</div>
-          <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
-            <div className="submit-button">
-              <button className="action submit-button" type="submit">
-                See Scenarios
-              </button>
-            </div>
+        </form>
+
+        <div>{children}</div>
+        <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
+          <div className="submit-button">
+            <button className="action submit-button" type="submit">
+              See Scenarios
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="triangle"></div>
-      </section>
-    </form>
+      <div className="triangle"></div>
+    </section>
   );
 };
 

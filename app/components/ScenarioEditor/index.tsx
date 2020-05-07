@@ -29,7 +29,8 @@ const MAX_SCENARIOS = 3;
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
   onSubmit?: (scenario: Scenario) => void;
-}> = ({ scenario, onSubmit }) => {
+  disabled: boolean;
+}> = ({ scenario, onSubmit, disabled }) => {
   const name = useTextInput(scenario.name, null, true);
   const interventionType = useSelectInput(
     scenario.interventionType,
@@ -121,13 +122,12 @@ const ScenarioEditor: React.FC<{
           <br />
           Name
         </label>
-        <input {...name} type="text" required />
+        <input {...name} type="text" required disabled={disabled} />
         <label>
           <br />
           description
         </label>
-        <textarea {...description} />
-
+        <textarea {...description} disabled={disabled} />
         <a data-tip data-for="interventionType-tooltip">
           <label>
             Intervention Type <IoIosInformationCircleOutline />
@@ -157,6 +157,7 @@ const ScenarioEditor: React.FC<{
         </ReactTooltip>
 
         <Select
+          isDisabled={disabled}
           onChange={interventionType.onChange}
           options={interventionTypes}
           value={interventionTypes.find(
@@ -199,6 +200,7 @@ const ScenarioEditor: React.FC<{
           </p>
         </ReactTooltip>
         <Select
+          isDisabled={disabled}
           value={interventionTimings.find(
             ({ value }) => value === interventionTiming.value,
           )}
@@ -245,6 +247,7 @@ const ScenarioEditor: React.FC<{
             checked={testSymptomaticOnly.value}
             onColor={colors.turqouise}
             offColor={'#c3c9cc'}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -261,6 +264,7 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          disabled={disabled}
         />
         <label>
           Proportion of tests for other
@@ -274,6 +278,7 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          disabled={disabled}
         />
       </div>
     </form>
@@ -337,17 +342,19 @@ const ScenarioList: React.FC<{
                 return (
                   <Tab>
                     {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
-                    <span onClick={removeScenario(index)}>
-                      <IoIosClose />
-                    </span>
+                    {scenarios.length > 1 && index !== 0 && (
+                      <span onClick={removeScenario(index)}>
+                        <IoIosClose />
+                      </span>
+                    )}
                   </Tab>
                 );
               })}
               {scenarios.length < MAX_SCENARIOS && (
-                <button className="small" type="button" onClick={addScenario}>
+                <a className="add-scenario" onClick={addScenario}>
                   Add Scenario
                   <IoIosAdd />
-                </button>
+                </a>
               )}
             </TabList>
             {scenarios.map((scenario, index) => {
@@ -359,7 +366,11 @@ const ScenarioList: React.FC<{
 
               return (
                 <TabPanel>
-                  <ScenarioEditor scenario={scenario} onSubmit={handleSubmit} />
+                  <ScenarioEditor
+                    scenario={scenario}
+                    onSubmit={handleSubmit}
+                    disabled={index === 0}
+                  />
                 </TabPanel>
               );
             })}
