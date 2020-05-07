@@ -18,7 +18,7 @@ export type TestSelectorVales = {
   numTestsPCR?: number;
   numTestsRDT?: number;
   numTestsXray?: number;
-  scenarios: Scenario[];
+  scenarios?: Scenario[];
 };
 
 const TestSelector: React.FC<TestSelectorVales & {

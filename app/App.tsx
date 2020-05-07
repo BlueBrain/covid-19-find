@@ -11,7 +11,6 @@ import API, { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
 import Contact from './containers/contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import ScenarioEditor from './components/ScenarioEditor';
 
 const DEFAULT_PARAMS = {
   countryCode: null,
@@ -78,39 +77,18 @@ const App: React.FC = () => {
       });
   }, []);
 
-  const handleSubmit = (changedValues, skipScroll = false) => {
+  const handleSubmit = changedValues => {
     setQueryParams({
       ...queryParams,
       ...changedValues,
     });
-
-    if (skipScroll) {
-      return;
-    }
 
     const forms: HTMLFormElement[] = [
       document.querySelector('#country-select-form'),
       document.querySelector('#tests-form'),
     ];
 
-    // Validate forms, and scroll to the next if valid
-    // If any form is invalid, will scroll to that form
-    // and report the invalidity
-    for (let i = 0; i <= forms.length; i++) {
-      const form = forms[i];
-      if (form.checkValidity() && form.dataset.dirty) {
-        if (i == forms.length - 1) {
-          // Show results if all are valid
-          forms.forEach(form => {
-            delete form.dataset.dirty;
-          });
-          return;
-        }
-      } else {
-        form.reportValidity();
-        break;
-      }
-    }
+    forms.forEach(form => form.reportValidity());
   };
 
   return (

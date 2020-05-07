@@ -327,8 +327,6 @@ const ScenarioList: React.FC<{
   scenarios: Scenario[];
   onSubmit?: (scenarioListSubmit: { scenarios: Scenario[] }) => void;
 }> = ({ scenarios = [], onSubmit }) => {
-  console.log('DUCK', { scenarios });
-
   const [visible, setVisible] = React.useState(false);
 
   const removeScenario = (index: number) => e => {
@@ -371,7 +369,7 @@ const ScenarioList: React.FC<{
             <TabList>
               {scenarios.map((scenario, index) => {
                 return (
-                  <Tab>
+                  <Tab key={`tab-${scenario.name}-${index}`}>
                     {`Scenario ${toLetters(index + 1).toLocaleUpperCase()}`}{' '}
                     {scenarios.length > 1 && index !== 0 && (
                       <span onClick={removeScenario(index)}>
@@ -396,7 +394,7 @@ const ScenarioList: React.FC<{
               };
 
               return (
-                <TabPanel>
+                <TabPanel key={`panel-${scenario.name}-${index}`}>
                   <ScenarioEditor
                     scenario={scenario}
                     onChange={handleSubmit}
