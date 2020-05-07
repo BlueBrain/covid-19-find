@@ -9,11 +9,10 @@ export enum InterventionType {
 
 export enum InterventionTiming {
   NEVER = 'never',
-  GT1 = '>1',
-  GT5 = '>5',
-  GT10 = '>10',
-  GT20 = '>20',
-  GT50 = '>50',
+  VERY_EARLY = 'very_early',
+  EARLY = 'early',
+  LATE = 'late',
+  VERY_LATE = 'very_late',
 }
 
 export const DEFAULT_SCENARIO_LIST: Scenario[] = [
@@ -22,7 +21,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This imaginary scenario is provided for comparison purposes. It shows the predicted course of the pandemic with a strong lockdown but no testing of any kind.',
-    interventionTiming: InterventionTiming.GT50,
+    interventionTiming: InterventionTiming.LATE,
     testSymptomaticOnly: true,
     hospitalTestProportion: 0,
     otherHighContactPopulationTestProportion: 0,
@@ -32,7 +31,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This scenario models the potential outcomes of a testing strategy that aims to identify and isolate the highest possible number of infected people, slowing the spread of the disease. The scenario presupposes a strong lockdown. It assumes that 50% of available tests are used to test hospital staff and 50% are used for other groups at high risk of contracting or transmitting the infection (e.g. shopkeepers, police, factory and transport workers who have a high level of contact with the public, and people living below the poverty line in large cities).  Tests are performed only on people showing symptoms. ',
-    interventionTiming: InterventionTiming.GT50,
+    interventionTiming: InterventionTiming.LATE,
     testSymptomaticOnly: true,
     hospitalTestProportion: 50,
     otherHighContactPopulationTestProportion: 50,
@@ -42,7 +41,7 @@ export const DEFAULT_SCENARIO_LIST: Scenario[] = [
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This scenario models the potential outcomes of a testing strategy that aims to reduce the burden of the pandemic on hospital staff, preserving the capabilities necessary to help others. The scenario presupposes a strong lockdown. It assumes that all available tests are used to test hospital staff, if possible repeatedly. Tests are performed only on people showing symptoms.',
-    interventionTiming: InterventionTiming.GT50,
+    interventionTiming: InterventionTiming.LATE,
     testSymptomaticOnly: true,
     hospitalTestProportion: 100,
     otherHighContactPopulationTestProportion: 0,

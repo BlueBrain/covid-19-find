@@ -9,7 +9,7 @@ class TestSimulator:
         assert simulator.default_scenarios() == [
             {
                 "interventionType": "lockdown",
-                "interventionTiming": ">10",
+                "interventionTiming": "late",
                 "testSymptomaticOnly": True,
                 "hospitalTestProportion": 0.0,
                 "otherHighContactPopulationTestProportion": 0.0,
@@ -17,7 +17,7 @@ class TestSimulator:
             },
             {
                 "interventionType": "lockdown",
-                "interventionTiming": ">10",
+                "interventionTiming": "late",
                 "testSymptomaticOnly": True,
                 "hospitalTestProportion": 0.5,
                 "otherHighContactPopulationTestProportion": 0.5,
@@ -25,7 +25,7 @@ class TestSimulator:
             },
             {
                 "interventionType": "lockdown",
-                "interventionTiming": ">10",
+                "interventionTiming": "late",
                 "testSymptomaticOnly": True,
                 "hospitalTestProportion": 1.0,
                 "otherHighContactPopulationTestProportion": 0.0,

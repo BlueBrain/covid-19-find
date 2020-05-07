@@ -127,12 +127,11 @@
           "interventionTiming": {
             "type": "string",
             "enum": [
-              "never",
-              ">1",
-              ">5",
-              ">10",
-              ">20",
-              ">50"
+              "very_early",
+              "early",
+              "late",
+              "very_late",
+              "never"
             ]
           },
           "testSymptomaticOnly": {
