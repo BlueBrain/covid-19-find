@@ -142,6 +142,11 @@ const App: React.FC = () => {
         {countrySelectFormReady && testsFormReady && (
           <Simulation simulationParams={queryParams as SimulationParams} />
         )}
+        {(!countrySelectFormReady || !testsFormReady) && (
+          <section>
+            <p>Please complete the steps to view simulation results</p>
+          </section>
+        )}
         <Footer />
       </main>
       <ScrollToTop />
