@@ -28,9 +28,9 @@ const MAX_SCENARIOS = 3;
 
 const ScenarioEditor: React.FC<{
   scenario: Scenario;
-  onSubmit?: (scenario: Scenario) => void;
+  onChange?: (scenario: Scenario) => void;
   disabled: boolean;
-}> = ({ scenario, onSubmit, disabled }) => {
+}> = ({ scenario, onChange, disabled }) => {
   const name = useTextInput(scenario.name, null, true);
   const interventionType = useSelectInput(
     scenario.interventionType,
@@ -58,37 +58,43 @@ const ScenarioEditor: React.FC<{
     null,
     true,
   );
+  const scenarioFormId = `#scenario-editor-${scenario.name
+    .split(' ')
+    .join('-')}`;
   const testNumberValidity = () => {
     const cumulative = Array.from(
-      document.querySelectorAll<HTMLInputElement>('.proportion-test'),
+      document.querySelectorAll<HTMLInputElement>(
+        `${scenarioFormId} .proportion-test`,
+      ),
     ).reduce((memo, element) => {
       const cumulative = (Number(element.value) || 0) + memo;
       const devalidify = () => {
         document
-          .querySelectorAll<HTMLInputElement>('.proportion-test')
+          .querySelectorAll<HTMLInputElement>(
+            `${scenarioFormId} .proportion-test`,
+          )
           .forEach(element => {
             element.setCustomValidity('');
           });
         element.removeEventListener('input', devalidify);
       };
       if (cumulative > 100) {
-        element.setCustomValidity('Proportions must not exceed 100');
+        element.setCustomValidity('Proportions must be less than 100');
         element.addEventListener('input', devalidify);
       }
       return cumulative;
     }, 0);
-    return cumulative > 100;
+
+    return cumulative === 100;
   };
 
-  const handleSubmit = e => {
+  const handleBlur = () => {
     if (testNumberValidity()) {
       return;
     }
 
-    e.preventDefault();
-    e.target.dataset.dirty = true;
-    onSubmit &&
-      onSubmit({
+    onChange &&
+      onChange({
         name: name.value,
         interventionType: interventionType.value,
         description: description.value,
@@ -116,18 +122,24 @@ const ScenarioEditor: React.FC<{
   ];
 
   return (
-    <form id={`scenario-editor-${scenario.name}`} onChange={handleSubmit}>
+    <div className="scenario" id={scenarioFormId}>
       <div className="form-column">
         <label>
           <br />
           Name
         </label>
-        <input {...name} type="text" required disabled={disabled} />
+        <input
+          {...name}
+          type="text"
+          required
+          disabled={disabled}
+          onBlur={handleBlur}
+        />
         <label>
           <br />
           description
         </label>
-        <textarea {...description} disabled={disabled} />
+        <textarea {...description} disabled={disabled} onBlur={handleBlur} />
       </div>
       <div className="form-column">
         <a data-tip data-for="interventionType-tooltip">
@@ -178,6 +190,7 @@ const ScenarioEditor: React.FC<{
         <Select
           isDisabled={disabled}
           onChange={interventionType.onChange}
+          onBlur={handleBlur}
           options={interventionTypes}
           value={interventionTypes.find(
             ({ value }) => value === interventionType.value,
@@ -224,6 +237,7 @@ const ScenarioEditor: React.FC<{
             ({ value }) => value === interventionTiming.value,
           )}
           onChange={interventionTiming.onChange}
+          onBlur={handleBlur}
           options={interventionTimings}
           // @ts-ignore
           theme={theme => ({
@@ -262,7 +276,10 @@ const ScenarioEditor: React.FC<{
         </ReactTooltip>
         <div style={{ textAlign: 'left', marginTop: '5px' }}>
           <Switch
-            onChange={testSymptomaticOnly.onChange}
+            onChange={value => {
+              testSymptomaticOnly.onChange(value);
+              handleBlur();
+            }}
             checked={testSymptomaticOnly.value}
             onColor={colors.turqouise}
             offColor={'#c3c9cc'}
@@ -283,6 +300,7 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          onBlur={handleBlur}
           disabled={disabled}
         />
         <label>
@@ -297,10 +315,11 @@ const ScenarioEditor: React.FC<{
           max="100"
           type="number"
           required
+          onBlur={handleBlur}
           disabled={disabled}
         />
       </div>
-    </form>
+    </div>
   );
 };
 
@@ -348,7 +367,7 @@ const ScenarioList: React.FC<{
   };
 
   return (
-    <div className="scenario-editor">
+    <form className="scenario-editor">
       <h3 className="collapse" onClick={() => setVisible(!visible)}>
         {visible ? <IoIosRemoveCircleOutline /> : <IoIosAddCircleOutline />}{' '}
         Advanced parameters
@@ -387,7 +406,7 @@ const ScenarioList: React.FC<{
                 <TabPanel>
                   <ScenarioEditor
                     scenario={scenario}
-                    onSubmit={handleSubmit}
+                    onChange={handleSubmit}
                     disabled={index === 0}
                   />
                 </TabPanel>
@@ -396,7 +415,7 @@ const ScenarioList: React.FC<{
           </Tabs>
         </div>
       )}
-    </div>
+    </form>
   );
 };
 
