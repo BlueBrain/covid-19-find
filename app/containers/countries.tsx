@@ -9,11 +9,18 @@ import CovidResults, { CovidData } from '../components/CovidResults';
 import { CountryResponse, SimulationParams } from '../API';
 
 const Countries: React.FC<{
+  countrySelectFormReady: boolean;
+  setCountrySelectFormReady: (value: boolean) => void;
   onSubmit?: (
     value: CountrySelectorResponse | { countryCode?: string | null },
   ) => void;
   values: SimulationParams & { countryCode?: string | null };
-}> = ({ onSubmit, values }) => {
+}> = ({
+  onSubmit,
+  values,
+  setCountrySelectFormReady,
+  countrySelectFormReady,
+}) => {
   const [countries, setCountries] = React.useState([]);
   const [countryInfo, setCountryInfo] = React.useState<{
     loading: boolean;
@@ -28,7 +35,6 @@ const Countries: React.FC<{
     data: null,
   });
   const api = useAPI();
-  const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     api
       .countries()
@@ -71,7 +77,7 @@ const Countries: React.FC<{
 
   // Reset county details when country code changes
   const selectCountry = (countryCode: string) => {
-    setReady(false);
+    setCountrySelectFormReady(false);
     onSubmit({
       countryCode,
       workingOutsideHomeProportion: null,
@@ -90,6 +96,9 @@ const Countries: React.FC<{
     entry => entry.countryCode === countryInfo?.data?.countryInfo?.countryCode,
   )?.name;
 
+  // TODO refactor by removing presentation logic
+  // perhaps consider creating a seperate presentation component
+  // for the section types
   return (
     <section className="input" id="country-selection">
       <div className="action-box">
@@ -98,10 +107,10 @@ const Countries: React.FC<{
           onSubmit={(values, valid) => {
             onSubmit(values);
             // dont show as ready until the form is valid
-            setReady(valid);
+            setCountrySelectFormReady(valid);
           }}
           onChange={() => {
-            setReady(false);
+            setCountrySelectFormReady(false);
           }}
           countryInfo={{
             ...values,
@@ -111,7 +120,7 @@ const Countries: React.FC<{
           loading={countryInfo.loading}
         />
       </div>
-      {ready &&
+      {countrySelectFormReady &&
         !!countryInfo &&
         !!countryInfo?.data &&
         !!countryInfo.data.covidData.timeseries && (

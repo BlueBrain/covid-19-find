@@ -23,6 +23,8 @@ export type TestSelectorVales = {
 
 const TestSelector: React.FC<TestSelectorVales & {
   onSubmit?: (values: TestSelectorVales) => void;
+  testsFormReady: boolean;
+  setTestsFormReady: (value: boolean) => void;
 }> = ({
   scenarios,
   sensitivityPCR,
@@ -32,6 +34,8 @@ const TestSelector: React.FC<TestSelectorVales & {
   numTestsPCR,
   numTestsRDT,
   onSubmit,
+  testsFormReady,
+  setTestsFormReady,
 }) => {
   const sensitivityPCRInput = useFormInput(sensitivityPCR, null, true);
   const sensitivityRDTInput = useFormInput(sensitivityRDT, null, true);
@@ -48,6 +52,7 @@ const TestSelector: React.FC<TestSelectorVales & {
 
   const handleSubmit = e => {
     e.preventDefault();
+    setTestsFormReady(e.target.checkValidity());
     onSubmit &&
       onSubmit({
         sensitivityPCR: sensitivityPCRInput.value,
@@ -60,10 +65,19 @@ const TestSelector: React.FC<TestSelectorVales & {
       });
   };
 
+  const handleChange = () => {
+    setTestsFormReady(false);
+  };
+
   return (
     <section>
       <div className="test-selector action-box">
-        <form className="tests-form" id="tests-form" onSubmit={handleSubmit}>
+        <form
+          className="tests-form"
+          id="tests-form"
+          onSubmit={handleSubmit}
+          onChange={handleChange}
+        >
           <div className="title">
             <div className="number">
               <span>2</span>

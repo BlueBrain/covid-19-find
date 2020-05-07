@@ -43,6 +43,14 @@ const App: React.FC = () => {
     },
   });
 
+  const [
+    { countrySelectFormReady, testsFormReady },
+    setFormsReady,
+  ] = React.useState<{
+    countrySelectFormReady: boolean;
+    testsFormReady: boolean;
+  }>({ countrySelectFormReady: false, testsFormReady: false });
+
   React.useEffect(() => {
     const api = new API();
     const [, countryCode] = navigator.language.split('-');
@@ -96,6 +104,13 @@ const App: React.FC = () => {
       <main>
         <TopSection />
         <Countries
+          countrySelectFormReady={countrySelectFormReady}
+          setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
+            setFormsReady({
+              testsFormReady,
+              countrySelectFormReady,
+            });
+          }}
           values={queryParams as SimulationParams}
           onSubmit={values => {
             // Reset all values if country code is changed
@@ -113,8 +128,20 @@ const App: React.FC = () => {
             handleSubmit(values);
           }}
         />
-        <TestSelector {...queryParams} onSubmit={handleSubmit} />
-        <Simulation simulationParams={queryParams as SimulationParams} />
+        <TestSelector
+          {...queryParams}
+          onSubmit={handleSubmit}
+          testsFormReady={testsFormReady}
+          setTestsFormReady={(testsFormReady: boolean) => {
+            setFormsReady({
+              countrySelectFormReady,
+              testsFormReady,
+            });
+          }}
+        />
+        {countrySelectFormReady && testsFormReady && (
+          <Simulation simulationParams={queryParams as SimulationParams} />
+        )}
         <Footer />
       </main>
       <ScrollToTop />
