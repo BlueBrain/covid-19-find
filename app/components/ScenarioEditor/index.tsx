@@ -136,6 +136,23 @@ const ScenarioEditor: React.FC<{
           </label>
         </a>
         <ReactTooltip id="interventionType-tooltip">
+          {interventionType.value === InterventionType.NONE && (
+            <p>
+              This option allows you to specify the type of government
+              government intervention.Lockdown implies severe government-imposed
+              measures similar to those taken in China, Italy or Spain: closure
+              of schools and non-essential shops, mandatory work from home
+              whenever possible, strong restrictions on movement outside the
+              home, the banning of public gatherings (religious ceremonies,
+              sports events, concerts etc.) and other similar measures. The goal
+              is to reduce R0 – the basic reproductive number – significantly
+              below 1. Mild intervention consists of a mix of mandatory and
+              voluntary measures to achieve social distancing, such as those
+              introduced in Sweden. The goal is to reduce R0 – the basic
+              reproductive number – to around 1, preventing explosive growth in
+              cases, while limiting the economic impact of the measures.
+            </p>
+          )}
           {interventionType.value === InterventionType.LOCKDOWN && (
             <p>
               Lockdown consists of severe government-imposed measures similar to
@@ -190,15 +207,15 @@ const ScenarioEditor: React.FC<{
         />
         <a data-tip data-for="interventionTimings-tooltip">
           <label>
-            Number of deaths before intervention{' '}
-            <IoIosInformationCircleOutline />
+            Start of government intervention <IoIosInformationCircleOutline />
           </label>
         </a>
         <ReactTooltip id="interventionTimings-tooltip">
           <p>
-            This number is an indication of the timing of the intervention. The
-            lower the number of deaths before the intervention begins, the
-            faster the intervention.
+            This option allows you to specify how quickly the government put in
+            place measures to contain or suppress the epidemic. The timing of
+            government intervention has a major effect on the dynamics of the
+            epidemic.
           </p>
         </ReactTooltip>
         <Select
