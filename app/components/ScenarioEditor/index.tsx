@@ -283,7 +283,7 @@ const ScenarioEditor: React.FC<{
         <label>
           Proportion of tests for
           <br />
-          hospital staff
+          hospital staff (%)
         </label>
         <input
           className="proportion-test"
@@ -296,11 +296,19 @@ const ScenarioEditor: React.FC<{
           onBlur={handleBlur}
           disabled={disabled}
         />
-        <label>
-          Proportion of tests for other
-          <br />
-          highly exposed groups
-        </label>
+        <a data-tip data-for="otherHighContactPopulationTestProportion-tooltip">
+          <label>
+            Proportion of tests for other
+            <br />
+            highly exposed groups (%) <IoIosInformationCircleOutline />
+          </label>
+        </a>
+        <ReactTooltip id="otherHighContactPopulationTestProportion-tooltip">
+          <p>
+            Urban population below the poverty line; people whose occupation
+            obliges them to work outside the home
+          </p>
+        </ReactTooltip>
         <input
           className="proportion-test"
           {...otherHighContactPopulationTestProportion}
