@@ -69,6 +69,7 @@ const Countries: React.FC<{
     }
   };
 
+  // Reset county details when country code changes
   const selectCountry = (countryCode: string) => {
     onSubmit({
       countryCode,
