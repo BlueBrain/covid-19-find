@@ -41,7 +41,6 @@ const TestSelector: React.FC<TestSelectorVales & {
   const numTestsRDTInput = useFormInput(numTestsRDT, null, true);
 
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
-
   // Reset default if url changes
   React.useEffect(() => {
     setScenariosValue({ scenarios });
@@ -49,7 +48,6 @@ const TestSelector: React.FC<TestSelectorVales & {
 
   const handleSubmit = e => {
     e.preventDefault();
-    e.target.dataset.dirty = true;
     onSubmit &&
       onSubmit({
         sensitivityPCR: sensitivityPCRInput.value,

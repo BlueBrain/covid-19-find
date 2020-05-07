@@ -28,7 +28,7 @@ const Countries: React.FC<{
     data: null,
   });
   const api = useAPI();
-
+  const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     api
       .countries()
@@ -71,6 +71,7 @@ const Countries: React.FC<{
 
   // Reset county details when country code changes
   const selectCountry = (countryCode: string) => {
+    setReady(false);
     onSubmit({
       countryCode,
       workingOutsideHomeProportion: null,
@@ -94,7 +95,14 @@ const Countries: React.FC<{
       <div className="action-box">
         <CountrySelector
           countries={countries}
-          onSubmit={onSubmit}
+          onSubmit={(values, valid) => {
+            onSubmit(values);
+            // dont show as ready until the form is valid
+            setReady(valid);
+          }}
+          onChange={() => {
+            setReady(false);
+          }}
           countryInfo={{
             ...values,
             ...omitBy(countryInfo?.data?.countryInfo || {}, isNil),
@@ -103,22 +111,24 @@ const Countries: React.FC<{
           loading={countryInfo.loading}
         />
       </div>
-      <div className={`results-drop ${open ? 'open' : ''}`}>
-        {!!countryInfo &&
-          !!countryInfo?.data &&
-          !!countryInfo.data.covidData.timeseries && (
+      {ready &&
+        !!countryInfo &&
+        !!countryInfo?.data &&
+        !!countryInfo.data.covidData.timeseries && (
+          <div className={`results-drop ${open ? 'open' : ''}`}>
+            {' '}
             <CovidResults
               data={countryInfo.data.covidData}
               countryLabel={
                 countryLabel || countryInfo?.data?.countryInfo.countryCode
               }
             />
-          )}
-        {/* TODO do something on error */}
-        {!!countryInfo && !!countryInfo.error && (
-          <h3>No Covid-19 Case Data found for this country.</h3>
+          </div>
         )}
-      </div>
+      {/* TODO do something on error */}
+      {!!countryInfo && !!countryInfo.error && (
+        <h3>No Covid-19 Case Data found for this country.</h3>
+      )}
     </section>
   );
 };
