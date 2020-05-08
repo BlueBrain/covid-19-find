@@ -15,7 +15,7 @@ import Switch from 'react-switch';
 import { Scenario, InterventionType, InterventionTiming } from '../../API';
 import { toLetters } from '../SimulationResults';
 import useFormInput, {
-  useCheckbox,
+  useDirectInput,
   useSelectInput,
   useTextInput,
 } from '../../hooks/useFormInput';
@@ -46,8 +46,8 @@ const ScenarioEditor: React.FC<{
     null,
     true,
   );
-  const testSymptomaticOnly = useCheckbox(
-    scenario.testSymptomaticOnly,
+  const testSymptomaticOnly = useDirectInput(
+    !!scenario.testSymptomaticOnly,
     null,
     true,
   );
@@ -91,7 +91,7 @@ const ScenarioEditor: React.FC<{
         interventionType: interventionType.value,
         description: description.value,
         interventionTiming: interventionTiming.value,
-        testSymptomaticOnly: testSymptomaticOnly.value,
+        testSymptomaticOnly: !!testSymptomaticOnly.value,
         hospitalTestProportion: hospitalTestProportion.value,
         otherHighContactPopulationTestProportion:
           otherHighContactPopulationTestProportion.value,
@@ -268,10 +268,20 @@ const ScenarioEditor: React.FC<{
         <div style={{ textAlign: 'left', marginTop: '5px' }}>
           <Switch
             onChange={value => {
-              testSymptomaticOnly.onChange(value);
-              handleBlur();
+              onChange
+                ? onChange({
+                    name: name.value,
+                    interventionType: interventionType.value,
+                    description: description.value,
+                    interventionTiming: interventionTiming.value,
+                    testSymptomaticOnly: value,
+                    hospitalTestProportion: hospitalTestProportion.value,
+                    otherHighContactPopulationTestProportion:
+                      otherHighContactPopulationTestProportion.value,
+                  })
+                : testSymptomaticOnly.onChange(value);
             }}
-            checked={testSymptomaticOnly.value}
+            checked={!!testSymptomaticOnly.value}
             onColor={colors.turqouise}
             offColor={'#c3c9cc'}
             disabled={disabled}
