@@ -105,11 +105,11 @@ const ScenarioEditor: React.FC<{
   ];
 
   const interventionTimings = [
-    { value: InterventionTiming.NEVER, label: 'Never' },
     { value: InterventionTiming.VERY_EARLY, label: 'Very early' },
     { value: InterventionTiming.EARLY, label: 'Early' },
     { value: InterventionTiming.LATE, label: 'Late' },
     { value: InterventionTiming.VERY_LATE, label: 'Very late' },
+    { value: InterventionTiming.NEVER, label: 'Never' },
   ];
 
   return (

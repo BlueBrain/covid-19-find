@@ -34,16 +34,23 @@ const TopSection: React.FC = () => {
           , Manila, the Philippines.
         </div>
         <div style={{ marginTop: '1rem' }}>
-          <img
-            className="bbp-logo"
-            src={bbpLogo}
-            style={{ width: '100px', marginRight: '1rem' }}
-          />
-          <img
-            className="ateneo-logo"
-            src={ataneoLogo}
-            style={{ height: '100px' }}
-          />
+          <a
+            href="https://www.epfl.ch/research/domains/bluebrain/"
+            target="_blank"
+          >
+            <img
+              className="bbp-logo"
+              src={bbpLogo}
+              style={{ width: '100px', marginRight: '1rem' }}
+            />
+          </a>
+          <a href="http://ateneo.edu/" target="_blank">
+            <img
+              className="ateneo-logo"
+              src={ataneoLogo}
+              style={{ height: '100px' }}
+            />
+          </a>
         </div>
       </div>
       <div className="half">
