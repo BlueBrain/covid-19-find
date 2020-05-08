@@ -30,7 +30,9 @@ const Header: React.FC = () => {
           >
             | Disclaimer
           </a>
-          <span className="item">{version && ` | Version: ${version}`}</span>
+          <span className="item">
+            {version && ` | Simulator Version: v${version}`}
+          </span>
         </div>
       </div>
     </footer>
