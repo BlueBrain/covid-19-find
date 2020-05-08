@@ -39,11 +39,13 @@ def create_app():
         else:
             return data
 
-    @app.route('/api/countries')
+    app_path_prefix = os.getenv("PUBLIC_URL", "")
+
+    @app.route(f'{app_path_prefix}/api/countries')
     def countries():
         return country_repo.country_list()
 
-    @app.route('/api/countries/<country_code>')
+    @app.route(f'{app_path_prefix}/api/countries/<country_code>')
     def country_details(country_code):
         return not_found_if_none(country_repo.country_details(country_code), country_code)
 
@@ -53,7 +55,7 @@ def create_app():
 
     simulator = Simulator()
 
-    @app.route("/api/simulation", methods=['POST'])
+    @app.route(f'{app_path_prefix}/api/simulation', methods=['POST'])
     @expects_json(schema)
     def run_simulation():
         request_data = request.get_json()
@@ -63,26 +65,26 @@ def create_app():
             )
         }
 
-    @app.route("/api/scenarios")
+    @app.route(f'{app_path_prefix}/api/scenarios')
     def fetch_scenarios():
         return {
             "scenarios": simulator.default_scenarios()
         }
 
-    @app.route("/api/covid19data/<country_code>")
+    @app.route(f'{app_path_prefix}/api/covid19data/<country_code>')
     def country_covid19_data(country_code):
         return not_found_if_none(data_repo.data_for(country_code), country_code)
 
     static_files_dir = os.path.abspath(os.environ.get("STATIC_DATA_DIR"))
 
-    @app.route('/')
+    @app.route(f'{app_path_prefix}/')
     def index():
         response = make_response(send_from_directory(static_files_dir,
                                                      'index.html', as_attachment=False))
         response.headers["Cache-Control"] = "no-cache, must-revalidate"
         return response
 
-    @app.route('/<path:filename>')
+    @app.route(f'{app_path_prefix}/<path:filename>')
     def static_files(filename):
         return send_from_directory(static_files_dir,
                                    filename, as_attachment=False)

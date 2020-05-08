@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "start": "parcel -p 8080 watch app/index.html",
-    "build": "tsc --noEmit && parcel build app/index.html",
+    "build": "tsc --noEmit && parcel build app/index.html --public-url ${PUBLIC_URL:-.}",
     "lint": "eslint \"./app/**/*.{ts,tsx,js,jsx}\"",
     "style": "prettier --check \"./app/**/*.{ts,tsx,js,jsx,less,html,css}\""
   },
