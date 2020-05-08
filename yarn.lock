@@ -2,6 +2,23 @@
 # yarn lockfile v1
 
 
+"@analytics/cookie-utils@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@analytics/cookie-utils/-/cookie-utils-0.2.3.tgz#e6ab923f88d89f7b02da0cfab585ff193977052f"
+  integrity sha512-RiMAVpSluRbWb2hlT9wMJ0r2l+MUZzScYjY+w2iWRzjOr9Zzzs4tYzJT6Sd94PDz3LzCuf4aGOwS6pkKXTEBLw==
+
+"@analytics/google-tag-manager@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@analytics/google-tag-manager/-/google-tag-manager-0.2.3.tgz#f01fa1df479146141e1af6e1eb92d10f235442da"
+  integrity sha512-eKyg1vpzCjTUAs8XoEjBsEArao0ayfIUUCyVenV+0hsOhRBUO9bujhlDL2q1QaFCjk3tco8wyNuESGH6hc8Wew==
+
+"@analytics/storage-utils@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@analytics/storage-utils/-/storage-utils-0.2.3.tgz#944a575cb54b0291d2a1abbdefde82254c74f929"
+  integrity sha512-hk2ZU5aAuap2L94UdsT5z5xHcmDPGker4DK+OxYnJVQyj2NdqkVMVRFUOUqHxdMP3c9d6oLunQJeYblH5NDNWQ==
+  dependencies:
+    "@analytics/cookie-utils" "^0.2.3"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.8.3.tgz#33e25903d7481181534e12ec0a25f16b6fcf419e"
@@ -1552,6 +1569,21 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
+analytics-utils@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/analytics-utils/-/analytics-utils-0.2.1.tgz#ecd255e7d23102a9fcd5705b1287fbb23bc88e67"
+  integrity sha512-cwaH/VsKARvixb1kcaigZLpcIe4O0L64scbHixDIsnf6gJoFOK8803erS2e0RzI/pXE92U5BOVDVNJuskqEWsQ==
+  dependencies:
+    "@analytics/storage-utils" "^0.2.3"
+    dlv "^1.1.3"
+
+analytics@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/analytics/-/analytics-0.3.5.tgz#1c2da1912ec9f89c5bd07e9a7a195c5630bfe1c5"
+  integrity sha512-ydKT6ukiuoruA3iUWW5x0fzKjjiP2F+YS/T6V4bf/ct6hEK8vv/RrLB98h3uafZRpvU4MmtMv94H+au8ohY5/Q==
+  dependencies:
+    analytics-utils "^0.2.1"
+
 ansi-escapes@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"
@@ -2952,6 +2984,11 @@ discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
   integrity sha1-44Mx8IRLukm5qctxx3FYWqsbxlo=
+
+dlv@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/dlv/-/dlv-1.1.3.tgz#5c198a8a11453596e751494d49874bc7732f2e79"
+  integrity sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==
 
 doctrine@^3.0.0:
   version "3.0.0"
