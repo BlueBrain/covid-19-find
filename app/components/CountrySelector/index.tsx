@@ -84,7 +84,6 @@ const CountrySelector: React.FC<{
   };
 
   const handleSubmit = e => {
-    console.log(e.target.checkValidity());
     e.preventDefault();
     onSubmit &&
       onSubmit(

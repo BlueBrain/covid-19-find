@@ -51,15 +51,15 @@ export const useTextInput = (
   };
 };
 
-export const useCheckbox = (
+export const useDirectInput = (
   initialValue: any,
   placeholder?: any,
   override?: boolean,
 ) => {
   const [value, setValue] = React.useState(initialValue);
 
-  const onHandleChange = e => {
-    setValue(e ? e.target.checked : value);
+  const onHandleChange = newValue => {
+    setValue(newValue);
   };
 
   React.useEffect(() => {
@@ -69,7 +69,7 @@ export const useCheckbox = (
   }, [initialValue, override]);
 
   return {
-    value: value || '',
+    value,
     onChange: onHandleChange,
     placeholder: placeholder || 'Enter... ',
   };
