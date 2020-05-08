@@ -68,11 +68,15 @@ const ScenarioEditor: React.FC<{
   const testNumberValidity = () => {
     if (propRef1.current && propRef2.current) {
       if (
-        Number(propRef1.current.value) + Number(propRef2.current.value) !==
+        Number(propRef1.current.value) + Number(propRef2.current.value) >
         100
       ) {
-        propRef1.current.setCustomValidity('Proportions must add to 100');
-        propRef2.current.setCustomValidity('Proportions must add to 100');
+        propRef1.current.setCustomValidity(
+          'Proportions must add to 100 or less',
+        );
+        propRef2.current.setCustomValidity(
+          'Proportions must add to 100 or less',
+        );
       } else {
         propRef1.current.setCustomValidity('');
         propRef2.current.setCustomValidity('');
