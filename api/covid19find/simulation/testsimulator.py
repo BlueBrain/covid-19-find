@@ -10,13 +10,13 @@ Created on Fri Apr 10 09:25:47 2020
 import covidlib as cl
 #fictitious everyone in hospitals
 num_scenarios=3
-fixed_params={'total_pop':8655000, \
-    'hospital_beds':34620, \
-    'prop_15_64': 0.40, \
-    'age_gt_64':0.05 ,\
-    'prop_urban': 0.73, \
-    'prop_below_pl':0.05, \
-    'prop_woh':0.40, \
+fixed_params={'total_pop':38928000, \
+    'hospital_beds':1000, \
+    'prop_15_64': 0.54, \
+    'age_gt_64':0.023 ,\
+    'prop_urban': 0.25, \
+    'prop_below_pl':0.7, \
+    'prop_woh':0.80, \
     'staff_per_bed':2.5,\
     'sensitivity_PCR':0.95,\
     'sensitivity_RDT':0.85,\
@@ -24,13 +24,13 @@ fixed_params={'total_pop':8655000, \
     'specificity_PCR':0.95,\
     'specificity_RDT':0.90,\
     'specificity_xray':0.90,\
-    'num_tests_PCR':3000,\
+    'num_tests_PCR':0,\
     'num_tests_RDT':0,\
     'num_tests_xray':0}
 #advanced settings
 scenario_params=[None]*num_scenarios
 scenario_params[0]={'intervention_type':2, \
-    'intervention_timing':2, \
+    'intervention_timing':1, \
     'symptomatic_only':'True', \
     'prop_hospital': 0.0, \
     'prop_other_hc':1.0}
@@ -40,7 +40,7 @@ scenario_params[1]={'intervention_type':2, \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  
 scenario_params[2]={'intervention_type':2, \
-    'intervention_timing': 3, \
+    'intervention_timing': 1, \
     'symptomatic_only':'TRUE', \
     'prop_hospital': 0.5, \
     'prop_other_hc':0.5}  

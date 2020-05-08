@@ -88,14 +88,11 @@ def run_simulation(fixed_params, **kwargs):
          prop_gt_64=fixed_params['age_gt_64']
          prop_15_64=fixed_params['prop_15_64']
          prop_1_14=1-(prop_gt_64+prop_15_64)
-         print ('prop_gt_64=', prop_gt_64)
-         print ('prop_15_64=', prop_15_64)
-         print ('prop_1_14=', prop_1_14)
          IFR_1_14=float(p['IFR_1_14'][0])
          IFR_15_64=float(p['IFR_15_64'][0])
          IFR_gt_64=float(p['IFR_gt_64'][0])
          p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
-         print('IFR corrected=',p['IFR_corrected'])
+    #     print('IFR corrected=',p['IFR_corrected'])
          #read in any advanced settings
          
 # =============================================================================
@@ -402,23 +399,23 @@ def simulate(num_compartments,params,beta, final_beta):
      # calculate new infections day by day for each compartment
     if params['intervention_type'][0]==0:  #with no intervention intervention will never start
         intervention_timing=0
-    if intervention_timing==0:
-        intervention_day=intervention_day_0 
+        intervention_day=0
     else:
-        if intervention_timing==1:
-            intervention_day=intervention_day_1 
+        if intervention_timing==0:
+            intervention_day=intervention_day_0 
         else:
-            if intervention_timing==2: #Switzerland
-                intervention_day=intervention_day_2 
+            if intervention_timing==1:
+                intervention_day=intervention_day_1 
             else:
-                if intervention_timing==3:
-                    intervention_day=intervention_day_3
+                if intervention_timing==2: #Switzerland
+                    intervention_day=intervention_day_2 
                 else:
-                    if intervention_timing==4:
-                        intervention_day=intervention_day_4
+                    if intervention_timing==3:
+                        intervention_day=intervention_day_3
                     else:
-                        intervention_day=intervention_day_5
-    print ('intervention threshold=', intervention_day)
+                        if intervention_timing==4:
+                            intervention_day=intervention_day_4
+ 
     test_started=False
     total_testkits=0
     for k in range(0,num_testkit_types):
