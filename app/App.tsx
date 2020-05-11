@@ -147,6 +147,11 @@ const App: React.FC = () => {
             <p>Please complete the steps to view simulation results</p>
           </section>
         )}
+        <section>
+          <a href="https://www.finddx.org/covid-19/dx-imp-sim/references">
+            <button className="btn simple">References</button>
+          </a>
+        </section>
         <Footer />
       </main>
       <ScrollToTop />
