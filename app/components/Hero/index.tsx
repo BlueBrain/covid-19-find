@@ -10,11 +10,9 @@ const Hero: React.FC = () => {
     <section className={className}>
       <span className="gradient"></span>
       <div className="content">
-        <h1 className="title">Covid-19</h1>
+        {/* <h1 className="title">Covid-19</h1> */}
         <h2 className="subtitle underline">
-          Strategy Proposals for <br />
-          country-specific allocation of <br />
-          resources
+          Diagnostic Implementation Simulator
         </h2>
         <a
           href="#country-selection"
