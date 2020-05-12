@@ -9,10 +9,10 @@ const TopSection: React.FC = () => {
   return (
     <section className="top-section">
       <div className="half content">
-        <h2 className="underline">
+        {/* <h2 className="underline">
           {' '}
           COVID-19 Diagnostic Implementation Simulator{' '}
-        </h2>
+        </h2> */}
         <div className="description">
           This Diagnostic Implementation Simulator for SARS-CoV-2 diagnostics
           simulates scenarios for optimal allocation of resources. It uses

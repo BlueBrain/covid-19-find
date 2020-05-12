@@ -12,7 +12,8 @@ const Hero: React.FC = () => {
       <div className="content">
         {/* <h1 className="title">Covid-19</h1> */}
         <h2 className="subtitle underline">
-          Diagnostic Implementation Simulator
+          Diagnostic <br />
+          Implementation Simulator
         </h2>
         <a
           href="#country-selection"
