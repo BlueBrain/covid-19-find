@@ -34,6 +34,7 @@ const DEFAULT_PARAMS = {
 };
 
 const App: React.FC = () => {
+  const [defaultScenarioList, setDefaultScenarioList] = React.useState();
   const [queryParams, setQueryParams] = useQueryString({
     // nested values edgecase
     // to prevent [object Object] in url
@@ -59,16 +60,20 @@ const App: React.FC = () => {
     api
       .scenarios()
       .then(({ scenarios }) => {
+        const defaultScenarios = scenarios.map((scenario, index) => ({
+          ...DEFAULT_SCENARIO_LIST[index],
+          ...scenario,
+          hospitalTestProportion: scenario.hospitalTestProportion * 100,
+          otherHighContactPopulationTestProportion:
+            scenario.otherHighContactPopulationTestProportion * 100,
+        }));
+
+        setDefaultScenarioList(defaultScenarios);
+
         // Implement default values
         setQueryParams({
           ...DEFAULT_PARAMS,
-          scenarios: scenarios.map((scenario, index) => ({
-            ...DEFAULT_SCENARIO_LIST[index],
-            ...scenario,
-            hospitalTestProportion: scenario.hospitalTestProportion * 100,
-            otherHighContactPopulationTestProportion:
-              scenario.otherHighContactPopulationTestProportion * 100,
-          })),
+          scenarios: defaultScenarios,
           countryCode,
           ...queryParams,
         });
@@ -77,6 +82,7 @@ const App: React.FC = () => {
         console.warn('Could not load default scenarios');
         setQueryParams({
           ...DEFAULT_PARAMS,
+          scenarios: DEFAULT_SCENARIO_LIST,
           countryCode,
           ...queryParams,
         });
@@ -114,13 +120,17 @@ const App: React.FC = () => {
           values={queryParams as SimulationParams}
           onSubmit={values => {
             // Reset all values if country code is changed
-            // Except for scenarios
-            // which will be preserved
             if (values.countryCode !== queryParams.countryCode) {
               handleSubmit({
                 ...DEFAULT_PARAMS,
                 countryCode: values.countryCode,
-                scenarios: queryParams.scenarios,
+                scenarios: defaultScenarioList,
+              });
+              // mark forms as dirty or not ready
+              // if the country changes
+              setFormsReady({
+                countrySelectFormReady: false,
+                testsFormReady: false,
               });
               return;
             }
