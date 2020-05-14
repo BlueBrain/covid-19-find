@@ -166,7 +166,7 @@ const CountrySelector: React.FC<{
                 <br />
                 (private and public)
               </label>
-              <input {...hospitalBeds} required min="0" type="number" />
+              <input {...hospitalBeds} required min="1" type="number" />
               <a data-tip data-for="hospitalBeds-tooltip">
                 <label>
                   Estimated Staff
