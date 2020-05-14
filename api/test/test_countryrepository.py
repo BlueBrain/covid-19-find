@@ -52,3 +52,14 @@ class TestCountryRepository:
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
                                                       'urbanPopulationProportion': None}
+
+    def test_country_details_IN(self):
+        assert country_repo.country_details("IN") == {'activePopulationProportion': 0.66,
+                                                      'countryCode': 'IN',
+                                                      'highContactPopulation': None,
+                                                      'hospitalBeds': None,
+                                                      'over64Proportion': 0.07224416813284598,
+                                                      'population': 1380004000,
+                                                      'remoteAreasPopulationProportion': None,
+                                                      'urbanPopulationInDegradedHousingProportion': None,
+                                                      'urbanPopulationProportion': 0.34}
