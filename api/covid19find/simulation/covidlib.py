@@ -84,6 +84,7 @@ def run_simulation(fixed_params, **kwargs):
          p['init_pop'][0]=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
          p['init_pop'][1]=high_risk_urban+other_high_contact
          p['init_pop'][2]=fixed_params['total_pop']-hosp_staff-int(p['init_pop'][1])
+         print('init_pop_0=',p['init_pop'][0],'init pop 1=',p['init_pop'][1],'init_pop_2=',p['init_pop'][2])
          #compute age_corrected IFR
          prop_gt_64=fixed_params['age_gt_64']
          prop_15_64=fixed_params['prop_15_64']
@@ -346,6 +347,7 @@ def simulate(num_compartments,params,beta, final_beta):
     init_pop[0]=int(params['init_pop'][0])
     init_pop[1]=int(params['init_pop'][1])
     init_pop[2]=int(params['init_pop'][2])
+    print('IN SIMULATE init_pop_0=',init_pop[0],'init pop 1=',init_pop[1],'init_pop_2=',init_pop[2])
     if params['intervention_type'][0]==0: #if there is no intervention beta will never go down
         alpha=beta*0
     else:
@@ -415,7 +417,7 @@ def simulate(num_compartments,params,beta, final_beta):
                     else:
                         if intervention_timing==4:
                             intervention_day=intervention_day_4
- 
+    print('intervention_day=', intervention_day)
     test_started=False
     total_testkits=0
     for k in range(0,num_testkit_types):
