@@ -8,14 +8,14 @@ data_dir = os.path.join(path_prefix, 'data/countries')
 
 
 def __int_or_none(val):
-    if val is None:
+    if val is None or val == 0:
         return None
     else:
         return int(val)
 
 
 def __percentage_to_proportion_or_none(val):
-    if val is None:
+    if val is None or val == 0:
         return None
     else:
         return val / 100
@@ -55,7 +55,7 @@ def country_details(country_code):
         "urbanPopulationInDegradedHousingProportion": __percentage_to_proportion_or_none(
             nearest["degraded"][0]),
         "over64Proportion": over64proportion,
-        "hospitalBeds": hospital_beds,
+        "hospitalBeds": __int_or_none(hospital_beds),
         "highContactPopulation": __int_or_none(nearest["high_contact"][0]),
         "remoteAreasPopulationProportion": __percentage_to_proportion_or_none(nearest["remote"][0])
     }
