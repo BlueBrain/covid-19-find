@@ -24,7 +24,7 @@ fixed_params={'total_pop':1380004000, \
     'specificity_PCR':0.95,\
     'specificity_RDT':0.90,\
     'specificity_xray':0.90,\
-    'num_tests_PCR':0,\
+    'num_tests_PCR':3500,\
     'num_tests_RDT':0,\
     'num_tests_xray':0}
 #advanced settings
