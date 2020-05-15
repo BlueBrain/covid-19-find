@@ -109,6 +109,13 @@ const App: React.FC = () => {
       <Hero />
       <main>
         <TopSection />
+        <section>
+          <a href="https://www.finddx.org/covid-19/dx-imp-sim/about/">
+            <button className="btn simple">
+              About the Dx Implementation Sim
+            </button>
+          </a>
+        </section>
         <Countries
           countrySelectFormReady={countrySelectFormReady}
           setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
