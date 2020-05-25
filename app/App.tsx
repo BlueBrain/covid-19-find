@@ -110,7 +110,10 @@ const App: React.FC = () => {
       <main>
         <TopSection />
         <section>
-          <a href="https://www.finddx.org/covid-19/dx-imp-sim/about/">
+          <a
+            href="https://www.finddx.org/covid-19/dx-imp-sim/about/"
+            target="_parent"
+          >
             <button className="btn simple">
               About the Dx Implementation Sim
             </button>
@@ -165,7 +168,10 @@ const App: React.FC = () => {
           </section>
         )}
         <section>
-          <a href="https://www.finddx.org/covid-19/dx-imp-sim/references">
+          <a
+            href="https://www.finddx.org/covid-19/dx-imp-sim/references"
+            target="_parent"
+          >
             <button className="btn simple">References</button>
           </a>
         </section>
