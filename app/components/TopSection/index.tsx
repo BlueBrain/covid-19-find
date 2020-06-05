@@ -4,6 +4,7 @@ import './top-section.less';
 
 const bbpLogo = require('../../assets/images/EPFL-BBP-logo.jpg');
 const ataneoLogo = require('../../assets/images/ateneo-logo.jpg');
+const unitaidLogo = require('../../assets/images/unitaid-logo.png');
 
 const TopSection: React.FC = () => {
   return (
@@ -31,7 +32,10 @@ const TopSection: React.FC = () => {
           <a href="http://ateneo.edu/" target="_blank">
             Ateneo de Manila University
           </a>
-          , Manila, the Philippines.
+          , Manila, the Philippines, and was supported by funding from{' '}
+          <a href="https://unitaid.org" target="_blank">
+            Unitaid
+          </a>
         </div>
         <div style={{ marginTop: '1rem' }}>
           <a
@@ -49,6 +53,18 @@ const TopSection: React.FC = () => {
               className="ateneo-logo"
               src={ataneoLogo}
               style={{ height: '100px' }}
+            />
+          </a>
+          <a href="https://unitaid.org/" target="_blank">
+            <img
+              className="unitaid-logo"
+              src={unitaidLogo}
+              style={{
+                width: '100px',
+                marginLeft: '1rem',
+                position: 'relative',
+                bottom: '40px',
+              }}
             />
           </a>
         </div>
