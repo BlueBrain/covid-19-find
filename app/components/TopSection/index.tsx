@@ -56,16 +56,7 @@ const TopSection: React.FC = () => {
             />
           </a>
           <a href="https://unitaid.org/" target="_blank">
-            <img
-              className="unitaid-logo"
-              src={unitaidLogo}
-              style={{
-                width: '100px',
-                marginLeft: '1rem',
-                position: 'relative',
-                bottom: '40px',
-              }}
-            />
+            <img className="unitaid-logo" src={unitaidLogo} />
           </a>
         </div>
       </div>
