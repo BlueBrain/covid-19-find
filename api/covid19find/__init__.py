@@ -20,8 +20,9 @@ def create_app():
     data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
 
     def update_covid_data():
-        app.logger.info("Updating COVID-19 data")
+        app.logger.info("Updating COVID-19 data.")
         data_repo.update_data()
+        app.logger.info("Finished updating COVID-19 data.")
 
     country_repo = CountryRepository()
 
