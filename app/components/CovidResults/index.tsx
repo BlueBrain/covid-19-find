@@ -6,9 +6,9 @@ import moment from 'moment';
 
 import colors from '../../colors';
 import useWindowWidth from '../../hooks/useWindowWidth';
+import TrendIndicator from '../TrendIndicator';
 
 import './covid-results';
-import TrendIndicator from '../TrendIndicator';
 
 const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
   const valuesToAverage = [];
