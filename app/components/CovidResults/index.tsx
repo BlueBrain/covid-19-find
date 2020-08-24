@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import colors from '../../colors';
 import useWindowWidth from '../../hooks/useWindowWidth';
+import TrendIndicator from '../TrendIndicator';
 
 import './covid-results';
 
@@ -43,6 +44,16 @@ export type CovidData = {
   totalRecovered: number;
 };
 
+const getLastWeekNumbers = (
+  key: string,
+  timeseries: CovidData['timeseries'],
+) => {
+  return {
+    previous: timeseries[timeseries.length - 8][key],
+    present: timeseries[timeseries.length - 1][key],
+  };
+};
+
 const CovidResults: React.FC<{
   data: CovidData;
   countryLabel: string;
@@ -66,18 +77,30 @@ const CovidResults: React.FC<{
     <div className="result covid-results">
       <div className="stats">
         <h3>
-          {data.totalConfirmed.toLocaleString()}
-          <br />
+          <span>{data.totalConfirmed.toLocaleString()}</span>{' '}
+          <TrendIndicator
+            {...{
+              ...getLastWeekNumbers('totalConfirmed', data.timeseries),
+              upIsGood: false,
+            }}
+          />
           <span className="subtitle"> COVID-19 Positive Tests</span>
         </h3>
         <h3>
-          {data.totalDeaths.toLocaleString()}
-          <br />
+          <span>{data.totalDeaths.toLocaleString()}</span>{' '}
+          <TrendIndicator
+            {...{
+              ...getLastWeekNumbers('totalDeaths', data.timeseries),
+              upIsGood: false,
+            }}
+          />
           <span className="subtitle">Deaths attributed to COVID-19</span>
         </h3>
         <h3>
-          {data.totalRecovered.toLocaleString()}
-          <br />
+          <span>{data.totalRecovered.toLocaleString()}</span>{' '}
+          <TrendIndicator
+            {...getLastWeekNumbers('totalRecovered', data.timeseries)}
+          />
           <span className="subtitle"> People Recovered from COVID-19</span>
         </h3>
       </div>
