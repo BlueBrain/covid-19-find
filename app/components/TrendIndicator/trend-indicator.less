@@ -1,0 +1,36 @@
+@bad: #c1272d;
+@good: #00b0b4;
+@stable: #697881;
+
+.trend-indicator {
+  font-size: 2rem;
+  font-weight: lighter;
+  white-space: nowrap;
+  margin-top: 0.5em;
+  &.up {
+    color: @good;
+    fill: @good;
+    stroke: @good;
+    &.bad {
+      color: @bad;
+      fill: @bad;
+      stroke: @bad;
+    }
+  }
+  &.down {
+    color: @bad;
+    fill: @bad;
+    stroke: @bad;
+
+    &.bad {
+      color: @good;
+      fill: @good;
+      stroke: @good;
+    }
+  }
+  &.stable {
+    color: @stable;
+    fill: @stable;
+    stroke: @stable;
+  }
+}
