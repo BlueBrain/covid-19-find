@@ -1,7 +1,7 @@
 import * as React from 'react';
+import TrendArrow from './TrendArrow';
 
 import './trend-indicator';
-import TrendArrow from './TrendArrow';
 
 const DEFAULT_TREND_DIFF = 3;
 
