@@ -11,7 +11,7 @@ import TrendIndicator from '../TrendIndicator';
 import './covid-results';
 
 const makeSlidingAverage = (
-  array: { [key: string]: number }[],
+  array: { [key: string]: number | string }[],
   key: string,
 ) => (entry, index) => {
   const valuesToAverage = [];
@@ -43,10 +43,11 @@ export type CovidData = {
     newConfirmed: number;
     newDeaths: number;
     newRecovered: number;
+    [key: string]: number | string;
   }[];
   totalConfirmed: number;
-  totalDeaths: number;
   totalRecovered: number;
+  totalDeaths: number;
 };
 
 const getLastWeekNumbers = (
@@ -84,27 +85,30 @@ const CovidResults: React.FC<{
         <h3>
           <span>{data.totalConfirmed.toLocaleString()}</span>{' '}
           <TrendIndicator
-            {...{
+            {...({
               ...getLastWeekNumbers('totalConfirmed', data.timeseries),
               upIsGood: false,
-            }}
+            } as { previous: number; present: number })}
           />
           <span className="subtitle"> COVID-19 Positive Tests</span>
         </h3>
         <h3>
           <span>{data.totalDeaths.toLocaleString()}</span>{' '}
           <TrendIndicator
-            {...{
+            {...({
               ...getLastWeekNumbers('totalDeaths', data.timeseries),
               upIsGood: false,
-            }}
+            } as { previous: number; present: number })}
           />
           <span className="subtitle">Deaths attributed to COVID-19</span>
         </h3>
         <h3>
           <span>{data.totalRecovered.toLocaleString()}</span>{' '}
           <TrendIndicator
-            {...getLastWeekNumbers('totalRecovered', data.timeseries)}
+            {...(getLastWeekNumbers('totalRecovered', data.timeseries) as {
+              previous: number;
+              present: number;
+            })}
           />
           <span className="subtitle"> People Recovered from COVID-19</span>
         </h3>
