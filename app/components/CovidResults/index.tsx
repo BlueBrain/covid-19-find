@@ -10,11 +10,14 @@ import TrendIndicator from '../TrendIndicator';
 
 import './covid-results';
 
-const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
+const makeSlidingAverage = (
+  array: { [key: string]: number }[],
+  key: string,
+) => (entry, index) => {
   const valuesToAverage = [];
   for (let i = index - 7; i < index; i++) {
     if (i >= 0) {
-      valuesToAverage.push(array[i][key]);
+      valuesToAverage.push(array[i][key] || 0);
     }
   }
 
@@ -24,7 +27,9 @@ const makeSlidingAverage = (array: any[], key: string) => (entry, index) => {
         valuesToAverage.length
       : valuesToAverage[0];
 
-  return average;
+  // results should always be greater than 0
+  // sometimes rolling average can create negative values
+  return average < 0 ? 0 : average;
 };
 
 export type CovidData = {
@@ -104,117 +109,247 @@ const CovidResults: React.FC<{
           <span className="subtitle"> People Recovered from COVID-19</span>
         </h3>
       </div>
-      <div className="chart">
-        <h3 className="title">
-          {countryLabel} | Current State of epidemic{' '}
-          <a
-            title="data from Johns Hopkins University"
-            href="https://coronavirus.jhu.edu/map.html"
-            target="_blank"
-            data-tip
-            data-for="jh-tooltip"
-          >
-            *
-          </a>
-          <ReactTooltip id="jh-tooltip">
-            <p>case data from Johns Hopkins University</p>
-          </ReactTooltip>
-        </h3>
-        <Line
-          width={null}
-          height={null}
-          options={{
-            aspectRatio: isMobile ? 1 : 2,
-            scales: {
-              yAxes: [
-                {
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Number of People (per day)',
-                  },
-                  gridLines: {
-                    color: '#00000005',
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    // Include a dollar sign in the ticks
-                    callback: value => {
-                      return value?.toLocaleString();
+      <div className="charts">
+        <div className="chart">
+          <h3 className="title">
+            {countryLabel} | Current State of epidemic{' '}
+            <a
+              title="data from Johns Hopkins University"
+              href="https://coronavirus.jhu.edu/map.html"
+              target="_blank"
+              data-tip
+              data-for="jh-tooltip"
+            >
+              *
+            </a>
+            <ReactTooltip id="jh-tooltip">
+              <p>case data from Johns Hopkins University</p>
+            </ReactTooltip>
+          </h3>
+          <Line
+            width={null}
+            height={null}
+            options={{
+              aspectRatio: isMobile ? 1 : 2,
+              scales: {
+                yAxes: [
+                  {
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Number of People (per day)',
+                    },
+                    gridLines: {
+                      color: '#00000005',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      // Include a dollar sign in the ticks
+                      callback: value => {
+                        return value?.toLocaleString();
+                      },
                     },
                   },
-                },
-              ],
-              xAxes: [
-                {
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Days',
-                  },
-                  gridLines: {
-                    color: '#00000005',
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    // Include a dollar sign in the ticks
-                    callback: value => {
-                      return moment(value).format('DD MMM');
+                ],
+                xAxes: [
+                  {
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Days',
+                    },
+                    gridLines: {
+                      color: '#00000005',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      // Include a dollar sign in the ticks
+                      callback: value => {
+                        return moment(value).format('DD MMM');
+                      },
                     },
                   },
+                ],
+              },
+              elements: {
+                point: {
+                  radius: 0,
+                },
+                line: {
+                  borderWidth: 1,
+                },
+              },
+            }}
+            data={{
+              backgroundColor: '#fff',
+              datasets: [
+                {
+                  label: 'New Cases',
+                  data: chartData
+                    .map(makeSlidingAverage(chartData, 'newConfirmed'))
+                    .map(entry => Math.floor(Number(entry))),
+                  borderColor: [colors.blueGray],
+                  backgroundColor: [
+                    Color(colors.blueGray)
+                      .alpha(0.2)
+                      .toString(),
+                  ],
+                },
+                {
+                  label: 'New Deaths',
+                  data: chartData
+                    .map(makeSlidingAverage(chartData, 'newDeaths'))
+                    .map(entry => Math.floor(Number(entry))),
+                  borderColor: [colors.pomegranate],
+
+                  backgroundColor: [
+                    Color(colors.pomegranate)
+                      .alpha(0.2)
+                      .toString(),
+                  ],
+                },
+                {
+                  label: 'New Recovered',
+                  data: chartData
+                    .map(makeSlidingAverage(chartData, 'newRecovered'))
+                    .map(entry => Math.floor(Number(entry))),
+                  borderColor: [colors.turqouise],
+                  backgroundColor: [
+                    Color(colors.turqouise)
+                      .alpha(0.2)
+                      .toString(),
+                  ],
                 },
               ],
-            },
-            elements: {
-              point: {
-                radius: 0,
-              },
-              line: {
-                borderWidth: 1,
-              },
-            },
-          }}
-          data={{
-            backgroundColor: '#fff',
-            datasets: [
-              {
-                label: 'New Cases',
-                data: chartData.map(
-                  makeSlidingAverage(chartData, 'newConfirmed'),
-                ),
-
-                borderColor: [colors.blueGray],
-                backgroundColor: [
-                  Color(colors.blueGray)
-                    .alpha(0.2)
-                    .toString(),
+              labels: chartData.map(entry => entry.date),
+            }}
+          />
+        </div>
+        <div className="chart">
+          <h3 className="title">
+            {countryLabel} | Current State of Testing{' '}
+            <a
+              title="data from Johns Hopkins University"
+              href="https://coronavirus.jhu.edu/map.html"
+              target="_blank"
+              data-tip
+              data-for="jh-tooltip"
+            >
+              *
+            </a>
+            <ReactTooltip id="jh-tooltip">
+              <p>case data from Johns Hopkins University</p>
+            </ReactTooltip>
+          </h3>
+          <Line
+            width={null}
+            height={null}
+            options={{
+              aspectRatio: isMobile ? 1 : 2,
+              scales: {
+                yAxes: [
+                  {
+                    id: 'A',
+                    position: 'left',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Number of Tests (per day)',
+                    },
+                    gridLines: {
+                      color: '#00000005',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      // Include a dollar sign in the ticks
+                      callback: value => {
+                        return value?.toLocaleString();
+                      },
+                    },
+                  },
+                  {
+                    id: 'B',
+                    type: 'linear',
+                    position: 'right',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Positive (per day)',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      callback: value => {
+                        if (!value) {
+                          return;
+                        }
+                        return `${(value * 100).toLocaleString()}%`;
+                      },
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Days',
+                    },
+                    gridLines: {
+                      color: '#00000005',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      // Include a dollar sign in the ticks
+                      callback: value => {
+                        return moment(value).format('DD MMM');
+                      },
+                    },
+                  },
                 ],
               },
-              {
-                label: 'New Deaths',
-                data: chartData.map(makeSlidingAverage(chartData, 'newDeaths')),
-                borderColor: [colors.pomegranate],
-
-                backgroundColor: [
-                  Color(colors.pomegranate)
-                    .alpha(0.2)
-                    .toString(),
-                ],
+              elements: {
+                point: {
+                  radius: 0,
+                },
+                line: {
+                  borderWidth: 1,
+                },
               },
-              {
-                label: 'New Recovered',
-                data: chartData.map(
-                  makeSlidingAverage(chartData, 'newRecovered'),
-                ),
-                borderColor: [colors.turqouise],
-                backgroundColor: [
-                  Color(colors.turqouise)
-                    .alpha(0.2)
-                    .toString(),
-                ],
-              },
-            ],
-            labels: chartData.map(entry => entry.date),
-          }}
-        />
+            }}
+            data={{
+              backgroundColor: '#fff',
+              datasets: [
+                {
+                  label: 'Tests Performed',
+                  yAxisID: 'A',
+                  data: chartData
+                    .map(makeSlidingAverage(chartData, 'newTests'))
+                    .map(entry => Math.floor(Number(entry))),
+                  borderColor: [colors.turqouise],
+                  backgroundColor: [
+                    Color(colors.turqouise)
+                      .alpha(0.2)
+                      .toString(),
+                  ],
+                },
+                {
+                  label: 'Tests Positive',
+                  yAxisID: 'B',
+                  data: chartData
+                    .map(
+                      makeSlidingAverage(
+                        chartData,
+                        'newTestsPositiveProportion',
+                      ),
+                    )
+                    .map(entry => Number(entry).toFixed(4)),
+                  borderColor: [colors.pomegranate],
+                  backgroundColor: [
+                    Color(colors.pomegranate)
+                      .alpha(0.2)
+                      .toString(),
+                  ],
+                },
+              ],
+              labels: chartData.map(entry => entry.date),
+            }}
+          />
+        </div>
       </div>
     </div>
   );

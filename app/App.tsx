@@ -79,7 +79,6 @@ const App: React.FC = () => {
         });
       })
       .catch(error => {
-        console.warn('Could not load default scenarios');
         setQueryParams({
           ...DEFAULT_PARAMS,
           scenarios: DEFAULT_SCENARIO_LIST,
