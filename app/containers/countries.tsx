@@ -42,12 +42,6 @@ const Countries: React.FC<{
       .catch(console.error);
   }, []);
 
-  React.useEffect(() => {
-    if (values.countryCode) {
-      loadCountryData(values.countryCode);
-    }
-  }, [values.countryCode]);
-
   const loadCountryData = async (countryCode: string) => {
     try {
       setCountryInfo({
@@ -74,6 +68,12 @@ const Countries: React.FC<{
       });
     }
   };
+
+  React.useEffect(() => {
+    if (values.countryCode) {
+      loadCountryData(values.countryCode);
+    }
+  }, [values.countryCode]);
 
   // Reset county details when country code changes
   const selectCountry = (countryCode: string) => {

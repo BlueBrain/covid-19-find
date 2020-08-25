@@ -45,7 +45,7 @@ export default function useQueryString(parsers?: Parser) {
       null,
       `${location.pathname}?${stringifyURLParams(newQueryParams)}`,
     );
-    let myEvent = new Event('popstate');
+    const myEvent = new Event('popstate');
     window.dispatchEvent(myEvent);
   };
 

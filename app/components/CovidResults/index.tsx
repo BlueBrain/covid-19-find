@@ -61,7 +61,7 @@ const CovidResults: React.FC<{
   let firstActiveDay = 0;
   const chartData = data.timeseries.filter((entry, index) => {
     if (!firstActiveDay) {
-      if (!!entry.currentActive) {
+      if (entry.currentActive) {
         firstActiveDay = index;
         return true;
       }
