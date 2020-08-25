@@ -12,9 +12,9 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 export type SimulationResultsData = any;
 
 export function toLetters(num: number): string {
-  var mod = num % 26,
-    pow = (num / 26) | 0,
-    out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
+  const mod = num % 26;
+  let pow = (num / 26) | 0;
+  const out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
   return pow ? toLetters(pow) + out : out;
 }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './Header.less';
 
-const logo = require('../../assets/images/logo_header.svg');
+import logo from '../../assets/images/logo_header.svg';
 
 const Header: React.FC = () => {
   return (

@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import './top-section.less';
 
-const bbpLogo = require('../../assets/images/EPFL-BBP-logo.jpg');
-const ataneoLogo = require('../../assets/images/ateneo-logo.jpg');
-const unitaidLogo = require('../../assets/images/unitaid-logo.png');
+import bbpLogo from '../../assets/images/EPFL-BBP-logo.jpg';
+import ataneoLogo from '../../assets/images/ateneo-logo.jpg';
+import unitaidLogo from '../../assets/images/unitaid-logo.png';
 
 const TopSection: React.FC = () => {
   return (

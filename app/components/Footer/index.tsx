@@ -3,7 +3,7 @@ import useVersion from '../../hooks/useVersion';
 
 import './footer.less';
 
-const logo = require('../../assets/images/logo_header.svg');
+import logo from '../../assets/images/logo_header.svg';
 
 const Header: React.FC = () => {
   const version = useVersion();

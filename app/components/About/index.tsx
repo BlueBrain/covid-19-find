@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import './about.less';
 
-const bbpLogo = require('../../assets/images/EPFL-BBP-logo.jpg');
-const findLogo = require('../../assets/images/find-logo.png');
-const connectionImage = require('../../assets/images/connection.png');
+import bbpLogo from '../../assets/images/EPFL-BBP-logo.jpg';
+import findLogo from '../../assets/images/find-logo.png';
+import connectionImage from '../../assets/images/connection.png';
 
 const About: React.FC = () => {
   const [expanded, setExpanded] = React.useState(false);
