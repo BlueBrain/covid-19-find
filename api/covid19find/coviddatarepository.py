@@ -40,9 +40,14 @@ class CovidDataRepository:
                     continue
                 country_code_alpha2 = country.alpha_2
                 country_data = grouped_country_data.get(country_code_alpha2, OrderedDict())
+                new_tests_positive = self.__divide_if_not_none(
+                    self.__int_or_none(row["new_cases"]),
+                    self.__int_or_none(row["new_tests"])
+                )
                 country_data[row["date"]] = {
                     "newTests": self.__int_or_none(row["new_tests"]),
-                    "totalTests": self.__int_or_none(row["tests_cumulative"])
+                    "totalTests": self.__int_or_none(row["tests_cumulative"]),
+                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None and  new_tests_positive < 1.0 else None
                 }
                 grouped_country_data[country_code_alpha2] = country_data
         return grouped_country_data
@@ -89,23 +94,21 @@ class CovidDataRepository:
         timeseries_data[0]["newConfirmed"] = timeseries_data[0]["totalConfirmed"]
         timeseries_data[0]["newDeaths"] = timeseries_data[0]["totalDeaths"]
         timeseries_data[0]["newRecovered"] = timeseries_data[0]["totalRecovered"]
-        timeseries_data[0]["newTestsPositiveProportion"] = self.__divide_if_not_none(
-            timeseries_data[0]["newConfirmed"], timeseries_data[0]["newTests"])
         for i in range(1, len(timeseries_data)):
             timeseries_data[i]["newConfirmed"] = timeseries_data[i]["totalConfirmed"] - timeseries_data[i - 1][
                 "totalConfirmed"]
             timeseries_data[i]["newDeaths"] = timeseries_data[i]["totalDeaths"] - timeseries_data[i - 1]["totalDeaths"]
             timeseries_data[i]["newRecovered"] = timeseries_data[i]["totalRecovered"] - timeseries_data[i - 1][
                 "totalRecovered"]
-            timeseries_data[i]["newTestsPositiveProportion"] = self.__divide_if_not_none(
-                timeseries_data[i]["newConfirmed"], timeseries_data[i]["newTests"])
 
     def __get_or_none(self, data, country_code, date, key):
         return data.get(country_code, {}).get(date, {}).get(key)
 
     def __divide_if_not_none(self, dividend, divisor):
-        if dividend and divisor:
+        if dividend is not None and divisor:
             return float(dividend) / float(divisor)
+        else:
+            return None
 
     def update_data(self):
         os.makedirs(self.data_dir, exist_ok=True)
@@ -135,9 +138,11 @@ class CovidDataRepository:
                 recovered = recovered_data[country][date]
                 total_tests = self.__get_or_none(tests_data, country, date, "totalTests")
                 new_tests = self.__get_or_none(tests_data, country, date, "newTests")
+                new_tests_positive = self.__get_or_none(tests_data, country, date, "newTestsPositiveProportion")
                 country_timeseries_data.append({
                     "date": date,
                     "newTests": new_tests,
+                    "newTestsPositiveProportion": new_tests_positive,
                     "totalConfirmed": confirmed,
                     "totalDeaths": deaths,
                     "totalRecovered": recovered,
