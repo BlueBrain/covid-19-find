@@ -36,10 +36,7 @@ const Countries: React.FC<{
   });
   const api = useAPI();
   React.useEffect(() => {
-    api
-      .countries()
-      .then(response => setCountries(response.countries))
-      .catch(console.error);
+    api.countries().then(response => setCountries(response.countries));
   }, []);
 
   const loadCountryData = async (countryCode: string) => {
@@ -60,7 +57,6 @@ const Countries: React.FC<{
         },
       });
     } catch (error) {
-      console.log({ error });
       setCountryInfo({
         error,
         loading: false,

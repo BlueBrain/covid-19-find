@@ -35,11 +35,6 @@ const TrendIndicator: React.FC<{
 
   const indicatorRotationDeg = calcIndicatorRotationDeg(percentageChange);
 
-  console.log({
-    percentageChange,
-    indicatorRotationDeg,
-  });
-
   return (
     <span
       className={`trend-indicator ${trendStatus.toLocaleLowerCase()} ${
