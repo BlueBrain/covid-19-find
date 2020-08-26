@@ -17,7 +17,7 @@ export enum InterventionTiming {
 
 export const DEFAULT_SCENARIO_LIST: Scenario[] = [
   {
-    name: 'Baseline',
+    name: 'Counterfactual: No tests and no intervention',
     interventionType: InterventionType.LOCKDOWN,
     description:
       'This imaginary scenario is provided for comparison purposes. It shows the predicted course of the pandemic with a strong lockdown but no testing of any kind.',

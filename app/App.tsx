@@ -118,6 +118,7 @@ const App: React.FC = () => {
             </button>
           </a>
         </section>
+        {/* Panel 1 */}
         <Countries
           countrySelectFormReady={countrySelectFormReady}
           setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
@@ -147,6 +148,7 @@ const App: React.FC = () => {
             handleSubmit(values);
           }}
         />
+        {/* Panel 2 */}
         <TestSelector
           {...queryParams}
           onSubmit={handleSubmit}
@@ -158,6 +160,7 @@ const App: React.FC = () => {
             });
           }}
         />
+        {/* Panel 3 */}
         {countrySelectFormReady && testsFormReady && (
           <Simulation simulationParams={queryParams as SimulationParams} />
         )}

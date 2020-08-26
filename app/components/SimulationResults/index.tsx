@@ -85,7 +85,7 @@ const SimulationResults: React.FC<{
     return {
       label:
         index === 0
-          ? 'Baseline'
+          ? 'Counterfactual: No tests and no intervention'
           : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
       data: entry.data.reduce((memo, entry) => {
         const key = entry.days;

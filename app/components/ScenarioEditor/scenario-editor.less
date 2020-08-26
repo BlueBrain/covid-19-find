@@ -7,9 +7,10 @@
       position: relative;
     }
   }
+  h2 {
+    color: white;
+  }
   .scenario {
-    display: flex;
-    flex-wrap: wrap;
     background-color: rgba(255, 255, 255, 0.25);
     padding: 15px 20px;
     border: 1px solid white;
@@ -40,28 +41,35 @@
   }
 }
 
-.react-tabs__tab {
-  color: white;
-  border: 1px solid white;
-  border-right: none;
-  &:last-of-type {
-    border-right: 1px solid white;
+.scenario-list {
+  .react-tabs__tab {
+    color: white;
+    border: 1px solid white;
+    border-right: none;
+    padding: 1em;
+    text-transform: uppercase;
+    &:last-of-type {
+      border-right: 1px solid white;
+    }
+  }
+
+  .react-tabs__tab--selected {
+    border-radius: 0;
+    color: rgb(105, 120, 129);
+  }
+
+  .react-tabs__tab-list {
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid white;
   }
 }
 
-.react-tabs__tab--selected {
-  border-radius: 0;
-  color: rgb(105, 120, 129);
-}
-
-.react-tabs__tab-list {
-  margin: 0;
-  border: none;
-  border-bottom: 1px solid white;
-}
-
-.scenario-list {
-  margin-top: 1rem;
+.columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .add-scenario {
