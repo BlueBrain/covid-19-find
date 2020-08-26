@@ -1,28 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Longitude and Latitude Values",
-  "description": "A geographical coordinate.",
+  "title": "FIND simulator HTTP request",
   "required": [
+    "countryCode",
     "population",
+    "activePopulationProportion",
     "hospitalBeds",
     "hospitalStaffPerBed",
     "workingOutsideHomeProportion",
     "urbanPopulationProportion",
+    "over64Proportion",
     "belowPovertyLineProportion",
-    "activePopulationProportion",
-    "sensitivityPCR",
-    "sensitivityRDT",
-    "sensitivityXray",
-    "specificityPCR",
-    "specificityRDT",
-    "specificityXray",
-    "numTestsPCR",
-    "numTestsRDT",
-    "numTestsXray",
-    "over64Proportion"
+    "scenarios"
   ],
   "type": "object",
   "properties": {
+    "countryCode": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2
+    },
     "population": {
       "type": "integer",
       "minimum": 0
@@ -60,48 +57,6 @@
       "minimum": 0,
       "maximum": 1
     },
-    "sensitivityPCR": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "sensitivityRDT": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "sensitivityXray": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "specificityPCR": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "specificityRDT": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "specificityXray": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "numTestsPCR": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "numTestsRDT": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "numTestsXray": {
-      "type": "integer",
-      "minimum": 0
-    },
     "scenarios": {
       "type": "array",
       "minItems": 1,
@@ -109,43 +64,124 @@
       "items": {
         "type": "object",
         "required": [
-          "interventionType",
-          "interventionTiming",
-          "testSymptomaticOnly",
-          "hospitalTestProportion",
-          "otherHighContactPopulationTestProportion"
+          "phases"
         ],
         "properties": {
-          "interventionType": {
-            "type": "string",
-            "enum": [
-              "no_intervention",
-              "mild_intervention",
-              "lockdown"
-            ]
-          },
-          "interventionTiming": {
-            "type": "string",
-            "enum": [
-              "very_early",
-              "early",
-              "late",
-              "very_late",
-              "never"
-            ]
-          },
-          "testSymptomaticOnly": {
-            "type": "boolean"
-          },
-          "hospitalTestProportion": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "otherHighContactPopulationTestProportion": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
+          "phases": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "importedInfectionsPerDay",
+                "trigger",
+                "triggerType",
+                "triggerCondition",
+                "severity",
+                "proportionOfContactsTraced",
+                "numTestsMitigation",
+                "typeTestsMitigation",
+                "confirmationTests",
+                "specificity",
+                "sensitivity",
+                "testSymptomaticOnly",
+                "hospitalTestProportion",
+                "otherHighContactPopulationTestProportion",
+                "restOfPopulationTestProportion",
+                "numTestsCare",
+                "typeTestsCare",
+                "requiredDxTests"
+              ],
+              "properties": {
+                "importedInfectionsPerDay": {
+                  "type": "number"
+                },
+                "trigger": {
+                  "type": "string"
+                },
+                "triggerType": {
+                  "type": "string",
+                  "enum": [
+                    "date"
+                  ]
+                },
+                "triggerCondition": {
+                  "type": "string",
+                  "enum": [
+                    "<",
+                    "=",
+                    ">="
+                  ]
+                },
+                "severity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "proportionOfContactsTraced": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "numTestsMitigation": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "typeTestsMitigation": {
+                  "type": "string",
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
+                },
+                "confirmationTests": {
+                  "type": "boolean"
+                },
+                "specificity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "sensitivity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "testSymptomaticOnly": {
+                  "type": "boolean"
+                },
+                "hospitalTestProportion": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "otherHighContactPopulationTestProportion": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "restOfPopulationTestProportion": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "numTestsCare": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "typeTestsCare": {
+                  "type": "string",
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
+                },
+                "requiredDxTests": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
           }
         }
       }
