@@ -79,8 +79,13 @@ const ScenarioEditor: React.FC<{
                     </div>
                     {phases.map(phase => {
                       return (
-                        <div className="col">
-                          <PhaseInput inputProps={input} />
+                        <div className="col" style={{ width: 200 }}>
+                          <PhaseInput
+                            inputProps={input}
+                            onChange={value => {
+                              // TODO save changes
+                            }}
+                          />
                         </div>
                       );
                     })}

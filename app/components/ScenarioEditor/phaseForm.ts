@@ -1,6 +1,7 @@
 export enum INPUT_TYPES {
   number = 'number',
   select = 'select',
+  boolean = 'boolean',
 }
 
 export type InputProp = {
@@ -18,13 +19,24 @@ export type NumberInputProp = InputProp & {
   step?: number;
 };
 
-export type SelectInputProp = {
+export type SelectInputProp = InputProp & {
   type: INPUT_TYPES.select;
   options: {
     value: string | null;
     label: string;
   }[];
 };
+
+export type BooleanInputProp = InputProp & {
+  type: INPUT_TYPES.boolean;
+};
+
+export type AnyInputProp = SelectInputProp | BooleanInputProp | NumberInputProp;
+
+export enum TEST_TYPES {
+  PCR = 'PCR',
+  RDT = 'RDT',
+}
 
 export default [
   {
@@ -103,8 +115,45 @@ export default [
             label: 'None',
             value: null,
           },
+          {
+            label: TEST_TYPES.PCR,
+            value: TEST_TYPES.PCR,
+          },
+          {
+            label: TEST_TYPES.RDT,
+            value: TEST_TYPES.RDT,
+          },
         ],
+      },
+      {
+        label: 'Sensitivity',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        prop: 'sensitivity',
+      },
+      {
+        label: 'Specificity',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        prop: 'specificity',
+      },
+      {
+        label: 'Symptomatic only',
+        type: INPUT_TYPES.boolean,
+        prop: 'symptomatic_only',
+      },
+      {
+        label: 'Confirmatory test for positive cases',
+        type: INPUT_TYPES.boolean,
+        prop: 'confirmation_tests',
       },
     ],
   },
-];
+] as {
+  title: string;
+  input: AnyInputProp[];
+}[];
