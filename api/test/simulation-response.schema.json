@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FIND simulator HTTP response",
+  "required": [
+    "scenarios"
+  ],
+  "type": "object",
+  "definitions": {
+    "simulationData": {
+      "type": "array",
+      "minItems": 180,
+      "items": {
+        "type": "object",
+        "required": [
+          "day",
+          "date",
+          "population",
+          "susceptibles",
+          "currentIsolated",
+          "currentInfected",
+          "totalInfected",
+          "totalTested",
+          "currentInfectedNotIsolated",
+          "totalConfirmed",
+          "totalDeaths",
+          "totalRecovered",
+          "beta",
+          "rEff",
+          "susceptibleProportion",
+          "newTests",
+          "newInfected",
+          "newConfirmed",
+          "newIsolated",
+          "newIsolatedInfected",
+          "newRecovered",
+          "requiredDxTests",
+          "newDeaths",
+          "truePositives",
+          "falsePositives",
+          "trueNegatives",
+          "falseNegatives",
+          "ppv",
+          "npv",
+          "incidence",
+          "prevalence"
+        ],
+        "properties": {
+          "day": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          },
+          "population": {
+            "type": "integer"
+          },
+          "susceptibles": {
+            "type": "integer"
+          },
+          "currentIsolated": {
+            "type": "integer"
+          },
+          "currentInfected": {
+            "type": "integer"
+          },
+          "totalInfected": {
+            "type": "integer"
+          },
+          "totalTested": {
+            "type": "integer"
+          },
+          "currentInfectedNotIsolated": {
+            "type": "integer"
+          },
+          "totalConfirmed": {
+            "type": "integer"
+          },
+          "totalDeaths": {
+            "type": "integer"
+          },
+          "totalRecovered": {
+            "type": "integer"
+          },
+          "beta": {
+            "type": "number"
+          },
+          "rEff": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "susceptibleProportion": {
+            "type": "number"
+          },
+          "newTests": {
+            "type": "integer"
+          },
+          "newInfected": {
+            "type": "integer"
+          },
+          "newConfirmed": {
+            "type": "integer"
+          },
+          "newIsolated": {
+            "type": "integer"
+          },
+          "newIsolatedInfected": {
+            "type": "integer"
+          },
+          "newRecovered": {
+            "type": "integer"
+          },
+          "requiredDxTests": {
+            "type": "integer"
+          },
+          "newDeaths": {
+            "type": "integer"
+          },
+          "truePositives": {
+            "type": "integer"
+          },
+          "falsePositives": {
+            "type": "integer"
+          },
+          "trueNegatives": {
+            "type": "integer"
+          },
+          "falseNegatives": {
+            "type": "integer"
+          },
+          "ppv": {
+            "type": "number"
+          },
+          "npv": {
+            "type": "number"
+          },
+          "incidence": {
+            "type": "number"
+          },
+          "prevalence": {
+            "type": "number"
+          },
+          "newTestsPositiveProportion": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "detectionRate": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "totalTests",
+          "totalDeaths",
+          "maxInfected",
+          "totalInfected",
+          "maxIsolated",
+          "data"
+        ],
+        "properties": {
+          "totalTests": {
+            "type": "integer"
+          },
+          "totalDeaths": {
+            "type": "integer"
+          },
+          "maxInfected": {
+            "type": "integer"
+          },
+          "totalInfected": {
+            "type": "integer"
+          },
+          "maxIsolated": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "hospitals",
+              "otherHighContact",
+              "restOfPopulation",
+              "total"
+            ],
+            "properties": {
+              "hospitals": {
+                "$ref": "#/definitions/simulationData"
+              },
+              "otherHighContact": {
+                "$ref": "#/definitions/simulationData"
+              },
+              "restOfPopulation": {
+                "$ref": "#/definitions/simulationData"
+              },
+              "total": {
+                "$ref": "#/definitions/simulationData"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

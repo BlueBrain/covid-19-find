@@ -1,0 +1,16 @@
+symptomatic_only,True,True,True,True,True,True
+confirmation_tests,False,False,False,False,False,False
+prop_hospital, 0.3, 0.3,0.3,0.3,0.3
+prop_other_hc,0.3,0.3,0.3,0.3,0.3
+severity,0.0,0.70,0.9,0.87,0.65
+trig_values,1,40,55,75,85
+num_tests_mitigation,0,0,0,7000,15000
+num_tests_care,0,0,0,0,0
+trig_op_type,=,=,=,=,=,=
+trig_def_type,date,date,date,date,date,date
+sensitivity,0.95,0.95,0.95,0.95,0.95
+specificity,0.95,0.95,0.95,0.95,0.95
+prop_contacts_traced,0,0,1.0,1.0,1.0,1.0
+test_multipliers,1,1,1
+imported_infections_per_day,0,0,20,20,20
+requireddxtests,0,1,2,2,2
