@@ -223,7 +223,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
    max_intervention_betafile = os.path.join(cl_path_prefix, 'lockdown_betas.csv')
 #   mild_betafile='betas_mild.csv'
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=True
+   expert_mode=False
 
 #   print(sc.scenarios)
 #   print(sc.scenario_labels)
@@ -240,13 +240,13 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
    for i in range(0,num_scenarios):
  #     key = sc.scenarios[i-1] #If this is an array no need for a key
 #      print('i=',i,'key=',key)
-      scenario_name='SCENARIO' + ' '+ str(i)  #it should have a proper name
+      scenario_name='SCENARIO 0'   #it should have a proper name
    #   scenario_names.append(scenario_name)  #name can be one item in dictionary
       if expert_mode:
          print ('*************')
          print ('scenario_name')
          print ('*************')
-      parameters_filename=scenario_name+'_params.csv'
+      parameters_filename = os.path.join(cl_path_prefix, scenario_name+'_params.csv')
       filename = scenario_name+'_out.csv'
       summary_filename=scenario_name+'_summary.csv'
       scenario_default=get_system_params(parameters_filename)
@@ -295,7 +295,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
   #      sim=copy.deepcopy(old_sim)
         for k in range(0,par.num_testkit_types): #maybe this should be for one phase only
              test_par.num_tests[k]=np.array(test_par.num_tests[k])*test_par.test_multipliers[j]
-        throw,df_tests=simulate(country_df,sim,par,max_betas,min_betas,30,test_par.num_days,1)
+        throw,df_tests=simulate(country_df,sim,par,max_betas,min_betas,30,test_par.num_days,0)
         dfsum_tests = df_tests.groupby(['days']).sum().reset_index()
         test_df['tests']=sum(map(int,p['num_tests']))
         test_df['deaths']=dfsum_tests['newdeaths'].sum()
@@ -416,14 +416,14 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
            
       #=============================================================================
       print('')
-      results_dict={}
-      results_dict.update({
-      'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
-      'total_tests_care_by_scenario':total_tests_care_by_scenario,\
-      'total_deaths_by_scenario':total_deaths_by_scenario,\
-      'max_infected_by_scenario':max_infected_by_scenario,\
-      'total_infected_by_scenario':total_infected_by_scenario,\
-      'max_isolated_by_scenario':max_isolated_by_scenario})
+   results_dict={}
+   results_dict.update({
+   'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
+   'total_tests_care_by_scenario':total_tests_care_by_scenario,\
+   'total_deaths_by_scenario':total_deaths_by_scenario,\
+   'max_infected_by_scenario':max_infected_by_scenario,\
+   'total_infected_by_scenario':total_infected_by_scenario,\
+   'max_isolated_by_scenario':max_isolated_by_scenario})
 
 #      p=original_p
    return(dataframes, test_df,results_dict)
