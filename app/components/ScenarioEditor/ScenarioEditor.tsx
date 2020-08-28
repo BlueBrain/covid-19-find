@@ -12,17 +12,6 @@ const ScenarioEditor: React.FC<{
   onChange?: (scenario: any) => void;
   disabled: boolean;
 }> = ({ scenario, onChange, disabled }) => {
-  console.log({ scenario });
-
-  const phases = [
-    {
-      name: 'Current Phase',
-    },
-    {
-      name: 'Next Phase',
-    },
-  ];
-
   const name = useTextInput(scenario.name, null, true);
 
   const scenarioFormId = `#scenario-editor-${scenario.name
@@ -55,7 +44,7 @@ const ScenarioEditor: React.FC<{
         <div className="col" style={{ width: 200 }}>
           <h2>Phases</h2>
         </div>
-        {phases.map(phase => {
+        {scenario.phases.map(phase => {
           return (
             <div className="col" style={{ width: 200 }} key={phase.name}>
               <h2>{phase.name}</h2>
@@ -75,7 +64,7 @@ const ScenarioEditor: React.FC<{
                     <div className="col" style={{ width: 200 }}>
                       <label>{input.label}</label>
                     </div>
-                    {phases.map(phase => {
+                    {scenario.phases.map(phase => {
                       return (
                         <div
                           className="col"

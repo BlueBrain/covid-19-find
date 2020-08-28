@@ -5,6 +5,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
     name: 'Counterfactual: No tests and no intervention',
     phases: [
       {
+        name: 'Current Phase',
         importedInfectionsPerDay: 20,
         trigger: 'Date',
         triggerType: 'Date',
@@ -25,6 +26,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         requiredDxTests: 1,
       },
       {
+        name: 'Next Phase',
         importedInfectionsPerDay: 30,
         trigger: 'Date',
         triggerType: 'Date',

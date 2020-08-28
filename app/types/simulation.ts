@@ -36,13 +36,21 @@ export type Phase = {
   requiredDxTests: number;
 };
 
+export type ClientPhase = Phase & {
+  name: string;
+};
+
 export type Scenario = {
   phases: Phase[];
 };
 
 export type ClientScenarioData = {
   name: string;
-  phases: Phase[];
+  phases: ClientPhase[];
+};
+
+export type ClientSimulationRequest = CountryData & {
+  scenarios: ClientScenarioData[];
 };
 
 export type SimulationRequest = CountryData & {

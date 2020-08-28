@@ -1,14 +1,15 @@
 import * as React from 'react';
-import TestSelector from './components/ScenarioEditorPanel';
+import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import { SimulationRequest } from './types/simulation';
+import { ClientSimulationRequest } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
+import useQueryString from './hooks/useQuerySring';
 
 const App: React.FC = () => {
-  const [queryParams, setQueryParams] = React.useState<SimulationRequest>(
-    DEFAULT_SIMULATION_REQUEST_PARAMS,
-  );
+  const [scenarioRequestData, setScenarioRequestData] = React.useState<
+    ClientSimulationRequest
+  >(DEFAULT_SIMULATION_REQUEST_PARAMS);
   // const [queryParams, setQueryParams] = useQueryString({
   //   // nested values edgecase
   //   // to prevent [object Object] in url
@@ -27,8 +28,8 @@ const App: React.FC = () => {
   }>({ countrySelectFormReady: false, testsFormReady: false });
 
   const handleSubmit = changedValues => {
-    setQueryParams({
-      ...queryParams,
+    setScenarioRequestData({
+      ...scenarioRequestData,
       ...changedValues,
     });
 
@@ -51,11 +52,10 @@ const App: React.FC = () => {
             countrySelectFormReady,
           });
         }}
-        // @ts-ignore
-        values={queryParams}
+        values={scenarioRequestData}
         onSubmit={values => {
           // Reset all values if country code is changed
-          if (values.countryCode !== queryParams.countryCode) {
+          if (values.countryCode !== scenarioRequestData.countryCode) {
             handleSubmit({
               ...DEFAULT_SIMULATION_REQUEST_PARAMS,
               countryCode: values.countryCode,
@@ -73,8 +73,8 @@ const App: React.FC = () => {
         }}
       />
       {/* Panel 2 */}
-      <TestSelector
-        {...queryParams}
+      <ScenarioEditorPanel
+        scenarios={scenarioRequestData.scenarios}
         onSubmit={handleSubmit}
         testsFormReady={testsFormReady}
         setTestsFormReady={(testsFormReady: boolean) => {
@@ -86,8 +86,7 @@ const App: React.FC = () => {
       />
       {/* Panel 3 */}
       {countrySelectFormReady && testsFormReady && (
-        // @ts-ignore
-        <Simulation simulationParams={queryParams} />
+        <Simulation simulationParams={scenarioRequestData} />
       )}
       {(!countrySelectFormReady || !testsFormReady) && (
         <section>

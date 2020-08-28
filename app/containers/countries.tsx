@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { omitBy, isNil } from 'lodash';
-import useAPI from '../hooks/useAPI';
 
+import useAPI from '../hooks/useAPI';
 import CountrySelector, {
   CountrySelectorResponse,
 } from '../components/CountrySelector';
 import CovidResults, { CovidData } from '../components/CovidResults';
-import { SimulationRequest } from '../types/simulation';
+import { CountryData } from '../types/simulation';
 import { CountryResponse } from '../types/country';
 
 const Countries: React.FC<{
@@ -15,7 +15,7 @@ const Countries: React.FC<{
   onSubmit?: (
     value: CountrySelectorResponse | { countryCode?: string | null },
   ) => void;
-  values: SimulationRequest & { countryCode?: string | null };
+  values: CountryData;
 }> = ({
   onSubmit,
   values,
@@ -31,10 +31,11 @@ const Countries: React.FC<{
       covidData: CovidData;
     } | null;
   }>({
-    loading: true,
+    loading: false,
     error: null,
     data: null,
   });
+
   const api = useAPI();
   React.useEffect(() => {
     api.countries().then(response => setCountries(response.countries));
