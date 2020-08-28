@@ -1,21 +1,19 @@
 import * as React from 'react';
 
-import { Scenario } from '../../API';
-import useFormInput, {
-  useDirectInput,
-  useSelectInput,
-  useTextInput,
-} from '../../hooks/useFormInput';
+import { useTextInput } from '../../hooks/useFormInput';
+import { ClientScenarioData } from '../../types/simulation';
+import PhaseInput from './PhaseInput';
 import phaseForm from './phaseForm';
 
 import './scenario-editor.less';
-import PhaseInput from './PhaseInput';
 
 const ScenarioEditor: React.FC<{
-  scenario: Scenario;
+  scenario: ClientScenarioData;
   onChange?: (scenario: any) => void;
   disabled: boolean;
 }> = ({ scenario, onChange, disabled }) => {
+  console.log({ scenario });
+
   const phases = [
     {
       name: 'Current Phase',
@@ -59,7 +57,7 @@ const ScenarioEditor: React.FC<{
         </div>
         {phases.map(phase => {
           return (
-            <div className="col" style={{ width: 200 }}>
+            <div className="col" style={{ width: 200 }} key={phase.name}>
               <h2>{phase.name}</h2>
             </div>
           );
@@ -67,19 +65,23 @@ const ScenarioEditor: React.FC<{
       </div>
       {phaseForm.map(formSection => {
         return (
-          <>
+          <div key={formSection.title}>
             <hr />
             <h3>{formSection.title}</h3>
             <div className="phase-section">
               {formSection.input.map(input => {
                 return (
-                  <div className="columns">
+                  <div className="columns" key={input.label}>
                     <div className="col" style={{ width: 200 }}>
                       <label>{input.label}</label>
                     </div>
                     {phases.map(phase => {
                       return (
-                        <div className="col" style={{ width: 200 }}>
+                        <div
+                          className="col"
+                          style={{ width: 200 }}
+                          key={`${phase.name}-${input.label}`}
+                        >
                           <PhaseInput
                             inputProps={input}
                             onChange={value => {
@@ -93,7 +95,7 @@ const ScenarioEditor: React.FC<{
                 );
               })}
             </div>
-          </>
+          </div>
         );
       })}
     </div>

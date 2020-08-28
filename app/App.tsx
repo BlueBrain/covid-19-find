@@ -1,48 +1,22 @@
 import * as React from 'react';
-import useQueryString from './hooks/useQuerySring';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import TopSection from './components/TopSection';
-import TestSelector from './components/TestSelector';
+import TestSelector from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import API, { SimulationParams, DEFAULT_SCENARIO_LIST } from './API';
-import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
-
-const DEFAULT_PARAMS = {
-  countryCode: null,
-  population: null,
-  hospitalBeds: null,
-  workingOutsideHomeProportion: null,
-  urbanPopulationProportion: null,
-  hospitalStaffPerBed: 2.5,
-  activePopulationProportion: null,
-  belowPovertyLineProportion: null,
-  hospitalEmployment: null,
-  over64Proportion: null,
-  sensitivityPCR: 0.95,
-  sensitivityRDT: 0.85,
-  sensitivityXray: 0,
-  specificityPCR: 0.95,
-  specificityRDT: 0.9,
-  specificityXray: 0,
-  numTestsPCR: 1000,
-  numTestsRDT: 1000,
-  numTestsXray: 0,
-  scenarios: DEFAULT_SCENARIO_LIST,
-};
+import { SimulationRequest } from './types/simulation';
+import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 
 const App: React.FC = () => {
-  const [defaultScenarioList, setDefaultScenarioList] = React.useState();
-  const [queryParams, setQueryParams] = useQueryString({
-    // nested values edgecase
-    // to prevent [object Object] in url
-    scenarios: {
-      parse: entry => JSON.parse(entry),
-      stringify: entry => JSON.stringify(entry),
-    },
-  });
+  const [queryParams, setQueryParams] = React.useState<SimulationRequest>(
+    DEFAULT_SIMULATION_REQUEST_PARAMS,
+  );
+  // const [queryParams, setQueryParams] = useQueryString({
+  //   // nested values edgecase
+  //   // to prevent [object Object] in url
+  //   scenarios: {
+  //     parse: entry => JSON.parse(entry),
+  //     stringify: entry => JSON.stringify(entry),
+  //   },
+  // });
 
   const [
     { countrySelectFormReady, testsFormReady },
@@ -51,42 +25,6 @@ const App: React.FC = () => {
     countrySelectFormReady: boolean;
     testsFormReady: boolean;
   }>({ countrySelectFormReady: false, testsFormReady: false });
-
-  React.useEffect(() => {
-    const api = new API();
-    const [, countryCode] = navigator.language.split('-');
-
-    // Fetch default scenarios from API
-    api
-      .scenarios()
-      .then(({ scenarios }) => {
-        const defaultScenarios = scenarios.map((scenario, index) => ({
-          ...DEFAULT_SCENARIO_LIST[index],
-          ...scenario,
-          hospitalTestProportion: scenario.hospitalTestProportion * 100,
-          otherHighContactPopulationTestProportion:
-            scenario.otherHighContactPopulationTestProportion * 100,
-        }));
-
-        setDefaultScenarioList(defaultScenarios);
-
-        // Implement default values
-        setQueryParams({
-          ...DEFAULT_PARAMS,
-          scenarios: defaultScenarios,
-          countryCode,
-          ...queryParams,
-        });
-      })
-      .catch(error => {
-        setQueryParams({
-          ...DEFAULT_PARAMS,
-          scenarios: DEFAULT_SCENARIO_LIST,
-          countryCode,
-          ...queryParams,
-        });
-      });
-  }, []);
 
   const handleSubmit = changedValues => {
     setQueryParams({
@@ -103,84 +41,60 @@ const App: React.FC = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <Hero />
-      <main>
-        <TopSection />
-        <section>
-          <a
-            href="https://www.finddx.org/covid-19/dx-imp-sim/about/"
-            target="_parent"
-          >
-            <button className="btn simple">
-              About the Dx Implementation Sim
-            </button>
-          </a>
-        </section>
-        {/* Panel 1 */}
-        <Countries
-          countrySelectFormReady={countrySelectFormReady}
-          setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
-            setFormsReady({
-              testsFormReady,
-              countrySelectFormReady,
+    <>
+      {/* Panel 1 */}
+      <Countries
+        countrySelectFormReady={countrySelectFormReady}
+        setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
+          setFormsReady({
+            testsFormReady,
+            countrySelectFormReady,
+          });
+        }}
+        // @ts-ignore
+        values={queryParams}
+        onSubmit={values => {
+          // Reset all values if country code is changed
+          if (values.countryCode !== queryParams.countryCode) {
+            handleSubmit({
+              ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+              countryCode: values.countryCode,
             });
-          }}
-          values={queryParams as SimulationParams}
-          onSubmit={values => {
-            // Reset all values if country code is changed
-            if (values.countryCode !== queryParams.countryCode) {
-              handleSubmit({
-                ...DEFAULT_PARAMS,
-                countryCode: values.countryCode,
-                scenarios: defaultScenarioList,
-              });
-              // mark forms as dirty or not ready
-              // if the country changes
-              setFormsReady({
-                countrySelectFormReady: false,
-                testsFormReady: false,
-              });
-              return;
-            }
+            // mark forms as dirty or not ready
+            // if the country changes
+            setFormsReady({
+              countrySelectFormReady: false,
+              testsFormReady: false,
+            });
+            return;
+          }
 
-            handleSubmit(values);
-          }}
-        />
-        {/* Panel 2 */}
-        <TestSelector
-          {...queryParams}
-          onSubmit={handleSubmit}
-          testsFormReady={testsFormReady}
-          setTestsFormReady={(testsFormReady: boolean) => {
-            setFormsReady({
-              countrySelectFormReady,
-              testsFormReady,
-            });
-          }}
-        />
-        {/* Panel 3 */}
-        {countrySelectFormReady && testsFormReady && (
-          <Simulation simulationParams={queryParams as SimulationParams} />
-        )}
-        {(!countrySelectFormReady || !testsFormReady) && (
-          <section>
-            <p>Please complete the steps to view simulation results</p>
-          </section>
-        )}
+          handleSubmit(values);
+        }}
+      />
+      {/* Panel 2 */}
+      <TestSelector
+        {...queryParams}
+        onSubmit={handleSubmit}
+        testsFormReady={testsFormReady}
+        setTestsFormReady={(testsFormReady: boolean) => {
+          setFormsReady({
+            countrySelectFormReady,
+            testsFormReady,
+          });
+        }}
+      />
+      {/* Panel 3 */}
+      {countrySelectFormReady && testsFormReady && (
+        // @ts-ignore
+        <Simulation simulationParams={queryParams} />
+      )}
+      {(!countrySelectFormReady || !testsFormReady) && (
         <section>
-          <a
-            href="https://www.finddx.org/covid-19/dx-imp-sim/references"
-            target="_parent"
-          >
-            <button className="btn simple">References</button>
-          </a>
+          <p>Please complete the steps to view simulation results</p>
         </section>
-        <Footer />
-      </main>
-      <ScrollToTop />
-    </div>
+      )}
+    </>
   );
 };
 

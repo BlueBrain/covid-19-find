@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import ScenarioEditor from '../ScenarioEditor/ScenarioList';
 import useFormInput from '../../hooks/useFormInput';
-import { Scenario } from '../../API';
+import { ClientScenarioData } from '../../types/simulation';
 
 import './test-selector.less';
 
@@ -16,7 +16,7 @@ export type TestSelectorVales = {
   numTestsPCR?: number;
   numTestsRDT?: number;
   numTestsXray?: number;
-  scenarios?: Scenario[];
+  scenarios?: ClientScenarioData[];
 };
 
 const TestSelector: React.FC<TestSelectorVales & {

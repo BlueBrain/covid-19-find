@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
-import { Scenarios, Scenario } from '../../API';
 import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
@@ -21,8 +20,9 @@ export function toLetters(num: number): string {
 const SimulationResults: React.FC<{
   loading: boolean;
   error: Error | null;
-  data: Scenarios | null;
-  scenarios: Scenario[];
+  // TODO: change types
+  data: any; // Scenarios | null;
+  scenarios: any; // Scenario[];
 }> = ({ loading, error, data, scenarios }) => {
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
   const open = !!data;

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import useAPI from '../hooks/useAPI';
-import SimulationResults from '../components/SimulationResults';
-import { SimulationParams, Scenarios } from '../API';
+import SimulationResultsComponent from '../components/SimulationResults';
+import { SimulationRequest, SimulationResults } from '../types/simulation';
 
-const Simulation: React.FC<{ simulationParams?: SimulationParams }> = ({
+const Simulation: React.FC<{ simulationParams?: SimulationRequest }> = ({
   simulationParams,
 }) => {
   const api = useAPI();
   const [simulationData, setSimulationData] = React.useState<{
     loading: boolean;
     error: Error | null;
-    data: Scenarios | null;
+    data: SimulationResults | null;
   }>({
     loading: false,
     error: null,
@@ -45,7 +45,7 @@ const Simulation: React.FC<{ simulationParams?: SimulationParams }> = ({
   }, [simulationParams]);
 
   return (
-    <SimulationResults
+    <SimulationResultsComponent
       {...simulationData}
       scenarios={simulationParams.scenarios}
     />

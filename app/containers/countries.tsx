@@ -6,7 +6,8 @@ import CountrySelector, {
   CountrySelectorResponse,
 } from '../components/CountrySelector';
 import CovidResults, { CovidData } from '../components/CovidResults';
-import { CountryResponse, SimulationParams } from '../API';
+import { SimulationRequest } from '../types/simulation';
+import { CountryResponse } from '../types/country';
 
 const Countries: React.FC<{
   countrySelectFormReady: boolean;
@@ -14,7 +15,7 @@ const Countries: React.FC<{
   onSubmit?: (
     value: CountrySelectorResponse | { countryCode?: string | null },
   ) => void;
-  values: SimulationParams & { countryCode?: string | null };
+  values: SimulationRequest & { countryCode?: string | null };
 }> = ({
   onSubmit,
   values,
