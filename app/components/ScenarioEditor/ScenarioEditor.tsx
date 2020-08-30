@@ -1,18 +1,20 @@
 import * as React from 'react';
 
 import { useTextInput } from '../../hooks/useFormInput';
-import { ClientScenarioData } from '../../types/simulation';
+import { ClientScenarioData, ClientPhase } from '../../types/simulation';
 import PhaseInput from './PhaseInput';
-import phaseForm from './phaseForm';
+import phaseForm, { AnyInputProp } from './phaseForm';
+import { replaceAtIndexWithoutMutation } from '../../libs/arrays';
 
 import './scenario-editor.less';
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
-  onChange?: (scenario: any) => void;
+  onChange?: (scenario: ClientScenarioData) => void;
   disabled: boolean;
 }> = ({ scenario, onChange, disabled }) => {
   const name = useTextInput(scenario.name, null, true);
+  const { phases } = scenario;
 
   const scenarioFormId = `#scenario-editor-${scenario.name
     .split(' ')
@@ -22,6 +24,22 @@ const ScenarioEditor: React.FC<{
     onChange &&
       onChange({
         name: name.value,
+        phases,
+      });
+  };
+
+  const handlePhaseChange = (input: AnyInputProp, phaseIndex: number) => (
+    value: string | number | boolean | null | undefined,
+  ) => {
+    const phaseToChange = { ...phases[phaseIndex], [input.key]: value };
+    onChange &&
+      onChange({
+        name: name.value,
+        phases: replaceAtIndexWithoutMutation<ClientPhase>(
+          phases,
+          phaseToChange,
+          phaseIndex,
+        ),
       });
   };
 
@@ -44,7 +62,7 @@ const ScenarioEditor: React.FC<{
         <div className="col" style={{ width: 200 }}>
           <h2>Phases</h2>
         </div>
-        {scenario.phases.map(phase => {
+        {phases.map(phase => {
           return (
             <div className="col" style={{ width: 200 }} key={phase.name}>
               <h2>{phase.name}</h2>
@@ -64,7 +82,7 @@ const ScenarioEditor: React.FC<{
                     <div className="col" style={{ width: 200 }}>
                       <label>{input.label}</label>
                     </div>
-                    {scenario.phases.map(phase => {
+                    {phases.map((phase, index) => {
                       return (
                         <div
                           className="col"
@@ -73,9 +91,8 @@ const ScenarioEditor: React.FC<{
                         >
                           <PhaseInput
                             inputProps={input}
-                            onChange={value => {
-                              // TODO save changes
-                            }}
+                            onChange={handlePhaseChange(input, index)}
+                            value={phase[input.key]}
                           />
                         </div>
                       );

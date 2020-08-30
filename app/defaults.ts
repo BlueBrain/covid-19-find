@@ -8,7 +8,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         name: 'Current Phase',
         importedInfectionsPerDay: 20,
         trigger: 'Date',
-        triggerType: 'Date',
+        triggerType: 'date',
         triggerCondition: '>=',
         severity: 0.8,
         proportionOfContactsTraced: 0.25,
@@ -18,8 +18,8 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 50,
-        otherHighContactPopulationTestProportion: 50,
+        hospitalTestProportion: 0.5,
+        otherHighContactPopulationTestProportion: 0.5,
         restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
@@ -29,7 +29,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         name: 'Next Phase',
         importedInfectionsPerDay: 30,
         trigger: 'Date',
-        triggerType: 'Date',
+        triggerType: 'date',
         triggerCondition: '>=',
         severity: 0.6,
         proportionOfContactsTraced: 0.5,
@@ -39,8 +39,8 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 50,
-        otherHighContactPopulationTestProportion: 50,
+        hospitalTestProportion: 0.5,
+        otherHighContactPopulationTestProportion: 0.5,
         restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
@@ -48,14 +48,15 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
       },
     ],
   },
-  {
-    name: 'Identify and isolate positive cases',
-    phases: [],
-  },
-  {
-    name: 'Protect hospital resources',
-    phases: [],
-  },
+  // TODO: how shall default phases look like?
+  // {
+  //   name: 'Identify and isolate positive cases',
+  //   phases: [],
+  // },
+  // {
+  //   name: 'Protect hospital resources',
+  //   phases: [],
+  // },
 ];
 
 export const DEFAULT_SIMULATION_REQUEST_PARAMS = {

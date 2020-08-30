@@ -57,4 +57,57 @@ export type SimulationRequest = CountryData & {
   scenarios: Scenario[];
 };
 
-export type SimulationResults = {};
+export type SimulationResults = {
+  scenarios: ScenarioResult[];
+};
+
+export type ScenarioResult = {
+  data: {
+    hospitals: ScenarioResultDatasetTimeSeries[];
+    otherHighContact: ScenarioResultDatasetTimeSeries[];
+    restOfPopulation: ScenarioResultDatasetTimeSeries[];
+    total: ScenarioResultDatasetTimeSeries[];
+  };
+  maxInfected: number;
+  maxIsolated: number;
+  totalDeaths: number;
+  totalInfected: number;
+  totalTests: number;
+};
+
+export type ScenarioResultDatasetTimeSeries = {
+  actualDxTest: number;
+  beta: number;
+  currentInfected: number;
+  currentInfectedNotIsolated: number;
+  currentIsolated: number;
+  date: string;
+  day: number;
+  detectionRate: null;
+  falseNegatives: number;
+  falsePositives: number;
+  incidence: number;
+  newConfirmed: number;
+  newDeaths: number;
+  newInfected: number;
+  newIsolated: number;
+  newIsolatedInfected: number;
+  newRecovered: number;
+  newTests: number;
+  newTestsPositiveProportion: null;
+  npv: number;
+  population: number;
+  ppv: number;
+  prevalence: number;
+  rEff: null;
+  requiredDxTests: number;
+  susceptibleProportion: number;
+  susceptibles: number;
+  totalConfirmed: number;
+  totalDeaths: number;
+  totalInfected: number;
+  totalRecovered: number;
+  totalTested: number;
+  trueNegatives: number;
+  truePositives: number;
+};

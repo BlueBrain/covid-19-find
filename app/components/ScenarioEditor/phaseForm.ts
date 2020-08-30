@@ -7,7 +7,7 @@ export enum INPUT_TYPES {
 export type InputProp = {
   label: string;
   type: INPUT_TYPES;
-  prop: string;
+  key: string;
   disabled?: boolean;
   required?: boolean;
 };
@@ -46,7 +46,7 @@ export default [
         label: 'Imported infections per day',
         type: INPUT_TYPES.number,
         min: 0,
-        prop: 'imported_infections_per_day',
+        key: 'importedInfectionsPerDay',
       },
     ],
   },
@@ -56,7 +56,7 @@ export default [
       {
         label: 'Trigger',
         type: 'condition',
-        prop: 'imported_infections_per_day',
+        key: 'importedInfectionsPerDay',
       },
       {
         label: 'Severity',
@@ -64,7 +64,7 @@ export default [
         min: 0,
         max: 1,
         step: 0.1,
-        prop: 'severirt',
+        key: 'severity',
       },
     ],
   },
@@ -74,7 +74,7 @@ export default [
       {
         label: 'Trace and isolate contacts',
         type: INPUT_TYPES.select,
-        prop: 'prop_contacts_traced',
+        key: 'proportionOfContactsTraced',
         options: [
           {
             label: 'None',
@@ -82,15 +82,15 @@ export default [
           },
           {
             label: '10%',
-            value: '10%',
+            value: 0.1,
           },
           {
             label: '25%',
-            value: '25%',
+            value: 0.25,
           },
           {
             label: '50%',
-            value: '50%',
+            value: 0.5,
           },
         ],
       },
@@ -103,13 +103,13 @@ export default [
         label: 'Number of tests per day',
         type: INPUT_TYPES.number,
         min: 0,
-        prop: 'num_tests_mitigation',
+        key: 'numTestsMitigation',
       },
       {
         label: 'Test Type',
         type: INPUT_TYPES.select,
         min: 0,
-        prop: 'Type_test_mitigation',
+        key: 'typeTestsMitigation',
         options: [
           {
             label: 'None',
@@ -131,7 +131,7 @@ export default [
         min: 0,
         max: 1,
         step: 0.05,
-        prop: 'sensitivity',
+        key: 'sensitivity',
       },
       {
         label: 'Specificity',
@@ -139,17 +139,17 @@ export default [
         min: 0,
         max: 1,
         step: 0.05,
-        prop: 'specificity',
+        key: 'specificity',
       },
       {
         label: 'Symptomatic only',
         type: INPUT_TYPES.boolean,
-        prop: 'symptomatic_only',
+        key: 'testSymptomaticOnly',
       },
       {
         label: 'Confirmatory test for positive cases',
         type: INPUT_TYPES.boolean,
-        prop: 'confirmation_tests',
+        key: 'confirmationTests',
       },
     ],
   },

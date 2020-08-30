@@ -1,4 +1,3 @@
-import csv from 'csvtojson';
 import { apiBase } from './config';
 import { CountryResponse } from './types/country';
 import { SimulationRequest, SimulationResults } from './types/simulation';
@@ -45,59 +44,27 @@ export default class API {
   async simulation(
     simulationParams: SimulationRequest,
   ): Promise<SimulationResults> {
-    // const formattedParams = {
-    //   ...simulationParams,
-    //   urbanPopulationProportion:
-    //     simulationParams.urbanPopulationProportion / 100,
-    //   belowPovertyLineProportion:
-    //     simulationParams.belowPovertyLineProportion / 100,
-    //   workingOutsideHomeProportion:
-    //     simulationParams.workingOutsideHomeProportion / 100,
-    //   activePopulationProportion:
-    //     simulationParams.activePopulationProportion / 100,
-    //   over64Proportion: simulationParams.over64Proportion / 100,
-    //   scenarios: simulationParams.scenarios.map(scenario => {
-    //     return {
-    //       ...scenario,
-    //       hospitalTestProportion: scenario.hospitalTestProportion / 100,
-    //       otherHighContactPopulationTestProportion:
-    //         scenario.otherHighContactPopulationTestProportion / 100,
-    //       testSymptomaticOnly: !!scenario.testSymptomaticOnly,
-    //       // TODO remove when not required by API
-    //       restOfPopulationTestProportion: 0,
-    //     };
-    //   }),
-    // };
+    const formattedParams = {
+      ...simulationParams,
+      urbanPopulationProportion:
+        simulationParams.urbanPopulationProportion / 100,
+      belowPovertyLineProportion:
+        simulationParams.belowPovertyLineProportion / 100,
+      workingOutsideHomeProportion:
+        simulationParams.workingOutsideHomeProportion / 100,
+      activePopulationProportion:
+        simulationParams.activePopulationProportion / 100,
+      over64Proportion: simulationParams.over64Proportion / 100,
+    };
 
-    // const typedParams = {
-    //   ...formattedParams,
-    //   ...Object.keys(formattedParams)
-    //     .filter(key => key !== 'countryCode' && key !== 'scenarios')
-    //     .reduce((memo, key) => {
-    //       memo[key] = Number(memo[key]);
-    //       return memo;
-    //     }, formattedParams),
-    // };
-
-    // const response = await fetch(`${this.base}/simulation`, {
-    //   method: 'POST',
-    //   body: JSON.stringify(typedParams),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    // const simulationResponse: SimulationResponse = await response.json();
-    // const csvData = await Promise.all(
-    //   simulationResponse.scenarios.map(scenario => {
-    //     return csv().fromString(scenario.data);
-    //   }),
-    // );
-    // return simulationResponse.scenarios.map((scenario, index) => {
-    //   return {
-    //     ...scenario,
-    //     data: csvData[index],
-    //   };
-    // });
-    return {};
+    const response = await fetch(`${this.base}/simulation`, {
+      method: 'POST',
+      body: JSON.stringify(formattedParams),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const simulationResults: SimulationResults = await response.json();
+    return simulationResults;
   }
 }

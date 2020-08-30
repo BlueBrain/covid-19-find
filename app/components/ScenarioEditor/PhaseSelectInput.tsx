@@ -8,7 +8,8 @@ import { useSelectInput } from '../../hooks/useFormInput';
 const PhaseSelectInput: React.FC<{
   inputProps: SelectInputProp;
   onChange: (number) => void;
-}> = ({ inputProps, onChange }) => {
+  value?: string | number | null;
+}> = ({ inputProps, onChange, value }) => {
   const select = useSelectInput(null, null, true);
 
   const handleBlur = () => {
@@ -18,9 +19,9 @@ const PhaseSelectInput: React.FC<{
   return (
     <Select
       isDisabled={inputProps.disabled}
-      // value={interventionTimings.find(
-      //   ({ value }) => value === interventionTiming.value,
-      // )}
+      value={inputProps.options.find(
+        ({ value: optionValue }) => optionValue === value,
+      )}
       onChange={select.onChange}
       onBlur={handleBlur}
       options={inputProps.options}
