@@ -16,7 +16,7 @@ export function toLetters(num: number): string {
   return pow ? toLetters(pow) + out : out;
 }
 
-const DEATH_SCALE_FACTOR = 100;
+const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
 
 const SimulationResults: React.FC<{
   loading: boolean;
@@ -36,10 +36,6 @@ const SimulationResults: React.FC<{
 
   const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
 
-  // const labels = union(
-  //   ...(scenariosResults || []).map(entry => entry.data.map(entry => entry.days)),
-  // );
-
   const graphs = [
     {
       title: 'Deaths',
@@ -55,6 +51,39 @@ const SimulationResults: React.FC<{
     },
     {
       title: 'Recovered',
+      key: 'newRecovered',
+      cohort: 'total',
+      color: colors.turqouise,
+    },
+    {
+      title: 'Infected hospital staff ',
+      key: 'totalInfected',
+      cohort: 'hospitals',
+      color: colors.aubergine,
+    },
+    {
+      title: 'Total Infections',
+      key: 'totalInfected',
+      cohort: 'total',
+      color: colors.aubergine,
+    },
+  ];
+
+  const testingGraphs = [
+    {
+      title: 'Number of Tests Performed per day',
+      key: 'totalDeaths',
+      cohort: 'total',
+      color: colors.pomegranate,
+    },
+    {
+      title: 'Estimated R0',
+      key: 'newConfirmed',
+      cohort: 'total',
+      color: colors.blueGray,
+    },
+    {
+      title: 'Prevalence',
       key: 'newRecovered',
       cohort: 'total',
       color: colors.turqouise,
@@ -177,6 +206,7 @@ const SimulationResults: React.FC<{
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                 </div>
                 <div className="chart">
+                  <h3 className="title">Scenarios Summary Graph</h3>
                   <Bubble
                     width={null}
                     height={null}
@@ -187,9 +217,10 @@ const SimulationResults: React.FC<{
                           label: (tooltipItem, data) => {
                             const dataset =
                               data.datasets[tooltipItem.datasetIndex];
+
                             const deaths = (
                               dataset.data[tooltipItem.index].r *
-                              DEATH_SCALE_FACTOR
+                              DEATH_CLIENT_WIDTH_SCALE_FACTOR
                             ).toLocaleString(undefined, {
                               maximumFractionDigits: 0,
                             });
@@ -257,7 +288,7 @@ const SimulationResults: React.FC<{
                           );
                           // this is a grim line of code.
                           // we need to scale deaths down to a viewable scale
-                          data.r = data.r / DEATH_SCALE_FACTOR;
+                          data.r = data.r / DEATH_CLIENT_WIDTH_SCALE_FACTOR;
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
                             data: [data],
@@ -369,6 +400,7 @@ const SimulationResults: React.FC<{
                     </div>
                   </div>
                 </div>
+                <hr />
                 <div className="stats horizontal">
                   <h3>
                     {Math.ceil(
@@ -453,7 +485,7 @@ const SimulationResults: React.FC<{
                                 {
                                   scaleLabel: {
                                     display: true,
-                                    labelString: 'Days',
+                                    labelString: 'Date',
                                   },
                                   gridLines: {
                                     color: '#00000005',
@@ -505,6 +537,8 @@ const SimulationResults: React.FC<{
                     );
                   })}
                 </div>
+                <hr />
+                <div></div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
                     This web tool estimates the relative impact of different
