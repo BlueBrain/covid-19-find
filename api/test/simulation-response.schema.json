@@ -130,10 +130,16 @@
             "type": "integer"
           },
           "ppv": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "npv": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "incidence": {
             "type": "number"

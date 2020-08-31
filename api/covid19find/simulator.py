@@ -1,5 +1,6 @@
 from .simulation.covidlib import run_simulation, get_scenarios
 import numpy as np
+import math
 import pandas as pd
 
 
@@ -135,8 +136,8 @@ class Simulator:
             "falsePositives": int(row["falsepositives"]),
             "trueNegatives": int(row["truenegatives"]),
             "falseNegatives": int(row["falsenegatives"]),
-            "ppv": row["ppv"],
-            "npv": row["npv"],
+            "ppv": None if math.isnan(row["ppv"]) else row["ppv"],
+            "npv": None if math.isnan(row["npv"]) else row["npv"],
             "incidence": row["incidence"],
             "prevalence": row["prevalence"],
             "newTestsPositiveProportion": row.get("positive_rate", None),

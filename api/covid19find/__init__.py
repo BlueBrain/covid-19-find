@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, Response, send_from_directory, request, make_response
+from flask import Flask, Response, send_from_directory, request, make_response, jsonify
 from flask_expects_json import expects_json
 from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import utc
@@ -44,11 +44,11 @@ def create_app():
 
     @app.route(f'{app_path_prefix}/api/countries')
     def countries():
-        return country_repo.country_list()
+        return jsonify(country_repo.country_list())
 
     @app.route(f'{app_path_prefix}/api/countries/<country_code>')
     def country_details(country_code):
-        return not_found_if_none(country_repo.country_details(country_code), country_code)
+        return jsonify(not_found_if_none(country_repo.country_details(country_code), country_code))
 
     with open(
             os.path.join(os.path.abspath(os.path.dirname(__file__)), "simulation-request.schema.json")) as schema_file:
@@ -62,7 +62,7 @@ def create_app():
 
     @app.route(f'{app_path_prefix}/api/covid19data/<country_code>')
     def country_covid19_data(country_code):
-        return not_found_if_none(data_repo.data_for(country_code), country_code)
+        return jsonify(not_found_if_none(data_repo.data_for(country_code), country_code))
 
     simulator = Simulator(data_repo)
 
@@ -70,7 +70,7 @@ def create_app():
     @expects_json(schema)
     def run_simulation():
         request_data = request.get_json()
-        return simulator.run(request_data)
+        return jsonify(simulator.run(request_data))
 
     static_files_dir = os.path.abspath(os.environ.get("STATIC_DATA_DIR"))
 
