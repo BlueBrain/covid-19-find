@@ -64,7 +64,8 @@ export default class API {
         'Content-Type': 'application/json',
       },
     });
-    const simulationResults: SimulationResults = await response.json();
-    return simulationResults;
+
+    const simulationResults = await response.json();
+    return simulationResults as SimulationResults;
   }
 }

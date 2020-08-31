@@ -41,27 +41,32 @@ const SimulationResults: React.FC<{
   const graphs = [
     {
       title: 'Deaths',
-      key: 'newDeaths',
+      key: 'totalDeaths',
+      cohort: 'total',
       color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
       key: 'newConfirmed',
+      cohort: 'total',
       color: colors.blueGray,
     },
     {
       title: 'Recovered',
       key: 'newRecovered',
+      cohort: 'total',
       color: colors.turqouise,
     },
     {
       title: 'Infected hospital staff ',
       key: 'totalInfected',
+      cohort: 'hospitals',
       color: colors.aubergine,
     },
     {
       title: 'Total Infections',
       key: 'totalInfected',
+      cohort: 'total',
       color: colors.aubergine,
     },
   ];
@@ -84,25 +89,27 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const datasets = scenariosResults.map((entry, index) => {
+  const datasets = scenariosResults.map((entry, scenarioIndex) => {
     return {
-      label: clientScenariosInput[index].name,
-      data: entry.data.reduce((memo, entry) => {
-        const key = entry.days;
+      label: clientScenariosInput[scenarioIndex].name,
+      data: entry.data.total.reduce((memo, entry, timeseriesIndex) => {
+        const key = entry.date;
         const day = {
           ...(memo[key] || {}),
         };
         graphs.forEach(graph => {
-          if (
-            graph.key === 'total_infected' &&
-            graph.title.includes('hospital') &&
-            entry.compartment !== 'Hospitals'
-          ) {
-            // dont't add up things just for the hospital compartment
-            return;
-          }
-          day[graph.title] =
-            (Number(day[graph.title]) || 0) + Number(entry[graph.key]);
+          // if (
+          //   graph.key === 'totalInfected' &&
+          //   graph.title.includes('hospital')
+          // ) {
+          //   // dont't add up things just for the hospital compartment
+          //   return;
+          // }
+          day[graph.key] =
+            scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
+              graph.key
+            ];
+          // (Number(day[graph.key]) || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -238,7 +245,9 @@ const SimulationResults: React.FC<{
                                 datasets: [
                                   {
                                     label: key,
-                                    data: clientScenariosInput[index][key],
+                                    data: simulationResults.scenarios.map(
+                                      scenario => scenario[key],
+                                    ),
                                     backgroundColor: Color(color)
                                       .alpha(0.5)
                                       .toString(),
@@ -293,7 +302,7 @@ const SimulationResults: React.FC<{
                     </span>
                   </h3>
                 </div>
-                {/* <div className="charts">
+                <div className="charts">
                   {graphs.map(graph => {
                     return (
                       <div className="chart" key={`chart-${graph.title}`}>
@@ -364,7 +373,7 @@ const SimulationResults: React.FC<{
                               return {
                                 label: dataset.label,
                                 data: Object.values(dataset.data).map(
-                                  values => values[graph.title],
+                                  values => values[graph.key],
                                 ),
                                 borderColor: [
                                   selected
@@ -384,13 +393,15 @@ const SimulationResults: React.FC<{
                                 ],
                               };
                             }),
-                            labels,
+                            labels: selectedScenario.data.total.map(
+                              entry => entry.date,
+                            ),
                           }}
                         />
                       </div>
                     );
                   })}
-                </div> */}
+                </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
                     This web tool estimates the relative impact of different

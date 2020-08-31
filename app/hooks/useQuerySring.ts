@@ -17,13 +17,13 @@ export default function useQueryString<T extends object>(
     if (!Object.keys(parsedParams).length) {
       return null;
     }
-    return Object.keys(parsedParams).reduce<T>((memo, key) => {
+    return Object.keys(parsedParams).reduce((memo, key) => {
       const parsedMemo = { ...memo };
       if (parsers && parsers[key]) {
         parsedMemo[key] = parsers[key].parse(memo[key]);
       }
       return parsedMemo;
-    }, parsedParams as T);
+    }, parsedParams as Record<keyof queryString.ParsedQuery<string>, string>) as T;
   };
 
   const stringifyURLParams = (newParams: any) => {
