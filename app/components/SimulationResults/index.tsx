@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
+import { Line, Bar, Bubble } from 'react-chartjs-2';
 import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
@@ -15,6 +15,8 @@ export function toLetters(num: number): string {
   const out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
   return pow ? toLetters(pow) + out : out;
 }
+
+const DEATH_SCALE_FACTOR = 100;
 
 const SimulationResults: React.FC<{
   loading: boolean;
@@ -76,6 +78,11 @@ const SimulationResults: React.FC<{
       key: 'totalDeaths',
       title: 'Total Deaths',
       color: colors.pomegranate,
+    },
+    {
+      key: 'totalInfected',
+      title: 'Total Infected',
+      color: colors.aubergine,
     },
     {
       key: 'maxInfected',
@@ -169,6 +176,105 @@ const SimulationResults: React.FC<{
                   </h2>
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                 </div>
+                <div className="chart">
+                  <Bubble
+                    width={null}
+                    height={null}
+                    options={{
+                      aspectRatio: isMobile ? 1 : 2,
+                      tooltips: {
+                        callbacks: {
+                          label: (tooltipItem, data) => {
+                            const dataset =
+                              data.datasets[tooltipItem.datasetIndex];
+                            const deaths = (
+                              dataset.data[tooltipItem.index].r *
+                              DEATH_SCALE_FACTOR
+                            ).toLocaleString(undefined, {
+                              maximumFractionDigits: 0,
+                            });
+                            return `${dataset.label}: ${deaths} deaths`;
+                          },
+                        },
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Total people in Isolation',
+                            },
+                            gridLines: {
+                              color: '#00000005',
+                            },
+                            ticks: {
+                              // beginAtZero: true,
+                              // Include a dollar sign in the ticks
+                              callback: function(value) {
+                                return value?.toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                });
+                              },
+                            },
+                          },
+                        ],
+                        xAxes: [
+                          {
+                            gridLines: {
+                              color: '#00000005',
+                            },
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Total people infected',
+                            },
+                            ticks: {
+                              callback: function(value) {
+                                return value?.toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                });
+                              },
+                              maxRotation: isMobile ? 90 : 0, // angle in degrees
+                            },
+                          },
+                        ],
+                      },
+                    }}
+                    data={{
+                      datasets: simulationResults.scenarios.map(
+                        (scenario, index) => {
+                          const data = scenario.data.total.reduce(
+                            (memo, entry) => {
+                              const x = memo.x + entry.totalInfected;
+                              const y = memo.y + entry.newIsolated;
+                              const r = memo.r + entry.totalDeaths;
+                              return {
+                                x,
+                                y,
+                                r,
+                              };
+                            },
+                            { x: 0, y: 0, r: 0 },
+                          );
+                          // this is a grim line of code.
+                          // we need to scale deaths down to a viewable scale
+                          data.r = data.r / DEATH_SCALE_FACTOR;
+                          // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
+                          return {
+                            data: [data],
+                            label: clientScenariosInput[index].name,
+                          };
+                        },
+                      ),
+                      backgroundColor: Color(colors.aubergine)
+                        .alpha(0.5)
+                        .toString(),
+                      borderColor: Color(colors.aubergine).toString(),
+                      labels: clientScenariosInput.map(
+                        scenario => scenario.name,
+                      ),
+                    }}
+                  />
+                </div>
                 <div className="comparison">
                   <div
                     className="chart"
@@ -205,8 +311,6 @@ const SimulationResults: React.FC<{
                                         color: '#00000005',
                                       },
                                       ticks: {
-                                        // beginAtZero: true,
-                                        // Include a dollar sign in the ticks
                                         callback: function(value) {
                                           return value?.toLocaleString(
                                             undefined,
@@ -337,7 +441,6 @@ const SimulationResults: React.FC<{
                                   },
                                   ticks: {
                                     beginAtZero: true,
-                                    // Include a dollar sign in the ticks
                                     callback: function(value, index, values) {
                                       return value?.toLocaleString(undefined, {
                                         maximumFractionDigits: 0,
