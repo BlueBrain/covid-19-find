@@ -1,26 +1,29 @@
 import * as React from 'react';
 import * as queryString from 'query-string';
 
-export type QueryParams = {
-  [key: string]: any;
-};
-
 export type Parser = {
   [key: string]: {
-    parse: (entry: any) => any;
+    parse: (entry: string) => any;
     stringify: (entry: any) => string;
   };
 };
 
-export default function useQueryString(parsers?: Parser) {
-  const parseURLParams = (params: string) => {
+export default function useQueryString<T extends object>(
+  defaultObject: T,
+  parsers?: Parser,
+) {
+  const parseURLParams = (params: string): T | null => {
     const parsedParams = queryString.parse(params);
-    return Object.keys(parsedParams).reduce((memo, key) => {
+    if (!Object.keys(parsedParams).length) {
+      return null;
+    }
+    return Object.keys(parsedParams).reduce<T>((memo, key) => {
+      const parsedMemo = { ...memo };
       if (parsers && parsers[key]) {
-        memo[key] = parsers[key].parse(memo[key]);
+        parsedMemo[key] = parsers[key].parse(memo[key]);
       }
-      return memo;
-    }, parsedParams);
+      return parsedMemo;
+    }, parsedParams as T);
   };
 
   const stringifyURLParams = (newParams: any) => {
@@ -35,11 +38,7 @@ export default function useQueryString(parsers?: Parser) {
     });
   };
 
-  const [queryParams, setQueryParams] = React.useState(
-    parseURLParams(location.search) || {},
-  );
-
-  const setQueryString = (newQueryParams: QueryParams) => {
+  const setQueryString = (newQueryParams: T) => {
     history.pushState(
       null,
       null,
@@ -49,8 +48,12 @@ export default function useQueryString(parsers?: Parser) {
     window.dispatchEvent(myEvent);
   };
 
+  const [queryParams, setQueryParams] = React.useState<T>(
+    parseURLParams(location.search) || defaultObject,
+  );
+
   const listenToPopstate = () => {
-    setQueryParams(parseURLParams(location.search) || {});
+    setQueryParams(parseURLParams(location.search) || defaultObject);
   };
 
   React.useEffect(() => {
@@ -60,8 +63,5 @@ export default function useQueryString(parsers?: Parser) {
     };
   });
 
-  return [queryParams, setQueryString] as [
-    QueryParams,
-    (newQueryParams: QueryParams) => void,
-  ];
+  return [queryParams, setQueryString] as [T, (newParams: T) => void];
 }

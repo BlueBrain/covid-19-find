@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
@@ -7,17 +8,32 @@ import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import useQueryString from './hooks/useQuerySring';
 
 const App: React.FC = () => {
-  const [scenarioRequestData, setScenarioRequestData] = React.useState<
-    ClientSimulationRequest
-  >(DEFAULT_SIMULATION_REQUEST_PARAMS);
-  // const [queryParams, setQueryParams] = useQueryString({
-  //   // nested values edgecase
-  //   // to prevent [object Object] in url
-  //   scenarios: {
-  //     parse: entry => JSON.parse(entry),
-  //     stringify: entry => JSON.stringify(entry),
-  //   },
-  // });
+  const [{ state }, setScenarioRequestData] = useQueryString<{
+    state: ClientSimulationRequest;
+  }>(
+    {
+      state: {
+        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+      },
+    },
+    {
+      // nested values edgecase
+      // to prevent [object Object] in url
+      state: {
+        parse: entry => JSON.parse(atob(entry)),
+        stringify: entry => btoa(JSON.stringify(entry)),
+      },
+    },
+  );
+
+  React.useEffect(() => {
+    setScenarioRequestData({
+      state: {
+        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+        ...state,
+      },
+    });
+  }, []);
 
   const [
     { countrySelectFormReady, testsFormReady },
@@ -29,8 +45,10 @@ const App: React.FC = () => {
 
   const handleSubmit = changedValues => {
     setScenarioRequestData({
-      ...scenarioRequestData,
-      ...changedValues,
+      state: {
+        ...state,
+        ...changedValues,
+      },
     });
 
     const forms: HTMLFormElement[] = [
@@ -52,10 +70,10 @@ const App: React.FC = () => {
             countrySelectFormReady,
           });
         }}
-        values={scenarioRequestData}
+        values={state}
         onSubmit={values => {
           // Reset all values if country code is changed
-          if (values.countryCode !== scenarioRequestData.countryCode) {
+          if (values.countryCode !== state.countryCode) {
             handleSubmit({
               ...DEFAULT_SIMULATION_REQUEST_PARAMS,
               countryCode: values.countryCode,
@@ -74,7 +92,7 @@ const App: React.FC = () => {
       />
       {/* Panel 2 */}
       <ScenarioEditorPanel
-        scenarios={scenarioRequestData.scenarios}
+        scenarios={state.scenarios}
         onSubmit={handleSubmit}
         testsFormReady={testsFormReady}
         setTestsFormReady={(testsFormReady: boolean) => {
@@ -86,7 +104,7 @@ const App: React.FC = () => {
       />
       {/* Panel 3 */}
       {countrySelectFormReady && testsFormReady && (
-        <Simulation simulationParams={scenarioRequestData} />
+        <Simulation clientSimulationRequest={state} />
       )}
       {(!countrySelectFormReady || !testsFormReady) && (
         <section>

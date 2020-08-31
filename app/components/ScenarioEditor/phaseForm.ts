@@ -17,6 +17,11 @@ export type NumberInputProp = InputProp & {
   min?: number;
   max?: number;
   step?: number;
+  validation?: {
+    type: 'equals';
+    value: number;
+    keysToMatch: string[];
+  };
 };
 
 export type SelectInputProp = InputProp & {
@@ -150,6 +155,94 @@ export default [
         label: 'Confirmatory test for positive cases',
         type: INPUT_TYPES.boolean,
         key: 'confirmationTests',
+      },
+      {
+        label: 'Proportion of tests for Health care staff',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        validation: {
+          type: 'equals',
+          value: 1,
+          keysToMatch: [
+            'hospitalTestProportion',
+            'otherHighContactPopulationTestProportion',
+            'restOfPopulationTestProportion',
+          ],
+        },
+        key: 'hospitalTestProportion',
+      },
+      {
+        label: 'Proportion of tests for other high contact groups',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        validation: {
+          type: 'equals',
+          value: 1,
+          keysToMatch: [
+            'hospitalTestProportion',
+            'otherHighContactPopulationTestProportion',
+            'restOfPopulationTestProportion',
+          ],
+        },
+        key: 'otherHighContactPopulationTestProportion',
+      },
+      {
+        label: 'Proportion of tests for rest of population',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        validation: {
+          type: 'equals',
+          value: 1,
+          keysToMatch: [
+            'hospitalTestProportion',
+            'otherHighContactPopulationTestProportion',
+            'restOfPopulationTestProportion',
+          ],
+        },
+        key: 'restOfPopulationTestProportion',
+      },
+    ],
+  },
+  {
+    title: 'Testing for Care',
+    input: [
+      {
+        label: 'Test Type',
+        type: INPUT_TYPES.select,
+        min: 0,
+        key: 'typeTestsCare',
+        options: [
+          {
+            label: 'None',
+            value: null,
+          },
+          {
+            label: TEST_TYPES.PCR,
+            value: TEST_TYPES.PCR,
+          },
+          {
+            label: TEST_TYPES.RDT,
+            value: TEST_TYPES.RDT,
+          },
+        ],
+      },
+      {
+        label: 'Total tests per day',
+        type: INPUT_TYPES.number,
+        min: 0,
+        key: 'numTestsCare',
+      },
+      {
+        label: 'Recommended number of tests for care of one patient',
+        type: INPUT_TYPES.number,
+        min: 0,
+        key: 'requiredDxTests',
       },
     ],
   },

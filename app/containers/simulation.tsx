@@ -1,13 +1,17 @@
 import * as React from 'react';
+
 import useAPI from '../hooks/useAPI';
 import SimulationResultsComponent from '../components/SimulationResults';
-import { SimulationRequest, SimulationResults } from '../types/simulation';
+import {
+  ClientSimulationRequest,
+  SimulationResults,
+} from '../types/simulation';
 
-const Simulation: React.FC<{ simulationParams?: SimulationRequest }> = ({
-  simulationParams,
-}) => {
+const Simulation: React.FC<{
+  clientSimulationRequest?: ClientSimulationRequest;
+}> = ({ clientSimulationRequest }) => {
   const api = useAPI();
-  const [simulationData, setSimulationData] = React.useState<{
+  const [{ loading, error, data }, setSimulationData] = React.useState<{
     loading: boolean;
     error: Error | null;
     data: SimulationResults | null;
@@ -18,7 +22,7 @@ const Simulation: React.FC<{ simulationParams?: SimulationRequest }> = ({
   });
 
   React.useEffect(() => {
-    if (!simulationParams) {
+    if (!clientSimulationRequest) {
       return;
     }
     setSimulationData({
@@ -27,7 +31,7 @@ const Simulation: React.FC<{ simulationParams?: SimulationRequest }> = ({
       data: null,
     });
     api
-      .simulation(simulationParams)
+      .simulation(clientSimulationRequest)
       .then(simulationData => {
         setSimulationData({
           error: null,
@@ -42,12 +46,14 @@ const Simulation: React.FC<{ simulationParams?: SimulationRequest }> = ({
           data: null,
         });
       });
-  }, [simulationParams]);
+  }, [clientSimulationRequest]);
 
   return (
     <SimulationResultsComponent
-      {...simulationData}
-      scenarios={simulationParams.scenarios}
+      loading={loading}
+      error={error}
+      simulationResults={data}
+      clientScenariosInput={clientSimulationRequest.scenarios || []}
     />
   );
 };

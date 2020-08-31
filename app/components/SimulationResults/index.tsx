@@ -7,8 +7,7 @@ import Color from 'color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import useWindowWidth from '../../hooks/useWindowWidth';
-
-export type SimulationResultsData = any;
+import { ClientScenarioData, SimulationResults } from '../../types/simulation';
 
 export function toLetters(num: number): string {
   const mod = num % 26;
@@ -20,45 +19,49 @@ export function toLetters(num: number): string {
 const SimulationResults: React.FC<{
   loading: boolean;
   error: Error | null;
-  // TODO: change types
-  data: any; // Scenarios | null;
-  scenarios: any; // Scenario[];
-}> = ({ loading, error, data, scenarios }) => {
+  simulationResults: SimulationResults;
+  clientScenariosInput: ClientScenarioData[];
+}> = ({ loading, error, simulationResults, clientScenariosInput }) => {
+  const { scenarios: scenariosResults } = simulationResults || {
+    scenarios: [],
+  };
+
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
-  const open = !!data;
+  const open = !!simulationResults;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
 
-  const selectedScenario = (data || [])[selectedScenarioIndex];
+  const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
 
-  const labels = union(
-    ...(data || []).map(entry => entry.data.map(entry => entry.days)),
-  );
+  // const labels = union(
+  //   ...(scenariosResults || []).map(entry => entry.data.map(entry => entry.days)),
+  // );
+
   const graphs = [
     {
       title: 'Deaths',
-      key: 'new_deaths',
+      key: 'newDeaths',
       color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
-      key: 'num_confirmed',
+      key: 'newConfirmed',
       color: colors.blueGray,
     },
     {
       title: 'Recovered',
-      key: 'num_recovered',
+      key: 'newRecovered',
       color: colors.turqouise,
     },
     {
       title: 'Infected hospital staff ',
-      key: 'total_infected',
+      key: 'totalInfected',
       color: colors.aubergine,
     },
     {
       title: 'Total Infections',
-      key: 'total_infected',
+      key: 'totalInfected',
       color: colors.aubergine,
     },
   ];
@@ -81,12 +84,9 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const datasets = (data || []).map((entry, index) => {
+  const datasets = scenariosResults.map((entry, index) => {
     return {
-      label:
-        index === 0
-          ? 'Counterfactual: No tests and no intervention'
-          : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
+      label: clientScenariosInput[index].name,
       data: entry.data.reduce((memo, entry) => {
         const key = entry.days;
         const day = {
@@ -124,9 +124,9 @@ const SimulationResults: React.FC<{
               </h2>
             </div>
             <div className="container">
-              {!!data && (
+              {!!clientScenariosInput && (
                 <ul className="scenarios">
-                  {data.map((scenario, index) => {
+                  {clientScenariosInput.map((clientScenarioInput, index) => {
                     return (
                       <li
                         className={`scenario ${
@@ -139,7 +139,7 @@ const SimulationResults: React.FC<{
                             setSelectedScenarioIndex(index);
                           }}
                         >
-                          {datasets[index].label}
+                          {clientScenarioInput.name}
                         </button>
                       </li>
                     );
@@ -158,9 +158,9 @@ const SimulationResults: React.FC<{
               <>
                 <div className="scenario-description">
                   <h2 className="underline">
-                    {scenarios[selectedScenarioIndex].name}
+                    {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
-                  <p>{scenarios[selectedScenarioIndex].description}</p>{' '}
+                  {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                 </div>
                 <div className="comparison">
                   <div
@@ -238,14 +238,16 @@ const SimulationResults: React.FC<{
                                 datasets: [
                                   {
                                     label: key,
-                                    data: data.map(scenario => scenario[key]),
+                                    data: clientScenariosInput[index][key],
                                     backgroundColor: Color(color)
                                       .alpha(0.5)
                                       .toString(),
                                     borderColor: Color(color).toString(),
                                   },
                                 ],
-                                labels: datasets.map(dataset => dataset.label),
+                                labels: clientScenariosInput.map(
+                                  scenario => scenario.name,
+                                ),
                               }}
                             />
                           </div>
@@ -290,8 +292,8 @@ const SimulationResults: React.FC<{
                       tests conducted
                     </span>
                   </h3>
-                </div>{' '}
-                <div className="charts">
+                </div>
+                {/* <div className="charts">
                   {graphs.map(graph => {
                     return (
                       <div className="chart" key={`chart-${graph.title}`}>
@@ -388,7 +390,7 @@ const SimulationResults: React.FC<{
                       </div>
                     );
                   })}
-                </div>
+                </div> */}
                 <div className="disclaimer">
                   <p className="disclaimer-text">
                     This web tool estimates the relative impact of different
