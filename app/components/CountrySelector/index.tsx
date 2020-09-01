@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { SVGMap } from 'react-svg-map';
 import Select from 'react-select';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import ReactTooltip from 'react-tooltip';
-import World from '@svg-maps/world';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Color from 'color';
 
 import colors from '../../colors';
 import useFormInput from '../../hooks/useFormInput';
+import WorldMap from '../WorldMap';
 
 import './country-selector.less';
 
@@ -275,7 +274,7 @@ const CountrySelector: React.FC<{
             </div>
           </div>
           <div className="world">
-            <SVGMap map={World} />
+            <WorldMap countryCode={countryInfo.countryCode} />
             <button className="action" type="submit">
               Enter
             </button>

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
-import { Scenarios, Scenario } from '../../API';
 import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
@@ -8,8 +7,7 @@ import Color from 'color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import useWindowWidth from '../../hooks/useWindowWidth';
-
-export type SimulationResultsData = any;
+import { ClientScenarioData, SimulationResults } from '../../types/simulation';
 
 export function toLetters(num: number): string {
   const mod = num % 26;
@@ -21,44 +19,54 @@ export function toLetters(num: number): string {
 const SimulationResults: React.FC<{
   loading: boolean;
   error: Error | null;
-  data: Scenarios | null;
-  scenarios: Scenario[];
-}> = ({ loading, error, data, scenarios }) => {
+  simulationResults: SimulationResults;
+  clientScenariosInput: ClientScenarioData[];
+}> = ({ loading, error, simulationResults, clientScenariosInput }) => {
+  const { scenarios: scenariosResults } = simulationResults || {
+    scenarios: [],
+  };
+
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
-  const open = !!data;
+  const open = !!simulationResults;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
 
-  const selectedScenario = (data || [])[selectedScenarioIndex];
+  const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
 
-  const labels = union(
-    ...(data || []).map(entry => entry.data.map(entry => entry.days)),
-  );
+  // const labels = union(
+  //   ...(scenariosResults || []).map(entry => entry.data.map(entry => entry.days)),
+  // );
+
   const graphs = [
     {
       title: 'Deaths',
-      key: 'new_deaths',
+      key: 'totalDeaths',
+      cohort: 'total',
       color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
-      key: 'num_confirmed',
+      key: 'newConfirmed',
+      cohort: 'total',
       color: colors.blueGray,
     },
     {
       title: 'Recovered',
-      key: 'num_recovered',
+      key: 'newRecovered',
+      cohort: 'total',
       color: colors.turqouise,
     },
     {
       title: 'Infected hospital staff ',
-      key: 'total_infected',
+      key: 'totalInfected',
+      cohort: 'hospitals',
       color: colors.aubergine,
     },
     {
       title: 'Total Infections',
-      key: 'total_infected',
+      key: 'totalInfected',
+      cohort: 'total',
       color: colors.aubergine,
     },
   ];
@@ -81,28 +89,27 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const datasets = (data || []).map((entry, index) => {
+  const datasets = scenariosResults.map((entry, scenarioIndex) => {
     return {
-      label:
-        index === 0
-          ? 'Baseline'
-          : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
-      data: entry.data.reduce((memo, entry) => {
-        const key = entry.days;
+      label: clientScenariosInput[scenarioIndex].name,
+      data: entry.data.total.reduce((memo, entry, timeseriesIndex) => {
+        const key = entry.date;
         const day = {
           ...(memo[key] || {}),
         };
         graphs.forEach(graph => {
-          if (
-            graph.key === 'total_infected' &&
-            graph.title.includes('hospital') &&
-            entry.compartment !== 'Hospitals'
-          ) {
-            // dont't add up things just for the hospital compartment
-            return;
-          }
-          day[graph.title] =
-            (Number(day[graph.title]) || 0) + Number(entry[graph.key]);
+          // if (
+          //   graph.key === 'totalInfected' &&
+          //   graph.title.includes('hospital')
+          // ) {
+          //   // dont't add up things just for the hospital compartment
+          //   return;
+          // }
+          day[graph.key] =
+            scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
+              graph.key
+            ];
+          // (Number(day[graph.key]) || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -124,9 +131,9 @@ const SimulationResults: React.FC<{
               </h2>
             </div>
             <div className="container">
-              {!!data && (
+              {!!clientScenariosInput && (
                 <ul className="scenarios">
-                  {data.map((scenario, index) => {
+                  {clientScenariosInput.map((clientScenarioInput, index) => {
                     return (
                       <li
                         className={`scenario ${
@@ -139,7 +146,7 @@ const SimulationResults: React.FC<{
                             setSelectedScenarioIndex(index);
                           }}
                         >
-                          {datasets[index].label}
+                          {clientScenarioInput.name}
                         </button>
                       </li>
                     );
@@ -158,9 +165,9 @@ const SimulationResults: React.FC<{
               <>
                 <div className="scenario-description">
                   <h2 className="underline">
-                    {scenarios[selectedScenarioIndex].name}
+                    {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
-                  <p>{scenarios[selectedScenarioIndex].description}</p>{' '}
+                  {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                 </div>
                 <div className="comparison">
                   <div
@@ -238,14 +245,18 @@ const SimulationResults: React.FC<{
                                 datasets: [
                                   {
                                     label: key,
-                                    data: data.map(scenario => scenario[key]),
+                                    data: simulationResults.scenarios.map(
+                                      scenario => scenario[key],
+                                    ),
                                     backgroundColor: Color(color)
                                       .alpha(0.5)
                                       .toString(),
                                     borderColor: Color(color).toString(),
                                   },
                                 ],
-                                labels: datasets.map(dataset => dataset.label),
+                                labels: clientScenariosInput.map(
+                                  scenario => scenario.name,
+                                ),
                               }}
                             />
                           </div>
@@ -290,7 +301,7 @@ const SimulationResults: React.FC<{
                       tests conducted
                     </span>
                   </h3>
-                </div>{' '}
+                </div>
                 <div className="charts">
                   {graphs.map(graph => {
                     return (
@@ -362,7 +373,7 @@ const SimulationResults: React.FC<{
                               return {
                                 label: dataset.label,
                                 data: Object.values(dataset.data).map(
-                                  values => values[graph.title],
+                                  values => values[graph.key],
                                 ),
                                 borderColor: [
                                   selected
@@ -382,7 +393,9 @@ const SimulationResults: React.FC<{
                                 ],
                               };
                             }),
-                            labels,
+                            labels: selectedScenario.data.total.map(
+                              entry => entry.date,
+                            ),
                           }}
                         />
                       </div>
