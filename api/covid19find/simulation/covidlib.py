@@ -240,7 +240,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
    for i in range(0,num_scenarios):
  #     key = sc.scenarios[i-1] #If this is an array no need for a key
 #      print('i=',i,'key=',key)
-      scenario_name='SCENARIO 0'   #it should have a proper name
+      scenario_name='SCENARIO' + ' '+ str(i)   #it should have a proper name
    #   scenario_names.append(scenario_name)  #name can be one item in dictionary
       if expert_mode:
          print ('*************')
