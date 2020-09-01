@@ -5,7 +5,7 @@ latency_period,2
 incubation_period,5
 recovery_period,10
 death_period,21
-beta_adaptation_days,1
+beta_adaptation_days,10
 prop_asymptomatic,0.02
 infection_fatality_rate,0.01
 prop_urban,0

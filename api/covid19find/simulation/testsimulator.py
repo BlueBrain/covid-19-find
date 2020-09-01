@@ -28,6 +28,7 @@ fixed_params={'total_pop':8200000, \
 #phase_start_days=[13,26,100,150,600,1200] #This and the preceding statement is temporary - will be used for target betas for each phase
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
+# The parameter values in this test code are fictitious
 # scenario 0
 scenario_params.append({
     'symptomatic_only':['True','True','True','True','True','True'], \
@@ -50,36 +51,48 @@ scenario_params.append({
     'imported_infections_per_day':[0,0,20,20,20],
     'requireddxtests':[0,1,2,2,2]})
 # scenario 1
-# =============================================================================
-# scenario_params.append({
-#     'symptomatic_only':['True','True','True','True','True','True','True'], \
-#     'confirmation_tests':['False','False','False','False','False','False','False'], \
-#     'prop_hospital': [0.0, 0.0,0.0,0.0,0.0,0.0,0.0],\
-#     'prop_other_hc':[0.0,0.0,0.0,0.0,0.0,0.0,0.0],\
-#     'severity':[0.0,0.42,0.42,0.9,0.9,0.7,0.7],\
-#     'trig_values':[1,20,34,52,94,120,200],
-#     'num_tests_PCR':[0,3500,3500,3500,3500,3500,0],\
-#     'num_tests_RDT':[0,0,0,0,0,0,0,],\
-#     'num_tests_xray':[0,0,0,0,0,0,0],\
-#     'trig_op_type':['=','=','=','=','=','=','='], \
-#     'trig_def_type':['date','date','date','date','date','date','date'],\
-#     'prop_contacts_traced':[1.0,1.0,1.0,1.0,1.0,1.0,0]})
-# #scenario 2
-# scenario_params.append({
-#     'symptomatic_only':['True','True','True','True','True','True','True'], \
-#     'confirmation_tests':['False','False','False','False','False','False','False'], \
-#     'prop_hospital': [0.0, 0.0,0.0,0.0,0.0,0.0,0.0],\
-#     'prop_other_hc':[0.0,0.0,0.0,0.0,0.0,0.0,0.0],\
-#     'severity':[0.0,0.42,0.42,0.9,0.9,0.7,0.7],\
-#     'trig_values':[1,20,34,52,94,120,200],
-#     'num_tests_PCR':[0,3500,3500,3500,3500,3500,0],\
-#     'num_tests_RDT':[0,0,0,0,0,0,0,],\
-#     'num_tests_xray':[0,0,0,0,0,0,0],\
-#     'trig_op_type':['=','=','=','=','=','=','='], \
-#     'trig_def_type':['date','date','date','date','date','date','date'],\
-#     'prop_contacts_traced':[1.0,1.0,1.0,1.0,1.0,1.0,0]})
-# #print('scenario params=',scenario_params)
-# =============================================================================
+scenario_params.append({
+    'symptomatic_only':['True','True','True','True','True','True'], \
+    'confirmation_tests':['False','False','False','False','False','False'], \
+    'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
+    'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
+    'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
+    'severity':[0.1,0.8,0.6,0.4,0.8],\
+    'trig_values':[1,22,90,150,200],\
+    'trig_def_type':['date','date','date','date','date','date'],\
+    'trig_op_type':['=','=','=','=','='],\
+    'num_tests_mitigation':[0,0,0,0,0],\
+    'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95,0.95,0.95],\
+    'num_tests_care':[0,0,0,0,0],\
+    'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0,0,1.0,1.0,1.0,1.0],\
+    'test_multipliers':[0,1,2,3],
+    'imported_infections_per_day':[0,0,20,20,20],
+    'requireddxtests':[0,1,2,2,2]})
+#scenario 2
+scenario_params.append({
+     'symptomatic_only':['True','True','True','True','True','True'], \
+    'confirmation_tests':['False','False','False','False','False','False'], \
+    'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
+    'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
+    'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
+    'severity':[0.1,0.8,0.6,0.4,0.8],\
+    'trig_values':[1,22,90,150,200],\
+    'trig_def_type':['date','date','date','date','date','date'],\
+    'trig_op_type':['=','=','=','=','='],\
+    'num_tests_mitigation':[0,0,0,0,0],\
+    'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95,0.95,0.95],\
+    'num_tests_care':[0,0,0,0,0],\
+    'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0,0,1.0,1.0,1.0,1.0],\
+    'test_multipliers':[0,1,2,3],
+    'imported_infections_per_day':[0,0,20,20,20],
+    'requireddxtests':[0,1,2,2,2]})
+#print('scenario params=',scenario_params)
 
 # =============================================================================
 #     'symptomatic_only':['True','True','True','True','True','False','True'], \

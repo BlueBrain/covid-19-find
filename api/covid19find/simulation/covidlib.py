@@ -275,6 +275,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
         # run an initial simulation to determine the starting date of the epidemic
       throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75)
       dfsum_dates = date_df.groupby(['days']).sum().reset_index()
+      # This will be updated when we have new optimization code - 
       df_date_result, day1 = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
       
       #compute main simulation and store results
@@ -288,12 +289,17 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
   #    old_sim=copy.deepcopy(sim)
       dataframes.append(df) 
       # do extra simulations to test different test strategies
+      print('line before j')
       for j in range(0,len(par.test_multipliers)):
+        print ('j=',j)
         test_par=Par(p)
   #      sim=copy.deepcopy(old_sim)
         for k in range(0,par.num_testkit_types): #maybe this should be for one phase only
              test_par.num_tests[k]=np.array(test_par.num_tests[k])*test_par.test_multipliers[j]
-        throw,df_tests=simulate(country_df,sim,par,max_betas,min_betas,30,test_par.num_days,1)
+  # This line of code is incorrect - the phase should be the current phase
+        current_phase=computecurrentphase(par.day1,par.trig_values)
+        print('start date=', par.day1,'current phase=',current_phase)    
+        throw,df_tests=simulate(country_df,sim,par,max_betas,min_betas,30,test_par.num_days,current_phase)
         dfsum_tests = df_tests.groupby(['days']).sum().reset_index()
         test_df['tests']=sum(map(int,p['num_tests']))
         test_df['deaths']=dfsum_tests['newdeaths'].sum()
@@ -414,14 +420,14 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
            
       #=============================================================================
       print('')
-      results_dict={}
-      results_dict.update({
-      'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
-      'total_tests_care_by_scenario':total_tests_care_by_scenario,\
-      'total_deaths_by_scenario':total_deaths_by_scenario,\
-      'max_infected_by_scenario':max_infected_by_scenario,\
-      'total_infected_by_scenario':total_infected_by_scenario,\
-      'max_isolated_by_scenario':max_isolated_by_scenario})
+   results_dict={}
+   results_dict.update({
+   'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
+   'total_tests_care_by_scenario':total_tests_care_by_scenario,\
+   'total_deaths_by_scenario':total_deaths_by_scenario,\
+   'max_infected_by_scenario':max_infected_by_scenario,\
+   'total_infected_by_scenario':total_infected_by_scenario,\
+   'max_isolated_by_scenario':max_isolated_by_scenario})
       
 #      p=original_p
    return(dataframes, test_df,results_dict)
@@ -1150,18 +1156,22 @@ def getcountrydata(csvfilename):
 
 def aligndeaths(actual,simulated):
    n = len(actual)
+   #defensive: deals with case of simulated less than actual - this should not happen
+   if len(simulated)<len(actual):
+       padding=np.zeros(len(actual)-len(simulated))
+       simulated=np.concatenate((np.array(simulated),padding))
    aligneddeaths = [0]*n
    amark = 0
-   for i in range(0,n):
+   for i in range(0,n-1):
       if actual[i] >= 20:
          amark = i
          break
    smark = 0
-   for i in range(0,n):
+   for i in range(0,n-1):
       if simulated[i] >= 20:
          smark = i
          break
-   for i in range(0,n):
+   for i in range(0,n-1):
       if (i < (amark-smark)):
          aligneddeaths[i] = 0
       else:
@@ -1180,6 +1190,19 @@ def alignactualwithsimulated(dfactual,dfsimdeaths):
    print('day1_literal=',day1_literal)
    day1 = dt.datetime.strptime(dfactual.iloc[shift]['Date'],"%Y-%m-%d")
    return dfactual, day1
+
+
+def computecurrentphase(start_date,triggers):
+    today=dt.datetime.now()
+    simday=(today-start_date).days
+    simphase=0
+    for i in range(0,len(triggers)):
+        if triggers[i]<simday:
+            simphase=i
+    return simphase
+        
+    
+    
 
 
 
