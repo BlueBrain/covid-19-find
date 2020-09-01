@@ -38,7 +38,7 @@ def create_app():
                 "error": "Couldn't find data for country " + country_code
             }), status=404, mimetype="application/json")
         else:
-            return data
+            return jsonify(data)
 
     app_path_prefix = os.getenv("PUBLIC_URL", "")
 
@@ -48,7 +48,7 @@ def create_app():
 
     @app.route(f'{app_path_prefix}/api/countries/<country_code>')
     def country_details(country_code):
-        return jsonify(not_found_if_none(country_repo.country_details(country_code), country_code))
+        return not_found_if_none(country_repo.country_details(country_code), country_code)
 
     with open(
             os.path.join(os.path.abspath(os.path.dirname(__file__)), "simulation-request.schema.json")) as schema_file:
@@ -62,7 +62,7 @@ def create_app():
 
     @app.route(f'{app_path_prefix}/api/covid19data/<country_code>')
     def country_covid19_data(country_code):
-        return jsonify(not_found_if_none(data_repo.data_for(country_code), country_code))
+        return not_found_if_none(data_repo.data_for(country_code), country_code)
 
     simulator = Simulator(data_repo)
 
