@@ -6,6 +6,7 @@ import Simulation from './containers/simulation';
 import { ClientSimulationRequest } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import useQueryString from './hooks/useQuerySring';
+import SaveLoadButtons from './components/SaveLoad';
 
 const App: React.FC = () => {
   const [{ state }, setScenarioRequestData] = useQueryString<{
@@ -57,6 +58,12 @@ const App: React.FC = () => {
     ];
 
     forms.forEach(form => form.reportValidity());
+  };
+
+  const handleLoadState = state => {
+    setScenarioRequestData({
+      state,
+    });
   };
 
   return (
@@ -111,6 +118,9 @@ const App: React.FC = () => {
           <p>Please complete the steps to view simulation results</p>
         </section>
       )}
+      <section>
+        <SaveLoadButtons state={state} onLoad={handleLoadState} />
+      </section>
     </>
   );
 };

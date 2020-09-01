@@ -1,12 +1,7 @@
 import * as React from 'react';
 
 import ScenarioEditor from '../ScenarioEditor/ScenarioList';
-import useFormInput from '../../hooks/useFormInput';
-import {
-  SimulationRequest,
-  Scenario,
-  ClientScenarioData,
-} from '../../types/simulation';
+import { ClientScenarioData } from '../../types/simulation';
 
 import './test-selector.less';
 
