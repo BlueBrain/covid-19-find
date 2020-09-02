@@ -1,7 +1,7 @@
-from .simulation.covidlib import run_simulation, get_scenarios
-import numpy as np
+from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
 import math
 import pandas as pd
+import os
 
 
 class Simulator:
@@ -145,22 +145,37 @@ class Simulator:
         }
 
     @staticmethod
-    def __reverse_map_scenario(covidlib_scenario):
-        if covidlib_scenario["symptomatic_only"].lower() == "true":
-            test_symptomatic_only = True
-        elif covidlib_scenario["symptomatic_only"].lower() == "false":
-            test_symptomatic_only = False
-        else:
-            test_symptomatic_only = None
-        return {
-            "interventionType": Simulator.REVERSE_INTERVENTION_PARAMS[int(covidlib_scenario["intervention_type"])],
-            "interventionTiming": Simulator.REVERSE_TIMING_PARAMS[int(covidlib_scenario["intervention_timing"])],
-            "testSymptomaticOnly": test_symptomatic_only,
-            "hospitalTestProportion": covidlib_scenario["prop_hospitals"],
-            "otherHighContactPopulationTestProportion": covidlib_scenario["prop_other_hc"],
-            "restOfPopulationTestProportion": 1 - covidlib_scenario["prop_hospitals"] - covidlib_scenario[
-                "prop_other_hc"]
-        }
+    def __reverse_map_scenario(scenario_index):
+        covid_libscenario = get_system_params(
+            os.path.join(cl_path_prefix, "SCENARIO {}_params.csv".format(scenario_index)))
+        num_phases = len(covid_libscenario["num_tests_mitigation"])
+        phases = []
+        for i in range(0, num_phases):
+            phases.append(
+                {
+                    "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"][i]),
+                    "trigger": covid_libscenario["trig_values"][i],
+                    "triggerType": covid_libscenario["trig_def_type"][i],
+                    "triggerCondition": covid_libscenario["trig_op_type"][i],
+                    "severity": float(covid_libscenario["severity"][i]),
+                    "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"][i]),
+                    "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"][i]),
+                    "typeTestsMitigation": "PCR",
+                    "confirmationTests": bool(covid_libscenario["confirmation_tests"][i]),
+                    "specificity": float(covid_libscenario["specificity"][i]),
+                    "sensitivity": float(covid_libscenario["sensitivity"][i]),
+                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"][i]),
+                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"][i]),
+                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"][i]),
+                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"][i]) - float(
+                        covid_libscenario["prop_other_hc"][i]),
+                    "numTestsCare": int(covid_libscenario["num_tests_care"][i]),
+                    "typeTestsCare": "PCR",
+                    "requiredDxTests": int(covid_libscenario["requireddxtests"][i])
+                }
+            )
+
+        return {"phases": phases}
 
     def default_scenarios(self):
-        return list(map(Simulator.__reverse_map_scenario, getscenarios()))
+        return list(map(Simulator.__reverse_map_scenario, range(0, 3)))

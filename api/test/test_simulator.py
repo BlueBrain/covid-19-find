@@ -20,3 +20,22 @@ class TestSimulator:
             schema = json.load(schema_file)
 
         validate(instance=response, schema=schema)
+
+    def test_default_scenarios(self):
+        with open(os.path.join(path_prefix, "../covid19find/simulation-request.schema.json")) as schema_file:
+            schema = json.load(schema_file)
+
+        default_scenarios = simulator.default_scenarios()
+        request = {
+            "countryCode": "CH",
+            "population": 8655000,
+            "activePopulationProportion": 0.66,
+            "hospitalBeds": 34620,
+            "hospitalStaffPerBed": 2.5,
+            "workingOutsideHomeProportion": 0.2,
+            "urbanPopulationProportion": 0.73,
+            "over64Proportion": 0.20,
+            "belowPovertyLineProportion": 0.10,
+            "scenarios": default_scenarios
+        }
+        validate(instance=request, schema=schema)
