@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Line, Bar, Bubble } from 'react-chartjs-2';
-import { union } from 'lodash';
 import './simulation-results.less';
 import colors from '../../colors';
 import Color from 'color';
@@ -8,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { ClientScenarioData, SimulationResults } from '../../types/simulation';
+import NumberOfTestsPerDay from './Graphs/NumberOfTestsPerDay';
 
 export function toLetters(num: number): string {
   const mod = num % 26;
@@ -51,39 +51,6 @@ const SimulationResults: React.FC<{
     },
     {
       title: 'Recovered',
-      key: 'newRecovered',
-      cohort: 'total',
-      color: colors.turqouise,
-    },
-    {
-      title: 'Infected hospital staff ',
-      key: 'totalInfected',
-      cohort: 'hospitals',
-      color: colors.aubergine,
-    },
-    {
-      title: 'Total Infections',
-      key: 'totalInfected',
-      cohort: 'total',
-      color: colors.aubergine,
-    },
-  ];
-
-  const testingGraphs = [
-    {
-      title: 'Number of Tests Performed per day',
-      key: 'totalDeaths',
-      cohort: 'total',
-      color: colors.pomegranate,
-    },
-    {
-      title: 'Estimated R0',
-      key: 'newConfirmed',
-      cohort: 'total',
-      color: colors.blueGray,
-    },
-    {
-      title: 'Prevalence',
       key: 'newRecovered',
       cohort: 'total',
       color: colors.turqouise,
@@ -538,7 +505,53 @@ const SimulationResults: React.FC<{
                   })}
                 </div>
                 <hr />
+                <div className="stats horizontal">
+                  <h3>
+                    {Math.ceil(
+                      selectedScenario.data.hospitals.reduce(
+                        (memo, entry) => memo + entry.newTests,
+                        0,
+                      ),
+                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <br />
+                    <span className="subtitle">
+                      Number of tests <br /> used for patient care
+                    </span>
+                  </h3>
+                  <h3>
+                    {Math.ceil(
+                      selectedScenario.data.total.reduce(
+                        (memo, entry) => memo + entry.requiredDxTests,
+                        0,
+                      ),
+                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <br />
+                    <span className="subtitle">
+                      Number of tests used and required <br /> for epidemic
+                      mitigation
+                    </span>
+                  </h3>
+                  <h3>
+                    {Math.ceil(
+                      selectedScenario.data.total.reduce(
+                        (memo, entry) => memo + entry.requiredDxTests,
+                        0,
+                      ),
+                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <br />
+                    <span className="subtitle">
+                      Number of tests required to <br /> estimate seroprevalence
+                    </span>
+                  </h3>
+                </div>
                 <div></div>
+                <div className="charts">
+                  <NumberOfTestsPerDay
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
                     This web tool estimates the relative impact of different
