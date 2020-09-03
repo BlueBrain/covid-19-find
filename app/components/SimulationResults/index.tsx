@@ -8,6 +8,8 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { ClientScenarioData, SimulationResults } from '../../types/simulation';
 import NumberOfTestsPerDay from './Graphs/NumberOfTestsPerDay';
+import RNaught from './Graphs/RNaught';
+import Prevalence from './Graphs/Prevalence';
 
 export function toLetters(num: number): string {
   const mod = num % 26;
@@ -547,6 +549,16 @@ const SimulationResults: React.FC<{
                 <div></div>
                 <div className="charts">
                   <NumberOfTestsPerDay
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                  <RNaught
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                  <Prevalence
                     clientScenariosInput={clientScenariosInput}
                     scenariosResults={scenariosResults}
                     selectedScenarioIndex={selectedScenarioIndex}

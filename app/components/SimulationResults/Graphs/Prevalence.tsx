@@ -6,13 +6,13 @@ import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import colors from '../../../colors';
 
-const NumberOfTestsPerDay: React.FC<{
+const Prevalence: React.FC<{
   scenariosResults: ScenarioResult[];
   selectedScenarioIndex: number;
   clientScenariosInput: ClientScenarioData[];
 }> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
-  const title = 'Number of tests per day';
-  const color = colors.turqouise;
+  const title = 'Prevalence';
+  const color = colors.aubergine;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
@@ -37,7 +37,7 @@ const NumberOfTestsPerDay: React.FC<{
                   data.datasets[tooltipItem.datasetIndex].label || '';
                 return `${label}: ${tooltipItem.yLabel?.toLocaleString(
                   undefined,
-                  { maximumFractionDigits: 0 },
+                  { maximumFractionDigits: 8 },
                 )}`;
               },
             },
@@ -48,7 +48,7 @@ const NumberOfTestsPerDay: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'Number of Tests (per day)',
+                  labelString: 'Prevalence (per day)',
                 },
                 gridLines: {
                   color: '#00000005',
@@ -56,8 +56,9 @@ const NumberOfTestsPerDay: React.FC<{
                 ticks: {
                   beginAtZero: true,
                   callback: function(value, index, values) {
+                    console.log(values);
                     return value?.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
+                      maximumFractionDigits: 8,
                     });
                   },
                 },
@@ -89,7 +90,7 @@ const NumberOfTestsPerDay: React.FC<{
             const selected = selectedScenarioIndex === index;
             return {
               label: clientScenariosInput[index].name,
-              data: scenario.data.total.map(entry => entry.newTests),
+              data: scenario.data.total.map(entry => entry.prevalence),
               borderColor: [
                 selected
                   ? color
@@ -117,4 +118,4 @@ const NumberOfTestsPerDay: React.FC<{
   );
 };
 
-export default NumberOfTestsPerDay;
+export default Prevalence;
