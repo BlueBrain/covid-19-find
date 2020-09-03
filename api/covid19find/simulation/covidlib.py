@@ -498,8 +498,7 @@ class Par:
       num_tests_care=list(map(int,params['num_tests_care']))
       self.num_tests=[num_tests_mit,num_tests_care]
   #    print ('num_tests=',self.num_tests)
-      self.sensitivity=np.zeros(num_testkit_types)
-      self.specificity=np.zeros(num_testkit_types)
+ 
       #if we wrote these variables as lists we could copy them without the loops
       
       self.prop_tests=[params['prop_hospital'],params['prop_other_hc']]
@@ -978,7 +977,10 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=200,
            sim.infected[t,i] = sim.infected[t-1,i]+sim.newinfected[t,i]-sim.newrecovered[t,i]-sim.newdeaths[t,i]
            if sim.infected[t,i]<0.0:
               sim.infected[t,i]=0.0
-           sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*par.recovery_period
+           if sim.infected[t,i]>0:
+               sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*par.recovery_period
+           else:
+               sim.reff[t,i]=np.nan
            sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]
            sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
    

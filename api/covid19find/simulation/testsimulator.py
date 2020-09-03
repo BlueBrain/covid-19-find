@@ -32,15 +32,15 @@ scenario_params=[]
 # scenario 0
 scenario_params.append({
     'symptomatic_only':['True','True','True','True','True','True'], \
-    'confirmation_tests':['False','False','False','False','False','False'], \
+    'confirmation_tests':['True','True','True','True','True','True'], \
     'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
     'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
     'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
-    'severity':[0.1,0.8,0.6,0.4,0.8],\
-    'trig_values':[1,22,90,150,200],\
+    'severity':[0.,0.7,0.9,0.87,0.65],\
+    'trig_values':[1,40,55,75,85],\
     'trig_def_type':['date','date','date','date','date','date'],\
     'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[0,0,0,0,0],\
+    'num_tests_mitigation':[10,10,10,7000,15000],\
     'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
     'specificity':[0.95,0.95,0.95,0.95,0.95],\
