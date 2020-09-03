@@ -32,7 +32,6 @@ scenario_params=[]
 # scenario 0
 scenario_params.append({
     'symptomatic_only':['True','True','True','True','True','True'], \
-    'confirmation_tests':['True','True','True','True','True','True'], \
     'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
     'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
     'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
@@ -53,7 +52,6 @@ scenario_params.append({
 # scenario 1
 scenario_params.append({
     'symptomatic_only':['True','True','True','True','True','True'], \
-    'confirmation_tests':['False','False','False','False','False','False'], \
     'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
     'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
     'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
@@ -74,7 +72,6 @@ scenario_params.append({
 #scenario 2
 scenario_params.append({
      'symptomatic_only':['True','True','True','True','True','True'], \
-    'confirmation_tests':['False','False','False','False','False','False'], \
     'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
     'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
     'prop_rop':[0.4,0.4,0.4,0.4,0.4],\

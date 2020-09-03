@@ -494,9 +494,9 @@ class Par:
       self.init_infected = np.zeros(num_compartments)
       self.prop_tests = np.zeros(num_compartments)
    #   self.num_tests=np.zeros(num_compartments)
-      num_tests_mit=list(map(int,params['num_tests_mitigation']))
-      num_tests_care=list(map(int,params['num_tests_care']))
-      self.num_tests=[num_tests_mit,num_tests_care]
+      self.num_tests_mit=list(map(int,params['num_tests_mitigation']))
+      self.num_tests_care=list(map(int,params['num_tests_care']))
+      self.num_tests=[self.num_tests_mit,self.num_tests_care]
   #    print ('num_tests=',self.num_tests)
  
       #if we wrote these variables as lists we could copy them without the loops
@@ -655,16 +655,18 @@ class Sim:
        return(sample_size)
         
     
-   def perform_tests(sim,par:Par,i,t,phase,testtype):
+   def perform_tests(sim,par:Par,i,t,phase):
       truepositives=0
       falsepositives=0
       truenegatives=0
       falsenegatives=0
     #  print('In perform tests')
       accum_tests_performed=0
-      tests_available=par.prop_tests[i][phase]*par.num_tests[testtype][phase]
-      if par.confirmation_tests[phase]:
-          tests_available=tests_available-sim.newisolated[t-1,i] #we do a confirmation tests for everyone isolated in previous period
+      tests_available=par.prop_tests[i][phase]*par.num_tests_mit[phase]  
+# =============================================================================
+#       if par.confirmation_tests[phase]:
+#           tests_available=tests_available-sim.newisolated[t-1,i] #we do a confirmation tests for everyone isolated in previous period
+# =============================================================================
   #        print ('compartment=',i,' test_type=',k,'prop_tests=', par.prop_tests[i][phase],'num_tests=',par.num_tests[k][phase],'tests_available=',tests_available)
       if tests_available>0:
 # =============================================================================
@@ -683,7 +685,7 @@ class Sim:
                total_symptomatic=sim.population[t-1,i]*par.background_rate_symptomatic
             
             if par.total_testkits[phase]>0:
-                total_symptomatic_for_test=total_symptomatic*par.num_tests[testtype][phase]/par.total_testkits[phase]
+                total_symptomatic_for_test=total_symptomatic*par.num_tests_mit[phase]/par.total_testkits[phase]
             else:
                 total_symptomatic_for_test=0
             if total_symptomatic_for_test<tests_available:
@@ -701,10 +703,10 @@ class Sim:
          else: #also testing non-symptomatic
 #            print ('testing all')
             if sim.population[t-1,i]>0:
-                truepositives = truepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * par.sensitivity[testtype]
+                truepositives = truepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * par.sensitivity[phase]
                 if truepositives>sim.infectednotisolated[t-1-par.incubation_period,i]:
                    truepositives=sim.infectednotisolated[t-1-par.incubation_period,i]
-                falsepositives=falsepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * (1-par.selectivity[testtype])
+                falsepositives=falsepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * (1-par.selectivity[phase])
             else:
                 truepositives=0
                 falsepositives=0
@@ -944,7 +946,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=200,
  #      print('t=',t,'contacts per person isolated=',contacts_per_person_isolated)
        for i in range(0,par.num_compartments):
            #perform mitigation testing
-           (truepositives,falsepositives,accum_tests_performed) = sim.perform_tests(par,i,t,phase,0)  
+           (truepositives,falsepositives,accum_tests_performed) = sim.perform_tests(par,i,t,phase)  
            
            # compute "dailies"
            # note: sim.newinfected[t,i] updated in addup_infections call
