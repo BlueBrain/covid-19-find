@@ -12,11 +12,9 @@ export default class API {
     return fetch(`${this.base}/countries`).then(response => response.json());
   }
 
-  // TODO: Default scenarios are not working for now
-  // I'm using a client-side version
-  // scenarios() {
-  //   return fetch(`${this.base}/scenarios`).then(response => response.json());
-  // }
+  scenarios() {
+    return fetch(`${this.base}/scenarios`).then(response => response.json());
+  }
 
   country(countryCode: string): Promise<CountryResponse> {
     return fetch(`${this.base}/countries/${countryCode}`)

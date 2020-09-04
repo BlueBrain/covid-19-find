@@ -3,12 +3,19 @@ import * as React from 'react';
 import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import { ClientSimulationRequest } from './types/simulation';
+import {
+  ClientSimulationRequest,
+  SimulationResults,
+  ClientScenarioData,
+} from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import useQueryString from './hooks/useQuerySring';
 import SaveLoadButtons from './components/SaveLoad';
+import useAPIContext from './hooks/useAPI';
 
 const App: React.FC = () => {
+  const api = useAPIContext();
+
   const [{ state }, setScenarioRequestData] = useQueryString<{
     state: ClientSimulationRequest;
   }>(
@@ -28,12 +35,28 @@ const App: React.FC = () => {
   );
 
   React.useEffect(() => {
-    setScenarioRequestData({
-      state: {
-        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
-        ...state,
-      },
-    });
+    if (state.scenarios.length) {
+      api
+        .scenarios()
+        .then((data: SimulationResults) => {
+          console.log({ data });
+          const scenarios = data.scenarios.reduce((memo, scenario, index) => {
+            return [
+              {
+                name: 'blah',
+                ...scenario,
+              },
+              ...memo,
+            ];
+          }, [] as ClientScenarioData[]);
+
+          setScenarioRequestData({
+            // @ts-ignore
+            state: { scenarios },
+          });
+        })
+        .catch(console.error);
+    }
   }, []);
 
   const [
