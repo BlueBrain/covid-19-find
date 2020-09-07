@@ -1,6 +1,12 @@
+import { takeRight } from 'lodash';
+
 import { apiBase } from './config';
 import { CountryResponse } from './types/country';
-import { SimulationRequest, SimulationResults } from './types/simulation';
+import {
+  SimulationRequest,
+  SimulationResults,
+  Scenario,
+} from './types/simulation';
 
 export default class API {
   base: string;
@@ -13,7 +19,16 @@ export default class API {
   }
 
   scenarios() {
-    return fetch(`${this.base}/scenarios`).then(response => response.json());
+    return (
+      fetch(`${this.base}/scenarios`)
+        .then(response => response.json())
+        // TODO: remove this when default scenarios are created dynamically
+        .then((data: { scenarios: Scenario[] }) => ({
+          scenarios: data.scenarios.map(scenario => ({
+            phases: takeRight(scenario.phases, 2),
+          })),
+        }))
+    );
   }
 
   country(countryCode: string): Promise<CountryResponse> {

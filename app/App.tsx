@@ -7,11 +7,13 @@ import {
   ClientSimulationRequest,
   SimulationResults,
   ClientScenarioData,
+  Scenario,
 } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import useQueryString from './hooks/useQuerySring';
 import SaveLoadButtons from './components/SaveLoad';
 import useAPIContext from './hooks/useAPI';
+import { decodeClientState, encodeClientState } from './libs/stateLoader';
 
 const App: React.FC = () => {
   const api = useAPIContext();
@@ -25,37 +27,31 @@ const App: React.FC = () => {
       },
     },
     {
-      // nested values edgecase
-      // to prevent [object Object] in url
       state: {
-        parse: entry => JSON.parse(atob(entry)),
-        stringify: entry => btoa(JSON.stringify(entry)),
+        parse: decodeClientState,
+        stringify: encodeClientState,
       },
     },
   );
 
   React.useEffect(() => {
     if (state.scenarios.length) {
-      api
-        .scenarios()
-        .then((data: SimulationResults) => {
-          console.log({ data });
-          const scenarios = data.scenarios.reduce((memo, scenario, index) => {
-            return [
-              {
-                name: 'blah',
-                ...scenario,
-              },
-              ...memo,
-            ];
-          }, [] as ClientScenarioData[]);
+      api.scenarios().then((data: { scenarios: Scenario[] }) => {
+        const scenarios = data.scenarios.reduce((memo, scenario, index) => {
+          return [
+            {
+              name: 'blah',
+              ...scenario,
+            },
+            ...memo,
+          ];
+        }, [] as ClientScenarioData[]);
 
-          setScenarioRequestData({
-            // @ts-ignore
-            state: { scenarios },
-          });
-        })
-        .catch(console.error);
+        setScenarioRequestData({
+          // @ts-ignore
+          state: { scenarios },
+        });
+      });
     }
   }, []);
 
