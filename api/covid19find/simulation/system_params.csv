@@ -1,4 +1,4 @@
-num_days,186
+num_days,189
 p_positive_if_symptomatic,0.9
 background_rate_symptomatic,0.02
 latency_period,2
@@ -20,10 +20,7 @@ total_pop,50000
 init_infected,1,1,1
 num_testkit_types,2
 testkits,PCR,RDT
-sensitivity,0.95,0.85,0.9
-specificity,0.95,0.8,0.9
 num_tests,10000,0,0
-symptomatic_only,TRUE,TRUE,TRUE
 IFR_1_14,0.0000297
 IFR_15_64,0.00296
 IFR_gt_64,0.03936

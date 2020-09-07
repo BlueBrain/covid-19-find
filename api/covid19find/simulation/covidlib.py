@@ -15,7 +15,7 @@ import os
 
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
 def get_system_params(sysfile):
-#this is a simplified replacement for get_system_params
+
    p = {}
    csv_reader = csv.reader(open(sysfile), delimiter=',')
    for a_row in csv_reader:
@@ -27,7 +27,6 @@ def get_system_params(sysfile):
             for i in range(1,len(a_row)):
                 val.append(a_row[i])
         p[param_name]=val
-   print('p=',p)
    return p
 
 ######################################################################
@@ -188,8 +187,14 @@ def run_simulation(country_df,fixed_params, **kwargs):
 
 # set up system parameters
 
+
+
    p = get_system_params(sysfile)
+
+
    update_system_params(p, fixed_params) # note: p is updated
+
+
 
 # read initial beta matrix
 
@@ -249,36 +254,48 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
       parameters_filename = os.path.join(cl_path_prefix, scenario_name+'_params.csv')
       filename = scenario_name+'_out.csv'
       summary_filename=scenario_name+'_summary.csv'
-      scenario_default=get_system_params(parameters_filename)
-      print('scenario default=',scenario_default)
-      print('scenarios i=',scenarios[i])
+      scenario_default=get_system_params(parameters_filename)  #badly named - these are scenario parameters
+   #   print('scenario default=',scenario_default)
+  #    print('scenarios i=',scenarios[i])
   #    p['scenario_name']=scenario_name # JPV: not sure why you need this
  #     apply_scenario_to_p_2(p,scenario_default)
-      p.update(scenario_default)
- #     print('p with default,p')
-      # update p according to scenario_params[key]
- #     apply_scenario_to_p(p, sc.scenario_params[key])  #this can be index
-      p.update(scenarios[i]) 
- #     print('p after user input',p)
- #     beta_max = float(p['beta_max'][0]) #this is the maximum value of overall beta for any intervention
-#      beta_min=float(p['beta_min'][0]) #this is the lowest value of overall beta for any intervention
-      nmultipliers=len(p['test_multipliers'])
-      test_df=pd.DataFrame({
-          'tests': p['test_multipliers'],
-          'livessaved':np.zeros(nmultipliers),
-          'reff':np.zeros(nmultipliers)})
+ #     past=create_past(p,[30,80],[0.2,0.9])
+      past=create_past_2(p,scenario_default,[1, 44, 74, 88, 199],[0.15, 0.9, 0.8, 0.75, 0.0])
+      p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
       max_betas = get_beta(no_intervention_betafile, num_compartments)
-      
+ # runs an initial simulation to align dates with simulation days
       date_par=Par(p)
       date_sim = Sim(date_par.num_days,date_par.num_compartments)
       date_sim.set_initial_conditions(date_par)
-     
         # run an initial simulation to determine the starting date of the epidemic
       throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75)
       dfsum_dates = date_df.groupby(['days']).sum().reset_index()
       # This will be updated when we have new optimization code -
       df_date_result, day1 = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
+      #reads the trig values in scenarios i and converts to simulation days - does not yet check for type of trigger
+      for j in range(0,len(scenarios[i]['trig_values'])):
+          if(scenarios[i]['trig_def_type'][j]=='date'):
+              date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
+              scenarios[i]['trig_values'][j]=(date-day1).days
+      scenario=create_scenario(past,scenarios[i])
+
+ #     p.update(scenario_default) #not sure what this does or if it is needed
+ #     print('p with default,p')
+      # update p according to scenario_params[key]
+ #     apply_scenario_to_p(p, sc.scenario_params[key])  #this can be index
+      p.update(scenario)
+ #     print('p after user input',p)
+ #     beta_max = float(p['beta_max'][0]) #this is the maximum value of overall beta for any intervention
+#      beta_min=float(p['beta_min'][0]) #this is the lowest value of overall beta for any intervention
+      nmultipliers=len(p['test_multipliers'])
+
+
+      test_df=pd.DataFrame({
+          'tests': p['test_multipliers'],
+          'livessaved':np.zeros(nmultipliers),
+          'reff':np.zeros(nmultipliers)})
+
       
       #compute main simulation and store results
    #   sim=copy.deepcopy(old_sim)
@@ -300,7 +317,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
              test_par.num_tests[k]=np.array(test_par.num_tests[k])*test_par.test_multipliers[j]
   # This line of code is incorrect - the phase should be the current phase
         current_phase=computecurrentphase(par.day1,par.trig_values)
-        print('start date=', par.day1,'current phase=',current_phase)
+        print('start date=', par.day1,'current phase=',current_phase)    
         throw,df_tests=simulate(country_df,sim,par,max_betas,min_betas,30,test_par.num_days,current_phase)
         dfsum_tests = df_tests.groupby(['days']).sum().reset_index()
         test_df['tests']=sum(map(int,p['num_tests']))
@@ -462,30 +479,28 @@ class Par:
       self.tau = self.infection_fatality_rate/self.recovery_period
       self.gamma = (1-self.infection_fatality_rate)/self.recovery_period
       self.num_testkit_types=int(params['num_testkit_types'])
-      self.num_tests_mitigation=params['num_tests_mitigation']
-      self.num_tests_care=params['num_tests_care']
-      self.sensitivity=params['sensitivity']
-      self.specificity=params['specificity']
+      self.num_tests_mitigation=list(map(int,params['num_tests_mitigation']))
+      self.num_tests_care=list(map(int,params['num_tests_care']))
+      self.sensitivity=list(map(float,params['sensitivity']))
+      self.specificity=list(map(float,params['specificity']))
       self.test_symptomatic_only=[]
       self.design_effect=float(params['design_effect'])
       self.confirmation_tests=[]
       for i in range(0,len(params['symptomatic_only'])):
-          self.test_symptomatic_only.append(params['symptomatic_only'][i].upper() == 'TRUE') 
-      for i in range(0,len(params['confirmation_tests'])):
-          self.confirmation_tests.append(params['confirmation_tests'][i].upper() == 'TRUE') 
+          self.test_symptomatic_only.append(params['symptomatic_only'][i].upper() == 'TRUE')
    #   self.no_testing=params['no_testing'][0].upper()=='TRUE'  #used to switch off testing in scenario 0
       self.p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'])
       self.background_rate_symptomatic=float(params['background_rate_symptomatic'])
-      self.severity=params['severity']
-      self.trig_values=params['trig_values']
+      self.severity=list(map(float,params['severity']))
+      self.trig_values=list(map(int,params['trig_values']))
       self.trig_def_type=params['trig_def_type']
       self.trig_op_type=params['trig_op_type']
       self.max_contacts_per_case=float(params['max_contacts_per_case'])
       self.min_contacts_per_case=float(params['min_contacts_per_case'])
-      self.prop_contacts_traced=params['prop_contacts_traced']
-      self.test_multipliers=params['test_multipliers']
-      self.requireddxtests=params['requireddxtests']
-      self.imported_infections_per_day=params['imported_infections_per_day']
+      self.prop_contacts_traced=list(map(float, params['prop_contacts_traced']))
+      self.test_multipliers=list(map(int,params['test_multipliers']))
+      self.requireddxtests=list(map(int,params['requireddxtests']))
+      self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
       num_compartments = self.num_compartments
       num_testkit_types = self.num_testkit_types
       self.compartment = []
@@ -501,7 +516,7 @@ class Par:
  
       #if we wrote these variables as lists we could copy them without the loops
       
-      self.prop_tests=[params['prop_hospital'],params['prop_other_hc']]
+      self.prop_tests=[list(map(float,params['prop_hospital'])),list(map(float,params['prop_other_hc']))]
       prop_rop=[]
       for i in range(0,len(params['prop_hospital'])):
          value=1-(float(self.prop_tests[0][i])+float(self.prop_tests[1][i]))
@@ -1206,6 +1221,54 @@ def computecurrentphase(start_date,triggers):
         if triggers[i]<simday:
             simphase=i
     return simphase
+
+def create_past(param, trigger_values, severity):
+    #in final version will get these from system parameters
+    #in later version we will obtain number of tests from real data
+    n_phases=len(trigger_values)
+    past={
+    'trig_values':trigger_values,\
+    'severity':severity,\
+    'symptomatic_only':['true']*n_phases, \
+    'prop_hospital': [0.3]*n_phases,\
+    'prop_other_hc':[0.3]*n_phases,\
+    'prop_rop':[0.4]*n_phases,\
+    'trig_def_type':['date']*n_phases, \
+    'trig_op_type':['=','=']*n_phases,\
+    'num_tests_mitigation':[0]*n_phases,\
+    'type_test_mitigation':['PCR'] * n_phases,\
+    'sensitivity':[0.95]*n_phases,\
+    'specificity':[0.95]* n_phases,\
+    'num_tests_care':[0]*n_phases,\
+    'type_tests_care':['PCR']*n_phases,\
+    'prop_contacts_traced':[0]*n_phases,\
+    'test_multipliers':[0,1,2,3],
+    'imported_infections_per_day':[0]*n_phases,
+    'requireddxtests':[0]*n_phases}
+    return(past)
+
+def create_past_2(param,defaults,trigger_values, severity):
+    n_phases=len(trigger_values)
+    past={}
+    for a_key in defaults.keys():
+        a_value=defaults[a_key][0]
+        a_list=[a_value]*n_phases
+        past.update({a_key:a_list})
+    past.update({'trig_values':trigger_values})
+    past.update({'severity':severity})
+    print('past=',past)
+    return(past)
+
+
+def create_scenario(past,future):
+     scenario={}
+     for a_key in past.keys():
+         past_value=past[a_key]
+         future_value=future[a_key]
+         sequence=past_value+future_value
+         scenario.update({a_key:sequence})
+     return(scenario)
+
 
 
 
