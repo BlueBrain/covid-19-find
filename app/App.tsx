@@ -3,49 +3,29 @@ import * as React from 'react';
 import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import {
-  ClientSimulationRequest,
-  SimulationResults,
-  ClientScenarioData,
-  Scenario,
-} from './types/simulation';
+import { ClientSimulationRequest, Scenario } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
-import useQueryString from './hooks/useQuerySring';
 import SaveLoadButtons from './components/SaveLoad';
 import useAPIContext from './hooks/useAPI';
-import { decodeClientState, encodeClientState } from './libs/stateLoader';
 
 const App: React.FC = () => {
   const api = useAPIContext();
-
-  const [{ state }, setScenarioRequestData] = useQueryString<{
-    state: ClientSimulationRequest;
-  }>(
-    {
-      state: {
-        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
-      },
-    },
-    {
-      state: {
-        parse: decodeClientState,
-        stringify: encodeClientState,
-      },
-    },
+  const [defaultScenarios, setDefaultScenarios] = React.useState(
+    DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
   );
+  const [{ state }, setScenarioRequestData] = React.useState<{
+    state: ClientSimulationRequest;
+  }>({
+    state: {
+      ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+    },
+  });
 
   React.useEffect(() => {
     if (state.scenarios.length) {
-      api.scenarios().then((data: { scenarios: Scenario[] }) => {
-        const scenarios = data.scenarios.reduce((memo, scenario, index) => {
-          return [
-            {
-              name: 'blah',
-              ...scenario,
-            },
-            ...memo,
-          ];
-        }, [] as ClientScenarioData[]);
+      api.scenarios().then(({ scenarios }: { scenarios: Scenario[] }) => {
+        // @ts-ignore
+        setDefaultScenarios(scenarios);
 
         setScenarioRequestData({
           // @ts-ignore
@@ -98,10 +78,10 @@ const App: React.FC = () => {
         }}
         values={state}
         onSubmit={values => {
-          // Reset all values if country code is changed
           if (values.countryCode !== state.countryCode) {
             handleSubmit({
               ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+              scenarios: defaultScenarios,
               countryCode: values.countryCode,
             });
             // mark forms as dirty or not ready

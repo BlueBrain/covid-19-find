@@ -15,15 +15,11 @@ export const load = async (e: Event) => {
 };
 
 export const decodeClientState = (stateString: string) =>
-  leftToRightCompose<ClientSimulationRequest, string>([
-    decodeURIComponent,
-    atob,
-    JSON.parse,
-  ])(stateString);
+  leftToRightCompose<ClientSimulationRequest, string>([atob, JSON.parse])(
+    stateString,
+  );
 
 export const encodeClientState = (state: ClientSimulationRequest) =>
-  leftToRightCompose<string, ClientSimulationRequest>([
-    JSON.stringify,
-    btoa,
-    encodeURIComponent,
-  ])(state);
+  leftToRightCompose<string, ClientSimulationRequest>([JSON.stringify, btoa])(
+    state,
+  );

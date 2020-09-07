@@ -135,7 +135,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.05,
+        step: 0.01,
         key: 'sensitivity',
       },
       {
@@ -143,7 +143,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.05,
+        step: 0.01,
         key: 'specificity',
       },
       {
@@ -156,7 +156,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.05,
+        step: 0.01,
         validation: {
           type: 'equals',
           value: 1,
@@ -173,7 +173,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.05,
+        step: 0.01,
         validation: {
           type: 'equals',
           value: 1,
@@ -190,7 +190,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.05,
+        step: 0.01,
         validation: {
           type: 'equals',
           value: 1,
