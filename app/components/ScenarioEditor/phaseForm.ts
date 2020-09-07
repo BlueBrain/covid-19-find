@@ -152,11 +152,6 @@ export default [
         key: 'testSymptomaticOnly',
       },
       {
-        label: 'Confirmatory test for positive cases',
-        type: INPUT_TYPES.boolean,
-        key: 'confirmationTests',
-      },
-      {
         label: 'Proportion of tests for Health care staff',
         type: INPUT_TYPES.number,
         min: 0,
