@@ -30,64 +30,86 @@ scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 # The parameter values in this test code are fictitious
 # scenario 0
-scenario_params.append({
-    'symptomatic_only':['True','True','True','True','True','True'], \
-    'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
-    'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
-    'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
-    'severity':[0.,0.7,0.9,0.87,0.65],\
-    'trig_values':[1,40,55,75,85],\
-    'trig_def_type':['date','date','date','date','date','date'],\
+# =============================================================================
+# scenario_params.append({
+#     'symptomatic_only':['True','True','True','True','True','True'], \
+#     'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
+#     'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
+#     'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
+#     'severity':[0.3, 0.9, 0.8, 0.4, 0.0],\
+#     'trig_values':[1,44,74,88,199],\
+#     'trig_def_type':['date','date','date','date','date','date'],\
+#     'trig_op_type':['=','=','=','=','='],\
+#     'num_tests_mitigation':[0,0,0,0,0],\
+#     'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
+#     'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
+#     'specificity':[0.95,0.95,0.95,0.95,0.95],\
+#     'num_tests_care':[0,0,0,0,0],\
+#     'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
+#     'prop_contacts_traced':[0,0,0.25,0.25,0.25,0.25],\
+#     'test_multipliers':[0,1,2,3],
+#     'imported_infections_per_day':[0,0,20,20,20],
+#     'requireddxtests':[0,1,2,2,2]})
+# =============================================================================
+# This now represents current phase + next phase - params for other phases are inferred by optimization program
+scenario_params.append({   
+'symptomatic_only':['True','True'], \
+    'prop_hospital': [0.3, 0.3],\
+    'prop_other_hc':[0.3,0.3],\
+    'prop_rop':[0.4,0.4],\
+    'severity':[0.4, 0.0],\
+    'trig_values':['2020-6-30','2020-9-30'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[10,10,10,7000,15000],\
-    'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95,0.95,0.95],\
-    'num_tests_care':[0,0,0,0,0],\
-    'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0,0,1.0,1.0,1.0,1.0],\
+    'num_tests_mitigation':[0,0],\
+    'type_test_mitigation':['PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.95,0.95],\
+    'num_tests_care':[0,0],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25],\
     'test_multipliers':[0,1,2,3],
-    'imported_infections_per_day':[0,0,20,20,20],
+    'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
-# scenario 1
+
 scenario_params.append({
-    'symptomatic_only':['True','True','True','True','True','True'], \
-    'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
-    'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
-    'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
-    'severity':[0.1,0.8,0.6,0.4,0.8],\
-    'trig_values':[1,22,90,150,200],\
-    'trig_def_type':['date','date','date','date','date','date'],\
+   'symptomatic_only':['True','True'], \
+    'prop_hospital': [0.3, 0.3],\
+    'prop_other_hc':[0.3,0.3],\
+    'prop_rop':[0.4,0.4],\
+    'severity':[0.4, 0.0],\
+    'trig_values':['2020-6-30','2020-9-30'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[0,0,0,0,0],\
-    'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95,0.95,0.95],\
-    'num_tests_care':[0,0,0,0,0],\
-    'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0,0,1.0,1.0,1.0,1.0],\
+    'num_tests_mitigation':[0,0],\
+    'type_test_mitigation':['PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.95,0.95],\
+    'num_tests_care':[0,0],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25],\
     'test_multipliers':[0,1,2,3],
-    'imported_infections_per_day':[0,0,20,20,20],
+    'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
 #scenario 2
 scenario_params.append({
-     'symptomatic_only':['True','True','True','True','True','True'], \
-    'prop_hospital': [0.3, 0.3,0.3,0.3,0.3],\
-    'prop_other_hc':[0.3,0.3,0.3,0.3,0.3],\
-    'prop_rop':[0.4,0.4,0.4,0.4,0.4],\
-    'severity':[0.1,0.8,0.6,0.4,0.8],\
-    'trig_values':[1,22,90,150,200],\
-    'trig_def_type':['date','date','date','date','date','date'],\
+    'symptomatic_only':['True','True'], \
+    'prop_hospital': [0.3, 0.3],\
+    'prop_other_hc':[0.3,0.3],\
+    'prop_rop':[0.4,0.4],\
+    'severity':[0.4, 0.0],\
+    'trig_values':['2020-6-30','2020-9-30'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[0,0,0,0,0],\
-    'type_test_mitigation':['PCR','PCR','PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95,0.95,0.95],\
-    'num_tests_care':[0,0,0,0,0],\
-    'type_tests_care':['PCR','PCR','PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0,0,1.0,1.0,1.0,1.0],\
+    'num_tests_mitigation':[0,0],\
+    'type_test_mitigation':['PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.95,0.95],\
+    'num_tests_care':[0,0],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25],\
     'test_multipliers':[0,1,2,3],
-    'imported_infections_per_day':[0,0,20,20,20],
+    'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
 #print('scenario params=',scenario_params)
 
