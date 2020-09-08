@@ -2,6 +2,7 @@ from .simulation.covidlib import run_simulation, get_system_params, cl_path_pref
 import math
 import pandas as pd
 import os
+from datetime import date
 
 
 class Simulator:
@@ -71,7 +72,6 @@ class Simulator:
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(parameters["countryCode"])
-        print(country_df.iloc[55])
         result = run_simulation(country_df, self.get_fixed_parameters(parameters), scenarios=scenarios)
 
         scenario_data = []
@@ -147,13 +147,14 @@ class Simulator:
     def __reverse_map_scenario(scenario_index):
         covid_libscenario = get_system_params(
             os.path.join(cl_path_prefix, "SCENARIO {}_params.csv".format(scenario_index)))
-        num_phases = len(covid_libscenario["num_tests_mitigation"])
+        # TODO we have only one phase for now
+        num_phases = 1
         phases = []
         for i in range(0, num_phases):
             phases.append(
                 {
                     "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"][i]),
-                    "trigger": covid_libscenario["trig_values"][i],
+                    "trigger": date.today().isoformat(),
                     "triggerType": covid_libscenario["trig_def_type"][i],
                     "triggerCondition": covid_libscenario["trig_op_type"][i],
                     "severity": float(covid_libscenario["severity"][i]),
