@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Line, Bar, Bubble } from 'react-chartjs-2';
+import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { ClientScenarioData, SimulationResults } from '../../types/simulation';
@@ -403,9 +405,37 @@ const SimulationResults: React.FC<{
                       <div className="chart" key={`chart-${graph.title}`}>
                         <h3 className="title">{graph.title}</h3>
                         <Line
+                          plugins={[ChartAnnotation]}
                           width={null}
                           height={null}
                           options={{
+                            annotation: {
+                              annotations: [
+                                // Add a vertical line
+                                // that represents today's date
+                                // so that the data that represents the future
+                                // and thus conjecture
+                                // is more obvious
+                                {
+                                  type: 'line',
+                                  mode: 'vertical',
+                                  scaleID: 'x-axis-0',
+                                  value: selectedScenario.data.total.findIndex(
+                                    entry =>
+                                      entry.date ===
+                                      moment(Date.now()).format('YYYY-MM-DD'),
+                                  ),
+                                  borderColor: colors.aubergine,
+
+                                  borderWidth: 2,
+                                  label: {
+                                    enabled: true,
+                                    content: 'Today',
+                                    backgroundColor: colors.blueGray,
+                                  },
+                                },
+                              ],
+                            },
                             tooltips: {
                               callbacks: {
                                 label: (tooltipItem, data) => {

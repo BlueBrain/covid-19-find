@@ -50,6 +50,7 @@
     "@types/react-select": "^3.0.11",
     "analytics": "^0.3.5",
     "chart.js": "^2.9.3",
+    "chartjs-plugin-annotation": "^0.5.7",
     "color": "^3.1.2",
     "compressed-json": "^1.0.15",
     "csvtojson": "^2.0.10",
