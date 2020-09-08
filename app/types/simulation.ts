@@ -59,6 +59,13 @@ export type SimulationRequest = CountryData & {
 
 export type SimulationResults = {
   scenarios: ScenarioResult[];
+  testingImpact: TestingImpact[];
+};
+
+export type TestingImpact = {
+  tests: number;
+  livesSaved: number;
+  rEff: number;
 };
 
 export type ScenarioResult = {

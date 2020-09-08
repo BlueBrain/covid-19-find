@@ -2,17 +2,15 @@ import * as React from 'react';
 import { Line } from 'react-chartjs-2';
 import Color from 'color';
 
-import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
+import { TestingImpact } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import colors from '../../../colors';
 
-const Prevalence: React.FC<{
-  scenariosResults: ScenarioResult[];
-  selectedScenarioIndex: number;
-  clientScenariosInput: ClientScenarioData[];
-}> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
-  const title = 'Prevalence';
-  const color = colors.aubergine;
+const RNaughtAtEnd: React.FC<{
+  testingImpact: TestingImpact[];
+}> = ({ testingImpact }) => {
+  const title = 'r0 at end of period';
+  const color = colors.turqouise;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
@@ -30,6 +28,9 @@ const Prevalence: React.FC<{
         width={null}
         height={null}
         options={{
+          legend: {
+            display: false,
+          },
           tooltips: {
             callbacks: {
               label: (tooltipItem, data) => {
@@ -37,7 +38,7 @@ const Prevalence: React.FC<{
                   data.datasets[tooltipItem.datasetIndex].label || '';
                 return `${label}: ${tooltipItem.yLabel?.toLocaleString(
                   undefined,
-                  { maximumFractionDigits: 8 },
+                  { maximumFractionDigits: 0 },
                 )}`;
               },
             },
@@ -48,7 +49,7 @@ const Prevalence: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'Prevalence (per day)',
+                  labelString: 'r0',
                 },
                 gridLines: {
                   color: '#00000005',
@@ -57,7 +58,7 @@ const Prevalence: React.FC<{
                   beginAtZero: true,
                   callback: function(value, index, values) {
                     return value?.toLocaleString(undefined, {
-                      maximumFractionDigits: 8,
+                      maximumFractionDigits: 0,
                     });
                   },
                 },
@@ -67,7 +68,7 @@ const Prevalence: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'Date',
+                  labelString: 'Increase in Testing',
                 },
                 gridLines: {
                   color: '#00000005',
@@ -85,36 +86,17 @@ const Prevalence: React.FC<{
           },
         }}
         data={{
-          datasets: scenariosResults.map((scenario, index) => {
-            const selected = selectedScenarioIndex === index;
-            return {
-              label: clientScenariosInput[index].name,
-              data: scenario.data.total.map(entry => entry.prevalence),
-              borderColor: [
-                selected
-                  ? color
-                  : Color(color)
-                      .alpha(0.2)
-                      .toString(),
-              ],
-              backgroundColor: [
-                selected
-                  ? Color(color)
-                      .alpha(0.2)
-                      .toString()
-                  : Color(color)
-                      .alpha(0)
-                      .toString(),
-              ],
-            };
-          }),
-          labels: scenariosResults[selectedScenarioIndex].data.total.map(
-            entry => entry.date,
-          ),
+          labels: testingImpact.map((impact, index) => `${index + 1}x`),
+          datasets: [
+            {
+              label: 'r0 at end of period',
+              data: testingImpact.map(impact => impact.rEff || 0),
+            },
+          ],
         }}
       />
     </div>
   );
 };
 
-export default Prevalence;
+export default RNaughtAtEnd;

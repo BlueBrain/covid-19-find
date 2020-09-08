@@ -26,7 +26,7 @@ const fixScenario = (scenario: Scenario, index: number) => ({
     index === 0
       ? 'Counterfactual: No tests and no intervention'
       : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
-  phases: takeRight(scenario.phases, 2).map(fixPhases),
+  phases: scenario.phases.map(fixPhases),
 });
 
 export default class API {
@@ -102,7 +102,7 @@ export default class API {
       },
     });
 
-    const simulationResults = await response.json();
-    return simulationResults as SimulationResults;
+    const simulationResults = (await response.json()) as SimulationResults;
+    return simulationResults;
   }
 }

@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { Line, Bar, Bubble } from 'react-chartjs-2';
-import './simulation-results.less';
-import colors from '../../colors';
 import Color from 'color';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { ClientScenarioData, SimulationResults } from '../../types/simulation';
 import NumberOfTestsPerDay from './Graphs/NumberOfTestsPerDay';
 import RNaught from './Graphs/RNaught';
 import Prevalence from './Graphs/Prevalence';
+import LivesSaved from './Graphs/LivesSaved';
+import RNaughtAtEnd from './Graphs/RNaughtAtEnd';
+import colors from '../../colors';
 
-export function toLetters(num: number): string {
-  const mod = num % 26;
-  let pow = (num / 26) | 0;
-  const out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
-  return pow ? toLetters(pow) + out : out;
-}
+import './simulation-results.less';
 
 const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
 
@@ -94,7 +91,7 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const datasets = scenariosResults.map((entry, scenarioIndex) => {
+  const datasets = Array.from(scenariosResults).map((entry, scenarioIndex) => {
     return {
       label: clientScenariosInput[scenarioIndex].name,
       data: entry.data.total.reduce((memo, entry, timeseriesIndex) => {
@@ -103,18 +100,11 @@ const SimulationResults: React.FC<{
           ...(memo[key] || {}),
         };
         graphs.forEach(graph => {
-          // if (
-          //   graph.key === 'totalInfected' &&
-          //   graph.title.includes('hospital')
-          // ) {
-          //   // dont't add up things just for the hospital compartment
-          //   return;
-          // }
+          // TODO: Accumulate values here, or just show the raw values
           day[graph.key] =
             scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
               graph.key
             ];
-          // (Number(day[graph.key]) || 0) + Number(entry[graph.key]);
         });
         memo[key] = day;
         return memo;
@@ -562,6 +552,10 @@ const SimulationResults: React.FC<{
                     clientScenariosInput={clientScenariosInput}
                     scenariosResults={scenariosResults}
                     selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                  <LivesSaved testingImpact={simulationResults.testingImpact} />
+                  <RNaughtAtEnd
+                    testingImpact={simulationResults.testingImpact}
                   />
                 </div>
                 <div className="disclaimer">
