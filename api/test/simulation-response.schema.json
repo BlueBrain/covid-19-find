@@ -2,13 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "FIND simulator HTTP response",
   "required": [
-    "scenarios"
+    "scenarios",
+    "testingImpact"
   ],
   "type": "object",
   "definitions": {
     "simulationData": {
       "type": "array",
-      "minItems": 180,
       "items": {
         "type": "object",
         "required": [
@@ -161,6 +161,28 @@
           }
         }
       }
+    },
+    "testsData": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tests",
+          "livesSaved",
+          "rEff"
+        ],
+        "properties": {
+          "tests": {
+            "type": "integer"
+          },
+          "livesSaved": {
+            "type": "integer"
+          },
+          "rEff": {
+            "type": "number"
+          }
+        }
+      }
     }
   },
   "properties": {
@@ -218,6 +240,9 @@
           }
         }
       }
+    },
+    "testingImpact": {
+      "$ref": "#/definitions/testsData"
     }
   }
 }

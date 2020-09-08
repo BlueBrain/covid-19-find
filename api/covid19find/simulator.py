@@ -69,6 +69,19 @@ class Simulator:
     def __get_array_for_key(scenarios, key, func=lambda x: x):
         return list(map(lambda scenario: func(scenario[key]), scenarios))
 
+    @staticmethod
+    def __tests_dataframe_row_to_response(index_row):
+        row = index_row[1]
+        return {
+            "tests": row["tests"],
+            "livesSaved": row["livessaved"],
+            "rEff": row["reff"]
+        }
+
+    @staticmethod
+    def __tests_dataframe_to_response(test_df):
+        return list(map(Simulator.__tests_dataframe_row_to_response, test_df.iterrows()))
+
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(parameters["countryCode"])
@@ -97,7 +110,7 @@ class Simulator:
                     }
                 }
             )
-        return {"scenarios": scenario_data}
+        return {"scenarios": scenario_data, "testingImpact": self.__tests_dataframe_to_response(result[1])}
 
     @staticmethod
     def __dataframe_to_response(df):
