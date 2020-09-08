@@ -73,9 +73,9 @@ class Simulator:
     def __tests_dataframe_row_to_response(index_row):
         row = index_row[1]
         return {
-            "tests": row["tests"],
-            "livesSaved": row["livessaved"],
-            "rEff": row["reff"]
+            "tests": None if math.isnan(row["tests"]) else row["tests"],
+            "livesSaved": None if math.isnan(row["livessaved"]) else row["livessaved"],
+            "rEff": None if math.isnan(row["reff"]) else row["reff"]
         }
 
     @staticmethod
