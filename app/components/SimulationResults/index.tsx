@@ -553,6 +553,9 @@ const SimulationResults: React.FC<{
                     scenariosResults={scenariosResults}
                     selectedScenarioIndex={selectedScenarioIndex}
                   />
+                </div>
+                <hr />
+                <div className="charts">
                   <LivesSaved testingImpact={simulationResults.testingImpact} />
                   <RNaughtAtEnd
                     testingImpact={simulationResults.testingImpact}
