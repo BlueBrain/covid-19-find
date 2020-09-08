@@ -173,13 +173,22 @@
         ],
         "properties": {
           "tests": {
-            "type": "integer"
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "livesSaved": {
-            "type": "integer"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "rEff": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           }
         }
       }
