@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { NumberInputProp } from './phaseForm';
 
+import './phase-input.less';
+
 const PhaseNumberInput: React.FC<{
   inputProps: NumberInputProp;
   onChange: (number) => void;
@@ -16,6 +18,7 @@ const PhaseNumberInput: React.FC<{
   };
   return (
     <input
+      className="phase number"
       min={inputProps.min}
       max={inputProps.max}
       step={inputProps.step}

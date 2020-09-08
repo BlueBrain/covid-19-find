@@ -3,12 +3,18 @@ import * as React from 'react';
 import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import { ClientSimulationRequest } from './types/simulation';
+import { ClientSimulationRequest, Scenario } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
-import useQueryString from './hooks/useQuerySring';
 import SaveLoadButtons from './components/SaveLoad';
+import useAPIContext from './hooks/useAPI';
+import useQueryString from './hooks/useQuerySring';
+import { decodeClientState, encodeClientState } from './libs/stateLoader';
 
 const App: React.FC = () => {
+  const api = useAPIContext();
+  const [defaultScenarios, setDefaultScenarios] = React.useState(
+    DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
+  );
   const [{ state }, setScenarioRequestData] = useQueryString<{
     state: ClientSimulationRequest;
   }>(
@@ -18,22 +24,25 @@ const App: React.FC = () => {
       },
     },
     {
-      // nested values edgecase
-      // to prevent [object Object] in url
       state: {
-        parse: entry => JSON.parse(atob(entry)),
-        stringify: entry => btoa(JSON.stringify(entry)),
+        parse: decodeClientState,
+        stringify: encodeClientState,
       },
     },
   );
 
   React.useEffect(() => {
-    setScenarioRequestData({
-      state: {
-        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
-        ...state,
-      },
-    });
+    if (state.scenarios.length) {
+      api.scenarios().then(({ scenarios }: { scenarios: Scenario[] }) => {
+        // @ts-ignore
+        setDefaultScenarios(scenarios);
+
+        setScenarioRequestData({
+          // @ts-ignore
+          state: { scenarios },
+        });
+      });
+    }
   }, []);
 
   const [
@@ -79,10 +88,10 @@ const App: React.FC = () => {
         }}
         values={state}
         onSubmit={values => {
-          // Reset all values if country code is changed
           if (values.countryCode !== state.countryCode) {
             handleSubmit({
               ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+              scenarios: defaultScenarios,
               countryCode: values.countryCode,
             });
             // mark forms as dirty or not ready

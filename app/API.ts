@@ -1,6 +1,33 @@
+import { takeRight } from 'lodash';
+
 import { apiBase } from './config';
 import { CountryResponse } from './types/country';
-import { SimulationRequest, SimulationResults } from './types/simulation';
+import {
+  SimulationRequest,
+  SimulationResults,
+  Scenario,
+  Phase,
+  ClientSimulationRequest,
+} from './types/simulation';
+import { roundAccurately } from './libs/numbers';
+import { toLetters } from './libs/strings';
+
+const fixPhases = (phase: Phase, index: number) => ({
+  ...phase,
+  name: index === 0 ? 'Current Phase' : 'Next Phase',
+  restOfPopulationTestProportion: roundAccurately(
+    phase.restOfPopulationTestProportion,
+    2,
+  ),
+});
+
+const fixScenario = (scenario: Scenario, index: number) => ({
+  name:
+    index === 0
+      ? 'Counterfactual: No tests and no intervention'
+      : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
+  phases: takeRight(scenario.phases, 2).map(fixPhases),
+});
 
 export default class API {
   base: string;
@@ -12,11 +39,16 @@ export default class API {
     return fetch(`${this.base}/countries`).then(response => response.json());
   }
 
-  // TODO: Default scenarios are not working for now
-  // I'm using a client-side version
-  // scenarios() {
-  //   return fetch(`${this.base}/scenarios`).then(response => response.json());
-  // }
+  scenarios() {
+    return (
+      fetch(`${this.base}/scenarios`)
+        .then(response => response.json())
+        // TODO: remove this when default scenarios are created dynamically
+        .then((data: { scenarios: Scenario[] }) => ({
+          scenarios: data.scenarios.map(fixScenario),
+        }))
+    );
+  }
 
   country(countryCode: string): Promise<CountryResponse> {
     return fetch(`${this.base}/countries/${countryCode}`)
@@ -42,10 +74,15 @@ export default class API {
   }
 
   async simulation(
-    simulationParams: SimulationRequest,
+    simulationParams: ClientSimulationRequest,
   ): Promise<SimulationResults> {
     const formattedParams = {
       ...simulationParams,
+      scenarios: simulationParams.scenarios.map(scenario => ({
+        phases: scenario.phases.map(({ name, ...rest }) => ({
+          ...rest,
+        })),
+      })),
       urbanPopulationProportion:
         simulationParams.urbanPopulationProportion / 100,
       belowPovertyLineProportion:

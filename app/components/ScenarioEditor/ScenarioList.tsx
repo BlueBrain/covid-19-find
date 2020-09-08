@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { IoIosClose, IoIosAdd } from 'react-icons/io';
 
-import { toLetters } from '../SimulationResults';
 import ScenarioEditor from './ScenarioEditor';
-import { Scenario, ClientScenarioData } from '../../types/simulation';
+import { ClientScenarioData } from '../../types/simulation';
+import { toLetters } from '../../libs/strings';
 
 import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';

@@ -70,15 +70,18 @@ const ScenarioEditor: React.FC<{
           );
         })}
       </div>
-      {phaseForm.map(formSection => {
+      {phaseForm.map((formSection, formSectionIndex) => {
         return (
-          <div key={formSection.title}>
+          <div key={`${formSection.title}-${formSectionIndex}`}>
             <hr />
             <h3>{formSection.title}</h3>
             <div className="phase-section">
-              {formSection.input.map(input => {
+              {formSection.input.map((input, formSectionInputIndex) => {
                 return (
-                  <div className="columns" key={input.label}>
+                  <div
+                    className="columns"
+                    key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
+                  >
                     <div className="col" style={{ width: 200 }}>
                       <label>{input.label}</label>
                     </div>
@@ -87,7 +90,7 @@ const ScenarioEditor: React.FC<{
                         <div
                           className="col"
                           style={{ width: 200 }}
-                          key={`${phase.name}-${input.label}`}
+                          key={`${phase.name}-${input.label}-${index}`}
                         >
                           <PhaseInput
                             inputProps={input}
