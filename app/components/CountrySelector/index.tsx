@@ -262,7 +262,7 @@ const CountrySelector: React.FC<{
                 step="0.01"
                 type="number"
               />
-              <label>Population aged > 64 years (%)</label>
+              <label>Population aged {'>'} 64 years (%)</label>
               <input
                 {...over64Proportion}
                 required

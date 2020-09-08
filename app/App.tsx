@@ -7,19 +7,29 @@ import { ClientSimulationRequest, Scenario } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import SaveLoadButtons from './components/SaveLoad';
 import useAPIContext from './hooks/useAPI';
+import useQueryString from './hooks/useQuerySring';
+import { decodeClientState, encodeClientState } from './libs/stateLoader';
 
 const App: React.FC = () => {
   const api = useAPIContext();
   const [defaultScenarios, setDefaultScenarios] = React.useState(
     DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
   );
-  const [{ state }, setScenarioRequestData] = React.useState<{
+  const [{ state }, setScenarioRequestData] = useQueryString<{
     state: ClientSimulationRequest;
-  }>({
-    state: {
-      ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+  }>(
+    {
+      state: {
+        ...DEFAULT_SIMULATION_REQUEST_PARAMS,
+      },
     },
-  });
+    {
+      state: {
+        parse: decodeClientState,
+        stringify: encodeClientState,
+      },
+    },
+  );
 
   React.useEffect(() => {
     if (state.scenarios.length) {

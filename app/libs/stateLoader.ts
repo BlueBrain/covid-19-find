@@ -1,6 +1,7 @@
 import { ClientSimulationRequest } from '../types/simulation';
 import { download, readSingleFile } from './download';
 import { leftToRightCompose } from './func';
+import { compress, decompress } from 'compressed-json';
 
 export const save = (state: ClientSimulationRequest) => {
   const fileName = 'FIND-Covid-Scenarios.json';
@@ -15,11 +16,13 @@ export const load = async (e: Event) => {
 };
 
 export const decodeClientState = (stateString: string) =>
-  leftToRightCompose<ClientSimulationRequest, string>([atob, JSON.parse])(
-    stateString,
-  );
+  leftToRightCompose<ClientSimulationRequest, string>([
+    atob,
+    decompress.fromString,
+  ])(stateString);
 
 export const encodeClientState = (state: ClientSimulationRequest) =>
-  leftToRightCompose<string, ClientSimulationRequest>([JSON.stringify, btoa])(
-    state,
-  );
+  leftToRightCompose<string, ClientSimulationRequest>([
+    compress.toString,
+    btoa,
+  ])(state);
