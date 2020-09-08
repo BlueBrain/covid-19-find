@@ -81,7 +81,6 @@
                 "proportionOfContactsTraced",
                 "numTestsMitigation",
                 "typeTestsMitigation",
-                "confirmationTests",
                 "specificity",
                 "sensitivity",
                 "testSymptomaticOnly",
@@ -133,9 +132,6 @@
                     "PCR",
                     "RDT"
                   ]
-                },
-                "confirmationTests": {
-                  "type": "boolean"
                 },
                 "specificity": {
                   "type": "number",
