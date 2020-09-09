@@ -10,3 +10,13 @@ export const replaceAtIndexWithoutMutation: <T>(
     ],
     [],
   );
+
+export const removeAtIndexWithoutMutation: <T>(
+  orginalArray: T[],
+  indexToRemove: number,
+) => T[] = (orginalArray, indexToRemove) =>
+  orginalArray.reduce(
+    (memo, element, index) =>
+      index === indexToRemove ? memo : [...memo, element],
+    [],
+  );

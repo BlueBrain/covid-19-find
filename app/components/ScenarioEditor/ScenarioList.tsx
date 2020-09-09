@@ -50,7 +50,7 @@ const ScenarioList: React.FC<{
                     ? 'Counterfactual: No tests and no intervention'
                     : `Scenario ${toLetters(index).toLocaleUpperCase()}`}{' '}
                   {scenarios.length > 1 && index !== 0 && (
-                    <span onClick={removeScenario(index)}>
+                    <span className="clickable" onClick={removeScenario(index)}>
                       <IoIosClose />
                     </span>
                   )}
