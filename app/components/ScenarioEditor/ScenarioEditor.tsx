@@ -96,12 +96,13 @@ const ScenarioEditor: React.FC<{
         </div>
       </div>
       <div className="columns">
-        <div className="col" style={{ width: 200 }}>
+        <div className="col">
           <h2>Phases</h2>
         </div>
+
         {phases.map((phase, index) => {
           return (
-            <div className="col" style={{ width: 200 }} key={phase.name}>
+            <div className="col" key={phase.name}>
               <h2 style={{ whiteSpace: 'nowrap' }}>
                 {phase.name}
                 <span className="clickable" onClick={handleRemovePhase(index)}>
@@ -112,43 +113,50 @@ const ScenarioEditor: React.FC<{
           );
         })}
       </div>
-      {phaseForm.map((formSection, formSectionIndex) => {
-        return (
-          <div key={`${formSection.title}-${formSectionIndex}`}>
-            <hr />
-            <h3>{formSection.title}</h3>
-            <div className="phase-section">
-              {formSection.input.map((input, formSectionInputIndex) => {
-                return (
-                  <div
-                    className="columns"
-                    key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
-                  >
-                    <div className="col" style={{ width: 200 }}>
-                      <label>{input.label}</label>
+      {phases.length >= 1 ? (
+        phaseForm.map((formSection, formSectionIndex) => {
+          return (
+            <div key={`${formSection.title}-${formSectionIndex}`}>
+              <hr />
+              <h3>{formSection.title}</h3>
+              <div className="phase-section">
+                {formSection.input.map((input, formSectionInputIndex) => {
+                  return (
+                    <div
+                      className="columns"
+                      key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
+                    >
+                      <div className="col">
+                        <label>{input.label}</label>
+                      </div>
+                      {phases.map((phase, index) => {
+                        return (
+                          <div
+                            className="col"
+                            key={`${phase.name}-${input.label}-${index}`}
+                          >
+                            <PhaseInput
+                              inputProps={input}
+                              onChange={handlePhaseChange(input, index)}
+                              value={phase[input.key]}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
-                    {phases.map((phase, index) => {
-                      return (
-                        <div
-                          className="col"
-                          style={{ width: 200 }}
-                          key={`${phase.name}-${input.label}-${index}`}
-                        >
-                          <PhaseInput
-                            inputProps={input}
-                            onChange={handlePhaseChange(input, index)}
-                            value={phase[input.key]}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <div>
+          <p style={{ padding: '4em', textAlign: 'center', color: 'white' }}>
+            No phases in this scenario
+          </p>
+        </div>
+      )}
     </div>
   );
 };
