@@ -1,12 +1,19 @@
 import * as React from 'react';
+import { IoIosClose } from 'react-icons/io';
 
 import { useTextInput } from '../../hooks/useFormInput';
 import { ClientScenarioData, ClientPhase } from '../../types/simulation';
 import PhaseInput from './PhaseInput';
 import phaseForm, { AnyInputProp } from './phaseForm';
-import { replaceAtIndexWithoutMutation } from '../../libs/arrays';
+import {
+  replaceAtIndexWithoutMutation,
+  removeAtIndexWithoutMutation,
+} from '../../libs/arrays';
 
 import './scenario-editor.less';
+import { DEFAULT_SCENARIO_LIST } from '../../defaults';
+
+const MAX_PHASE_COUNT = 3;
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
@@ -43,70 +50,113 @@ const ScenarioEditor: React.FC<{
       });
   };
 
+  const handleAddPhase = () => {
+    onChange &&
+      onChange({
+        name: name.value,
+        phases: [
+          ...phases,
+          {
+            // TODO: DEFINE default phase?
+            ...DEFAULT_SCENARIO_LIST[0].phases[0],
+            name: 'New Phase',
+          },
+        ],
+      });
+  };
+
+  const handleRemovePhase = (index: number) => () => {
+    onChange &&
+      onChange({
+        name: name.value,
+        phases: removeAtIndexWithoutMutation(phases, index),
+      });
+  };
+
   return (
     <div className="scenario" id={scenarioFormId}>
-      <div className="form-column">
-        <label>
-          <br />
-          Scenario Name
-        </label>
-        <input
-          {...name}
-          type="text"
-          required
-          disabled={disabled}
-          onBlur={handleBlur}
-        />
+      <div className="form-column columns">
+        <div>
+          <label>
+            <br />
+            Scenario Name
+          </label>
+          <input
+            {...name}
+            type="text"
+            required
+            disabled={disabled}
+            onBlur={handleBlur}
+          />
+        </div>
+        <div>
+          {phases.length < MAX_PHASE_COUNT && (
+            <button onClick={handleAddPhase}>Add Phase</button>
+          )}
+        </div>
       </div>
       <div className="columns">
-        <div className="col" style={{ width: 200 }}>
+        <div className="col">
           <h2>Phases</h2>
         </div>
-        {phases.map(phase => {
+
+        {phases.map((phase, index) => {
           return (
-            <div className="col" style={{ width: 200 }} key={phase.name}>
-              <h2>{phase.name}</h2>
+            <div className="col" key={phase.name}>
+              <h2 style={{ whiteSpace: 'nowrap' }}>
+                {phase.name}
+                <span className="clickable" onClick={handleRemovePhase(index)}>
+                  <IoIosClose />
+                </span>
+              </h2>
             </div>
           );
         })}
       </div>
-      {phaseForm.map((formSection, formSectionIndex) => {
-        return (
-          <div key={`${formSection.title}-${formSectionIndex}`}>
-            <hr />
-            <h3>{formSection.title}</h3>
-            <div className="phase-section">
-              {formSection.input.map((input, formSectionInputIndex) => {
-                return (
-                  <div
-                    className="columns"
-                    key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
-                  >
-                    <div className="col" style={{ width: 200 }}>
-                      <label>{input.label}</label>
+      {phases.length >= 1 ? (
+        phaseForm.map((formSection, formSectionIndex) => {
+          return (
+            <div key={`${formSection.title}-${formSectionIndex}`}>
+              <hr />
+              <h3>{formSection.title}</h3>
+              <div className="phase-section">
+                {formSection.input.map((input, formSectionInputIndex) => {
+                  return (
+                    <div
+                      className="columns"
+                      key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
+                    >
+                      <div className="col">
+                        <label>{input.label}</label>
+                      </div>
+                      {phases.map((phase, index) => {
+                        return (
+                          <div
+                            className="col"
+                            key={`${phase.name}-${input.label}-${index}`}
+                          >
+                            <PhaseInput
+                              inputProps={input}
+                              onChange={handlePhaseChange(input, index)}
+                              value={phase[input.key]}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
-                    {phases.map((phase, index) => {
-                      return (
-                        <div
-                          className="col"
-                          style={{ width: 200 }}
-                          key={`${phase.name}-${input.label}-${index}`}
-                        >
-                          <PhaseInput
-                            inputProps={input}
-                            onChange={handlePhaseChange(input, index)}
-                            value={phase[input.key]}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <div>
+          <p style={{ padding: '4em', textAlign: 'center', color: 'white' }}>
+            No phases in this scenario
+          </p>
+        </div>
+      )}
     </div>
   );
 };

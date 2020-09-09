@@ -8,6 +8,7 @@ import { toLetters } from '../../libs/strings';
 
 import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';
+import { DEFAULT_SCENARIO_LIST } from '../../defaults';
 
 const MAX_SCENARIOS = 3;
 
@@ -24,22 +25,17 @@ const ScenarioList: React.FC<{
   };
 
   const addScenario = () => {
-    // TODO add a scenario
-    // const newScenarios = [
-    //   ...scenarios,
-    //   {
-    //     name: 'New Scenario',
-    //     description: '',
-    //     testSymptomaticOnly: true,
-    //     hospitalTestProportion: 0,
-    //     otherHighContactPopulationTestProportion: 0,
-    //     restOfPopulationTestProportion: 0,
-    //   },
-    // ];
-    // onSubmit &&
-    //   onSubmit({
-    //     scenarios: newScenarios,
-    //   });
+    const newScenarios = [
+      ...scenarios,
+      {
+        ...DEFAULT_SCENARIO_LIST[0],
+        name: 'New Scenario',
+      },
+    ];
+    onSubmit &&
+      onSubmit({
+        scenarios: newScenarios,
+      });
   };
 
   return (
@@ -54,7 +50,7 @@ const ScenarioList: React.FC<{
                     ? 'Counterfactual: No tests and no intervention'
                     : `Scenario ${toLetters(index).toLocaleUpperCase()}`}{' '}
                   {scenarios.length > 1 && index !== 0 && (
-                    <span onClick={removeScenario(index)}>
+                    <span className="clickable" onClick={removeScenario(index)}>
                       <IoIosClose />
                     </span>
                   )}
