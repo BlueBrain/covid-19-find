@@ -158,7 +158,7 @@ const CovidResults: React.FC<{
                   {
                     scaleLabel: {
                       display: true,
-                      labelString: 'Days',
+                      labelString: 'Date',
                     },
                     gridLines: {
                       color: '#00000005',
@@ -291,7 +291,7 @@ const CovidResults: React.FC<{
                   {
                     scaleLabel: {
                       display: true,
-                      labelString: 'Days',
+                      labelString: 'Date',
                     },
                     gridLines: {
                       color: '#00000005',

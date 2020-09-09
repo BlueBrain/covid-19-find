@@ -38,8 +38,10 @@ const App: React.FC = () => {
         setDefaultScenarios(scenarios);
 
         setScenarioRequestData({
-          // @ts-ignore
-          state: { scenarios },
+          state: {
+            scenarios,
+            ...state,
+          },
         });
       });
     }
