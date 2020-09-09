@@ -9,7 +9,8 @@ import {
 
 const Simulation: React.FC<{
   clientSimulationRequest?: ClientSimulationRequest;
-}> = ({ clientSimulationRequest }) => {
+  ready: boolean;
+}> = ({ clientSimulationRequest, ready }) => {
   const api = useAPI();
   const [{ loading, error, data }, setSimulationData] = React.useState<{
     loading: boolean;
@@ -22,7 +23,7 @@ const Simulation: React.FC<{
   });
 
   React.useEffect(() => {
-    if (!clientSimulationRequest) {
+    if (!clientSimulationRequest || !ready) {
       return;
     }
     setSimulationData({
@@ -50,7 +51,8 @@ const Simulation: React.FC<{
 
   return (
     <SimulationResultsComponent
-      loading={loading}
+      ready={ready}
+      loading={true}
       error={error}
       simulationResults={data}
       clientScenariosInput={clientSimulationRequest.scenarios || []}

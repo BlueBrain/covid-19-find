@@ -121,14 +121,10 @@ const App: React.FC = () => {
         }}
       />
       {/* Panel 3 */}
-      {countrySelectFormReady && testsFormReady && (
-        <Simulation clientSimulationRequest={state} />
-      )}
-      {(!countrySelectFormReady || !testsFormReady) && (
-        <section>
-          <p>Please complete the steps to view simulation results</p>
-        </section>
-      )}
+      <Simulation
+        clientSimulationRequest={state}
+        ready={countrySelectFormReady && testsFormReady}
+      />
       <section>
         <SaveLoadButtons state={state} onLoad={handleLoadState} />
       </section>

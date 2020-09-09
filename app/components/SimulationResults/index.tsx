@@ -13,19 +13,21 @@ import RNaught from './Graphs/RNaught';
 import Prevalence from './Graphs/Prevalence';
 import LivesSaved from './Graphs/LivesSaved';
 import RNaughtAtEnd from './Graphs/RNaughtAtEnd';
+import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 
 import './simulation-results.less';
-import { PDFFromElement } from '../../libs/download';
+import AwaitingInput from './AwaitingInput';
 
 const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
 
 const SimulationResults: React.FC<{
+  ready: boolean;
   loading: boolean;
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-}> = ({ loading, error, simulationResults, clientScenariosInput }) => {
+}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -33,7 +35,7 @@ const SimulationResults: React.FC<{
   };
 
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
-  const open = !!simulationResults;
+  const open = !!simulationResults && ready;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
@@ -125,7 +127,7 @@ const SimulationResults: React.FC<{
 
   return (
     <section className="input" id="simulation-results">
-      {open && (
+      {open ? (
         <>
           <div className="action-box primary">
             <div className="title">
@@ -620,6 +622,14 @@ const SimulationResults: React.FC<{
             )}
           </div>
         </>
+      ) : (
+        <AwaitingInput
+          {...{
+            loading,
+            error,
+            ready,
+          }}
+        />
       )}
     </section>
   );

@@ -55,6 +55,9 @@
     border-right: none;
     padding: 1em;
     text-transform: uppercase;
+    &:focus {
+      outline: none;
+    }
     &:last-of-type {
       border-right: 1px solid white;
     }
@@ -69,6 +72,10 @@
     margin: 0;
     border: none;
     border-bottom: 1px solid white;
+  }
+
+  .react-tabs__tab:focus:after {
+    display: none;
   }
 }
 
