@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Line, Bar, Bubble } from 'react-chartjs-2';
 import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
@@ -13,19 +11,21 @@ import RNaught from './Graphs/RNaught';
 import Prevalence from './Graphs/Prevalence';
 import LivesSaved from './Graphs/LivesSaved';
 import RNaughtAtEnd from './Graphs/RNaughtAtEnd';
+import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
+import AwaitingInput from './AwaitingInput';
 
 import './simulation-results.less';
-import { PDFFromElement } from '../../libs/download';
 
 const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
 
 const SimulationResults: React.FC<{
+  ready: boolean;
   loading: boolean;
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-}> = ({ loading, error, simulationResults, clientScenariosInput }) => {
+}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -33,7 +33,7 @@ const SimulationResults: React.FC<{
   };
 
   const [selectedScenarioIndex, setSelectedScenarioIndex] = React.useState(0);
-  const open = !!simulationResults;
+  const open = !!simulationResults && ready && !error;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
@@ -125,7 +125,7 @@ const SimulationResults: React.FC<{
 
   return (
     <section className="input" id="simulation-results">
-      {open && (
+      {open ? (
         <>
           <div className="action-box primary">
             <div className="title">
@@ -160,11 +160,7 @@ const SimulationResults: React.FC<{
                 </ul>
               )}
             </div>
-            <div className="triangle primary">
-              <div className={`loader ${loading ? 'loading' : ''}`}>
-                <FontAwesomeIcon icon={faSpinner} pulse />
-              </div>
-            </div>
+            <div className="triangle primary"></div>
           </div>
           <div
             className={`results-drop primary ${open ? 'open' : ''}`}
@@ -620,6 +616,14 @@ const SimulationResults: React.FC<{
             )}
           </div>
         </>
+      ) : (
+        <AwaitingInput
+          {...{
+            loading,
+            error,
+            ready,
+          }}
+        />
       )}
     </section>
   );

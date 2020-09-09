@@ -8,7 +8,7 @@ import colors from '../../colors';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import TrendIndicator from '../TrendIndicator';
 
-import './covid-results';
+import './covid-results.less';
 
 const makeSlidingAverage = (
   array: { [key: string]: number | string }[],
