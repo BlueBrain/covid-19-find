@@ -16,6 +16,7 @@ import RNaughtAtEnd from './Graphs/RNaughtAtEnd';
 import colors from '../../colors';
 
 import './simulation-results.less';
+import { PDFFromElement } from '../../libs/download';
 
 const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
 
@@ -25,6 +26,8 @@ const SimulationResults: React.FC<{
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
 }> = ({ loading, error, simulationResults, clientScenariosInput }) => {
+  const PDFRef = React.useRef();
+
   const { scenarios: scenariosResults } = simulationResults || {
     scenarios: [],
   };
@@ -114,6 +117,12 @@ const SimulationResults: React.FC<{
     };
   });
 
+  const handlePDFDownloadClick = () => {
+    if (PDFRef.current) {
+      PDFFromElement(PDFRef.current);
+    }
+  };
+
   return (
     <section className="input" id="simulation-results">
       {open && (
@@ -157,7 +166,10 @@ const SimulationResults: React.FC<{
               </div>
             </div>
           </div>
-          <div className={`results-drop primary ${open ? 'open' : ''}`}>
+          <div
+            className={`results-drop primary ${open ? 'open' : ''}`}
+            ref={PDFRef}
+          >
             {selectedScenario && (
               <>
                 <div className="scenario-description">
@@ -165,6 +177,9 @@ const SimulationResults: React.FC<{
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
+                  <button onClick={handlePDFDownloadClick}>
+                    Download As PDF
+                  </button>
                 </div>
                 <div className="chart">
                   <h3 className="title">Scenarios Summary Graph</h3>

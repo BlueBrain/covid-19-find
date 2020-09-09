@@ -1,3 +1,6 @@
+import { jsPDF } from 'jspdf';
+import domToImage from 'dom-to-image';
+
 export const download = (filename: string, mediaType: string, data: any) => {
   const blob = new Blob([data], { type: mediaType });
   if (window.navigator.msSaveBlob) {
@@ -24,4 +27,17 @@ export const readSingleFile = (e: Event): Promise<string | ArrayBuffer> => {
     reader.onerror = reject;
     reader.readAsText(file);
   });
+};
+
+export const PDFFromElement = (element: HTMLElement) => {
+  const { offsetWidth: w, offsetHeight: h } = element;
+  const doc = new jsPDF('p', 'px', [w, h]);
+  if (doc) {
+    domToImage
+      .toPng(element, { style: { 'background-color': 'white' } })
+      .then(imgData => {
+        doc.addImage(imgData, 'PNG', 0, 0, w, h);
+        doc.save('scenario.pdf');
+      });
+  }
 };
