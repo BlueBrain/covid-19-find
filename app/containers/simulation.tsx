@@ -52,7 +52,7 @@ const Simulation: React.FC<{
   return (
     <SimulationResultsComponent
       ready={ready}
-      loading={true}
+      loading={loading}
       error={error}
       simulationResults={data}
       clientScenariosInput={clientSimulationRequest.scenarios || []}

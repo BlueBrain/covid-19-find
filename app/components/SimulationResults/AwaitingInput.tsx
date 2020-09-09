@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSpinner,
+  faExclamationCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 const AwaitingInput: React.FC<{
   ready: boolean;
@@ -18,11 +21,25 @@ const AwaitingInput: React.FC<{
         </h2>
       </div>
       <div className="container">
-        <p style={{ color: 'white' }}>
-          Please complete the steps to view simulation results
-        </p>
+        {!ready && !error && !loading && (
+          <p style={{ color: 'white' }}>
+            Please complete the steps to view simulation results
+          </p>
+        )}
+        {loading && !error && <p style={{ color: 'white' }}>Loading</p>}
+        {error && (
+          <p style={{ color: 'white' }}>
+            There was a problem while processing the simulation
+          </p>
+        )}
       </div>
       <div className="triangle primary">
+        <div
+          className={`loader ${error ? 'loading' : ''}`}
+          style={{ left: '-17px' }}
+        >
+          <FontAwesomeIcon icon={faExclamationCircle} />
+        </div>
         <div className={`loader ${loading ? 'loading' : ''}`}>
           <FontAwesomeIcon icon={faSpinner} pulse />
         </div>

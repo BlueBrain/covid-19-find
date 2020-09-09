@@ -125,6 +125,7 @@ const App: React.FC = () => {
         clientSimulationRequest={state}
         ready={countrySelectFormReady && testsFormReady}
       />
+      {/* CONTROL PANEL */}
       <section>
         <SaveLoadButtons state={state} onLoad={handleLoadState} />
       </section>
