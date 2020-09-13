@@ -26,12 +26,13 @@ const SCALE_VALUE = 3;
 
 /*
  Scales the value by 10s according to the max digit
+ in order to fit these large numbers as radius 
+ for bubbles on a the client screen in pixels
  if max digit is 200,000,000
  then a value with 1,000,000
  will look like 1
  and 150,000,000
  will look like 150
- not sure if this is a a good idea...
 */
 function scaleValueFromLargestValue(value: number, largestValue: number) {
   const digits = Math.floor(largestValue).toString().length;
@@ -297,10 +298,12 @@ const SimulationResults: React.FC<{
 
                           // this is a grim line of code.
                           // we need to scale deaths down to a viewable scale
-                          data.r = scaleValueFromLargestValue(
-                            data.r,
-                            largestDeathsValue,
-                          );
+                          data.r =
+                            scaleValueFromLargestValue(
+                              data.r,
+                              largestDeathsValue,
+                            ) / 2;
+
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
                             data: [data],
