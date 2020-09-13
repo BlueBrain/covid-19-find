@@ -1,7 +1,10 @@
+import { TRIGGER_TYPE, TRIGGER_CONDITION } from '../../types/simulation';
+
 export enum INPUT_TYPES {
   number = 'number',
   select = 'select',
   boolean = 'boolean',
+  text = 'text',
 }
 
 export type InputProp = {
@@ -59,9 +62,59 @@ export default [
     title: 'Government Intervention',
     input: [
       {
-        label: 'Trigger',
-        type: 'condition',
-        key: 'importedInfectionsPerDay',
+        label: 'Trigger Type',
+        type: INPUT_TYPES.select,
+        key: 'triggerType',
+        options: [
+          {
+            label: TRIGGER_TYPE.DATE,
+            value: TRIGGER_TYPE.DATE,
+          },
+          {
+            label: TRIGGER_TYPE.CASES,
+            value: TRIGGER_TYPE.CASES,
+          },
+          {
+            label: TRIGGER_TYPE.DEATHS,
+            value: TRIGGER_TYPE.DEATHS,
+          },
+          {
+            label: TRIGGER_TYPE.POSITIVES,
+            value: TRIGGER_TYPE.POSITIVES,
+          },
+          {
+            label: TRIGGER_TYPE.INCREASE_CASES,
+            value: TRIGGER_TYPE.INCREASE_CASES,
+          },
+          {
+            label: TRIGGER_TYPE.INCREASE_DEATHS,
+            value: TRIGGER_TYPE.INCREASE_DEATHS,
+          },
+        ],
+      },
+      {
+        label: 'Trigger Condition',
+        type: INPUT_TYPES.select,
+        key: 'triggerCondition',
+        options: [
+          {
+            label: TRIGGER_CONDITION.EQUAL,
+            value: TRIGGER_CONDITION.EQUAL,
+          },
+          {
+            label: TRIGGER_CONDITION.LESS_THAN,
+            value: TRIGGER_CONDITION.LESS_THAN,
+          },
+          {
+            label: TRIGGER_CONDITION.GREATER_OR_EQUAL,
+            value: TRIGGER_CONDITION.GREATER_OR_EQUAL,
+          },
+        ],
+      },
+      {
+        label: 'Trigger Value',
+        type: INPUT_TYPES.text,
+        key: 'trigger',
       },
       {
         label: 'Severity',

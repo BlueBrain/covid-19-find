@@ -1,3 +1,18 @@
+export enum TRIGGER_TYPE {
+  DATE = 'date',
+  DEATHS = 'deaths',
+  CASES = 'cases',
+  INCREASE_DEATHS = 'increase deaths',
+  INCREASE_CASES = 'increase cases',
+  POSITIVES = 'positives',
+}
+
+export enum TRIGGER_CONDITION {
+  EQUAL = '=',
+  LESS_THAN = '<',
+  GREATER_OR_EQUAL = '>=',
+}
+
 export enum TEST_TYPES {
   PCR = 'PCR',
   RDT = 'RDT',
