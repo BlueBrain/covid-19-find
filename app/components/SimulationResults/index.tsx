@@ -3,9 +3,14 @@ import { Line, Bar, Bubble } from 'react-chartjs-2';
 import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
 import moment from 'moment';
+import { maxBy } from 'lodash';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
-import { ClientScenarioData, SimulationResults } from '../../types/simulation';
+import {
+  ClientScenarioData,
+  SimulationResults,
+  ScenarioResult,
+} from '../../types/simulation';
 import NumberOfTestsPerDay from './Graphs/NumberOfTestsPerDay';
 import RNaught from './Graphs/RNaught';
 import Prevalence from './Graphs/Prevalence';
@@ -17,7 +22,25 @@ import AwaitingInput from './AwaitingInput';
 
 import './simulation-results.less';
 
-const DEATH_CLIENT_WIDTH_SCALE_FACTOR = 100;
+const SCALE_VALUE = 3;
+
+/*
+ Scales the value by 10s according to the max digit
+ if max digit is 200,000,000
+ then a value with 1,000,000
+ will look like 1
+ and 150,000,000
+ will look like 150
+ not sure if this is a a good idea...
+*/
+function scaleValueFromLargestValue(value: number, largestValue: number) {
+  const digits = Math.floor(largestValue).toString().length;
+  if (largestValue <= SCALE_VALUE) {
+    return Math.floor(value);
+  }
+  const scalefactor = digits - SCALE_VALUE;
+  return Math.floor(value / Number(`1e${scalefactor}`));
+}
 
 const SimulationResults: React.FC<{
   ready: boolean;
@@ -95,6 +118,13 @@ const SimulationResults: React.FC<{
       color: colors.turqouise,
     },
   ];
+
+  const largestDeathsValue =
+    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
+      return scenario.data.total.reduce((memo, entry) => {
+        return memo + entry.newDeaths;
+      }, 0);
+    })?.totalDeaths || 0;
 
   const datasets = Array.from(scenariosResults).map((entry, scenarioIndex) => {
     return {
@@ -190,10 +220,9 @@ const SimulationResults: React.FC<{
                             const dataset =
                               data.datasets[tooltipItem.datasetIndex];
 
-                            const deaths = (
-                              dataset.data[tooltipItem.index].r *
-                              DEATH_CLIENT_WIDTH_SCALE_FACTOR
-                            ).toLocaleString(undefined, {
+                            const deaths = dataset.data[
+                              tooltipItem.index
+                            ].deaths.toLocaleString(undefined, {
                               maximumFractionDigits: 0,
                             });
                             return `${dataset.label}: ${deaths} deaths`;
@@ -203,6 +232,8 @@ const SimulationResults: React.FC<{
                       scales: {
                         yAxes: [
                           {
+                            suggestedMin: 0,
+                            beginAtZero: true,
                             scaleLabel: {
                               display: true,
                               labelString: 'Total people in Isolation',
@@ -218,6 +249,8 @@ const SimulationResults: React.FC<{
                                   maximumFractionDigits: 0,
                                 });
                               },
+                              beginAtZero: true,
+                              suggestedMax: 100,
                             },
                           },
                         ],
@@ -236,6 +269,7 @@ const SimulationResults: React.FC<{
                                   maximumFractionDigits: 0,
                                 });
                               },
+                              beginAtZero: true,
                               maxRotation: isMobile ? 90 : 0, // angle in degrees
                             },
                           },
@@ -247,20 +281,26 @@ const SimulationResults: React.FC<{
                         (scenario, index) => {
                           const data = scenario.data.total.reduce(
                             (memo, entry) => {
-                              const x = memo.x + entry.totalInfected;
+                              const x = memo.x + entry.newInfected;
                               const y = memo.y + entry.newIsolated;
-                              const r = memo.r + entry.totalDeaths;
+                              const r = memo.r + entry.newDeaths;
+                              const deaths = memo.r + entry.newDeaths;
                               return {
                                 x,
                                 y,
                                 r,
+                                deaths,
                               };
                             },
-                            { x: 0, y: 0, r: 0 },
+                            { x: 0, y: 0, r: 0, deaths: 0 },
                           );
+
                           // this is a grim line of code.
                           // we need to scale deaths down to a viewable scale
-                          data.r = data.r / DEATH_CLIENT_WIDTH_SCALE_FACTOR;
+                          data.r = scaleValueFromLargestValue(
+                            data.r,
+                            largestDeathsValue,
+                          );
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
                             data: [data],
