@@ -110,6 +110,7 @@ const App: React.FC = () => {
       />
       {/* Panel 2 */}
       <ScenarioEditorPanel
+        defaultScenarios={defaultScenarios}
         scenarios={state.scenarios}
         onSubmit={handleSubmit}
         testsFormReady={testsFormReady}

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { ClientScenarioData, TEST_TYPES } from './types/simulation';
 
 export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
@@ -7,7 +8,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
       {
         name: 'Current Phase',
         importedInfectionsPerDay: 20,
-        trigger: 'Date',
+        trigger: moment(Date.now()).format('YYYY-MM-DD'),
         triggerType: 'date',
         triggerCondition: '>=',
         severity: 0.8,

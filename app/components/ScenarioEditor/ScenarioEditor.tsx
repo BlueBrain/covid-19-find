@@ -17,9 +17,10 @@ const MAX_PHASE_COUNT = 3;
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
+  defaultPhase: ClientPhase;
   onChange?: (scenario: ClientScenarioData) => void;
   disabled: boolean;
-}> = ({ scenario, onChange, disabled }) => {
+}> = ({ defaultPhase, scenario, onChange, disabled }) => {
   const name = useTextInput(scenario.name, null, true);
   const { phases } = scenario;
 
@@ -57,8 +58,7 @@ const ScenarioEditor: React.FC<{
         phases: [
           ...phases,
           {
-            // TODO: DEFINE default phase?
-            ...DEFAULT_SCENARIO_LIST[0].phases[0],
+            ...defaultPhase,
             name: 'New Phase',
           },
         ],

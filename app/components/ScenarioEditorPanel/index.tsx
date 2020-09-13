@@ -6,11 +6,18 @@ import { ClientScenarioData } from '../../types/simulation';
 import './test-selector.less';
 
 const ScenarioEditorPanel: React.FC<{
+  defaultScenarios: ClientScenarioData[];
   scenarios: ClientScenarioData[];
   onSubmit?: (props: { scenarios: ClientScenarioData[] }) => void;
   testsFormReady: boolean;
   setTestsFormReady: (value: boolean) => void;
-}> = ({ scenarios, onSubmit, testsFormReady, setTestsFormReady }) => {
+}> = ({
+  defaultScenarios,
+  scenarios,
+  onSubmit,
+  testsFormReady,
+  setTestsFormReady,
+}) => {
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
   // Reset default if url changes
   React.useEffect(() => {
@@ -48,6 +55,7 @@ const ScenarioEditorPanel: React.FC<{
             </h2>
           </div>
           <ScenarioEditor
+            defaultScenarios={defaultScenarios}
             scenarios={scenariosValue.scenarios}
             onSubmit={setScenariosValue}
           />
