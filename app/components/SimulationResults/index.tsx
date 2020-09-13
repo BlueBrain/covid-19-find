@@ -15,7 +15,6 @@ import NumberOfTestsPerDay from './Graphs/NumberOfTestsPerDay';
 import RNaught from './Graphs/RNaught';
 import Prevalence from './Graphs/Prevalence';
 import LivesSaved from './Graphs/LivesSaved';
-import RNaughtAtEnd from './Graphs/RNaughtAtEnd';
 import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
@@ -641,9 +640,6 @@ const SimulationResults: React.FC<{
                 <hr />
                 <div className="charts">
                   <LivesSaved testingImpact={simulationResults.testingImpact} />
-                  <RNaughtAtEnd
-                    testingImpact={simulationResults.testingImpact}
-                  />
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
