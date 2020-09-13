@@ -20,6 +20,7 @@ import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
 
 import './simulation-results.less';
+import { truncate } from '../../libs/strings';
 
 const SCALE_VALUE = 3;
 
@@ -373,6 +374,13 @@ const SimulationResults: React.FC<{
                                         color: '#00000005',
                                       },
                                       ticks: {
+                                        callback: value => {
+                                          const MAX_CHAR_LENGTH = 10;
+                                          return truncate(
+                                            value,
+                                            MAX_CHAR_LENGTH,
+                                          );
+                                        },
                                         maxRotation: isMobile ? 90 : 0, // angle in degrees
                                       },
                                     },
