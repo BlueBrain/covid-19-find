@@ -13,9 +13,10 @@ import { DEFAULT_SCENARIO_LIST } from '../../defaults';
 const MAX_SCENARIOS = 3;
 
 const ScenarioList: React.FC<{
+  defaultScenarios: ClientScenarioData[];
   scenarios: ClientScenarioData[];
   onSubmit?: (scenarioListSubmit: { scenarios: ClientScenarioData[] }) => void;
-}> = ({ scenarios = [], onSubmit }) => {
+}> = ({ defaultScenarios, scenarios = [], onSubmit }) => {
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
     onSubmit &&
@@ -28,7 +29,7 @@ const ScenarioList: React.FC<{
     const newScenarios = [
       ...scenarios,
       {
-        ...DEFAULT_SCENARIO_LIST[0],
+        ...defaultScenarios[0],
         name: 'New Scenario',
       },
     ];
@@ -74,6 +75,12 @@ const ScenarioList: React.FC<{
             return (
               <TabPanel key={`panel-${scenario.name}-${index}`}>
                 <ScenarioEditor
+                  defaultPhase={{
+                    ...defaultScenarios[0].phases[0],
+                    triggerType: null,
+                    triggerCondition: null,
+                    trigger: null,
+                  }}
                   scenario={scenario}
                   onChange={handleSubmit}
                   disabled={index === 0}
