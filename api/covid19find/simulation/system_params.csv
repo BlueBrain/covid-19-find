@@ -1,12 +1,11 @@
-num_days,189
-p_positive_if_symptomatic,0.9
+num_days,300
 background_rate_symptomatic,0.02
 latency_period,2
 incubation_period,5
 recovery_period,10
 death_period,21
 beta_adaptation_days,10
-prop_asymptomatic,0.02
+prop_asymptomatic,0.2
 infection_fatality_rate,0.01
 prop_urban,0
 degraded,0
@@ -29,3 +28,4 @@ max_contacts_per_case,10
 min_contacts_per_case,2.5
 pc_contacts_isolated,0.5
 design_effect,2
+test_multipliers, 1,2,3,4
