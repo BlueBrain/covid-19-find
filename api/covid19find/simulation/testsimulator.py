@@ -57,10 +57,10 @@ scenario_params.append({
     'prop_hospital': [0.3, 0.3],\
     'prop_other_hc':[0.3,0.3],\
     'prop_rop':[0.4,0.4],\
-    'severity':[0.4, 0.0],\
-    'trig_values':['2020-6-30','2020-9-30'],\
+    'severity':[0.8, 0.8],\
+    'trig_values':['2020-09-11','2020-12-30'],\
     'trig_def_type':['date','date'],\
-    'trig_op_type':['=','=','=','=','='],\
+    'trig_op_type':['=','='],\
     'num_tests_mitigation':[0,0],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
@@ -68,47 +68,44 @@ scenario_params.append({
     'num_tests_care':[0,0],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'test_multipliers':[0,1,2,3],
     'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
 
 scenario_params.append({
    'symptomatic_only':['True','True'], \
-    'prop_hospital': [0.3, 0.3],\
-    'prop_other_hc':[0.3,0.3],\
-    'prop_rop':[0.4,0.4],\
-    'severity':[0.4, 0.0],\
-    'trig_values':['2020-6-30','2020-9-30'],\
+    'prop_hospital': [0.5, 0.5],\
+    'prop_other_hc':[0.5,0.5],\
+    'prop_rop':[0.0,0.0],\
+    'severity':[0.8, 0.8],\
+    'trig_values':['2020-09-11','2020-12-30'],\
     'trig_def_type':['date','date'],\
-    'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[0,0],\
+    'trig_op_type':['=','='],\
+    'num_tests_mitigation':[3000,3000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
     'num_tests_care':[0,0],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'test_multipliers':[0,1,2,3],
     'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
 #scenario 2
 scenario_params.append({
     'symptomatic_only':['True','True'], \
-    'prop_hospital': [0.3, 0.3],\
-    'prop_other_hc':[0.3,0.3],\
-    'prop_rop':[0.4,0.4],\
-    'severity':[0.4, 0.0],\
-    'trig_values':['2020-6-30','2020-9-30'],\
+    'prop_hospital': [1.0, 1.0],\
+    'prop_other_hc':[0.0,0.0],\
+    'prop_rop':[0.0,0.0],\
+    'severity':[0.8, 0.8],\
+    'trig_values':['2020-9-11','2020-12-30'],\
     'trig_def_type':['date','date'],\
-    'trig_op_type':['=','=','=','=','='],\
-    'num_tests_mitigation':[0,0],\
+    'trig_op_type':['=','='],\
+    'num_tests_mitigation':[3000,3000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
     'num_tests_care':[0,0],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'test_multipliers':[0,1,2,3],
     'imported_infections_per_day':[20,20],
     'requireddxtests':[0,1,2,2,2]})
 #print('scenario params=',scenario_params)
@@ -209,7 +206,9 @@ for i in range (0,len(results_dict['max_infected_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['max_infected_by_scenario'][i])
 print('Total infected by scenario')
 for i in range (0,len(results_dict['total_infected_by_scenario'])):
-        print ('scenario: ',i,': ', results_dict['total_infected_by_scenario'])
+    print ('scenario: ',i,': ', results_dict['total_infected_by_scenario'][i])
+        
+#print ('results dict=',results_dict)
 
 print("\nhash checksum of dataframes:")
 for df in dataframes:
