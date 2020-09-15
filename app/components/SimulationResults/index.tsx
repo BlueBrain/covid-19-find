@@ -647,7 +647,7 @@ const SimulationResults: React.FC<{
                 </div>
                 <hr />
                 <div className="charts">
-                  <LivesSaved testingImpact={simulationResults.testingImpact} />
+                  <LivesSaved testingImpact={simulationResults.scenarios[selectedScenarioIndex].testingImpact} />
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">

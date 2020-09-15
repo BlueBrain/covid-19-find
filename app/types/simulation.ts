@@ -74,7 +74,6 @@ export type SimulationRequest = CountryData & {
 
 export type SimulationResults = {
   scenarios: ScenarioResult[];
-  testingImpact: TestingImpact[];
 };
 
 export type TestingImpact = {
@@ -90,6 +89,7 @@ export type ScenarioResult = {
     restOfPopulation: ScenarioResultDatasetTimeSeries[];
     total: ScenarioResultDatasetTimeSeries[];
   };
+  testingImpact: TestingImpact[];
   maxInfected: number;
   maxIsolated: number;
   totalDeaths: number;

@@ -1,15 +1,14 @@
-symptomatic_only,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE
-prop_hospital,0.3,0.3,0.3,0.3,0.3,
-prop_other_hc,0.3,0.3,0.3,0.3,0.3,
+symptomatic_only,TRUE
+prop_hospital,0.5
+prop_other_hc,0.5
 severity,0.15, 0.9, 0.8, 0.75, 0.0
 trig_values,1,44,74,88,199
-num_tests_mitigation,0,0,0,0,0
-num_tests_care,0,0,0,0,0,
-trig_op_type,=,=,=,=,=,=
-trig_def_type,date,date,date,date,date,date
-sensitivity,0.95,0.95,0.95,0.95,0.95,
-specificity,0.95,0.95,0.95,0.95,0.95,
-prop_contacts_traced,0,0,1,1,1,1
-test_multipliers,1,1,1,,,
-imported_infections_per_day,0,0,20,20,20,
-requireddxtests,0,1,2,2,2,
+num_tests_mitigation,0
+num_tests_care,0
+trig_op_type,=
+trig_def_type,date
+sensitivity,0.95
+specificity,0.95
+prop_contacts_traced,0
+imported_infections_per_day,0
+requireddxtests,0

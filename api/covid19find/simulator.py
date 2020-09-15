@@ -73,9 +73,8 @@ class Simulator:
     def __tests_dataframe_row_to_response(index_row):
         row = index_row[1]
         return {
-            "tests": None if math.isnan(row["tests"]) else row["tests"],
-            "livesSaved": None if math.isnan(row["livessaved"]) else row["livessaved"],
-            "rEff": None if math.isnan(row["reff"]) else row["reff"]
+            "tests": None if math.isnan(row["tests administered"]) else int(row["tests administered"]),
+            "livesSaved": None if math.isnan(row["lives saved"]) else row["lives saved"]
         }
 
     @staticmethod
@@ -90,6 +89,7 @@ class Simulator:
         scenario_data = []
         scenario_dfs = result[0]
         scenario_totals = result[2]
+        test_df = result[1]
         for i in range(0, len(scenario_totals["total_deaths_by_scenario"])):
             scenarios_compartments_df = scenario_dfs[i * 2]
             scenario_data.append(
@@ -107,10 +107,11 @@ class Simulator:
                         "restOfPopulation": self.__dataframe_to_response(
                             scenarios_compartments_df[scenarios_compartments_df.compartment.eq("Rest of population")]),
                         "total": self.__dataframe_to_response(scenario_dfs[i * 2 + 1])
-                    }
+                    },
+                    "testingImpact": self.__tests_dataframe_to_response(test_df[test_df.scenario.eq(i)])
                 }
             )
-        return {"scenarios": scenario_data, "testingImpact": self.__tests_dataframe_to_response(result[1])}
+        return {"scenarios": scenario_data}
 
     @staticmethod
     def __dataframe_to_response(df):
@@ -166,24 +167,24 @@ class Simulator:
         for i in range(0, num_phases):
             phases.append(
                 {
-                    "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"][i]),
+                    "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
                     "trigger": date.today().isoformat(),
-                    "triggerType": covid_libscenario["trig_def_type"][i],
-                    "triggerCondition": covid_libscenario["trig_op_type"][i],
+                    "triggerType": covid_libscenario["trig_def_type"],
+                    "triggerCondition": covid_libscenario["trig_op_type"],
                     "severity": float(covid_libscenario["severity"][i]),
-                    "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"][i]),
-                    "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"][i]),
+                    "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
+                    "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
                     "typeTestsMitigation": "PCR",
-                    "specificity": float(covid_libscenario["specificity"][i]),
-                    "sensitivity": float(covid_libscenario["sensitivity"][i]),
-                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"][i]),
-                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"][i]),
-                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"][i]),
-                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"][i]) - float(
-                        covid_libscenario["prop_other_hc"][i]),
-                    "numTestsCare": int(covid_libscenario["num_tests_care"][i]),
+                    "specificity": float(covid_libscenario["specificity"]),
+                    "sensitivity": float(covid_libscenario["sensitivity"]),
+                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"]),
+                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"]),
+                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"]),
+                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"]) - float(
+                        covid_libscenario["prop_other_hc"]),
+                    "numTestsCare": int(covid_libscenario["num_tests_care"]),
                     "typeTestsCare": "PCR",
-                    "requiredDxTests": int(covid_libscenario["requireddxtests"][i])
+                    "requiredDxTests": int(covid_libscenario["requireddxtests"])
                 }
             )
 
