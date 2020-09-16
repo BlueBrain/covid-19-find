@@ -540,6 +540,7 @@ class Par:
       self.test_multipliers=list(map(int,params['test_multipliers']))
       self.requireddxtests=list(map(int,params['requireddxtests']))
       self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
+      self.is_counterfactual=list(map(bool, params['is_counterfactual']))
       num_compartments = self.num_compartments
       num_testkit_types = self.num_testkit_types
       self.compartment = []
@@ -717,8 +718,9 @@ class Sim:
     #  print('In perform tests')
       accum_tests_performed=0
       #if we are simulating the past we take num tests performed from empirical data - else from user parameters
-      if (use_real_testdata) and ispast(par.day1,t):
+      if (use_real_testdata) and ispast(par.day1,t) and not(par.is_counterfactual) and not (t>len(sim.totaltestsperformed_mit)-1):
           tests_available=sim.totaltestsperformed_mit[t]
+          
       else:
           tests_available=par.prop_tests[i][phase]*par.num_tests_mitigation[phase]
 # =============================================================================
@@ -1120,6 +1122,7 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.title(scenario_name+': '+compartment+' - Infected')
      plt.ylabel('Number')
      plt.xlabel('Date')
+     plt.xticks(rotation=30) 
      plt.legend(title= "Legend")
      plt.show()
      plt.close()
@@ -1133,6 +1136,7 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.title(scenario_name+': '+compartment+' - Deaths')
      plt.ylabel('Number')
      plt.xlabel('Date')
+     plt.xticks(rotation=30) 
      plt.legend(title= "Legend")
      plt.show()
      plt.close()
@@ -1140,6 +1144,7 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.title(scenario_name+': '+compartment+' - Isolated')
      plt.ylabel('Number')
      plt.xlabel('Date')
+     plt.xticks(rotation=30) 
      plt.legend(title= "Legend")
      plt.show()
      plt.close()
@@ -1147,12 +1152,14 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.title(scenario_name+': '+compartment+' - Susceptibles')
      plt.ylabel('Number')
      plt.xlabel('Date')
+     plt.xticks(rotation=30) 
      plt.legend(title= "Legend")
      plt.show()
      plt.plot(dates,prevalence,color='r', label="Prevalence")
      plt.title(scenario_name+': '+compartment+' - Prevalence')
      plt.ylabel('Prevalence')
      plt.xlabel('Date')
+     plt.xticks(rotation=30) 
      plt.legend(title= "Legend")
      plt.show()
      plt.close()
