@@ -69,7 +69,8 @@ scenario_params.append({
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
     'imported_infections_per_day':[20,20],
-    'requireddxtests':[0,1,2,2,2]})
+    'requireddxtests':[1,2],
+    'is_counterfactual':[True,True]})
 
 scenario_params.append({
    'symptomatic_only':['True','True'], \
@@ -87,8 +88,9 @@ scenario_params.append({
     'num_tests_care':[0,0],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[20,20],
-    'requireddxtests':[0,1,2,2,2]})
+    'imported_infections_per_day':[20,20],\
+    'requireddxtests':[1,2],\
+    'is_counterfactual':[False,False]})
 #scenario 2
 scenario_params.append({
     'symptomatic_only':['True','True'], \
@@ -106,8 +108,9 @@ scenario_params.append({
     'num_tests_care':[0,0],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[20,20],
-    'requireddxtests':[0,1,2,2,2]})
+    'imported_infections_per_day':[20,20],\
+    'requireddxtests':[1,2],\
+    'is_counterfactual':[False,False]})
 #print('scenario params=',scenario_params)
 
 # =============================================================================

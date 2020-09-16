@@ -12,3 +12,4 @@ specificity,0.95
 prop_contacts_traced,0
 imported_infections_per_day,0
 requireddxtests,0
+is_counterfactual,FALSE
