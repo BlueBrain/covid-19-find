@@ -8,6 +8,8 @@ from datetime import date
 class Simulator:
     SIMULATION_DAYS = 186
 
+    IS_SCENARIO_COUNTERFACTUAL = [True, False, False]
+
     def __init__(self, covid_repository):
         self.covid_repository = covid_repository
 
@@ -39,10 +41,10 @@ class Simulator:
 
     @staticmethod
     def get_scenario_parameters(parameters):
-        return list(map(Simulator.__map_scenario, parameters["scenarios"]))
+        return [Simulator.__map_scenario(i, scenario) for i, scenario in enumerate(parameters["scenarios"])]
 
     @staticmethod
-    def __map_scenario(input_scenario):
+    def __map_scenario(index, input_scenario):
         phases = input_scenario["phases"]
         return {
             "imported_infections_per_day": Simulator.__get_array_for_key(phases, "importedInfectionsPerDay"),
@@ -62,7 +64,8 @@ class Simulator:
             "test_multipliers": [0, 1, 2, 3],
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
-            "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests")
+            "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
+            "is_counterfactual": [Simulator.IS_SCENARIO_COUNTERFACTUAL[index] for _ in range(len(phases))]
         }
 
     @staticmethod
