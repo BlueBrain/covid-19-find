@@ -1,8 +1,7 @@
 symptomatic_only,TRUE
 prop_hospital,0.5
 prop_other_hc,0.5
-severity,0.15, 0.9, 0.8, 0.75, 0.0
-trig_values,1,44,74,88,199
+prop_rop, 0
 num_tests_mitigation,0
 num_tests_care,0
 trig_op_type,=

@@ -6,7 +6,6 @@ recovery_period,10
 death_period,21
 beta_adaptation_days,10
 prop_asymptomatic,0.2
-infection_fatality_rate,0.01
 prop_urban,0
 degraded,0
 ge_65,0.045
@@ -29,3 +28,5 @@ min_contacts_per_case,2.5
 pc_contacts_isolated,0.5
 design_effect,2
 test_multipliers, 1,2,3,4
+beta_lockdown,0.03
+beta_initial,0.35
