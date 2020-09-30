@@ -4,6 +4,7 @@ prop_other_hc,1.0
 prop_rop,0.0
 num_tests_mitigation,0
 num_tests_care,0
+severity,0.2
 trig_op_type,=
 trig_def_type,date
 sensitivity,0.95

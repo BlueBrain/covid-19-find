@@ -21,7 +21,7 @@ fixed_params={'total_pop':8200000, \
     'prop_below_pl':0.05, \
     'prop_woh':0.4, \
     'staff_per_bed':3.0,\
-    'test_directory':'test1'
+    'test_directory':'test5'
     
     }
 scenario_params=[]

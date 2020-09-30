@@ -5,6 +5,7 @@ prop_rop, 0.0
 num_tests_mitigation,0
 num_tests_care,0
 trig_op_type,=
+severity,0.2
 trig_def_type,date
 sensitivity,0.95
 specificity,0.95

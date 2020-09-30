@@ -6,6 +6,7 @@ num_tests_mitigation,0
 num_tests_care,0
 trig_op_type,=
 trig_def_type,date
+severity,0.2
 sensitivity,0.95
 specificity,0.95
 prop_contacts_traced,0.25
