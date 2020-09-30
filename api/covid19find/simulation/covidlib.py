@@ -13,7 +13,7 @@ import copy
 import os
 
 
-
+cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
 def get_system_params(sysfile):
 
    p = {}
@@ -156,11 +156,11 @@ def update_system_params(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
-
-   if len(fixed_params['test_directory'])>0:
-       os.chdir(fixed_params['test_directory'])
-   sysfile = 'system_params.csv'
-   initial_betafile = 'initial_betas.csv'
+   params_dir = ""
+   if 'test_directory' in fixed_params:
+       params_dir = fixed_params['test_directory']
+   sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
+   initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    win_length=7
    country_df=country_df_raw.rolling(win_length).mean()
    country_df['Date']=country_df_raw['Date']
@@ -171,19 +171,19 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
       scenarios_user_specified=[]
 
 # set up system parameters
-   
+
    p = get_system_params(sysfile)
    update_system_params(p, fixed_params) # note: p is updated
-   
-       
+
+
 # read initial beta matrix
 
    num_compartments = int(p['num_compartments'][0])
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
-   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta)
-   
+   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir)
+
    return results
 
 ######################################################################
@@ -198,15 +198,15 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #        results for each scenario
 ######################################################################
 
-def process_scenarios(country_df,p,scenarios,initial_beta):
+def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
 
    num_compartments = int(p['num_compartments'])
    num_scenarios = len(scenarios)
 
-   no_intervention_betafile = 'initial_betas.csv'
-   max_intervention_betafile = 'lockdown_betas.csv'
+   no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
+   max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=True
+   expert_mode=False
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -227,7 +227,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
          print ('*************')
          print ('scenario_name')
          print ('*************')
-      parameters_filename=scenario_name+'_params.csv'
+      parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
       filename = scenario_name+'_out.csv'
       summary_filename=scenario_name+'_summary.csv'
       scenario_default=get_system_params(parameters_filename) #get_system parameters should gave a different name

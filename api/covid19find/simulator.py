@@ -6,12 +6,11 @@ from datetime import date
 
 
 class Simulator:
-    SIMULATION_DAYS = 186
-
     IS_SCENARIO_COUNTERFACTUAL = [True, False, False]
 
-    def __init__(self, covid_repository):
+    def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
+        self.parameters_directory = parameters_directory
 
     @staticmethod
     def __map_datapoint(dp):
@@ -23,11 +22,10 @@ class Simulator:
         }
 
     def get_country_df(self, country_code):
-        covid_data = self.covid_repository.data_for(country_code)["timeseries"][:self.SIMULATION_DAYS]
+        covid_data = self.covid_repository.data_for(country_code)["timeseries"]
         return pd.DataFrame.from_records(list(map(self.__map_datapoint, covid_data)))
 
-    @staticmethod
-    def get_fixed_parameters(parameters):
+    def get_fixed_parameters(self, parameters):
         return {
             "total_pop": parameters["population"],
             "hospital_beds": parameters["hospitalBeds"],
@@ -36,7 +34,8 @@ class Simulator:
             "prop_urban": parameters["urbanPopulationProportion"],
             "prop_below_pl": parameters["belowPovertyLineProportion"],
             "prop_woh": parameters["workingOutsideHomeProportion"],
-            "staff_per_bed": parameters["hospitalStaffPerBed"]
+            "staff_per_bed": parameters["hospitalStaffPerBed"],
+            "test_directory": self.parameters_directory
         }
 
     @staticmethod
@@ -65,7 +64,7 @@ class Simulator:
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
-            "is_counterfactual": [Simulator.IS_SCENARIO_COUNTERFACTUAL[index] for _ in range(len(phases))]
+            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))]
         }
 
     @staticmethod
@@ -194,4 +193,5 @@ class Simulator:
         return {"phases": phases}
 
     def default_scenarios(self):
-        return list(map(Simulator.__reverse_map_scenario, range(0, 3)))
+        # TODO change it back to 3 scenarios once testing is over
+        return list(map(Simulator.__reverse_map_scenario, range(0, 1)))
