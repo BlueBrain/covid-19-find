@@ -275,10 +275,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
       
       # do extra simulations to test different test strategies
       # loops through the test_kit multipliers
-      
+      print('beginning simulations with different number of tests')
       for j in range(0,len(par.test_multipliers)):
         test_par=Par(p)
         test_par.day1=day1
+        test_par.shift=shift
 # =============================================================================
 #         test_sim=Sim(par.num_days,test_par.num_compartments)
 #         test_sim.set_initial_conditions(test_par)
@@ -286,10 +287,10 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
         
         current_phase=computecurrentphase(par.day1,par.trig_values)
         for k in range(current_phase,len(par.trig_values)):
-            test_par.num_tests_mitigation[k]=np.array(par.num_tests_mitigation[k])*test_par.test_multipliers[j]
+            test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
         sim = Sim(par.num_days,par.num_compartments)
         sim.set_initial_conditions(test_par)
-        use_real_testdata=False
+        use_real_testdata=True
         sim,df_tests=simulate(country_df,sim,test_par,max_betas,min_betas,1,test_par.num_days,0,use_real_testdata)
         dfsum_tests = df_tests.groupby(['dates']).sum().reset_index()
         deaths=dfsum_tests['newdeaths'].sum()
