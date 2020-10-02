@@ -206,7 +206,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
    no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=False
+   expert_mode=True
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -285,7 +285,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
 #         test_sim.set_initial_conditions(test_par)
 # =============================================================================
         
-        current_phase=computecurrentphase(par.day1,par.trig_values)
+        current_phase,today=computetoday(par.day1,par.trig_values)
         for k in range(current_phase,len(par.trig_values)):
             test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
         sim = Sim(par.num_days,par.num_compartments)
@@ -297,10 +297,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
         if j==0:
             baseline_deaths=dfsum_tests['newdeaths'].sum()
         lives_saved=baseline_deaths-deaths
-        print('baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
+        tests_administered=dfsum_tests['newtested_mit'][today:par.num_days].sum()
+        print('tests administered from today',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
         a_dict={
         'scenario':i,\
-        'tests administered':dfsum_tests['tested_mit'].sum(),\
+        'tests administered':tests_administered,\
         'deaths':deaths,\
         'lives saved':lives_saved}
         #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
@@ -526,7 +527,6 @@ class Sim:
       self.isolated=np.zeros((num_days,num_compartments))
       self.susceptibles = np.zeros((num_days,num_compartments))
       self.recovered = np.zeros((num_days,num_compartments))
-      self.require_dx_tests = np.zeros((num_days,num_compartments))
       self.newrecovered = np.zeros((num_days,num_compartments))
       self.requireddxtests=np.zeros((num_days,num_compartments))
       self.actualdxtests=np.zeros((num_days,num_compartments))
@@ -772,7 +772,7 @@ class Sim:
             'newconfirmed': np.round(self.newconfirmed[:,i],1),
             'newrecovered': np.round(self.newrecovered[:,i],3),
             'requireddxtests': np.round(self.requireddxtests[:,i],1),
-            'actualdxtests': np.round(self.actualdxtests[:,0],1),
+            'actualdxtests': np.round(self.actualdxtests[:,i],1),
             'newdeaths': np.round(self.newdeaths[:,i],1),
             'truepositives':np.round(self.truepositives[:,i],1),
             'falsepositives':np.round(self.falsepositives[:,i],1),
@@ -957,7 +957,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                sim.prevalence[t,i]=0
                
        meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
-     
  # =============================================================================
     df = sim.get_data_frame(par.num_days,par.num_compartments,par.compartment)
     return sim,df
@@ -1079,14 +1078,14 @@ def ispast(start_date,t):
     else:
         return(False)
      
-def computecurrentphase(start_date,triggers):
+def computetoday(start_date,triggers):
     today=dt.datetime.now()
     simday=(today-start_date).days
     simphase=0
     for i in range(0,len(triggers)):
         if triggers[i]<simday:
             simphase=i
-    return simphase
+    return simphase,simday
 
 def create_past(param,defaults,trigger_values, severity):
     n_phases=len(trigger_values)

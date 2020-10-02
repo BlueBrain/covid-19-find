@@ -20,8 +20,8 @@ fixed_params={'total_pop':8200000, \
     'prop_urban': 0.72, \
     'prop_below_pl':0.05, \
     'prop_woh':0.4, \
-    'staff_per_bed':3.0,\
-    'test_directory':'test5'
+    'staff_per_bed':2.5,\
+    'test_directory':'test6'
     
     }
 scenario_params=[]
@@ -98,23 +98,23 @@ scenario_params=[]
 # =============================================================================
 #scenario 2
 scenario_params.append({
-    'symptomatic_only':['False','False'], \
-    'prop_hospital': [0.0, 0.0],\
-    'prop_other_hc':[0.0,0.0],\
-    'prop_rop':[1.0,1.0],\
-    'severity':[0.9, 0.9],\
-    'trig_values':['2020-9-11','2020-12-30'],\
+    'symptomatic_only':['True','True'], \
+    'prop_hospital': [0.4, 0.4],\
+    'prop_other_hc':[0.3,0.3],\
+    'prop_rop':[0.3,0.3],\
+    'severity':[0.6, 0.6 ],\
+    'trig_values':['2020-10-15','2020-12-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[13000,13000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
-    'num_tests_care':[0,0],\
+    'num_tests_care':[1000,1000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
     'imported_infections_per_day':[50,50],\
-    'requireddxtests':[1,2],\
+    'requireddxtests':[2,2],\
     'is_counterfactual':['False','False']})
 
 dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
