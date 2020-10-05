@@ -11,6 +11,7 @@ import csv
 import datetime as dt
 import copy
 import os
+import json
 
 
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
@@ -136,6 +137,9 @@ def update_system_params(p, fixed_params):
    IFR_15_64=float(p['IFR_15_64'])
    IFR_gt_64=float(p['IFR_gt_64'])
    p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
+   p['past_dates']=fixed_params['past_dates']
+   p['past_severities']=fixed_params['past_severities']
+   p['expert_mode']=fixed_params['expert_mode']
 
    return
 
@@ -161,7 +165,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
        params_dir = fixed_params['test_directory']
    sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
    initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
-   win_length=7
+   win_length=14
    country_df=country_df_raw.rolling(win_length).mean()
    country_df['Date']=country_df_raw['Date']
    country_df['accumulated_deaths']=country_df_raw['accumulated_deaths']
@@ -206,7 +210,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
    no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=True
+   expert_mode=p['expert_mode']
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -228,11 +232,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
          print ('scenario_name')
          print ('*************')
       parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
-      filename = scenario_name+'_out.csv'
-      summary_filename=scenario_name+'_summary.csv'
+      filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
+      summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
       scenario_default=get_system_params(parameters_filename) #get_system parameters should gave a different name
-      # The next instruction is temporary: uses hardcoded values for switzerland
-      past=create_past(p,scenario_default,[1, 55, 127,242],[0.2,0.86,0.6,0.65])
+      # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
+      past=create_past(p,scenario_default,p['past_dates'],p['past_severities'])
       p.update(past)
       raw_min_betas = get_beta(max_intervention_betafile, num_compartments)
       min_betas=normalize_betas(p,raw_min_betas,float(p['beta_lockdown']))
@@ -594,10 +598,10 @@ class Sim:
        
   # computes the number of imported infections for all compartments
             
-   def get_imported(sim,par:Par, t,phase):
+   def get_imported(sim,par:Par, t,i,phase):
  #it would be better to make this proportional to population
        prop_population_in_compart=np.zeros(par.num_compartments)
-       prop_population_in_compart=par.init_pop/np.sum(par.init_pop)
+       prop_population_in_compart=par.init_pop[i]/np.sum(par.init_pop)
        imported_infections=prop_population_in_compart*par.imported_infections_per_day[phase]
    #    sim.newinfected[t]=sim.newinfected[t]+imported_infections
        return imported_infections
@@ -633,21 +637,23 @@ class Sim:
          else:
             tests_performed = sim.population[t-1,i] 
          if par.test_symptomatic_only[phase]: 
-            if (t)>par.incubation_period:  ## JPV: change to (t+1) to t when richard gives go ahead
-               total_symptomatic=sim.population[t-1,i]*par.background_rate_symptomatic+(1-par.prop_asymptomatic)*sim.infectednotisolated[(t-1)-par.incubation_period,i]
+            if t>par.incubation_period:
+                num_symptomatic_covid=sim.infectednotisolated[t-1-par.incubation_period,i]*(1-par.prop_asymptomatic)
+                total_symptomatic=sim.population[t-1,i]*par.background_rate_symptomatic+num_symptomatic_covid
+            if tests_available>total_symptomatic:
+                tests_performed=total_symptomatic
             else:
-               total_symptomatic=sim.population[t-1,i]*par.background_rate_symptomatic
-            if total_symptomatic<tests_available:
-                 tests_performed=total_symptomatic
+                tests_performed=tests_available
             if total_symptomatic>0:
-               p_positive_if_symptomatic=sim.infectednotisolated[t-1-par.incubation_period,i]*(1-par.prop_asymptomatic)/total_symptomatic
+               p_infected_if_symptomatic=num_symptomatic_covid/total_symptomatic
+               
             else:
-               p_positive_if_symptomatic=0
+               p_infected_if_symptomatic=0
             #this seems to be accumulating - but there is no loop
-            truepositives = truepositives+tests_performed * p_positive_if_symptomatic * par.sensitivity[phase]
-            falsepositives = falsepositives+tests_performed * (1-p_positive_if_symptomatic) * (1-par.specificity[phase])
+            truepositives = tests_performed * p_infected_if_symptomatic * par.sensitivity[phase]
+            falsepositives = tests_performed * (1-p_infected_if_symptomatic) * (1-par.specificity[phase])
         
-         else: #also testing non-symptomatic
+         else: #also testing non-symptomatic - this code needs to be updated
             if sim.population[t-1,i]>0:
                 truepositives = truepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * par.sensitivity[phase]
                 if truepositives>sim.infectednotisolated[t-1-par.incubation_period,i]:
@@ -715,11 +721,12 @@ class Sim:
           'population' : np.round(self.population[:,0],1),
           'susceptibles' : np.round(self.susceptibles[:,0],1),
           'isolated': np.round(self.isolated[:,0],1),
+          'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
+          'infectednotisolated': np.round(self.infectednotisolated[:,0],1),
           'infected': np.round(self.infected[:,0],1),
           'importedinfections':np.round(self.importedinfections[:,0],1),
           'accumulatedinfected': np.round(self.accumulatedinfected[:,0],1),
           'tested_mit': np.round(self.tested_mit[:,0],1),
-          'infectednotisolated': np.round(self.infectednotisolated[:,0],1),
           'confirmed': np.round(self.confirmed[:,0],1),
           'deaths': np.round(self.deaths[:,0],1),
           'recovered': np.round(self.recovered[:,0],1),
@@ -754,11 +761,12 @@ class Sim:
             'population' : np.round(self.population[:,i],1),
             'susceptibles' : np.round(self.susceptibles[:,i],1),
             'isolated': np.round(self.isolated[:,i],1),
+            'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
+            'infectednotisolated': np.round(self.infectednotisolated[:,i],1),
             'infected': np.round(self.infected[:,i],1),
             'importedinfections':np.round(self.importedinfections[:,i],1),
             'accumulatedinfected': np.round(self.accumulatedinfected[:,i],1),
-            'tested_mit': np.round(self.tested_mit[:,i],1),
-            'infectednotisolated': np.round(self.infectednotisolated[:,i],1),
+            'tested_mit': np.round(self.tested_mit[:,i],1),  
             'confirmed': np.round(self.confirmed[:,i],1),
             'deaths': np.round(self.deaths[:,i],1),
             'recovered': np.round(self.recovered[:,i],1),
@@ -870,8 +878,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        sim.days[t]=t
        sim.cross_infect(par,betas,t)
        sim.addup_infections(par,t)
-       sim.newimportedinfections[t]=sim.get_imported(par,t,phase)
-       sim.newinfected[t]=sim.newinfected[t]+sim.newimportedinfections[t]
        # works out number of contacts per person. Maximum when target beta=max beta
  #      print('max contacts per case=', par.max_contacts_per_case,'prop contacts traced',par.prop_contacts_traced[phase])
  #      print('beta overall',beta_overall,)
@@ -919,9 +925,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            sim.deaths[t,i] = sim.deaths[t-1,i]+sim.newdeaths[t,i]
            sim.recovered[t,i] = sim.recovered[t-1,i]+sim.newrecovered[t,i]
            sim.infected[t,i] = sim.infected[t-1,i]+sim.newinfected[t,i]-sim.newrecovered[t,i]-sim.newdeaths[t,i]
-           #makes sure number of infected never falls below number of imported infections
-           if sim.infected[t,i]<sim.importedinfections[t,i]:
-              sim.infected[t,i]=sim.importedinfections[t,i]
+           
            if sim.infected[t,i]>0:
                sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*par.recovery_period
            else:
@@ -942,13 +946,17 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
    
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
    
-           if sim.infected[t,i] - sim.isolated[t,i] > 0.0:
+           if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
                #false positives do not reduce the number of infected not isolated
               sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
               if sim.infectednotisolated[t,i]<0:
                   sim.infectednotisolated[t,i]
            else:
               sim.infectednotisolated[t,i] = 0.0
+           sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
+            #makes sure number of infected never falls below number of imported infections
+           sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
+           sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
            if sim.population[t,i]>0:
                sim.incidence[t,i]=sim.newinfected[t,i]/sim.population[t,i]
                sim.prevalence[t,i]=sim.accumulatedinfected[t,i]/sim.population[t,i]
@@ -1134,6 +1142,14 @@ def compute_secondaries(par,i,primary_infected,contacts_per_person,meanbeta,phas
     true_positives=secondary_infected*par.sensitivity[phase]
     false_positives=n_contacts*(1-par.specificity[phase])
     return true_positives, false_positives
+
+def write_parameters(afilename,fixed_params,scenario_params):
+    param_dict={'fixed_params':fixed_params,\
+           'scenario_params':scenario_params}
+    with open(afilename,'w') as outfile:      
+        json.dump(param_dict,outfile)
+        
+    
     
     
     

@@ -9,6 +9,8 @@ Created on Fri Apr 10 09:25:47 2020
 
 import covidlib as cl
 import pandas as pd
+import os
+import json
 #fictitious everyone in hospitals
 
 #fixed parameters are parameters that are the same for all scenarios
@@ -17,12 +19,14 @@ fixed_params={'total_pop':8200000, \
     'hospital_beds':33000, \
     'prop_15_64': 0.66, \
     'age_gt_64':0.20 ,\
-    'prop_urban': 0.72, \
+    'prop_urban': 0.66, \
     'prop_below_pl':0.05, \
     'prop_woh':0.4, \
     'staff_per_bed':2.5,\
-    'test_directory':'test6'
-    
+    'test_directory':'test1',\
+    'past_dates':[1, 50, 90],\
+    'past_severities':[0.13,0.9,0.7],\
+    'expert_mode':False
     }
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -102,21 +106,22 @@ scenario_params.append({
     'prop_hospital': [0.4, 0.4],\
     'prop_other_hc':[0.3,0.3],\
     'prop_rop':[0.3,0.3],\
-    'severity':[0.6, 0.6 ],\
-    'trig_values':['2020-10-15','2020-12-30'],\
+    'severity':[0.9, 0.9 ],\
+    'trig_values':['2020-10-04','2020-12-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[130000,130000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
-    'num_tests_care':[1000,1000],\
+    'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
     'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False']})
-
+filename=os.path.join(fixed_params['test_directory'],'parameters.json')
+cl.write_parameters(filename,fixed_params,scenario_params)
 dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
 
 print ('total deaths by scenario')
@@ -137,4 +142,11 @@ for i in range (0,len(results_dict['total_infected_by_scenario'])):
 print("\nhash checksum of dataframes:")
 for df in dataframes:
    print(pd.util.hash_pandas_object(df).sum())
+afilename=os.path.join(fixed_params['test_directory'],'result_summary.csv')
+adict={'deaths':results_dict['total_deaths_by_scenario']}
+afile= open(afilename,'w')
+for i in range (0,len(results_dict['total_deaths_by_scenario'])):
+     outstring='scenario: ' + str(i,) + ', ' + str( results_dict['total_deaths_by_scenario'][i])
+     afile.write (outstring)
+afile.close()
 
