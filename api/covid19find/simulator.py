@@ -1,8 +1,11 @@
-from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
+import json
 import math
-import pandas as pd
 import os
 from datetime import date
+
+import pandas as pd
+
+from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
 
 
 class Simulator:
@@ -18,7 +21,7 @@ class Simulator:
             "Date": dp["date"],
             "accumulated_deaths": dp["totalDeaths"],
             "accumulated_cases": dp["totalConfirmed"],
-            "tests": dp["newTests"]
+            "tests": 0 if dp["newTests"] is None else dp["newTests"]
         }
 
     def get_country_df(self, country_code):
@@ -86,7 +89,16 @@ class Simulator:
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(parameters["countryCode"])
-        result = run_simulation(country_df, self.get_fixed_parameters(parameters), scenarios=scenarios)
+        fixed_parameters = self.get_fixed_parameters(parameters)
+        # TODO remove after tests
+        with open(os.path.join(self.parameters_directory, "parameters.json")) as params_file:
+            params_from_file = json.load(params_file)
+
+        fixed_parameters["past_severities"] = params_from_file["fixed_params"]["past_severities"]
+        fixed_parameters["past_dates"] = params_from_file["fixed_params"]["past_dates"]
+        fixed_parameters["expert_mode"] = params_from_file["fixed_params"]["expert_mode"]
+
+        result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
         scenario_data = []
         scenario_dfs = result[0]
