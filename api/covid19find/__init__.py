@@ -21,7 +21,7 @@ def create_app():
 
     def update_covid_data():
         app.logger.info("Updating COVID-19 data.")
-        data_repo.update_data()
+        # data_repo.update_data()
         app.logger.info("Finished updating COVID-19 data.")
 
     country_repo = CountryRepository()
@@ -64,7 +64,7 @@ def create_app():
     def country_covid19_data(country_code):
         return not_found_if_none(data_repo.data_for(country_code), country_code)
 
-    parameters_dir = os.path.abspath(os.environ.get("PARAMETERS_DIRECTORY", "production"))
+    parameters_dir = os.environ.get("PARAMETERS_DIRECTORY", "production")
     simulator = Simulator(data_repo, parameters_dir)
 
     @app.route(f'{app_path_prefix}/api/simulation', methods=['POST'])

@@ -6,7 +6,7 @@ from datetime import date
 
 
 class Simulator:
-    IS_SCENARIO_COUNTERFACTUAL = [True, False, False]
+    IS_SCENARIO_COUNTERFACTUAL = [False, False, False]
 
     def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
@@ -159,10 +159,9 @@ class Simulator:
             "detectionRate": row.get("detection_rate", None)
         }
 
-    @staticmethod
-    def __reverse_map_scenario(scenario_index):
+    def __reverse_map_scenario(self, scenario_index):
         covid_libscenario = get_system_params(
-            os.path.join(cl_path_prefix, "SCENARIO {}_params.csv".format(scenario_index)))
+            os.path.join(cl_path_prefix, self.parameters_directory, "SCENARIO {}_params.csv".format(scenario_index)))
         # TODO we have only one phase for now
         num_phases = 1
         phases = []
@@ -194,4 +193,4 @@ class Simulator:
 
     def default_scenarios(self):
         # TODO change it back to 3 scenarios once testing is over
-        return list(map(Simulator.__reverse_map_scenario, range(0, 1)))
+        return list(map(self.__reverse_map_scenario, range(0, 1)))

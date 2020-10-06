@@ -77,10 +77,10 @@ class CovidDataRepository:
 
         for country, data in grouped_country_data.items(multi=True):
             # remove all the entries which are not count data
-            data.popitem(last=False)
-            data.popitem(last=False)
-            data.popitem(last=False)
-            data.popitem(last=False)
+            data.popitem()
+            data.popitem()
+            data.popitem()
+            data.popitem()
             country_data = summed_country_data.get(country, OrderedDict())
             # Do
             for date, value in data.items():
