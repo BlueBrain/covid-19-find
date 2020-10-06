@@ -15,7 +15,7 @@ class CovidDataRepository:
 
     recovered_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
 
-    tests_url = "https://finddx.shinyapps.io/FIND_Cov_19_Tracker/downloads/cv_data_download.csv"
+    tests_url = "https://raw.githubusercontent.com/dsbbfinddx/FINDCov19TrackerData/master/processed/data_all.csv"
 
     def __init__(self, data_dir):
         self.data_dir = data_dir
@@ -34,22 +34,20 @@ class CovidDataRepository:
         with open(os.path.join(self.raw_data_dir, filename)) as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                country_code_alpha3 = row["alpha3"]
-                country = pycountry.countries.get(alpha_3=country_code_alpha3)
-                if country is None:
+                if row["set"] != "country":
                     continue
-                country_code_alpha2 = country.alpha_2
-                country_data = grouped_country_data.get(country_code_alpha2, OrderedDict())
+                country_code = row["unit"]
+                country_data = grouped_country_data.get(country_code, OrderedDict())
                 new_tests_positive = self.__divide_if_not_none(
-                    self.__int_or_none(row["new_cases"]),
-                    self.__int_or_none(row["new_tests"])
+                    self.__int_or_none(row["new_cases_orig"]),
+                    self.__int_or_none(row["new_tests_orig"])
                 )
-                country_data[row["date"]] = {
-                    "newTests": self.__int_or_none(row["new_tests"]),
-                    "totalTests": self.__int_or_none(row["tests_cumulative"]),
-                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None and  new_tests_positive < 1.0 else None
+                country_data[row["time"]] = {
+                    "newTests": self.__int_or_none(row["new_tests_orig"]),
+                    "totalTests": self.__int_or_none(row["all_cum_tests"]),
+                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None and new_tests_positive < 1.0 else None
                 }
-                grouped_country_data[country_code_alpha2] = country_data
+                grouped_country_data[country_code] = country_data
         return grouped_country_data
 
     def __get_country_code(self, country_name):
@@ -77,10 +75,10 @@ class CovidDataRepository:
 
         for country, data in grouped_country_data.items(multi=True):
             # remove all the entries which are not count data
-            data.popitem()
-            data.popitem()
-            data.popitem()
-            data.popitem()
+            del data["Province/State"]
+            del data["Country/Region"]
+            del data["Lat"]
+            del data["Long"]
             country_data = summed_country_data.get(country, OrderedDict())
             # Do
             for date, value in data.items():
@@ -122,12 +120,12 @@ class CovidDataRepository:
         urllib.request.urlretrieve(self.recovered_url,
                                    os.path.join(self.raw_data_dir, "time_series_covid19_recovered_global.csv"))
         urllib.request.urlretrieve(self.tests_url,
-                                   os.path.join(self.raw_data_dir, "cv_data_download.csv"))
+                                   os.path.join(self.raw_data_dir, "data_all.csv"))
 
         confirmed_data = self.__read_and_sum_johns_hopkins("time_series_covid19_confirmed_global.csv")
         deaths_data = self.__read_and_sum_johns_hopkins("time_series_covid19_deaths_global.csv")
         recovered_data = self.__read_and_sum_johns_hopkins("time_series_covid19_recovered_global.csv")
-        tests_data = self.__read_find("cv_data_download.csv")
+        tests_data = self.__read_find("data_all.csv")
 
         merged_data = dict()
         for country in confirmed_data:

@@ -21,7 +21,7 @@ def create_app():
 
     def update_covid_data():
         app.logger.info("Updating COVID-19 data.")
-        # data_repo.update_data()
+        data_repo.update_data()
         app.logger.info("Finished updating COVID-19 data.")
 
     country_repo = CountryRepository()
