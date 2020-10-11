@@ -13,20 +13,20 @@ import os
 import json
 
 #fixed parameters are parameters that are the same for all scenarios
-country_df = cl.getcountrydata('France.csv') #temporary. Front_end will provide real data
-fixed_params={'total_pop':65274000, \
-    'hospital_beds':391644, \
-    'prop_15_64': 0.62, \
-    'age_gt_64':0.2195 ,\
-    'prop_urban': 0.8, \
-    'prop_below_pl':0.1, \
+ #temporary. Front_end will provide real data
+country_df = cl.getcountrydata('Switzerland.csv') #temporary. Front_end will provide real data
+fixed_params={'total_pop':8200000, \
+    'hospital_beds':33000, \
+    'prop_15_64': 0.66, \
+    'age_gt_64':0.20 ,\
+    'prop_urban': 0.72, \
+    'prop_below_pl':0.05, \
     'prop_woh':0.4, \
     'staff_per_bed':2.5,\
-    'test_directory':'scratch1',\
-    'past_dates':[1, 63, 165],\
-    'past_severities':[0.0,0.945,0.6],\
-    'expert_mode':True
-    }
+    'test_directory':'test1_1',\
+    'past_dates':[1, 29, 50, 73, 135, 140],\
+    'past_severities':[0.0, 0.2, 0.91, 0.98, 0.6, 0.75],\
+    'expert_mode':'True'}
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 # For test purposes scenarios 0 and 1 are commented out. In final version they will return

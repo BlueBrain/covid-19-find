@@ -139,6 +139,7 @@ def update_system_params(p, fixed_params):
    p['past_dates']=fixed_params['past_dates']
    p['past_severities']=fixed_params['past_severities']
    p['expert_mode']=fixed_params['expert_mode']
+   p['expert_mode']=fixed_params['expert_mode']
    
 
    return
@@ -1205,6 +1206,14 @@ def write_parameters(afilename,fixed_params,scenario_params):
            'scenario_params':scenario_params}
     with open(afilename,'w') as outfile:      
         json.dump(param_dict,outfile)
+        
+def read_parameters(afilename):
+    with open(afilename) as infile:      
+        data=json.load(infile)
+    fixed_params=data['fixed_params']
+    scenario_params=data['scenario_params']
+    return fixed_params,scenario_params
+    
         
 def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic):
     for i in range(0,par.num_compartments):  

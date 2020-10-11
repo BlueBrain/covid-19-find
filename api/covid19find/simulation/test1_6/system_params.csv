@@ -30,3 +30,4 @@ design_effect,2
 test_multipliers, 1,2,3,4
 beta_lockdown,0.03
 beta_initial,0.35
+relative_prob_infected,2
