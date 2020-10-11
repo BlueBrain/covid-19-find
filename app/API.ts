@@ -15,10 +15,10 @@ import { toLetters } from './libs/strings';
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
   name: index === 0 ? 'Current Phase' : 'Next Phase',
-  restOfPopulationTestProportion: roundAccurately(
-    phase.restOfPopulationTestProportion,
-    2,
-  ),
+  // restOfPopulationTestProportion: roundAccurately(
+  //   phase.restOfPopulationTestProportion,
+  //   2,
+  // ),
 });
 
 const fixScenario = (scenario: Scenario, index: number) => ({
@@ -83,6 +83,7 @@ export default class API {
           ...rest,
         })),
       })),
+      population: Number(simulationParams.population),
       urbanPopulationProportion:
         simulationParams.urbanPopulationProportion / 100,
       belowPovertyLineProportion:

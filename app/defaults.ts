@@ -1,5 +1,9 @@
 import moment from 'moment';
-import { ClientScenarioData, TEST_TYPES } from './types/simulation';
+import {
+  ClientScenarioData,
+  TESTING_STRATEGIES,
+  TEST_TYPES,
+} from './types/simulation';
 
 export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
   {
@@ -19,12 +23,15 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 0.5,
-        otherHighContactPopulationTestProportion: 0.5,
-        restOfPopulationTestProportion: 0,
+        // hospitalTestProportion: 0.5,
+        // otherHighContactPopulationTestProportion: 0.5,
+        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
+        testingStrategy: TESTING_STRATEGIES.ALL,
+        resultPeriod: 5,
+        proportionAsymptomaticTested: 0.01,
       },
       {
         name: 'Next Phase',
@@ -40,12 +47,15 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 0.5,
-        otherHighContactPopulationTestProportion: 0.5,
-        restOfPopulationTestProportion: 0,
+        // hospitalTestProportion: 0.5,
+        // otherHighContactPopulationTestProportion: 0.5,
+        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
+        testingStrategy: TESTING_STRATEGIES.ALL,
+        resultPeriod: 5,
+        proportionAsymptomaticTested: 0.01,
       },
     ],
   },
