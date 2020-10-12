@@ -47,7 +47,7 @@
       "minimum": 0,
       "maximum": 1
     },
-    "over64proportion": {
+    "over64Proportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1

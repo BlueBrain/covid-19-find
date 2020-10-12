@@ -10,9 +10,9 @@ import math
 import csv
 import datetime as dt
 import copy
-
-
 import os
+import json
+
 
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
 def get_system_params(sysfile):
@@ -115,46 +115,32 @@ def update_system_params(p, fixed_params):
    num_compartments = int(p['num_compartments'])
    num_testkit_types=int(p['num_testkit_types'])
          
-#     These are defined in compartment parameters - no need to define here:
-#     p['compartment']=['Hospitals','Other high contact ','Rest of population']
-#     p['init_infected']=[100,100,100]
-
-# =============================================================================
-#    p['testkits']=['PCR','RDT','Chest xrays']
-#    p['sensitivity'][0]=fixed_params['sensitivity_PCR']
-#    p['sensitivity'][1]=fixed_params['sensitivity_RDT']
-#    p['specificity'][0]=fixed_params['specificity_PCR']
-#    p['specificity'][1]=fixed_params['specificity_RDT']
-# =============================================================================
-#   p['trig_def_type'][0]=fixed_params['trig_def_type']
-#   p['trig_op_type'][0]=fixed_params['trig_op_type']
-#   p['trig_values']=fixed_params['trig_values']
-#   p['test_symptomatic_only']=['true','true','true']
-         
    #define size of compartments   
    hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
-   high_risk_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
-   other_high_contact=(fixed_params['total_pop']-high_risk_urban-hosp_staff)*fixed_params['prop_15_64']*fixed_params['prop_woh']
-   p['init_pop'][0]=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
-   p['init_pop'][1]=high_risk_urban+other_high_contact
-   p['init_pop'][2]=fixed_params['total_pop']-hosp_staff-int(p['init_pop'][1])
+   poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+   remaining_pop=fixed_params['total_pop']-poor_urban-hosp_staff
+   woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
+   other_hc=poor_urban+woh
+   rop=fixed_params['total_pop']-hosp_staff-other_hc
+   p['init_pop'][0]=hosp_staff
+   p['init_pop'][1]=other_hc
+   p['init_pop'][2]=rop
    p['total_pop']=int(fixed_params['total_pop'])
-   #compute age_corrected IFR
+   print('init pop=',p['init_pop'])
+    #compute age_corrected IFR for country
 
    prop_gt_64=fixed_params['age_gt_64']
    prop_15_64=fixed_params['prop_15_64']
    prop_1_14=1-(prop_gt_64+prop_15_64)
-#   print ('prop_gt_64=', prop_gt_64)
- #  print ('prop_15_64=', prop_15_64)
- #  print ('prop_1_14=', prop_1_14)
    IFR_1_14=float(p['IFR_1_14'])
    IFR_15_64=float(p['IFR_15_64'])
    IFR_gt_64=float(p['IFR_gt_64'])
- #  print('term 1',IFR_1_14*prop_1_14)
- #  print('term 2',IFR_15_64*prop_15_64)
- #  print('term 3',IFR_gt_64*prop_gt_64)
    p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
- #  print('IFR corrected=',p['IFR_corrected'])
+   p['past_dates']=fixed_params['past_dates']
+   p['past_severities']=fixed_params['past_severities']
+   p['expert_mode']=fixed_params['expert_mode']
+   p['expert_mode']=fixed_params['expert_mode']
+   
 
    return
 
@@ -175,29 +161,25 @@ def update_system_params(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
-
-   sysfile = os.path.join(cl_path_prefix, 'system_params.csv')
-   initial_betafile = os.path.join(cl_path_prefix, 'initial_betas.csv')
-   win_length=7
-   country_df=country_df_raw.rolling(win_length).mean()
+   params_dir = ""
+   if 'test_directory' in fixed_params:
+       params_dir = fixed_params['test_directory']
+   sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
+   initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
+   win_length=28
+   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df['Date']=country_df_raw['Date']
+   country_df['accumulated_deaths']=country_df_raw['accumulated_deaths']
    if len(kwargs)>0:
       scenarios_user_specified=kwargs['scenarios']
-  #    phase_start_days=kwargs['phase_start_days']
    else:
       scenarios_user_specified=[]
-   #   phase_start_days=[]
 
 # set up system parameters
-   
-  
-   
+
    p = get_system_params(sysfile)
-   
-   
    update_system_params(p, fixed_params) # note: p is updated
-   
-       
+
 
 # read initial beta matrix
 
@@ -205,8 +187,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
-   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta)
-   
+   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir)
+
    return results
 
 ######################################################################
@@ -221,22 +203,15 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #        results for each scenario
 ######################################################################
 
-def process_scenarios(country_df,p,scenarios,initial_beta):
+def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
 
-#   original_p=p.copy() #make sure p starts clean each time
    num_compartments = int(p['num_compartments'])
    num_scenarios = len(scenarios)
 
-   no_intervention_betafile = os.path.join(cl_path_prefix, 'initial_betas.csv')
-   max_intervention_betafile = os.path.join(cl_path_prefix, 'lockdown_betas.csv')
-#   mild_betafile='betas_mild.csv'
+   no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
+   max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=False
-
-#   print(sc.scenarios)
-#   print(sc.scenario_labels)
-#   print('scenario params=',sc.scenario_params)
-
+   expert_mode=p['expert_mode']
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -247,152 +222,113 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
    total_infected_by_scenario=np.zeros(num_scenarios)
    max_infected_by_scenario=np.zeros(num_scenarios)
    max_isolated_by_scenario=np.zeros(num_scenarios)
-   scenario_names=['Counterfactual','Half hospitals','Protect capacity']
+   scenario_names=['Counterfactual','Half hospitals','Protect capacity'] #could have these as parameters
    dataframes=[]
    test_column_names=['scenario','tests administered','deaths', 'lives saved']
    test_df= pd.DataFrame(columns=test_column_names)
    for i in range(0,num_scenarios):
- #     key = sc.scenarios[i-1] #If this is an array no need for a key
-#      print('i=',i,'key=',key)
-      scenario_name='SCENARIO' + ' '+ str(i)  #it should have a proper name
-   #   scenario_names.append(scenario_name)  #name can be one item in dictionary
+      scenario_name='SCENARIO' + ' '+ str(i) #it should have a proper name
       if expert_mode:
          print ('*************')
          print ('scenario_name')
          print ('*************')
-      parameters_filename = os.path.join(cl_path_prefix, scenario_name+'_params.csv')
-      filename = scenario_name+'_out.csv'
-      summary_filename=scenario_name+'_summary.csv'
-      scenario_default=get_system_params(parameters_filename)  #badly named - these are scenario parameters
-   #   print('scenario default=',scenario_default)
-  #    print('scenarios i=',scenarios[i])
-  #    p['scenario_name']=scenario_name # JPV: not sure why you need this
- #     apply_scenario_to_p_2(p,scenario_default)
- #     past=create_past(p,[30,80],[0.2,0.9])
-      past=create_past_2(p,scenario_default,[1, 44, 74, 88],[0.15, 0.9, 0.8, 0.75])
-   #   print('past=', past)
+      parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
+      filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
+      summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
+      scenario_default=get_system_params(parameters_filename) #get_system parameters should gave a different name
+      # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
+      past=create_past(p,scenario_default,p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
+     # min_betas=normalize_betas(p,raw_min_betas,float(p['beta_lockdown']))
       max_betas = get_beta(no_intervention_betafile, num_compartments)
- # runs an initial simulation to align dates with simulation days     
+     # max_betas=normalize_betas(p,raw_max_betas,float(p['beta_initial']))
+      
+ # runs an initial simulation to align dates with simulation days 
       date_par=Par(p)
       date_sim = Sim(date_par.num_days,date_par.num_compartments)
       date_sim.set_initial_conditions(date_par)
       use_real_testdata=False #we can't yet use real testdata because we have no dates to align it with
-      throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75,use_real_testdata)
+      throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75,0,use_real_testdata)
       dfsum_dates = date_df.groupby(['days']).sum().reset_index()
-      # This will be updated when we have new optimization code - 
-      df_date_result, day1 = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
+      day1,shift = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
+      
       #reads the trig values in scenarios i and converts to simulation days - does not yet check for type of trigger
+      # this code is very dicy and needs checking
+      
       for j in range(0,len(scenarios[i]['trig_values'])):
           if(scenarios[i]['trig_def_type'][j]=='date'):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
       scenario=create_scenario(past,scenarios[i])
-      
- #     p.update(scenario_default) #not sure what this does or if it is needed
- #     print('p with default,p')
-      # update p according to scenario_params[key]
- #     apply_scenario_to_p(p, sc.scenario_params[key])  #this can be index
       p.update(scenario) 
  #     print('p after user input',p)
  #     beta_max = float(p['beta_max'][0]) #this is the maximum value of overall beta for any intervention
 #      beta_min=float(p['beta_min'][0]) #this is the lowest value of overall beta for any intervention
       nmultipliers=len(p['test_multipliers'])
-      
-         
-# =============================================================================
-#       test_df=pd.DataFrame({
-#           'scenario':0,
-#           'deaths':np.zeros(nmultipliers),
-#           'tests per day':np.zeros(nmultipliers),
-#           'reff':np.zeros(nmultipliers)})
-# =============================================================================
-      
-      
-      #compute main simulation and store results
-   #   sim=copy.deepcopy(old_sim)
       par = Par(p)
       par.day1=day1
+      par.shift=shift
       sim = Sim(par.num_days,par.num_compartments)
       sim.set_initial_conditions(par)
-      use_real_testdata=False
-      sim,df = simulate(country_df,sim,par,max_betas,min_betas,1,par.num_days,use_real_testdata)
+      use_real_testdata=True
+      #Startday here is  hard coded to 1
+      print ('real simulation')
+      sim,df = simulate(country_df,sim,par,max_betas,min_betas,1,par.num_days,0,use_real_testdata)
       df.to_csv(filename,index=False,date_format='%Y-%m-%d')
-  #    old_sim=copy.deepcopy(sim)
       dataframes.append(df) 
+      
       # do extra simulations to test different test strategies
-#      print('line before j')
-      #loops through the test_kit multipliers
+      # loops through the test_kit multipliers
+      print('beginning simulations with different number of tests')
       for j in range(0,len(par.test_multipliers)):
-   #     print ('j=',j)
         test_par=Par(p)
         test_par.day1=day1
+        test_par.shift=shift
 # =============================================================================
 #         test_sim=Sim(par.num_days,test_par.num_compartments)
 #         test_sim.set_initial_conditions(test_par)
 # =============================================================================
-
-        current_phase=computecurrentphase(par.day1,par.trig_values)
+        
+        current_phase,today=computetoday(par.day1,par.trig_values)
         for k in range(current_phase,len(par.trig_values)):
-            test_par.num_tests_mitigation[k]=np.array(par.num_tests_mitigation[k])*test_par.test_multipliers[j]
- #       print('start date=', par.day1,'current phase=',current_phase)
-        #Reinitialize sim
+            test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
         sim = Sim(par.num_days,par.num_compartments)
         sim.set_initial_conditions(test_par)
-        use_real_testdata=False
-        sim,df_tests=simulate(country_df,sim,test_par,max_betas,min_betas,1,test_par.num_days,use_real_testdata)
+        use_real_testdata=True
+        sim,df_tests=simulate(country_df,sim,test_par,max_betas,min_betas,1,test_par.num_days,0,use_real_testdata)
         dfsum_tests = df_tests.groupby(['dates']).sum().reset_index()
         deaths=dfsum_tests['newdeaths'].sum()
         if j==0:
             baseline_deaths=dfsum_tests['newdeaths'].sum()
         lives_saved=baseline_deaths-deaths
-        print('baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
+        tests_administered=dfsum_tests['newtested_mit'][today:par.num_days].sum()
+        print('tests administered from today',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
         a_dict={
         'scenario':i,\
-        'tests administered':dfsum_tests['tested_mit'].sum(),\
+        'tests administered':tests_administered,\
         'deaths':deaths,\
         'lives saved':lives_saved}
         #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
         test_df=test_df.append(a_dict,ignore_index=True)
       dfsum = df.groupby(['dates']).sum().reset_index()
-#      dfactual = getcountrydata('Switzerland.csv')
-      
-# =============================================================================
-#       numpydate=np.datetime64(day1,format="%Y-%m.%d %I:%M:%S %p")
-#       print('numpy date',numpydate)
-# =============================================================================
- #     df['day1']=pd.to_datetime(day1,format="%Y-%m-%d")
- #     print('day1 df',df['day1'])
-   #   df['date']=df['day1']+pd.to_timedelta(df['days'],unit='d')
-     
- #     print('df date=',df['date'])
-#      dfsum['total_deaths'].to_csv('simdeaths.csv',index=False)
-        # gives result by day summed across compartments
-  #    dfsum['day1']=pd.to_datetime(day1,format="%Y-%m-%d")
-  #    dfsum['date']=dfsum['day1']+pd.to_timedelta(dfsum['days'],unit='d')
       dfsum['reff']=dfsum['newinfected']/dfsum['infected']*int(p['recovery_period'][0])
- #     print(dfsum['Reff'].to_string(index=False))
       dfsum['positive rate']=dfsum['newisolated']/dfsum['newtested_mit']
- #     print(dfsum['Positive rate'].to_string(index=False))
       dfsum['detection rate']=dfsum['newisolated']/dfsum['newinfected']
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
       dfsum['npv']=dfsum['truenegatives']/(dfsum['truenegatives']+dfsum['falsenegatives'])
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
       dfsum['prevalence']=dfsum['accumulatedinfected']/(dfsum['population'])
-     
-  #    print(dfsum['Detection rate'].to_string(index=False))
       dataframes.append(dfsum)
       dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
-      # gives results by day grouped by individual compartment
+     
+        # gives results by day grouped by individual compartment
+      
       dfsumcomp = df.groupby(['compartment']).sum().reset_index()
       dfmaxcomp = df.groupby(['compartment']).max().reset_index() #ori
       for j in range(0,num_compartments):
          comp = dfmaxcomp['compartment'][j]
          dfcomp = df.loc[df['compartment'] == comp]
-                
-#       print('num_daily tests in ',comp,' =', num_tests_performed[i])
-
          if expert_mode:
             print('total population in compartment',comp,p['init_pop'][j])
             print('total tested for mitigation in compartment',comp,'=',dfsumcomp['newtested_mit'][j])
@@ -401,12 +337,9 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
             print('max_infections in ',comp,'=',dfmaxcomp['infected'][j])
             print('total_infections in ',comp,'=',dfsumcomp['newinfected'][j])
             print('max in isolation in ',comp,'=',dfmaxcomp['isolated'][j])
-    
-      #      plot_results(scenario_name,comp,int(num_tests_performed[j]),dfcomp['days'],dfcomp['isolated'],dfcomp['infected'],dfcomp['tested'],dfcomp['infectednotisolated'],dfcomp['total_confirmed'],dfcomp['total_deaths'],dfcomp['susceptibles'])
             plot_results(scenario_name,comp,int(num_tests_performed[j]),dfcomp['dates'],dfcomp['isolated'],dfcomp['infected'],dfcomp['tested_mit'],dfcomp['infectednotisolated'],dfcomp['confirmed'],dfcomp['deaths'],dfcomp['susceptibles'],dfcomp['prevalence'])
              
       if expert_mode:
-#         print('prev before ALL plot=',dfsum['prevalence'])
          plot_results(scenario_name,'ALL',dfsumcomp['newtested_mit'],dfsum['dates'],dfsum['isolated'],dfsum['infected'],dfsum['tested_mit'],dfsum['infectednotisolated'],dfsum['confirmed'],dfsum['deaths'],dfsum['susceptibles'],dfsum['prevalence'],country_df['accumulated_deaths'],)
          print('************')
 
@@ -429,7 +362,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta):
          print('Total infected by scenario=',total_infected_by_scenario[i]),
          print('Max isolated=',max_isolated_by_scenario[i])
          print('Total deaths=',total_deaths_by_scenario[i])
-
+         
          print('************')
          print('Tests required for seroprevalence study 95% confidence, max 1% error')
          print('For national study sum requirements for all subpopulations of interest')
@@ -499,23 +432,18 @@ class Par:
    def __init__(self,params):
       self.num_compartments = int(params['num_compartments'])
       self.num_days = int(params['num_days'])
-# =============================================================================
-#       self.inversion_date = int(params['inversion_date'][0])
-#       self.beta_pre_inversion = float(params['beta_pre_inversion'][0])
-#       self.beta_min=float(params['beta_min'][0])
-#       self.beta_max=float(params['beta_max'][0])
-# =============================================================================
       self.total_pop=int(params['total_pop'])
+      self.min_beta_target=float(params['beta_lockdown'])
+      self.max_beta_target=float(params['beta_initial'])
       self.beta_adaptation_days = float(params['beta_adaptation_days']) #this is number of days beta takes to shift from initial to final beta
       self.latency_period =  int(params['latency_period'])
       self.incubation_period =  int(params['incubation_period'])
-      # self.infection_fatality_rate=float(params['infection_fatality_rate'][0])
       self.infection_fatality_rate=float(params['IFR_corrected'])
       self.recovery_period = int(params['recovery_period'] )
       self.death_period = int(params['death_period'])
       self.prop_asymptomatic=float(params['prop_asymptomatic'])
-      self.tau = self.infection_fatality_rate/self.recovery_period
-      self.gamma = (1-self.infection_fatality_rate)/self.recovery_period
+      self.tau = self.infection_fatality_rate
+      self.gamma = (1-self.infection_fatality_rate)
       self.num_testkit_types=int(params['num_testkit_types'])
       self.num_tests_mitigation=list(map(int,params['num_tests_mitigation']))
       self.num_tests_care=list(map(int,params['num_tests_care']))
@@ -526,8 +454,6 @@ class Par:
       self.confirmation_tests=[]
       for i in range(0,len(params['symptomatic_only'])):
           self.test_symptomatic_only.append(params['symptomatic_only'][i].upper() == 'TRUE') 
-   #   self.no_testing=params['no_testing'][0].upper()=='TRUE'  #used to switch off testing in scenario 0
-  #    self.p_positive_if_symptomatic = float(params['p_positive_if_symptomatic'])
       self.p_positive_if_symptomatic = 0.0
       self.background_rate_symptomatic=float(params['background_rate_symptomatic'])
       self.severity=list(map(float,params['severity']))
@@ -540,17 +466,18 @@ class Par:
       self.test_multipliers=list(map(int,params['test_multipliers']))
       self.requireddxtests=list(map(int,params['requireddxtests']))
       self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
-      self.is_counterfactual=list(map(bool, params['is_counterfactual']))
+      self.is_counterfactual=[]
+      for i in range(0,len(params['is_counterfactual'])):
+          self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE') 
       num_compartments = self.num_compartments
-      num_testkit_types = self.num_testkit_types
       self.compartment = []
-      #If the variables were lists we would not need to initialize them all
       self.init_pop = np.zeros(num_compartments)
       self.init_infected = np.zeros(num_compartments)
-   #   self.num_tests=np.zeros(num_compartments)
-  #    self.num_tests_mit=list(map(int,params['num_tests_mitigation']))
-  #    self.num_tests_care=list(map(int,params['num_tests_care']))
       self.num_tests=[self.num_tests_mitigation,self.num_tests_care]
+      self.test_strategy=params['test_strategy']
+      self.results_period=list(map(int,params['results_period']))
+      self.prop_asymptomatic_tested=list(map(float,params['prop_asymptomatic_tested']))
+      self.relative_prob_infected=float(params['relative_prob_infected'])
   #    print ('num_tests=',self.num_tests)
  
       #if we wrote these variables as lists we could copy them without the loops
@@ -579,6 +506,7 @@ class Par:
   #    self.total_testkits = np.zeros(len(self.num_tests))
    #   self.total_testkits=np.asarray(self.num_tests).sum(axis=0)
       self.day1=dt.datetime.now()
+      self.shift=0
  #     print('total_testkits',self.total_testkits)
  #     print('AAA total testkits=',self.total_testkits)
       
@@ -596,6 +524,7 @@ class Sim:
       self.beta_arr = np.zeros((num_days,num_compartments))
       self.infected = np.zeros((num_days,num_compartments))
       self.infectednotisolated=np.zeros((num_days,num_compartments))
+      self.newimportedinfections=np.zeros((num_days,num_compartments))
       self.newinfected = np.zeros((num_days,num_compartments))
       self.accumulatedinfected=np.zeros((num_days,num_compartments))
       self.tested_mit=np.zeros((num_days,num_compartments))
@@ -606,7 +535,6 @@ class Sim:
       self.isolated=np.zeros((num_days,num_compartments))
       self.susceptibles = np.zeros((num_days,num_compartments))
       self.recovered = np.zeros((num_days,num_compartments))
-      self.require_dx_tests = np.zeros((num_days,num_compartments))
       self.newrecovered = np.zeros((num_days,num_compartments))
       self.requireddxtests=np.zeros((num_days,num_compartments))
       self.actualdxtests=np.zeros((num_days,num_compartments))
@@ -625,16 +553,16 @@ class Sim:
       self.npv=np.zeros((num_days,num_compartments))
       self.incidence=np.zeros((num_days,num_compartments))
       self.prevalence=np.zeros((num_days,num_compartments))
-
-      # number of infected generated by compartment i in compartment j
+      self.actualdeaths=np.zeros(num_days)
+      self.importedinfections=np.zeros((num_days,num_compartments))
       self.compart_newinfected=np.zeros((num_days,num_compartments,num_compartments))
       self.total_deaths=np.zeros(num_compartments)
       self.maxinfected=np.zeros(num_compartments)
       self.maxisolated=np.zeros(num_compartments)
       self.totalisolated=np.zeros(num_compartments)
       self.totaltestsperformed_mit=np.zeros(num_days)
-
-
+     
+      
       
 
    # set the correct values at t = 0
@@ -651,30 +579,19 @@ class Sim:
             sim.susceptibleprop[0,i]=0 #avoids a divide by zero error with zero pop in one compartment
          sim.infected[0,i] = sim.newinfected[0,i] # par.init_infected[i]
          sim.infectednotisolated[0,i] = sim.newinfected[0,i] # par.init_infected[i]
-      # tested, deaths, recovered: total and new are zero (default)
-   #      print('BEFORE SIMULATION')
-      #   print('compartment=',i,'population',sim.population[0,i], 'init_infected',par.init_infected[i],
-       #   'susceptibles',sim.susceptibles[0,i],'infected',sim.infected[0,i],
-   #       'infected non isolated',sim.infectednotisolated[0,i])
-
+ 
    # infect compartments at time t using the given beta matrix
+         
    def cross_infect(sim,par:Par,beta,t):
       # add up number of new infected for each compartment - total correct at end of loops
       for i in range(0, par.num_compartments): #this is the compartment doing the infecting
-         for j in range(0, par.num_compartments):      
-            #This computes how many infections compart i will cause in compartment j
-#            sim.compart_newinfected[t,i,j] = sim.infectednotisolated[t-1,i]*beta[i,j]*sim.susceptibleprop[t-1,j]
-            sim.compart_newinfected[t,i,j] = sim.infectednotisolated[t-1-(par.incubation_period-par.latency_period),i]*beta[i,j]*sim.susceptibleprop[t-1-(par.incubation_period-par.latency_period),j]
-                #this records how many new infections compart i will cause in compart j 
-# =============================================================================
-#             if i==1 and j==1:
-#                print ('i=',i,'j=',j,'compart_new_infected', sim.compart_newinfected[t,i,j],
-#                           'infected not isolated=',sim.infectednotisolated[t-1,i],
-#                           'beta=',beta[i,j],'suscept_prop',sim.susceptibleprop[t-1,j],
-#                           'suscept=',sim.susceptibles[t-1,j])
-# =============================================================================
+         for j in range(0, par.num_compartments):   
+            if t>(par.incubation_period-par.latency_period):
+                sim.compart_newinfected[t,i,j] = sim.infectednotisolated[t-1-(par.incubation_period-par.latency_period),i]*beta[i,j]*sim.susceptibleprop[t-1-(par.incubation_period-par.latency_period),j]*sim.population[t-1,j]/sim.population[t-1,:].sum()
+ 
 
    # add up infections per compartment at time t (can combine code here with with cross_infect at some point)
+            
    def addup_infections(sim,par:Par,t):
       for i in range(0,par.num_compartments):
          sim.newinfected[t,i]=0
@@ -682,26 +599,21 @@ class Sim:
             sim.newinfected[t,i]=sim.newinfected[t,i]+sim.compart_newinfected[t,j,i]
          if sim.newinfected[t,i]>sim.susceptibles[t-1,i]:#This should be part of i loop - may not be necessary
             sim.newinfected[t,i]=sim.susceptibles[t-1,i]
-   #      calc_beta=sim.newinfected[t,i]/sim.infectednotisolated[t-1,i]
-  #       print('compartment=',i,'calc_beta=',calc_beta)
-              # print ('cutting new infections')
-
-   # perform tests for compartment i at time t; return true positives, false positives, and number of tests performed
-   
-   # add in a user-determined, phase-specific number of exogeneous infections per day
-   def add_imported(sim,par:Par, t,phase):
-       prop_infections_in_compart=np.zeros(par.num_compartments)
-       if np.sum(sim.newinfected[t])>0:
-            prop_infections_in_compart=sim.newinfected[t]/np.sum(sim.newinfected[t])
-       else:
-  #          prop_infections_in_compart=np.array([0.333,0.333,0.333]) #should be num compartments
-            prop_infections_in_compart.fill(1.0/par.num_compartments)
-       imported_infections=prop_infections_in_compart*par.imported_infections_per_day[phase]
-       sim.newinfected[t]=sim.newinfected[t]+imported_infections
+       
+  # computes the number of imported infections for all compartments
+            
+   def get_imported(sim,par:Par, t,i,phase):
+ #it would be better to make this proportional to population
+       prop_population_in_compart=np.zeros(par.num_compartments)
+       prop_population_in_compart=par.init_pop[i]/np.sum(par.init_pop)
+       imported_infections=prop_population_in_compart*par.imported_infections_per_day[phase]
+   #    sim.newinfected[t]=sim.newinfected[t]+imported_infections
+       return imported_infections
        
    #Computes the sample size required for a national wide seroprevalence survey in which max
    # n. of groups for stratified analysis is given by n_groups
    # assumes a design effect (multiplier to compensate for clustering) specified in system parameters
+   
    def compute_sample_size(sim,par,n_groups,prev,z,error):
        group_size=par.total_pop/n_groups
        upper=(z**2*prev*(1-prev))/(error**2)
@@ -710,77 +622,110 @@ class Sim:
        return(sample_size)
         
     
-   def perform_tests(sim,par:Par,i,t,phase,use_real_testdata):
-      truepositives=0
-      falsepositives=0
-      truenegatives=0
-      falsenegatives=0
-    #  print('In perform tests')
-      accum_tests_performed=0
-      #if we are simulating the past we take num tests performed from empirical data - else from user parameters
-      if (use_real_testdata) and ispast(par.day1,t) and not(par.is_counterfactual) and not (t>len(sim.totaltestsperformed_mit)-1):
-          tests_available=sim.totaltestsperformed_mit[t]
-          
+   def perform_tests(sim,par:Par,t,phase,use_real_testdata):
+      if par.test_strategy[phase]=='all symptomatic':
+          testsperformed=sim.perform_tests_symptomatic_only(par,t,phase,use_real_testdata)
+      elif par.test_strategy[phase]=='special groups with symptoms':
+          testsperformed=sim.perform_tests_with_priorities(par,t,phase,use_real_testdata,[0,1,2])      
+      elif par.test_strategy[phase]=='open public testing':
+          testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
       else:
-          tests_available=par.prop_tests[i][phase]*par.num_tests_mitigation[phase]
-# =============================================================================
-#       if par.confirmation_tests[phase]:
-#           tests_available=tests_available-sim.newisolated[t-1,i] #we do a confirmation tests for everyone isolated in previous period
-# =============================================================================
-  #        print ('compartment=',i,' test_type=',k,'prop_tests=', par.prop_tests[i][phase],'num_tests=',par.num_tests[k][phase],'tests_available=',tests_available)
-      if tests_available>0:
-# =============================================================================
-#              true_positive_rate=par.sensitivity[k] #misleading
-#              false_positive_rate=1-par.specificity[k] #misleading
-# =============================================================================
-         if sim.population[t-1,i] >= tests_available:
-            tests_performed = tests_available
-         else:
-            tests_performed = sim.population[t-1,i] 
-         if par.test_symptomatic_only[phase]: 
-#            print('In sysmptomatic only')
-            if (t)>par.incubation_period:  ## JPV: change to (t+1) to t when richard gives go ahead
-            #total symptomatic = total I would expect to be symptomatic anyway + extras caused by covid
-               total_symptomatic=sim.population[t-1-par.incubation_period,i]*par.background_rate_symptomatic+(1-par.prop_asymptomatic)*sim.infectednotisolated[(t-1)-par.incubation_period,i]
-            else:
-               total_symptomatic=sim.population[t-1,i]*par.background_rate_symptomatic
-            total_symptomatic_for_test=total_symptomatic*par.prop_tests[i][phase]
-            if total_symptomatic_for_test<tests_available:
-               tests_performed=total_symptomatic_for_test
-#                   print ('compartment',i,'prop testsi',par.prop_tests[i],'testkit type=',k,'available=', tests_available,'symptomatic',total_symptomatic,'tested=',tests_performed)
-            if total_symptomatic>0:
-            # Not convinced of this
-     #          p_positive_if_symptomatic=sim.infectednotisolated[t-1-par.incubation_period,i]*par.background_rate_symptomatic/total_symptomatic
-               p_positive_if_symptomatic=sim.infectednotisolated[t-1-par.incubation_period,i]*(1-par.prop_asymptomatic)/total_symptomatic
-           #    print('p_positive if symptomatic=',p_positive_if_symptomatic)
-            else:
-               p_positive_if_symptomatic=0
-            truepositives = truepositives+tests_performed * p_positive_if_symptomatic * par.sensitivity[phase]
-  #          print('p positive if symptomatic=',p_positive_if_symptomatic )
-            falsepositives = falsepositives+tests_performed * (1-p_positive_if_symptomatic) * (1-par.specificity[phase])
+          print('Non-existent test strategy')
+          sys.exit()
+          
+
+      return (testsperformed)
+   
+   def perform_tests_symptomatic_only(sim,par:Par,t,phase,use_real_testdata):
+        newsymptomatic=np.zeros(par.num_compartments)
+        testsperformed=np.zeros(par.num_compartments)
+        symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+        #it is possible we should divide this by 10 to get daily rate
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        newsymptomatic=othersymptomatic+symptomatic_covid
+        total_symptomatic=newsymptomatic.sum()
+        if total_symptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
+        else:
+           p_infected_if_symptomatic=0
+        prop_tests=newsymptomatic/total_symptomatic
+        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+          tests_available=sim.totaltestsperformed_mit[t]*prop_tests
+        else:
+          tests_available=prop_tests*par.num_tests_mitigation[phase]
+        if tests_available.sum()>0:
+            for i in range(0,par.num_compartments):
+                if newsymptomatic[i] >= tests_available[i]:
+                    testsperformed[i] = tests_available[i]
+                else:
+                    testsperformed[i]=newsymptomatic[i]
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)   
+        return(testsperformed)
+    
+   def perform_tests_with_priorities(sim,par:Par,t,phase,use_real_testdata,priorities):
+        newsymptomatic=np.zeros(par.num_compartments)
+        testsperformed=np.zeros(par.num_compartments)
+        symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+        #it is possible we should divide this by 10 to get daily rate
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        newsymptomatic=othersymptomatic+symptomatic_covid
+        total_symptomatic=newsymptomatic.sum()
+        if total_symptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
+        else:
+           p_infected_if_symptomatic=0
+        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+          testsavailable=sim.totaltestsperformed_mit[t]
+        else:
+          testsavailable=par.num_tests_mitigation[phase]
+        for k in range(0, par.num_compartments):
+            i=priorities[k]
+            if testsavailable>0:
+                if newsymptomatic[i] >= testsavailable:
+                    testsperformed[i] = testsavailable         
+                else:
+                    testsperformed[i]=newsymptomatic[i]
+                if testsavailable-testsperformed[i]>0:
+                    testsavailable=testsavailable-testsperformed[i]
+                else:
+                    testsavailable=0
+            adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)      
+        return testsperformed
+   
+    
+   def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
+       
+        testsperformed=np.zeros(par.num_compartments)
+        symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+        #the proportion of non_symptomatic tested is expressed as a proportion of the symptomatic
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/par.recovery_period
+        allsymptomatic=othersymptomatic+symptomatic_covid
+        asymptomatic=(sim.population[t-1]-allsymptomatic)*par.prop_asymptomatic_tested[phase]
+        total2btested=allsymptomatic+asymptomatic
         
-         else: #also testing non-symptomatic
-#            print ('testing all')
-            if sim.population[t-1,i]>0:
-                truepositives = truepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * par.sensitivity[phase]
-                if truepositives>sim.infectednotisolated[t-1-par.incubation_period,i]:
-                   truepositives=sim.infectednotisolated[t-1-par.incubation_period,i]
-                falsepositives=falsepositives+tests_performed * sim.infectednotisolated[t-1-par.incubation_period,i]/sim.population[t-1,i] * (1-par.selectivity[phase])
-            else:
-                truepositives=0
-                falsepositives=0
-         truenegatives=truenegatives+(falsepositives*par.specificity[phase])/(1-par.specificity[phase])
-         falsenegatives=tests_performed-(truepositives+falsepositives+truenegatives)
-         sim.truepositives[t,i]=truepositives
-         sim.falsepositives[t,i]=falsepositives
-         sim.truenegatives[t,i]=truenegatives
-         sim.falsenegatives[t,i]=falsenegatives
-         sim.ppv[t,i]=truepositives/(truepositives+falsepositives)
-         sim.npv[t,i]=truenegatives/(truenegatives+falsenegatives)
-         accum_tests_performed=accum_tests_performed+tests_performed
- #            print('tests=',tests_performed, 'tp=',truepositives,'fp=',falsepositives,'tn=', truenegatives, 'fn=',falsenegatives )
-# print('truepositives=', truepositives,'false positives=', falsepositives,'new tested',sim.newtested[t,i],'infected not isolated',sim.infectednotisolated[t,i],'true positive rate', true_positive_rate,'false positive rate',false_positive_rate)
-      return (truepositives,falsepositives,accum_tests_performed)
+        total_symptomatic=allsymptomatic.sum()
+        if total_symptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic
+    
+           p_infected_if_asymptomatic=(sim.infected[t-1].sum()/sim.population[t-1].sum())*par.relative_prob_infected
+        else:
+           p_infected_if_symptomatic=0
+           p_infected_if_asymptomatic=0
+        expected_infected=p_infected_if_symptomatic*allsymptomatic+p_infected_if_asymptomatic*asymptomatic
+        p_infected=expected_infected/total2btested
+        prop_tests=total2btested/total2btested.sum()
+        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+          tests_available=sim.totaltestsperformed_mit[t]*prop_tests
+        else:
+          tests_available=prop_tests*par.num_tests_mitigation[phase]
+        if tests_available.sum()>0:
+            for i in range(0,par.num_compartments):
+                if total2btested[i] >= tests_available[i]:
+                    testsperformed[i] = tests_available[i]
+                else:
+                    testsperformed[i]=total2btested[i]
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
+        return(testsperformed)
    
    def trigger_next_phase(sim,params,t,phase):
        #This function returns true if t meets the criteria previous defined to trigger next phase
@@ -792,7 +737,7 @@ class Sim:
        elif params.trig_def_type[phase]=='deaths':
            value=np.sum(sim.newdeaths[t-7:t])/7
        elif params.trig_def_type[phase]=='increase cases':
-           if t>7:
+           if t>7:               
               value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newisolated[t-14:t-7,:])-1)*100
            else:
               value=float('NaN')
@@ -805,10 +750,6 @@ class Sim:
        elif params.trig_def_type[phase]=='positives':
            value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))*100
            print('found positives in label current)=',value)
-# =============================================================================
-#        else:
-#            return(False)
-# =============================================================================
        if math.isnan(value):
            return(False)
        if params.trig_op_type[phase]=='=':
@@ -824,11 +765,7 @@ class Sim:
                        print('found gt with t=',t,'phase=',phase)
                        return(True)
        return(False)
-
-               
-                   
-            
-
+   
    def get_data_frame(self,num_days,num_compartments,compartment):
       df = pd.DataFrame({
           'days': range(0,num_days),
@@ -838,21 +775,24 @@ class Sim:
           'population' : np.round(self.population[:,0],1),
           'susceptibles' : np.round(self.susceptibles[:,0],1),
           'isolated': np.round(self.isolated[:,0],1),
+          'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
+          'infectednotisolated': np.round(self.infectednotisolated[:,0],1),
           'infected': np.round(self.infected[:,0],1),
+          'importedinfections':np.round(self.importedinfections[:,0],1),
           'accumulatedinfected': np.round(self.accumulatedinfected[:,0],1),
           'tested_mit': np.round(self.tested_mit[:,0],1),
-          'infectednotisolated': np.round(self.infectednotisolated[:,0],1),
           'confirmed': np.round(self.confirmed[:,0],1),
           'deaths': np.round(self.deaths[:,0],1),
           'recovered': np.round(self.recovered[:,0],1),
-          'beta': np.round(self.beta_arr[:,0],5),
+          'beta': np.round(self.beta_arr[:,0],1),
           'susceptibleprop' : np.round(self.susceptibleprop[:,0],1),
           'newtested_mit': np.round(self.newtested_mit[:,0],1),
-          'newinfected': np.round(self.newinfected[:,0],1),
+          'newimportedinfections':np.round(self.newimportedinfections[:,0],3),
+          'newinfected': np.round(self.newinfected[:,0],3),
           'newisolated': np.round(self.newisolated[:,0],1),
           'newisolatedinfected': np.round(self.newisolatedinfected[:,0],1),
           'newconfirmed': np.round(self.newconfirmed[:,0],1),
-          'newrecovered': np.round(self.newrecovered[:,0],1),
+          'newrecovered': np.round(self.newrecovered[:,0],3),
           'requireddxtests': np.round(self.requireddxtests[:,0],1),
           'actualdxtests': np.round(self.actualdxtests[:,0],1),
           'newdeaths': np.round(self.newdeaths[:,0],1),
@@ -863,7 +803,8 @@ class Sim:
           'ppv':np.round(self.ppv[:,0],3),
           'npv':np.round(self.npv[:,0],3),
           'incidence':np.round(self.incidence[:,0],3),
-          'prevalence':np.round(self.prevalence[:,0],3)
+          'prevalence':np.round(self.prevalence[:,0],3),
+          'actualdeaths':self.actualdeaths
          })
       for i in range(1,num_compartments):
          dfadd = pd.DataFrame({
@@ -874,23 +815,26 @@ class Sim:
             'population' : np.round(self.population[:,i],1),
             'susceptibles' : np.round(self.susceptibles[:,i],1),
             'isolated': np.round(self.isolated[:,i],1),
-            'infected': np.round(self.infected[:,i],5),
-            'accumulatedinfected': np.round(self.accumulatedinfected[:,i],1),
-            'tested_mit': np.round(self.tested_mit[:,i],1),
+            'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
             'infectednotisolated': np.round(self.infectednotisolated[:,i],1),
+            'infected': np.round(self.infected[:,i],1),
+            'importedinfections':np.round(self.importedinfections[:,i],1),
+            'accumulatedinfected': np.round(self.accumulatedinfected[:,i],1),
+            'tested_mit': np.round(self.tested_mit[:,i],1),  
             'confirmed': np.round(self.confirmed[:,i],1),
             'deaths': np.round(self.deaths[:,i],1),
             'recovered': np.round(self.recovered[:,i],1),
-            'beta': np.round(self.beta_arr[:,i],5),
+            'beta': np.round(self.beta_arr[:,i],1),
             'susceptibleprop' : np.round(self.susceptibleprop[:,i],1),
             'newtested_mit': np.round(self.newtested_mit[:,i],1),
-            'newinfected': np.round(self.newinfected[:,i],5),
+            'newimportedinfections':np.round(self.newimportedinfections[:,i],3),
+            'newinfected': np.round(self.newinfected[:,i],3),
             'newisolated': np.round(self.newisolated[:,i],1),
             'newisolatedinfected': np.round(self.newisolatedinfected[:,i],1),
             'newconfirmed': np.round(self.newconfirmed[:,i],1),
-            'newrecovered': np.round(self.newrecovered[:,i],1),
+            'newrecovered': np.round(self.newrecovered[:,i],3),
             'requireddxtests': np.round(self.requireddxtests[:,i],1),
-            'actualdxtests': np.round(self.actualdxtests[:,0],1),
+            'actualdxtests': np.round(self.actualdxtests[:,i],1),
             'newdeaths': np.round(self.newdeaths[:,i],1),
             'truepositives':np.round(self.truepositives[:,i],1),
             'falsepositives':np.round(self.falsepositives[:,i],1),
@@ -899,7 +843,8 @@ class Sim:
             'ppv':np.round(self.ppv[:,i],3),
             'npv':np.round(self.npv[:,i],3),
             'incidence':np.round(self.incidence[:,i],3),
-            'prevalence':np.round(self.prevalence[:,i],3)
+            'prevalence':np.round(self.prevalence[:,i],3),
+            'actualdeaths':self.actualdeaths
             })
          df = df.append(dfadd)
       return df
@@ -925,7 +870,7 @@ class Sim:
 #    computation depends on sign of alpha - maybe there could be a more elegant solution for this
 ######################################################################
 
-def adjust_beta(beta,final_beta,alpha):
+def adjust_beta(par,beta,final_beta,alpha):
     num_compartments = len(beta)
     for i in range (0,num_compartments):
        for j in range(0,num_compartments):
@@ -939,7 +884,8 @@ def adjust_beta(beta,final_beta,alpha):
                  beta[i,j]=beta[i,j]+alpha[i,j]
               else:
                  beta[i,j] = final_beta[i,j]
-    return(beta)
+    meanbeta=np.sum(beta*par.init_pop/par.init_pop.sum(),axis=1)
+    return(meanbeta,beta)
    
 ######################################################################
 # simulate:
@@ -953,116 +899,95 @@ def adjust_beta(beta,final_beta,alpha):
 
     
 def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,phase=0,use_real_testdata=False):
-# =============================================================================
-#     par = Par(params)
-#     num_compartments = par.num_compartments
-#     num_testkit_types = par.num_testkit_types
-#     num_days = par.num_days
-#     num_phases=len(par.severity)-1
-#  #   betas = max_betas.copy()
-#  #   print('trig values)',params['trig_values'])
-# # =============================================================================
-# #     if par.intervention_type==0:
-# #         # if there is no intervention beta will never go down
-# #         alpha=beta*0
-# #     else:
-# #         # alpha=beta/alpha_post_inversion
-# #         #alpha post inversion is now actually a multiplier. Name is wrong. 
-# #         alpha=(beta-final_beta)/par.alpha_post_inversion
-# #         #all betas should go down at same speed.
-# # =============================================================================
-# 
-#     sim = Sim(num_days,num_compartments)
-#     sim.set_initial_conditions(par)
-# =============================================================================
-    
-    
+   
     num_phases=len(par.severity)-1
- #   num_compartments = par.num_compartments
-#    num_testkit_types = par.num_testkit_types
     pops_for_beta=par.init_infected  #temp instruction]
+    
     #fix starting condition
+    meanbeta=[par.max_beta_target,par.max_beta_target,par.max_beta_target]
     initial_betas=generate_betas(min_betas,max_betas,par.severity[phase])  #beta_min,beta_max, min_betas,max_betas, target,pops
-#    phase_duration=par.trig_values[phase+1]-par.trig_values[phase]
-#    beta_overall=par.severity[phase]
     betas = initial_betas.copy() #this is current value of beta matrix
-  #  final_betas=generate_betas(min_betas,max_betas,par.severity[phase+1])
     final_betas=initial_betas
     alpha=(final_betas-initial_betas)/par.beta_adaptation_days
     sim.dates=[par.day1 + dt.timedelta(days=x) for x in range(0,par.num_days)]
-    sim.totaltestsperformed_mit=country_df['tests'] #this presupposes country data has same dates as sim
-#    alpha_overall=(par.severity[phase+1]-par.severity[phase])/phase_duration
+    #This is the time when the patient is isolated between getting a positive result and recovering
+    time_in_isolation=par.recovery_period-par.results_period[phase]
+    for i in range(0,len(sim.totaltestsperformed_mit)):
+        if i+par.shift<0:
+            sim.totaltestsperformed_mit[i]=0
+            sim.actualdeaths[i]=0
+        elif i+par.shift<len(country_df): 
+            
+            sim.totaltestsperformed_mit[i]=country_df['tests'][i+par.shift]
+            sim.actualdeaths[i]=country_df['accumulated_deaths'][i+par.shift]    
     for t in range(start_day,end_day):
        if phase+1<=num_phases:
            if sim.trigger_next_phase(par,t,phase+1): 
                phase=phase+1
-
-               for i in range(0,par.num_compartments):
-                   pops_for_beta[i]=sim.infectednotisolated[t-1,i] #maybe could make this a slice
-       #        initial_betas=generate_betas(min_betas,max_betas,par.severity[phase])  #beta_min,beta_max, min_betas,max_betas, target,pops
-       #        betas = initial_betas.copy() #this is current value of beta matrix
-       #        beta_overall=par.severity[phase]
-        #       phase_duration=par.trig_values[phase+1]-par.trig_values[phase]
                initial_betas=betas
                if phase<num_phases+1:
                    final_betas=generate_betas(min_betas,max_betas,par.severity[phase])
                    alpha=(final_betas-initial_betas)/par.beta_adaptation_days
-        #           alpha_overall=(par.severity[phase+1]-par.severity[phase])/phase_duration
                else:  #this feels a little contorted
                    final_betas=initial_betas
                    alpha=(final_betas-initial_betas)/par.beta_adaptation_days
-   #            alpha_overall=(par.severity[phase+1]-par.severity[phase])/phase_duration
        sim.days[t]=t
-  #     print('t=',t,'phase=',phase,'beta_overall=',beta_overall)
        sim.cross_infect(par,betas,t)
        sim.addup_infections(par,t)
-       sim.add_imported(par,t,phase)
        # works out number of contacts per person. Maximum when target beta=max beta
  #      print('max contacts per case=', par.max_contacts_per_case,'prop contacts traced',par.prop_contacts_traced[phase])
  #      print('beta overall',beta_overall,)
        contacts_per_person=par.max_contacts_per_case*(1-par.severity[phase])+par.min_contacts_per_case*par.severity[phase]
        contacts_per_person_isolated=contacts_per_person*par.prop_contacts_traced[phase]
- #      print('t=',t,'contacts per person isolated=',contacts_per_person_isolated)
+#       print('t=',t,'contacts per person',contacts_per_person,'contacts per person isolated=',contacts_per_person_isolated)
+       #definition of meanbeta is a temporary fudge
+       accum_tests_performed = sim.perform_tests(par,t,phase,use_real_testdata)  
+       sim.newtested_mit[t]=accum_tests_performed
        for i in range(0,par.num_compartments):
-           #perform mitigation testing
-           use_real_testdata=True #this is temporary to isolate problems later.
-           (truepositives,falsepositives,accum_tests_performed) = sim.perform_tests(par,i,t,phase,use_real_testdata)
-           
-           # compute "dailies"
-           # note: sim.newinfected[t,i] updated in addup_infections call
-           sim.newtested_mit[t,i]=accum_tests_performed
-   #        print('true pos',truepositives,'false pos',falsepositives, 'contacts_per_person',contacts_per_person_isolated)
-           sim.newisolated[t,i] = (truepositives+falsepositives) *(1+contacts_per_person_isolated)  #We isolate all people who are infected plus a certain proportion of their contacts
-           sim.newisolatedinfected[t,i] = truepositives #this does not yet take account of contacts
+           #perform mitigation testing  
+           truepositivessecondaries,falsepositivessecondaries=compute_secondaries(par,i,sim.truepositives[t,i]+sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
+           sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
+           sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
+           if t-par.results_period[phase]>0 and time_in_isolation>0:
+               sim.newisolated[t,i] = sim.truepositives[t-par.results_period[phase],i]+sim.falsepositives[t-par.results_period[phase],i]
+               sim.newisolatedinfected[t,i] = sim.truepositives[t-par.results_period[phase],i]
+           else:
+               sim.newisolatedinfected[t,i]=0
            sim.newconfirmed[t,i] = sim.newisolated[t,i]
-           if t-1-par.incubation_period>=0:
-               sim.newrecovered[t,i] = sim.infected[t-1-par.recovery_period,i]*par.gamma  
-       #        sim.newrecovered[t,i] = sim.infected[t-1,i]*par.gamma  
-               sim.newdeaths[t,i] = sim.infected[t-1-par.death_period,i]*par.tau #needs testng
+           if t-(par.recovery_period+par.incubation_period)>=0:
+               sim.newrecovered[t,i] = sim.newinfected[t-(par.recovery_period+par.incubation_period),i]*par.gamma
            else:
                sim.newrecovered[t,i]=0
+           if t-par.death_period>=0:
+               sim.newdeaths[t,i] = sim.newinfected[t-(par.death_period+par.incubation_period),i]*par.tau 
+           else:
                sim.newdeaths[t,i]=0
            sim.requireddxtests[t,i]=sim.newrecovered[t,i]*par.requireddxtests[phase] 
            if sim.requireddxtests[t,i]>par.num_tests_care[phase]:
                sim.actualdxtests[t,i]=par.num_tests_care[phase]
            else:
                sim.actualdxtests[t,i]=sim.requireddxtests[t,i]
-   #            print('new infected=', sim.newinfected[t,i],',new recovered=',sim.newrecovered[t,i],',new deaths=',sim.newdeaths[t,i])
-           # update totals
-   
            sim.tested_mit[t,i] = sim.tested_mit[t-1,i] + sim.newtested_mit[t,i]
-           sim.isolated[t,i] = sim.isolated[t-1,i] + sim.newisolated[t,i] - sim.isolated[t-1,i]*par.gamma-sim.isolated[t-1,i]*par.tau
-           sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - sim.isolatedinfected[t-1,i]*par.gamma-sim.isolatedinfected[t-1,i]*par.tau
-   
+           if (t-time_in_isolation)>=0 and time_in_isolation>0:
+               newisolatedrecovered=sim.newisolated[t-time_in_isolation,i]*par.gamma
+               newisolatedinfectedrecovered=sim.newisolatedinfected[t-time_in_isolation,i]*par.gamma
+           else:
+               newisolatedrecovered=0
+               newisolatedinfectedrecovered=0
+           if t-par.death_period>=0:
+               newisolatedrecovered=newisolatedrecovered+sim.newisolated[t-par.death_period,i]*par.tau
+               newisolatedinfectedrecovered=newisolatedinfectedrecovered+sim.newisolatedinfected[t-par.death_period,i]*par.tau
+           sim.isolated[t,i]=sim.isolated[t-1,i]+sim.newisolated[t,i]-newisolatedrecovered
+           sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - newisolatedinfectedrecovered
            sim.deaths[t,i] = sim.deaths[t-1,i]+sim.newdeaths[t,i]
            sim.recovered[t,i] = sim.recovered[t-1,i]+sim.newrecovered[t,i]
            sim.infected[t,i] = sim.infected[t-1,i]+sim.newinfected[t,i]-sim.newrecovered[t,i]-sim.newdeaths[t,i]
-           if sim.infected[t,i]<0.0:
-              sim.infected[t,i]=0.0
+           
            if sim.infected[t,i]>0:
                sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*par.recovery_period
            else:
                sim.reff[t,i]=np.nan
+           sim.infected[t,i]=sim.infected[t,i]
            sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]
            sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
    
@@ -1078,25 +1003,25 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
    
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
    
-           if sim.infected[t,i] - sim.isolated[t,i] > 0.0:
-              sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolated[t,i]) #accounting identity 
+           if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
+               #false positives do not reduce the number of infected not isolated
+              sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
+              if sim.infectednotisolated[t,i]<0:
+                  sim.infectednotisolated[t,i]
            else:
               sim.infectednotisolated[t,i] = 0.0
-           sim.incidence[t,i]=sim.newinfected[t,i]/sim.population[t,i]
-           sim.prevalence[t,i]=sim.accumulatedinfected[t,i]/sim.population[t,i]
-  #         print('t=',t, 'acc_i=',sim.accumulatedinfected[t,i],'pop=',sim.population[t,i], 'prev=',sim.prevalence[t,i])
-  #     r=sim.compute_r(par,t)
- #      print('t=',t,'r=',r)
-       betas=adjust_beta(betas,final_betas,alpha)
-  #     print('t=',t,'betas=',betas)# apply deceleration on beta - for next period
-  #     beta_overall=beta_overall+alpha_overall
-       
-           
-  #         print('t=',t,'phase=',phase)       
-            
-      #  sim,params,t,phase
-  
-     
+           sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
+            #makes sure number of infected never falls below number of imported infections
+           sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
+           sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
+           if sim.population[t,i]>0:
+               sim.incidence[t,i]=sim.newinfected[t,i]/sim.population[t,i]
+               sim.prevalence[t,i]=sim.accumulatedinfected[t,i]/sim.population[t,i]
+           else:
+               sim.incidence[t,i]=0
+               sim.prevalence[t,i]=0
+               
+       meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
  # =============================================================================
     df = sim.get_data_frame(par.num_days,par.num_compartments,par.compartment)
     return sim,df
@@ -1108,17 +1033,8 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
 
 def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfected,newtested,infected_not_isolated,confirmed,deaths,susceptibles,prevalence,actual_deaths=[]):
      
- #    print('prevalence going into plot=',prevalence)
      fig = plt.figure()
-    # ax = fig.add_subplot(111)
-    # width=0.8
-    #  ax.set_title(title)
-    # plt.plot(days,newisolated,color='b', label="newisolated")
      plt.plot (dates, newinfected,color='r',label="newinfected")
-    # plt.plot (days, confirmed,color='g',label="Confirmed cases")
-    # plt.plot (days, infected_not_isolated,color='y',label="Infected_not_isolated")
-    # plt.plot (days, deaths,color='k',label="Deaths")
-    # plt.gca().set_ylim(0, 0.40)
      plt.title(scenario_name+': '+compartment+' - Infected')
      plt.ylabel('Number')
      plt.xlabel('Date')
@@ -1129,9 +1045,11 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.plot (dates, deaths,color='k',label="Simulated Deaths")
     
      if len(actual_deaths)>0:
-#        print('len simulated=',len(deaths),'len actual=',len(actual_deaths))
-        padding=np.zeros(len(deaths)-len(actual_deaths))
-        actual_deaths=np.concatenate((np.array(actual_deaths),padding))
+        if len(deaths)-len(actual_deaths)>0:
+            padding=np.zeros(len(deaths)-len(actual_deaths))
+            actual_deaths=np.concatenate((np.array(actual_deaths),padding))
+        else: 
+            actual_deaths=actual_deaths[0:len(deaths)]  
         plt.plot(dates,actual_deaths,color='g', label='Actual deaths')
      plt.title(scenario_name+': '+compartment+' - Deaths')
      plt.ylabel('Number')
@@ -1164,40 +1082,6 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      plt.show()
      plt.close()
      
-######################################################################
-# calibrate_beta:
-#    normalizes beta matrix based on an aggregate beta target
-#    returns:
-#       calibrated beta matrix
-######################################################################
-
-def calibratebeta(n,beta,pops,targetbeta):
-    b = aggregatebeta(n,beta,pops)
-    adjust=targetbeta/b
-    beta=beta*adjust
-    new_b=aggregatebeta(n,beta,pops)
-    return beta
-
-######################################################################
-# aggregate_beta:
-#    computes aggregate beta given initial beta matrix & compartment populations
-#    returns:
-#       aggregate beta (scalar)
-######################################################################
-
-def aggregatebeta(n,betas,pops):
-  # print('pops=',pops)
-   total = 0
-   P = np.sum(pops)
-#   print('betas=',betas)
-   for j in range(n):
-     col_sum = 0
-     for i in range(0,n):
- #       print('i=',i,'j=',j)
-        col_sum = col_sum + betas[i][j]
-     total = total + col_sum*pops[j]
-   aggb = total/P
-   return aggb
 
 ######################################################################
 # generate_betas:
@@ -1208,38 +1092,9 @@ def aggregatebeta(n,betas,pops):
 
 
 def generate_betas(min_betas,max_betas, severity):
-    #target is now expressed on a scale of 0 to 1
-# =============================================================================
-#     severity=(beta_max-target)/(beta_max-beta_min)
-#     if severity<0:  #this can happen if target severity outside allowed range
-#         severity=0
-#     if severity>1: #this can happen if target severity outside allowed range
-#         severity=1#generates a severity score from 0 to 1 (no intervention to lockdown)
-# =============================================================================
- #   print ('severity=',severity)
-    new_betas=severity*min_betas+(1-severity)*max_betas #generates a new beta matrix with values lying between min_betas and max_betas
-# =============================================================================
-#     agg=aggregatebeta(len(max_betas), severity_betas, pops)
-#     adjust=target/agg
-#     new_betas=severity_betas*adjust
-#     agg=aggregatebeta(len(max_betas), new_betas, pops)
-# =============================================================================
-    return(new_betas)
 
-# =============================================================================
-# def simulatedeaths(fixed_params):
-#    sysfile = 'system_params.csv'
-#    initial_betafile = 'initial_betas.csv'
-#    final_betafile = initial_betafile
-#    p = get_system_params(sysfile)
-#    update_system_params(p, fixed_params)
-#    num_compartments = int(p['num_compartments'][0])
-#    initial_beta = get_beta(initial_betafile, num_compartments)
-#    final_beta = get_beta(final_betafile, num_compartments)
-#    df = simulate(p,initial_beta,final_beta)
-#    dfsum = df.groupby(['days']).sum().reset_index()
-#    return dfsum
-# =============================================================================
+    new_betas=severity*min_betas+(1-severity)*max_betas #generates a new beta matrix with values lying between min_betas and max_betas
+    return(new_betas)
 
 def getcountrydata(csvfilename):
 #   df = pd.read_csv(csvfilename,index_col='Date',parse_dates=True)
@@ -1247,11 +1102,8 @@ def getcountrydata(csvfilename):
    return df.fillna(0)
 
 def aligndeaths(actual,simulated):
-   n = len(actual)
-   #defensive: deals with case of simulated less than actual - this should not happen
-   if len(simulated)<len(actual):
-       padding=np.zeros(len(actual)-len(simulated))
-       simulated=np.concatenate((np.array(simulated),padding))
+   
+   n = min(len(actual),len(simulated))
    aligneddeaths = [0]*n
    amark = 0
    for i in range(0,n-1):
@@ -1263,25 +1115,24 @@ def aligndeaths(actual,simulated):
       if simulated[i] >= 20:
          smark = i
          break
+   shift=amark-smark
    for i in range(0,n-1):
-      if (i < (amark-smark)):
+       #handle case of negative shifts
+      if i<shift:
          aligneddeaths[i] = 0
-      else:
-         aligneddeaths[i] = simulated[i-(amark-smark)]
-   return aligneddeaths, amark-smark
+      elif i-shift<len(aligneddeaths):
+         aligneddeaths[i] = simulated[i-shift]
+   
+   return aligneddeaths, shift
 
 def alignactualwithsimulated(dfactual,dfsimdeaths):
    simdeaths = dfsimdeaths.tolist()
-#   print('sim_deaths=', simdeaths)
    actdeaths = dfactual['accumulated_deaths'].tolist()
- #  print('act_deaths=',actdeaths)
    aligneddeaths, shift = aligndeaths(actdeaths,simdeaths)
-#   print('shift=',shift)
-   dfactual['Sim'] = aligneddeaths
-   day1_literal=dfactual.iloc[shift]['Date']
- #  print('day1_literal=',day1_literal)
-   day1 = dt.datetime.strptime(dfactual.iloc[shift]['Date'],"%Y-%m-%d")
-   return dfactual, day1
+   dayshift=dt.timedelta(shift)
+   day1 = dt.datetime.strptime(dfactual.iloc[0]['Date'],"%Y-%m-%d")+dayshift
+   return day1,shift
+
 
 
 def ispast(start_date,t):
@@ -1291,42 +1142,17 @@ def ispast(start_date,t):
         return(True)
     else:
         return(False)
-
-def computecurrentphase(start_date,triggers):
+     
+def computetoday(start_date,triggers):
     today=dt.datetime.now()
     simday=(today-start_date).days
     simphase=0
     for i in range(0,len(triggers)):
         if triggers[i]<simday:
             simphase=i
-    return simphase
+    return simphase,simday
 
-def create_past(param, trigger_values, severity):
-    #in final version will get these from system parameters
-    #in later version we will obtain number of tests from real data
-    n_phases=len(trigger_values)
-    past={
-    'trig_values':trigger_values,\
-    'severity':severity,\
-    'symptomatic_only':['true']*n_phases, \
-    'prop_hospital': [0.3]*n_phases,\
-    'prop_other_hc':[0.3]*n_phases,\
-    'prop_rop':[0.4]*n_phases,\
-    'trig_def_type':['date']*n_phases, \
-    'trig_op_type':['=','=']*n_phases,\
-    'num_tests_mitigation':[0]*n_phases,\
-    'type_test_mitigation':['PCR'] * n_phases,\
-    'sensitivity':[0.95]*n_phases,\
-    'specificity':[0.95]* n_phases,\
-    'num_tests_care':[0]*n_phases,\
-    'type_tests_care':['PCR']*n_phases,\
-    'prop_contacts_traced':[0]*n_phases,\
-    'test_multipliers':[0,1,2,3],
-    'imported_infections_per_day':[0]*n_phases,
-    'requireddxtests':[0]*n_phases}
-    return(past)
-
-def create_past_2(param,defaults,trigger_values, severity):
+def create_past(param,defaults,trigger_values, severity):
     n_phases=len(trigger_values)
     past={}
     for a_key in defaults.keys():
@@ -1335,7 +1161,6 @@ def create_past_2(param,defaults,trigger_values, severity):
         past.update({a_key:a_list})
     past.update({'trig_values':trigger_values})
     past.update({'severity':severity})
- #   print('past=',past)
     return(past)
         
 
@@ -1347,6 +1172,67 @@ def create_scenario(past,future):
          sequence=past_value+future_value
          scenario.update({a_key:sequence})
      return(scenario)
+
+#normalize betas so the sum of expected infections reaches a target value
+# function can be optimized to use matrix multiplication
+     
+def normalize_betas(p,beta,target):
+    expected_infections=np.zeros((len(beta),len(beta)))
+    init_pops=list(map(float,p['init_pop']))
+    total_pop=sum(init_pops)
+    for i in range(0, len(beta)):
+        for j in range(0, len(beta)):
+            expected_infections[i,j]=beta[i,j]*init_pops[j]/total_pop*init_pops[i]/total_pop
+    adjust=target/np.sum(expected_infections)
+    return beta*adjust
+
+def compute_secondaries(par,i,primary_infected,contacts_per_person,meanbeta,phase):
+    n_contacts=primary_infected*contacts_per_person
+    #not quite sure about this calculation
+    expectedsecondaries_per_primary=meanbeta[i]*par.recovery_period
+    totalexpectedinfections=expectedsecondaries_per_primary*primary_infected
+    if n_contacts>0 and totalexpectedinfections/n_contacts<=1:
+        p_infected=totalexpectedinfections/n_contacts
+    else:
+        p_infected=0
+    secondary_infected=p_infected*n_contacts
+    #need to add true and false negatives. Need to update sim
+    true_positives=secondary_infected*par.sensitivity[phase]
+    false_positives=n_contacts*(1-par.specificity[phase])
+    return true_positives, false_positives
+
+def write_parameters(afilename,fixed_params,scenario_params):
+    param_dict={'fixed_params':fixed_params,\
+           'scenario_params':scenario_params}
+    with open(afilename,'w') as outfile:      
+        json.dump(param_dict,outfile)
+        
+def read_parameters(afilename):
+    with open(afilename) as infile:      
+        data=json.load(infile)
+    fixed_params=data['fixed_params']
+    scenario_params=data['scenario_params']
+    return fixed_params,scenario_params
+    
+        
+def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic):
+    for i in range(0,par.num_compartments):  
+       sim.truepositives[t,i] = testsperformed[i] * p_infected_if_symptomatic[i] * par.sensitivity[phase]
+       sim.falsepositives[t,i] = testsperformed[i] * (1-p_infected_if_symptomatic[i]) * (1-par.specificity[phase])
+       sim.truenegatives[t,i]= (sim.falsepositives[t,i]*par.specificity[phase])/(1-par.specificity[phase])
+       sim.falsenegatives[t,i]= testsperformed[i]-sim.truepositives[t,i]-sim.falsepositives[t,i]-sim.truenegatives[t,i]
+       if (sim.truepositives[t,i]+sim.falsepositives[t,i])>0:
+           sim.ppv[t,i]=sim.truepositives[t,i]/(sim.truepositives[t,i]+sim.falsepositives[t,i])
+       else:
+           sim.ppv[t,i]=np.nan
+       if (sim.truenegatives[t,i]+sim.falsenegatives[t,i])>0:
+           sim.npv[t,i]=sim.truenegatives[t,i]/(sim.truenegatives[t,i]+sim.falsenegatives[t,i])
+       else:
+           sim.npv[t,i]=np.nan
+        
+    
+    
+    
     
         
     
