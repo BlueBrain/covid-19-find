@@ -63,6 +63,12 @@ class Simulator:
             "prop_hospital": Simulator.__get_array_for_key(phases, "hospitalTestProportion"),
             "prop_other_hc": Simulator.__get_array_for_key(phases, "otherHighContactPopulationTestProportion"),
             "prop_rop": Simulator.__get_array_for_key(phases, "restOfPopulationTestProportion"),
+
+            "test_strategy": Simulator.__get_array_for_key(phases, "testingStrategy"),
+            "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
+            "prop_asymptomatic_tested": Simulator.__get_array_for_key(phases, "proportionAsymptomaticTested"),
+
+
             "test_multipliers": [0, 1, 2, 3],
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
@@ -178,6 +184,7 @@ class Simulator:
         num_phases = 1
         phases = []
         for i in range(0, num_phases):
+
             phases.append(
                 {
                     "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
@@ -197,7 +204,11 @@ class Simulator:
                         covid_libscenario["prop_other_hc"]),
                     "numTestsCare": int(covid_libscenario["num_tests_care"]),
                     "typeTestsCare": "PCR",
-                    "requiredDxTests": int(covid_libscenario["requireddxtests"])
+                    "requiredDxTests": int(covid_libscenario["requireddxtests"]),
+
+                    "testingStrategy":  covid_libscenario["test_strategy"],
+                    "resultsPeriod": int(covid_libscenario["results_period"]),
+                    "proportionAsymptomaticTested": float(covid_libscenario["prop_asymptomatic_tested"])
                 }
             )
 

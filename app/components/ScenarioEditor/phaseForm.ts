@@ -234,7 +234,7 @@ export default [
         min: 0,
         max: 30,
         step: 1,
-        key: 'resultPeriod',
+        key: 'resultsPeriod',
       },
       {
         label: 'Proportion asymptomatic tested per day',

@@ -63,9 +63,7 @@
       "maxItems": 3,
       "items": {
         "type": "object",
-        "required": [
-          "phases"
-        ],
+        "required": ["phases"],
         "properties": {
           "phases": {
             "type": "array",
@@ -84,14 +82,30 @@
                 "specificity",
                 "sensitivity",
                 "testSymptomaticOnly",
-                "hospitalTestProportion",
-                "otherHighContactPopulationTestProportion",
-                "restOfPopulationTestProportion",
                 "numTestsCare",
                 "typeTestsCare",
-                "requiredDxTests"
+                "requiredDxTests",
+                "resultsPeriod",
+                "proportionAsymptomaticTested",
+                "testingStrategy"
               ],
               "properties": {
+                "testingStrategy": {
+                  "type": "string",
+                  "enum": [
+                    "all symptomatic",
+                    "special groups with symptoms",
+                    "open public testing"
+                  ]
+                },
+                "proportionAsymptomaticTested": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "resultsPeriod": {
+                  "type": "number"
+                },
                 "importedInfectionsPerDay": {
                   "type": "number"
                 },
@@ -100,17 +114,11 @@
                 },
                 "triggerType": {
                   "type": "string",
-                  "enum": [
-                    "date"
-                  ]
+                  "enum": ["date"]
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": [
-                    "<",
-                    "=",
-                    ">="
-                  ]
+                  "enum": ["<", "=", ">="]
                 },
                 "severity": {
                   "type": "number",
@@ -128,10 +136,7 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "specificity": {
                   "type": "number",
@@ -146,31 +151,13 @@
                 "testSymptomaticOnly": {
                   "type": "boolean"
                 },
-                "hospitalTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
-                "otherHighContactPopulationTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
-                "restOfPopulationTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
                 "numTestsCare": {
                   "type": "number",
                   "minimum": 0
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "requiredDxTests": {
                   "type": "number",

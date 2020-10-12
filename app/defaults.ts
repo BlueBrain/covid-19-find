@@ -30,7 +30,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
         testingStrategy: TESTING_STRATEGIES.ALL,
-        resultPeriod: 5,
+        resultsPeriod: 5,
         proportionAsymptomaticTested: 0.01,
       },
       {
@@ -54,7 +54,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
         testingStrategy: TESTING_STRATEGIES.ALL,
-        resultPeriod: 5,
+        resultsPeriod: 5,
         proportionAsymptomaticTested: 0.01,
       },
     ],

@@ -37,7 +37,7 @@ export type CountryData = {
 };
 
 export type Phase = {
-  testingStrategy: TESTING_STRATEGIES;
+  testingStrategy: TESTING_STRATEGIES; //test_strategy
   importedInfectionsPerDay: number;
   trigger: string;
   triggerType: string;
@@ -56,7 +56,7 @@ export type Phase = {
   numTestsCare: number;
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
-  resultPeriod: number;
+  resultsPeriod: number; // prop_asymptomatic_tested, results_period,
   proportionAsymptomaticTested: number;
 };
 
