@@ -111,6 +111,21 @@ def get_scenarios(scenariosfile):
 #    from fixed_params
 ######################################################################
 
+#checks the population values in the fixed params. Returns 0 if this is no error - else -1
+def validate_fixed_params(fixed_params):
+    hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
+    poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+    remaining_pop=fixed_params['total_pop']-poor_urban
+    if remaining_pop<0:
+        return(-1)
+    woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
+    other_hc=poor_urban+woh
+    rop=fixed_params['total_pop']-hosp_staff-other_hc
+    if rop<0:
+        return(-1)
+    else:
+        return(0)
+
 def update_system_params2(p, fixed_params):
     #update defaults values if overridden by fixed_params
     
@@ -193,6 +208,10 @@ def update_system_params2(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
+   validation_result=validate_fixed_params(fixed_params)
+   if validation_result==-1:
+       print('Invalid population numbers')
+       sys.exit()
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']
@@ -1214,9 +1233,12 @@ def create_scenario(past,future):
      scenario={}
      for a_key in past.keys():
          past_value=past[a_key]
-         future_value=future[a_key]
-         sequence=past_value+future_value
-         scenario.update({a_key:sequence})
+         if a_key in future:
+             future_value=future[a_key]
+             sequence=past_value+future_value
+             scenario.update({a_key:sequence})
+         else:
+             print('WARNING - KEY " ', a_key,' " IN SCENARIO PARAMETERS NOT PRESENT IN FIXED PARAMETERS')
      return(scenario)
 
 #normalize betas so the sum of expected infections reaches a target value

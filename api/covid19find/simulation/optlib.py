@@ -164,6 +164,7 @@ def getsimdeaths(sev,trig):
    fixed_params['past_severities'] = sev
    fixed_params['past_dates'] = trig
    fixed_params['expert_mode'] = 'FALSE'
+   fixed_params['save_results'] = 'FALSE'
 
    scenario_params=[]
 
@@ -194,7 +195,8 @@ def getsimdeaths(sev,trig):
     })
 
    filename=os.path.join(fixed_params['test_directory'],'parameters.json')
-   cl.write_parameters(filename,fixed_params,scenario_params)
+   if fixed_params['save_results'].upper()=="TRUE":
+       cl.write_parameters(filename,fixed_params,scenario_params)
 
    dataframes, test_df,results_dict=\
                    cl.run_simulation(country_df,fixed_params,scenarios=scenario_params,end_date=end_date)
@@ -286,7 +288,7 @@ def findnexttrig(dfx, sev, trig, trignum):
    lastday = len(dfx)-1
    sev.append(0.00)
    trig.append(lastday)
-   sevsteps = 20
+   sevsteps = 40
    sevmult = 1.0/(sevsteps)
    minphaselength = 14
    maxphaselength = 90
@@ -300,42 +302,31 @@ def findnexttrig(dfx, sev, trig, trignum):
        upperbound=lastday-56
  #  span = lookahead(trig[trignum-1]+1,maxphaselength+50,lastday) # EXP1
    print("trigger index:",trignum)
-   stopcounter=0
-   for t in range(lowerbound,upperbound):
-      print('t=',t)
-      trig[trignum] = t
-      maxsev=1
-      minsev=0
-      sev[trignum]=1
-      maxresult = runandalignsim(dfx,sev,trig)
-      maxsevscore = scorealignment(maxresult,lastday) # span vs lastday
-      sev[trignum]=0
-      minresult=runandalignsim(dfx,sev,trig)
-      minsevscore=scorealignment(minresult,lastday)
-      while maxsev-minsev>0.001:
-  #       print('minsev=',minsev,'maxsev=',maxsev)
-         if maxsevscore<minsevscore:
-             minsev=minsev+0.382*(maxsev-minsev)
-             sev[trignum]=minsev
-             minresult=runandalignsim(dfx,sev,trig)
-             minsevscore=scorealignment(minresult,lastday)
+   for s in range(0,sevsteps+1):
+      currsev = round(s*sevmult,2)
+      print(">severity:",currsev)
+      scorerun = 0
+      score = 0
+      for t in range(lowerbound,upperbound):
+         lastscore = score
+         sev[trignum] = currsev
+         trig[trignum] = t
+         result = runandalignsim(dfx,sev,trig)
+         span = lookahead(t,100,lastday)
+         score = scorealignment(result,lastday) # span vs lastday
+         if abs(score - lastscore)<epsilon:
+            scorerun = scorerun + 1
          else:
-             maxsev=minsev+0.618*(maxsev-minsev)
-             sev[trignum]=maxsev
-             maxresult=runandalignsim(dfx,sev,trig)
-             maxsevscore=scorealignment(maxresult,lastday)
- #        span = lookahead(t,20,lastday)
-      if minsevscore < bestscore:
-         stopcounter=0
-         bestscore = minsevscore
-         bests =minsev 
-         besttrig = t
-      else:
-          stopcounter=stopcounter+1
-      if stopcounter>=7:
-          break
-      print('bestscore=',bestscore,'best severity=',bests,'besttrigger=',besttrig)
- #  print(">>best:",bests,besttrig,bestscore)
+            scorerun = 0
+         if scorerun == 5:
+            break
+         print(currsev,t,score)
+         if score < bestscore:
+            bestscore = score
+            bests = currsev
+            besttrig = t
+#      print(bestscore,bests,besttrig)
+   print(">>best:",bests,besttrig,bestscore)
    sev[trignum] = bests
    trig[trignum] = besttrig
    return bestscore, sev, trig
@@ -420,7 +411,7 @@ def packseverities(sev,trig):
 
 def setcountry(cname):
    global countryname
-   global countrydf
+   global country_df
    global countrycode
    countryname = cname
    countrycode = getcountrycode(countryname)

@@ -2,7 +2,7 @@
 import optlib as opt
 import sys
 
-cname = 'Switzerland'
+cname = 'India'
 if len(sys.argv) > 1:
    cname = sys.argv[1]
 

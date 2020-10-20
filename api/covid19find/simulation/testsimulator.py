@@ -11,12 +11,14 @@ import covidlib as cl
 import pandas as pd
 import os
 import json
+import sys
+from werkzeug.datastructures import MultiDict
 
 #fixed parameters are parameters that are the same for all scenarios
  #temporary. Front_end will provide real data
 country_df = cl.getcountrydata('Switzerland.csv') #temporary. Front_end will provide real data
 fixed_params={
-    'test_directory':'BBP_testing',\
+    'test_directory':'test3_2',\
     'total_pop':8200000, \
     'hospital_beds':33000, \
     'prop_15_64': 0.66, \
@@ -30,14 +32,20 @@ fixed_params={
     'expert_mode':'True',
     'run_multiple_test_scenarios':'True',
     'save_results':'True'}
+validation_result=cl.validate_fixed_params(fixed_params)
+# =============================================================================
+# if validation_result==-1:
+#     print('validation result=',validation_result)
+#     sys.exit()
+# =============================================================================
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 # Here we only append 1 scenario. In the final version there will be 3 
 # Pls do not delecte
 
 scenario_params.append({
-    'severity':[0.7, 0.95],\
-    'trig_values':['2020-09-15','2020-10-15'],\
+    'severity':[0.9, 0.95],\
+    'trig_values':['2020-09-15','2020-12-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[13000,13000],\
@@ -55,65 +63,67 @@ scenario_params.append({
     'prop_asymptomatic_tested':[0.02,0.02]
     })
     
-scenario_params.append({
-    'severity':[0.7, 0.95],\
-    'trig_values':['2020-09-15','2020-10-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
-    'requireddxtests':[2,2],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['special groups with symptoms','special groups with symptoms'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
-    })
-    
-scenario_params.append({
-    'severity':[0.7, 0.95],\
-    'trig_values':['2020-09-15','2020-10-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
-    'requireddxtests':[2,2],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['all symptomatic','all symptomatic'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
-    })
-    
-scenario_params.append({
-    'severity':[0.7, 0.95],\
-    'trig_values':['2020-09-15','2020-10-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
-    'requireddxtests':[2,2],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['open public testing','open public testing'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
-    })
+# =============================================================================
+# scenario_params.append({
+#     'severity':[0.7, 0.95],\
+#     'trig_values':['2020-09-15','2020-10-15'],\
+#     'trig_def_type':['date','date'],\
+#     'trig_op_type':['=','='],\
+#     'num_tests_mitigation':[13000,13000],\
+#     'type_test_mitigation':['PCR','PCR'],\
+#     'sensitivity':[0.95,0.95],\
+#     'specificity':[0.95,0.95],\
+#     'num_tests_care':[10000,10000],\
+#     'type_tests_care':['PCR','PCR'],\
+#     'prop_contacts_traced':[0.25,0.25],\
+#     'imported_infections_per_day':[100,100],\
+#     'requireddxtests':[2,2],\
+#     'is_counterfactual':['False','False'],\
+#     'test_strategy':['special groups with symptoms','special groups with symptoms'],\
+#     'results_period':[1,1],\
+#     'prop_asymptomatic_tested':[0.02,0.02]
+#     })
+#     
+# scenario_params.append({
+#     'severity':[0.7, 0.95],\
+#     'trig_values':['2020-09-15','2020-10-15'],\
+#     'trig_def_type':['date','date'],\
+#     'trig_op_type':['=','='],\
+#     'num_tests_mitigation':[13000,13000],\
+#     'type_test_mitigation':['PCR','PCR'],\
+#     'sensitivity':[0.95,0.95],\
+#     'specificity':[0.95,0.95],\
+#     'num_tests_care':[10000,10000],\
+#     'type_tests_care':['PCR','PCR'],\
+#     'prop_contacts_traced':[0.25,0.25],\
+#     'imported_infections_per_day':[100,100],\
+#     'requireddxtests':[2,2],\
+#     'is_counterfactual':['False','False'],\
+#     'test_strategy':['all symptomatic','all symptomatic'],\
+#     'results_period':[1,1],\
+#     'prop_asymptomatic_tested':[0.02,0.02]
+#     })
+#     
+# scenario_params.append({
+#     'severity':[0.7, 0.95],\
+#     'trig_values':['2020-09-15','2020-10-15'],\
+#     'trig_def_type':['date','date'],\
+#     'trig_op_type':['=','='],\
+#     'num_tests_mitigation':[13000,13000],\
+#     'type_test_mitigation':['PCR','PCR'],\
+#     'sensitivity':[0.95,0.95],\
+#     'specificity':[0.95,0.95],\
+#     'num_tests_care':[10000,10000],\
+#     'type_tests_care':['PCR','PCR'],\
+#     'prop_contacts_traced':[0.25,0.25],\
+#     'imported_infections_per_day':[100,100],\
+#     'requireddxtests':[2,2],\
+#     'is_counterfactual':['False','False'],\
+#     'test_strategy':['open public testing','open public testing'],\
+#     'results_period':[1,1],\
+#     'prop_asymptomatic_tested':[0.02,0.02]
+#     })
+# =============================================================================
 
 filename=os.path.join(fixed_params['test_directory'],'parameters.json')
 cl.write_parameters(filename,fixed_params,scenario_params)
