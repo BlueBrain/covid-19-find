@@ -11,11 +11,13 @@
     "test_directory": "test1_1",
     "past_dates": [1, 29, 50, 73, 135, 140],
     "past_severities": [0.0, 0.2, 0.91, 0.98, 0.6, 0.75],
-    "expert_mode": false
+    "expert_mode": false,
+    "run_multiple_test_scenarios": true,
+    "save_results": false
   },
   "scenario_params": [
     {
-      "symptomatic_only": ["True", "True"],
+      "symptomatic_only": [true, true],
       "prop_hospital": [0.4, 0.4],
       "prop_other_hc": [0.3, 0.3],
       "prop_rop": [0.3, 0.3],
@@ -32,7 +34,7 @@
       "prop_contacts_traced": [0.25, 0.25],
       "imported_infections_per_day": [50, 50],
       "requireddxtests": [2, 2],
-      "is_counterfactual": ["False", "False"],
+      "is_counterfactual": [false, false],
       "test_strategy": ["open public testing", "open public testing"],
       "results_period": [1, 1],
       "prop_asymptomatic_tested": [0.01, 0.01]

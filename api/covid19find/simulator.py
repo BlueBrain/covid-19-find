@@ -7,7 +7,6 @@ import pandas as pd
 
 from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
 
-
 class Simulator:
     IS_SCENARIO_COUNTERFACTUAL = [False, False, False]
 
@@ -103,6 +102,8 @@ class Simulator:
         fixed_parameters["past_severities"] = params_from_file["fixed_params"]["past_severities"]
         fixed_parameters["past_dates"] = params_from_file["fixed_params"]["past_dates"]
         fixed_parameters["expert_mode"] = params_from_file["fixed_params"]["expert_mode"]
+        fixed_parameters["run_multiple_test_scenarios"] = params_from_file["fixed_params"]["run_multiple_test_scenarios"]
+        fixed_parameters["save_results"] = params_from_file["fixed_params"]["save_results"]
 
         result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 

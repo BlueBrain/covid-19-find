@@ -163,8 +163,8 @@ def getsimdeaths(sev,trig):
    fixed_params['test_directory'] = 'scratch1'
    fixed_params['past_severities'] = sev
    fixed_params['past_dates'] = trig
-   fixed_params['expert_mode'] = 'FALSE'
-   fixed_params['save_results'] = 'FALSE'
+   fixed_params['expert_mode'] = False
+   fixed_params['save_results'] = False
 
    scenario_params=[]
 
@@ -195,7 +195,7 @@ def getsimdeaths(sev,trig):
     })
 
    filename=os.path.join(fixed_params['test_directory'],'parameters.json')
-   if fixed_params['save_results'].upper()=="TRUE":
+   if fixed_params['save_results']:
        cl.write_parameters(filename,fixed_params,scenario_params)
 
    dataframes, test_df,results_dict=\

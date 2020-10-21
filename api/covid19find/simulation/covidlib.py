@@ -140,7 +140,7 @@ def update_system_params2(p, fixed_params):
     p['init_pop'][1]=other_hc
     p['init_pop'][2]=rop
     p['total_pop']=int(fixed_params['total_pop'])
-    if p['expert_mode'].upper()=='TRUE':
+    if p['expert_mode']:
         print('init pop=',p['init_pop'])
     #compute age_corrected IFR for country
 
@@ -269,7 +269,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=p['expert_mode'].upper()=='TRUE'
+   expert_mode=p['expert_mode']
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -332,7 +332,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       use_real_testdata=True
       #Startday here is  hard coded to 1
       sim,df = simulate(country_df,sim,par,max_betas,min_betas,1,end_date,0,use_real_testdata)
-      if par.save_results==True:
+      if par.save_results:
           df.to_csv(filename,index=False,date_format='%Y-%m-%d')
       dataframes.append(df) 
       
@@ -380,7 +380,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
       dfsum['prevalence']=dfsum['accumulatedinfected']/(dfsum['population'])
       dataframes.append(dfsum)
-      if par.save_results==True:
+      if par.save_results:
           dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
      
         # gives results by day grouped by individual compartment
@@ -526,10 +526,10 @@ class Par:
       self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
       self.is_counterfactual=[]
       for i in range(0,len(params['is_counterfactual'])):
-          self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE')
+          self.is_counterfactual.append(params['is_counterfactual'][i])
      
-      self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios'].upper() == 'TRUE') 
-      self.save_results=(params['save_results'].upper() == 'TRUE') 
+      self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios']) 
+      self.save_results=(params['save_results']) 
       num_compartments = self.num_compartments
       self.compartment = []
       self.init_pop = np.zeros(num_compartments)
