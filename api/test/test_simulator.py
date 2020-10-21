@@ -95,9 +95,7 @@ def map_scenario(scenario_from_params):
             "specificity": scenario_from_params["specificity"][i],
             "sensitivity": scenario_from_params["sensitivity"][i],
             "testSymptomaticOnly": scenario_from_params["symptomatic_only"][i],
-            "hospitalTestProportion": scenario_from_params["prop_hospital"][i],
-            "otherHighContactPopulationTestProportion": scenario_from_params["prop_other_hc"][i],
-            "restOfPopulationTestProportion": scenario_from_params["prop_rop"][i],
+            
             "numTestsCare": scenario_from_params["num_tests_care"][i],
             "typeTestsCare": scenario_from_params["type_tests_care"][i],
             "requiredDxTests": scenario_from_params["requireddxtests"][i],

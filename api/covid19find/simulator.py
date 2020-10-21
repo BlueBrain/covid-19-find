@@ -59,9 +59,6 @@ class Simulator:
             "sensitivity": Simulator.__get_array_for_key(phases, "sensitivity"),
             "specificity": Simulator.__get_array_for_key(phases, "specificity"),
             "symptomatic_only": Simulator.__get_array_for_key(phases, "testSymptomaticOnly", str),
-            "prop_hospital": Simulator.__get_array_for_key(phases, "hospitalTestProportion"),
-            "prop_other_hc": Simulator.__get_array_for_key(phases, "otherHighContactPopulationTestProportion"),
-            "prop_rop": Simulator.__get_array_for_key(phases, "restOfPopulationTestProportion"),
 
             "test_strategy": Simulator.__get_array_for_key(phases, "testingStrategy"),
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
@@ -199,10 +196,7 @@ class Simulator:
                     "specificity": float(covid_libscenario["specificity"]),
                     "sensitivity": float(covid_libscenario["sensitivity"]),
                     "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"]),
-                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"]),
-                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"]),
-                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"]) - float(
-                        covid_libscenario["prop_other_hc"]),
+
                     "numTestsCare": int(covid_libscenario["num_tests_care"]),
                     "typeTestsCare": "PCR",
                     "requiredDxTests": int(covid_libscenario["requireddxtests"]),
