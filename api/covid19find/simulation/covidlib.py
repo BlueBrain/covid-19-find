@@ -111,38 +111,85 @@ def get_scenarios(scenariosfile):
 #    from fixed_params
 ######################################################################
 
-def update_system_params(p, fixed_params):
-   num_compartments = int(p['num_compartments'])
-   num_testkit_types=int(p['num_testkit_types'])
-         
-   #define size of compartments   
-   hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
-   poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
-   remaining_pop=fixed_params['total_pop']-poor_urban-hosp_staff
-   woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
-   other_hc=poor_urban+woh
-   rop=fixed_params['total_pop']-hosp_staff-other_hc
-   p['init_pop'][0]=hosp_staff
-   p['init_pop'][1]=other_hc
-   p['init_pop'][2]=rop
-   p['total_pop']=int(fixed_params['total_pop'])
-   print('init pop=',p['init_pop'])
+#checks the population values in the fixed params. Returns 0 if this is no error - else -1
+def validate_fixed_params(fixed_params):
+    hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
+    poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+    remaining_pop=fixed_params['total_pop']-poor_urban
+    if remaining_pop<0:
+        return(-1)
+    woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
+    other_hc=poor_urban+woh
+    rop=fixed_params['total_pop']-hosp_staff-other_hc
+    if rop<0:
+        return(-1)
+    else:
+        return(0)
+
+def update_system_params2(p, fixed_params):
+    #update defaults values if overridden by fixed_params
+    
+    p.update(fixed_params)
+    hosp_staff=int(p['hospital_beds'])*float(p['staff_per_bed'])
+    poor_urban=int(p['total_pop'])*float(p['prop_urban'])*float(p['prop_below_pl'])
+    remaining_pop=int(p['total_pop'])-poor_urban
+    woh=remaining_pop*float(p['prop_15_64'])*float(p['prop_woh']) #working outside home
+    other_hc=poor_urban+woh
+    rop=int(p['total_pop'])-hosp_staff-other_hc
+    p['init_pop'][0]=hosp_staff
+    p['init_pop'][1]=other_hc
+    p['init_pop'][2]=rop
+    p['total_pop']=int(fixed_params['total_pop'])
+    if p['expert_mode'].upper()=='TRUE':
+        print('init pop=',p['init_pop'])
     #compute age_corrected IFR for country
 
-   prop_gt_64=fixed_params['age_gt_64']
-   prop_15_64=fixed_params['prop_15_64']
-   prop_1_14=1-(prop_gt_64+prop_15_64)
-   IFR_1_14=float(p['IFR_1_14'])
-   IFR_15_64=float(p['IFR_15_64'])
-   IFR_gt_64=float(p['IFR_gt_64'])
-   p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
-   p['past_dates']=fixed_params['past_dates']
-   p['past_severities']=fixed_params['past_severities']
-   p['expert_mode']=fixed_params['expert_mode']
-   p['expert_mode']=fixed_params['expert_mode']
+    prop_gt_64=p['age_gt_64']
+    prop_15_64=p['prop_15_64']
+    prop_1_14=1-(prop_gt_64+prop_15_64)
+    IFR_1_14=float(p['IFR_1_14'])
+    IFR_15_64=float(p['IFR_15_64'])
+    IFR_gt_64=float(p['IFR_gt_64'])
+    p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
+    p['past_dates']=fixed_params['past_dates']
+    p['past_severities']=fixed_params['past_severities']
+   
+#  This is an old version of routine - to be removed if new version (uodate_system_parameters2) gives no problems   
+# =============================================================================
+# def update_system_params(p, fixed_params):
+#    num_compartments = int(p['num_compartments'])
+#    num_testkit_types=int(p['num_testkit_types'])
+#          
+#    #define size of compartments   
+#    hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
+#    poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+#    remaining_pop=fixed_params['total_pop']-poor_urban-hosp_staff
+#    woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
+#    other_hc=poor_urban+woh
+#    rop=fixed_params['total_pop']-hosp_staff-other_hc
+#    p['init_pop'][0]=hosp_staff
+#    p['init_pop'][1]=other_hc
+#    p['init_pop'][2]=rop
+#    p['total_pop']=int(fixed_params['total_pop'])
+#    print('init pop=',p['init_pop'])
+#     #compute age_corrected IFR for country
+# 
+#    prop_gt_64=fixed_params['age_gt_64']
+#    prop_15_64=fixed_params['prop_15_64']
+#    prop_1_14=1-(prop_gt_64+prop_15_64)
+#    IFR_1_14=float(p['IFR_1_14'])
+#    IFR_15_64=float(p['IFR_15_64'])
+#    IFR_gt_64=float(p['IFR_gt_64'])
+#    p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
+#    p['past_dates']=fixed_params['past_dates']
+#    p['past_severities']=fixed_params['past_severities']
+#    p['expert_mode']=fixed_params['expert_mode']
+#    p['run_multiple_test_scenarios']=fixed_params['run_multiple_test_scenarios']
+#    p['save_results']=fixed_params['save_results']
+# =============================================================================
    
 
-   return
+    return
 
 
 ######################################################################
@@ -161,6 +208,10 @@ def update_system_params(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
+   validation_result=validate_fixed_params(fixed_params)
+   if validation_result==-1:
+       print('Invalid population numbers')
+       sys.exit()
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']
@@ -170,15 +221,20 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df['Date']=country_df_raw['Date']
    country_df['accumulated_deaths']=country_df_raw['accumulated_deaths']
+   end_day=None
+   keys=kwargs.keys()
    if len(kwargs)>0:
       scenarios_user_specified=kwargs['scenarios']
+      if 'end_day' in keys:
+       end_day=kwargs['end_day']
+      
    else:
       scenarios_user_specified=[]
 
 # set up system parameters
 
    p = get_system_params(sysfile)
-   update_system_params(p, fixed_params) # note: p is updated
+   update_system_params2(p, fixed_params) # note: p is updated
 
 
 # read initial beta matrix
@@ -187,7 +243,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
-   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir)
+   if end_day==None:
+       end_day=int(p['num_days'])
+   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
 
    return results
 
@@ -203,7 +261,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #        results for each scenario
 ######################################################################
 
-def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
+def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 
    num_compartments = int(p['num_compartments'])
    num_scenarios = len(scenarios)
@@ -211,7 +269,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
    no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=p['expert_mode']
+   expert_mode=p['expert_mode'].upper()=='TRUE'
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -273,44 +331,46 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
       sim.set_initial_conditions(par)
       use_real_testdata=True
       #Startday here is  hard coded to 1
-      print ('real simulation')
-      sim,df = simulate(country_df,sim,par,max_betas,min_betas,1,par.num_days,0,use_real_testdata)
-      df.to_csv(filename,index=False,date_format='%Y-%m-%d')
+      sim,df = simulate(country_df,sim,par,max_betas,min_betas,1,end_date,0,use_real_testdata)
+      if par.save_results==True:
+          df.to_csv(filename,index=False,date_format='%Y-%m-%d')
       dataframes.append(df) 
       
       # do extra simulations to test different test strategies
       # loops through the test_kit multipliers
-      print('beginning simulations with different number of tests')
-      for j in range(0,len(par.test_multipliers)):
-        test_par=Par(p)
-        test_par.day1=day1
-        test_par.shift=shift
-# =============================================================================
-#         test_sim=Sim(par.num_days,test_par.num_compartments)
-#         test_sim.set_initial_conditions(test_par)
-# =============================================================================
-        
-        current_phase,today=computetoday(par.day1,par.trig_values)
-        for k in range(current_phase,len(par.trig_values)):
-            test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
-        sim = Sim(par.num_days,par.num_compartments)
-        sim.set_initial_conditions(test_par)
-        use_real_testdata=True
-        sim,df_tests=simulate(country_df,sim,test_par,max_betas,min_betas,1,test_par.num_days,0,use_real_testdata)
-        dfsum_tests = df_tests.groupby(['dates']).sum().reset_index()
-        deaths=dfsum_tests['newdeaths'].sum()
-        if j==0:
-            baseline_deaths=dfsum_tests['newdeaths'].sum()
-        lives_saved=baseline_deaths-deaths
-        tests_administered=dfsum_tests['newtested_mit'][today:par.num_days].sum()
-        print('tests administered from today',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
-        a_dict={
-        'scenario':i,\
-        'tests administered':tests_administered,\
-        'deaths':deaths,\
-        'lives saved':lives_saved}
-        #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
-        test_df=test_df.append(a_dict,ignore_index=True)
+      
+      if par.run_multiple_test_scenarios==True:
+          print('beginning simulations with different number of tests')
+          for j in range(0,len(par.test_multipliers)):
+            test_par=Par(p)
+            test_par.day1=day1
+            test_par.shift=shift
+    # =============================================================================
+    #         test_sim=Sim(par.num_days,test_par.num_compartments)
+    #         test_sim.set_initial_conditions(test_par)
+    # =============================================================================
+            
+            current_phase,today=computetoday(par.day1,par.trig_values)
+            for k in range(current_phase,len(par.trig_values)):
+                test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
+            sim = Sim(par.num_days,par.num_compartments)
+            sim.set_initial_conditions(test_par)
+            use_real_testdata=True
+            sim,df_tests=simulate(country_df,sim,test_par,max_betas,min_betas,1,end_date,0,use_real_testdata)
+            dfsum_tests = df_tests.groupby(['dates']).sum().reset_index()
+            deaths=dfsum_tests['newdeaths'].sum()
+            if j==0:
+                baseline_deaths=dfsum_tests['newdeaths'].sum()
+            lives_saved=baseline_deaths-deaths
+            tests_administered=dfsum_tests['newtested_mit'][today:par.num_days].sum()
+            print('tests administered from today',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
+            a_dict={
+            'scenario':i,\
+            'tests administered':tests_administered,\
+            'deaths':deaths,\
+            'lives saved':lives_saved}
+            #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
+            test_df=test_df.append(a_dict,ignore_index=True)
       dfsum = df.groupby(['dates']).sum().reset_index()
       dfsum['reff']=dfsum['newinfected']/dfsum['infected']*int(p['recovery_period'][0])
       dfsum['positive rate']=dfsum['newisolated']/dfsum['newtested_mit']
@@ -320,7 +380,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir):
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
       dfsum['prevalence']=dfsum['accumulatedinfected']/(dfsum['population'])
       dataframes.append(dfsum)
-      dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
+      if par.save_results==True:
+          dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
      
         # gives results by day grouped by individual compartment
       
@@ -449,11 +510,8 @@ class Par:
       self.num_tests_care=list(map(int,params['num_tests_care']))
       self.sensitivity=list(map(float,params['sensitivity']))
       self.specificity=list(map(float,params['specificity']))
-      self.test_symptomatic_only=[]
       self.design_effect=float(params['design_effect'])
       self.confirmation_tests=[]
-      for i in range(0,len(params['symptomatic_only'])):
-          self.test_symptomatic_only.append(params['symptomatic_only'][i].upper() == 'TRUE') 
       self.p_positive_if_symptomatic = 0.0
       self.background_rate_symptomatic=float(params['background_rate_symptomatic'])
       self.severity=list(map(float,params['severity']))
@@ -468,7 +526,10 @@ class Par:
       self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
       self.is_counterfactual=[]
       for i in range(0,len(params['is_counterfactual'])):
-          self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE') 
+          self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE')
+     
+      self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios'].upper() == 'TRUE') 
+      self.save_results=(params['save_results'].upper() == 'TRUE') 
       num_compartments = self.num_compartments
       self.compartment = []
       self.init_pop = np.zeros(num_compartments)
@@ -482,12 +543,14 @@ class Par:
  
       #if we wrote these variables as lists we could copy them without the loops
       
-      self.prop_tests=[list(map(float,params['prop_hospital'])),list(map(float,params['prop_other_hc']))]
-      prop_rop=[]
-      for i in range(0,len(params['prop_hospital'])):
-         value=1-(float(self.prop_tests[0][i])+float(self.prop_tests[1][i]))
-         prop_rop.append(value)
-      self.prop_tests.append(prop_rop)
+  #    self.prop_tests=[list(map(float,params['prop_hospital'])),list(map(float,params['prop_other_hc']))]
+# =============================================================================
+#       prop_rop=[]
+#       for i in range(0,len(params['prop_hospital'])):
+#          value=1-(float(self.prop_tests[0][i])+float(self.prop_tests[1][i]))
+#          prop_rop.append(value)
+# =============================================================================
+ #     self.prop_tests.append(prop_rop)
       for i in range(0,self.num_compartments):
          self.compartment.append(params['compartment'][i])
          self.init_pop[i]=int(params['init_pop'][i])
@@ -629,6 +692,8 @@ class Sim:
           testsperformed=sim.perform_tests_with_priorities(par,t,phase,use_real_testdata,[0,1,2])      
       elif par.test_strategy[phase]=='open public testing':
           testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
+      elif par.test_strategy[phase]=='no testing':
+          testsperformed=0
       else:
           print('Non-existent test strategy')
           sys.exit()
@@ -1168,9 +1233,12 @@ def create_scenario(past,future):
      scenario={}
      for a_key in past.keys():
          past_value=past[a_key]
-         future_value=future[a_key]
-         sequence=past_value+future_value
-         scenario.update({a_key:sequence})
+         if a_key in future:
+             future_value=future[a_key]
+             sequence=past_value+future_value
+             scenario.update({a_key:sequence})
+         else:
+             print('WARNING - KEY " ', a_key,' " IN SCENARIO PARAMETERS NOT PRESENT IN FIXED PARAMETERS')
      return(scenario)
 
 #normalize betas so the sum of expected infections reaches a target value
@@ -1215,11 +1283,11 @@ def read_parameters(afilename):
     return fixed_params,scenario_params
     
         
-def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic):
+def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected):
     for i in range(0,par.num_compartments):  
-       sim.truepositives[t,i] = testsperformed[i] * p_infected_if_symptomatic[i] * par.sensitivity[phase]
-       sim.falsepositives[t,i] = testsperformed[i] * (1-p_infected_if_symptomatic[i]) * (1-par.specificity[phase])
-       sim.truenegatives[t,i]= (sim.falsepositives[t,i]*par.specificity[phase])/(1-par.specificity[phase])
+       sim.truepositives[t,i] = testsperformed[i] * p_infected[i] * par.sensitivity[phase]
+       sim.falsepositives[t,i] = testsperformed[i] * (1-p_infected[i]) * (1-par.specificity[phase])
+       sim.truenegatives[t,i]= testsperformed[i] * (1-p_infected[i])*par.specificity[phase]
        sim.falsenegatives[t,i]= testsperformed[i]-sim.truepositives[t,i]-sim.falsepositives[t,i]-sim.truenegatives[t,i]
        if (sim.truepositives[t,i]+sim.falsepositives[t,i])>0:
            sim.ppv[t,i]=sim.truepositives[t,i]/(sim.truepositives[t,i]+sim.falsepositives[t,i])
