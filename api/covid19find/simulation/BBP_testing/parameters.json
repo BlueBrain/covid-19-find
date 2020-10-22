@@ -11,9 +11,9 @@
     "staff_per_bed": 2.5,
     "past_dates": [1, 51, 68, 132, 140],
     "past_severities": [0.22, 0.92, 0.965, 0.65, 0.75],
-    "expert_mode": "True",
-    "run_multiple_test_scenarios": "True",
-    "save_results": "True"
+    "expert_mode": false,
+    "run_multiple_test_scenarios": true,
+    "save_results": false
   },
   "scenario_params": [
     {
