@@ -12,3 +12,4 @@ is_counterfactual,False
 test_strategy,no testing
 results_period,1
 prop_asymptomatic_tested,0.01
+NONEXISTENT,111
