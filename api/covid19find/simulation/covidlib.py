@@ -718,7 +718,7 @@ class Sim:
         
     
    def perform_tests(sim,par:Par,t,phase,use_real_testdata):
-     
+        testsperformed=[0,0,0]
         if par.test_strategy[phase]=='all symptomatic':
             testsperformed=sim.perform_tests_symptomatic_only(par,t,phase,use_real_testdata)
         elif par.test_strategy[phase]=='special groups with symptoms':
@@ -726,10 +726,10 @@ class Sim:
         elif par.test_strategy[phase]=='open public testing':
             testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
         elif par.test_strategy[phase]=='no testing':
-            testsperformed=0
+            return([0,0,0])
         else:
             raise CustomError('Non-existent test strategy')
-            return(0)
+            return([0,0,0])
         return (testsperformed)
    
    def perform_tests_symptomatic_only(sim,par:Par,t,phase,use_real_testdata):
@@ -1040,10 +1040,14 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        accum_tests_performed = sim.perform_tests(par,t,phase,use_real_testdata)  
        sim.newtested_mit[t]=accum_tests_performed
        for i in range(0,par.num_compartments):
-           #perform mitigation testing  
-           truepositivessecondaries,falsepositivessecondaries=compute_secondaries(par,i,sim.truepositives[t,i]+sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
-           sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
-           sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
+           #perform mitigation testing 
+           if np.array(accum_tests_performed).sum()>0:
+               truepositivessecondaries,falsepositivessecondaries=compute_secondaries(par,i,sim.truepositives[t,i]+sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
+               sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
+               sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
+           else:
+               sim.truepositives[t,i]=0
+               sim.falsepositives[t,i]=0
            if t-par.results_period[phase]>0 and time_in_isolation>0:
                sim.newisolated[t,i] = sim.truepositives[t-par.results_period[phase],i]+sim.falsepositives[t-par.results_period[phase],i]
                sim.newisolatedinfected[t,i] = sim.truepositives[t-par.results_period[phase],i]
