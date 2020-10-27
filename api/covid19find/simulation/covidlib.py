@@ -12,9 +12,26 @@ import datetime as dt
 import copy
 import os
 import json
+import ast
+
+class CustomError(Exception):
+     pass
 
 
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
+
+def write_json(adict,afilename):
+    adict2={}
+    for akey in adict.keys():
+        value=adict[akey]
+        try:
+            newvalue=ast.literal_eval(value)
+        except:
+            newvalue=value
+        adict2.update({akey:newvalue})     
+    with open(afilename,'w') as outfile: 
+        json.dump(adict2, outfile)
+
 def get_system_params(sysfile):
 
    p = {}
@@ -140,7 +157,7 @@ def update_system_params2(p, fixed_params):
     p['init_pop'][1]=other_hc
     p['init_pop'][2]=rop
     p['total_pop']=int(fixed_params['total_pop'])
-    if p['expert_mode'].upper()=='TRUE':
+    if p['expert_mode']==True:
         print('init pop=',p['init_pop'])
     #compute age_corrected IFR for country
 
@@ -210,12 +227,13 @@ def update_system_params2(p, fixed_params):
 def run_simulation(country_df_raw,fixed_params, **kwargs):
    validation_result=validate_fixed_params(fixed_params)
    if validation_result==-1:
-       print('Invalid population numbers')
-       sys.exit()
+       raise CustomError('Invalid population numbers')
+       return()
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']
    sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
+   sysfilejson=os.path.join(cl_path_prefix, params_dir, 'system_params.json')
    initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    win_length=28
    country_df=country_df_raw.rolling(win_length,center=True).mean()
@@ -233,18 +251,24 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 
 # set up system parameters
 
-   p = get_system_params(sysfile)
+ #  p = get_system_params(sysfile)
+   try:
+       with open(sysfilejson) as infile: 
+           p=json.load(infile)
+   except FileNotFoundError:
+       raise
+  # write_json(p,sysfilejson) 
    update_system_params2(p, fixed_params) # note: p is updated
 
 
 # read initial beta matrix
 
-   num_compartments = int(p['num_compartments'][0])
+   num_compartments = p['num_compartments']
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
    if end_day==None:
-       end_day=int(p['num_days'])
+       end_day=p['num_days']
    results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
 
    return results
@@ -269,7 +293,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    no_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    max_intervention_betafile = os.path.join(cl_path_prefix, params_dir, 'lockdown_betas.csv')
    num_tests_performed=np.zeros(num_compartments)
-   expert_mode=p['expert_mode'].upper()=='TRUE'
+   expert_mode=p['expert_mode']
    total_tests_mit_by_scenario=np.zeros(num_scenarios)
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
@@ -285,16 +309,24 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    test_column_names=['scenario','tests administered','deaths', 'lives saved']
    test_df= pd.DataFrame(columns=test_column_names)
    for i in range(0,num_scenarios):
-      scenario_name='SCENARIO' + ' '+ str(i) #it should have a proper name
+      scenario_name='scenario' + ' '+ str(i) #it should have a proper name
       if expert_mode:
          print ('*************')
          print ('scenario_name')
          print ('*************')
       parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
+      parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
       summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
-      scenario_default=get_system_params(parameters_filename) #get_system parameters should gave a different name
-      # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
+   #   scenario_default=get_system_params(parameters_filename)
+      try:
+          with open(parameters_filename_json) as infile: 
+               scenario_default=json.load(infile)
+      except FileNotFoundError:
+          raise#get_system parameters should gave a different name
+ #     write_json(scenario_default,parameters_filename_json)
+        # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
+      
       past=create_past(p,scenario_default,p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
@@ -372,7 +404,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
             test_df=test_df.append(a_dict,ignore_index=True)
       dfsum = df.groupby(['dates']).sum().reset_index()
-      dfsum['reff']=dfsum['newinfected']/dfsum['infected']*int(p['recovery_period'][0])
+      dfsum['reff']=dfsum['newinfected']/dfsum['infected']*p['recovery_period']
       dfsum['positive rate']=dfsum['newisolated']/dfsum['newtested_mit']
       dfsum['detection rate']=dfsum['newisolated']/dfsum['newinfected']
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
@@ -525,11 +557,11 @@ class Par:
       self.requireddxtests=list(map(int,params['requireddxtests']))
       self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
       self.is_counterfactual=[]
-      for i in range(0,len(params['is_counterfactual'])):
-          self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE')
+  #    for i in range(0,len(params['is_counterfactual'])):
+  #        self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE')
      
-      self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios'].upper() == 'TRUE') 
-      self.save_results=(params['save_results'].upper() == 'TRUE') 
+      self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios']) 
+      self.save_results=params['save_results'] 
       num_compartments = self.num_compartments
       self.compartment = []
       self.init_pop = np.zeros(num_compartments)
@@ -686,20 +718,19 @@ class Sim:
         
     
    def perform_tests(sim,par:Par,t,phase,use_real_testdata):
-      if par.test_strategy[phase]=='all symptomatic':
-          testsperformed=sim.perform_tests_symptomatic_only(par,t,phase,use_real_testdata)
-      elif par.test_strategy[phase]=='special groups with symptoms':
-          testsperformed=sim.perform_tests_with_priorities(par,t,phase,use_real_testdata,[0,1,2])      
-      elif par.test_strategy[phase]=='open public testing':
-          testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
-      elif par.test_strategy[phase]=='no testing':
-          testsperformed=0
-      else:
-          print('Non-existent test strategy')
-          sys.exit()
-          
-
-      return (testsperformed)
+     
+        if par.test_strategy[phase]=='all symptomatic':
+            testsperformed=sim.perform_tests_symptomatic_only(par,t,phase,use_real_testdata)
+        elif par.test_strategy[phase]=='special groups with symptoms':
+            testsperformed=sim.perform_tests_with_priorities(par,t,phase,use_real_testdata,[0,1,2])      
+        elif par.test_strategy[phase]=='open public testing':
+            testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
+        elif par.test_strategy[phase]=='no testing':
+            testsperformed=0
+        else:
+            raise CustomError('Non-existent test strategy')
+            return(0)
+        return (testsperformed)
    
    def perform_tests_symptomatic_only(sim,par:Par,t,phase,use_real_testdata):
         newsymptomatic=np.zeros(par.num_compartments)
@@ -714,7 +745,7 @@ class Sim:
         else:
            p_infected_if_symptomatic=0
         prop_tests=newsymptomatic/total_symptomatic
-        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.totaltestsperformed_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
@@ -739,7 +770,7 @@ class Sim:
            p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
         else:
            p_infected_if_symptomatic=0
-        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+        if (use_real_testdata) and ispast(par.day1,t):
           testsavailable=sim.totaltestsperformed_mit[t]
         else:
           testsavailable=par.num_tests_mitigation[phase]
@@ -779,7 +810,7 @@ class Sim:
         expected_infected=p_infected_if_symptomatic*allsymptomatic+p_infected_if_asymptomatic*asymptomatic
         p_infected=expected_infected/total2btested
         prop_tests=total2btested/total2btested.sum()
-        if (use_real_testdata) and ispast(par.day1,t) and not (par.is_counterfactual[phase]):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.totaltestsperformed_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
