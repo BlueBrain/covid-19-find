@@ -224,7 +224,7 @@ export default [
         key: 'specificity',
       },
       {
-        label: 'Results Period',
+        label: 'Time to result',
         type: INPUT_TYPES.number,
         min: 0,
         max: 30,
