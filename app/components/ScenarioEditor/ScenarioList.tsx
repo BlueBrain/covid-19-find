@@ -8,7 +8,6 @@ import { toLetters } from '../../libs/strings';
 
 import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';
-import { DEFAULT_SCENARIO_LIST } from '../../defaults';
 
 const MAX_SCENARIOS = 3;
 

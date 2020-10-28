@@ -19,6 +19,7 @@ const ScenarioEditorPanel: React.FC<{
   setTestsFormReady,
 }) => {
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
+
   // Reset default if url changes
   React.useEffect(() => {
     setScenariosValue({ scenarios });
@@ -27,10 +28,7 @@ const ScenarioEditorPanel: React.FC<{
   const handleSubmit = e => {
     e.preventDefault();
     setTestsFormReady(e.target.checkValidity());
-    onSubmit &&
-      onSubmit({
-        scenarios,
-      });
+    onSubmit && onSubmit(scenariosValue);
   };
 
   const handleChange = () => {
