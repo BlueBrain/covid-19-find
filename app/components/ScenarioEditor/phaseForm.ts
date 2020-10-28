@@ -168,6 +168,10 @@ export default [
         key: 'testingStrategy',
         options: [
           {
+            label: TESTING_STRATEGIES.NONE,
+            value: TESTING_STRATEGIES.NONE,
+          },
+          {
             label: TESTING_STRATEGIES.ALL,
             value: TESTING_STRATEGIES.ALL,
           },

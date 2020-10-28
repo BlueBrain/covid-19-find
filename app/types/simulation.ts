@@ -19,6 +19,7 @@ export enum TEST_TYPES {
 }
 
 export enum TESTING_STRATEGIES {
+  NONE = 'Counterfactual - no testing',
   ALL = 'all symptomatic',
   SPECIAL = 'special groups with symptoms',
   OPEN = 'open public testing',
