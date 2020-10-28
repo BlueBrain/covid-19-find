@@ -81,7 +81,6 @@
                 "typeTestsMitigation",
                 "specificity",
                 "sensitivity",
-                "testSymptomaticOnly",
                 "numTestsCare",
                 "typeTestsCare",
                 "requiredDxTests",
@@ -95,7 +94,8 @@
                   "enum": [
                     "all symptomatic",
                     "special groups with symptoms",
-                    "open public testing"
+                    "open public testing",
+                    "no testing"
                   ]
                 },
                 "proportionAsymptomaticTested": {

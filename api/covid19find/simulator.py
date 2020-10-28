@@ -58,7 +58,6 @@ class Simulator:
             "type_tests_mitigation": Simulator.__get_array_for_key(phases, "typeTestsMitigation"),
             "sensitivity": Simulator.__get_array_for_key(phases, "sensitivity"),
             "specificity": Simulator.__get_array_for_key(phases, "specificity"),
-            "symptomatic_only": Simulator.__get_array_for_key(phases, "testSymptomaticOnly", str),
 
             "test_strategy": Simulator.__get_array_for_key(phases, "testingStrategy"),
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
@@ -195,8 +194,6 @@ class Simulator:
                     "typeTestsMitigation": "PCR",
                     "specificity": float(covid_libscenario["specificity"]),
                     "sensitivity": float(covid_libscenario["sensitivity"]),
-                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"]),
-
                     "numTestsCare": int(covid_libscenario["num_tests_care"]),
                     "typeTestsCare": "PCR",
                     "requiredDxTests": int(covid_libscenario["requireddxtests"]),
