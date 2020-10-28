@@ -20,7 +20,7 @@ const PhaseTextInput: React.FC<{
     <input
       className="phase text"
       type="text"
-      value={inputValue}
+      defaultValue={inputValue}
       required
       ref={ref}
       onBlur={handleBlur}
