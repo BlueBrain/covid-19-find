@@ -224,11 +224,6 @@ export default [
         key: 'specificity',
       },
       {
-        label: 'Symptomatic only',
-        type: INPUT_TYPES.boolean,
-        key: 'testSymptomaticOnly',
-      },
-      {
         label: 'Results Period',
         type: INPUT_TYPES.number,
         min: 0,
