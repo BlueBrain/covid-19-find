@@ -1,4 +1,8 @@
-import { TRIGGER_TYPE, TRIGGER_CONDITION } from '../../types/simulation';
+import {
+  TRIGGER_TYPE,
+  TRIGGER_CONDITION,
+  TESTING_STRATEGIES,
+} from '../../types/simulation';
 
 export enum INPUT_TYPES {
   number = 'number',
@@ -158,6 +162,30 @@ export default [
     title: 'Testing for Mitigation',
     input: [
       {
+        label: 'Testing Strategy',
+        type: INPUT_TYPES.select,
+        min: 0,
+        key: 'testingStrategy',
+        options: [
+          {
+            label: TESTING_STRATEGIES.NONE,
+            value: TESTING_STRATEGIES.NONE,
+          },
+          {
+            label: TESTING_STRATEGIES.ALL,
+            value: TESTING_STRATEGIES.ALL,
+          },
+          {
+            label: TESTING_STRATEGIES.OPEN,
+            value: TESTING_STRATEGIES.OPEN,
+          },
+          {
+            label: TESTING_STRATEGIES.SPECIAL,
+            value: TESTING_STRATEGIES.SPECIAL,
+          },
+        ],
+      },
+      {
         label: 'Number of tests per day',
         type: INPUT_TYPES.number,
         min: 0,
@@ -200,61 +228,55 @@ export default [
         key: 'specificity',
       },
       {
-        label: 'Symptomatic only',
-        type: INPUT_TYPES.boolean,
-        key: 'testSymptomaticOnly',
+        label: 'Time to result',
+        type: INPUT_TYPES.number,
+        min: 0,
+        max: 30,
+        step: 1,
+        key: 'resultPeriod',
       },
       {
-        label: 'Proportion of tests for Health care staff',
+        label: 'Proportion asymptomatic tested per day',
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
         step: 0.01,
-        validation: {
-          type: 'equals',
-          value: 1,
-          keysToMatch: [
-            'hospitalTestProportion',
-            'otherHighContactPopulationTestProportion',
-            'restOfPopulationTestProportion',
-          ],
-        },
-        key: 'hospitalTestProportion',
+        key: 'proportionAsymptomaticTested',
       },
-      {
-        label: 'Proportion of tests for other high contact groups',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 1,
-        step: 0.01,
-        validation: {
-          type: 'equals',
-          value: 1,
-          keysToMatch: [
-            'hospitalTestProportion',
-            'otherHighContactPopulationTestProportion',
-            'restOfPopulationTestProportion',
-          ],
-        },
-        key: 'otherHighContactPopulationTestProportion',
-      },
-      {
-        label: 'Proportion of tests for rest of population',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 1,
-        step: 0.01,
-        validation: {
-          type: 'equals',
-          value: 1,
-          keysToMatch: [
-            'hospitalTestProportion',
-            'otherHighContactPopulationTestProportion',
-            'restOfPopulationTestProportion',
-          ],
-        },
-        key: 'restOfPopulationTestProportion',
-      },
+      // {
+      //   label: 'Proportion of tests for other high contact groups',
+      //   type: INPUT_TYPES.number,
+      //   min: 0,
+      //   max: 1,
+      //   step: 0.01,
+      //   validation: {
+      //     type: 'equals',
+      //     value: 1,
+      //     keysToMatch: [
+      //       'hospitalTestProportion',
+      //       'otherHighContactPopulationTestProportion',
+      //       'restOfPopulationTestProportion',
+      //     ],
+      //   },
+      //   key: 'otherHighContactPopulationTestProportion',
+      // },
+      // {
+      //   label: 'Proportion of tests for rest of population',
+      //   type: INPUT_TYPES.number,
+      //   min: 0,
+      //   max: 1,
+      //   step: 0.01,
+      //   validation: {
+      //     type: 'equals',
+      //     value: 1,
+      //     keysToMatch: [
+      //       'hospitalTestProportion',
+      //       'otherHighContactPopulationTestProportion',
+      //       'restOfPopulationTestProportion',
+      //     ],
+      //   },
+      //   key: 'restOfPopulationTestProportion',
+      // },
     ],
   },
   {

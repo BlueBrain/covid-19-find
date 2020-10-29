@@ -1,5 +1,9 @@
 import moment from 'moment';
-import { ClientScenarioData, TEST_TYPES } from './types/simulation';
+import {
+  ClientScenarioData,
+  TESTING_STRATEGIES,
+  TEST_TYPES,
+} from './types/simulation';
 
 export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
   {
@@ -19,17 +23,20 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 0.5,
-        otherHighContactPopulationTestProportion: 0.5,
-        restOfPopulationTestProportion: 0,
+        // hospitalTestProportion: 0.5,
+        // otherHighContactPopulationTestProportion: 0.5,
+        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
+        testingStrategy: TESTING_STRATEGIES.NONE,
+        resultPeriod: 5,
+        proportionAsymptomaticTested: 0.01,
       },
       {
         name: 'Next Phase',
         importedInfectionsPerDay: 30,
-        trigger: 'Date',
+        trigger: moment(Date.now()).format('YYYY-MM-DD'),
         triggerType: 'date',
         triggerCondition: '>=',
         severity: 0.6,
@@ -40,12 +47,15 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        hospitalTestProportion: 0.5,
-        otherHighContactPopulationTestProportion: 0.5,
-        restOfPopulationTestProportion: 0,
+        // hospitalTestProportion: 0.5,
+        // otherHighContactPopulationTestProportion: 0.5,
+        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
+        testingStrategy: TESTING_STRATEGIES.NONE,
+        resultPeriod: 5,
+        proportionAsymptomaticTested: 0.01,
       },
     ],
   },

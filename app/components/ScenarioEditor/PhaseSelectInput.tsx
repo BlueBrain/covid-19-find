@@ -19,7 +19,7 @@ const PhaseSelectInput: React.FC<{
   return (
     <Select
       isDisabled={inputProps.disabled}
-      value={inputProps.options.find(
+      defaultValue={inputProps.options.find(
         ({ value: optionValue }) => optionValue === value,
       )}
       onChange={select.onChange}

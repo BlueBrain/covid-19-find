@@ -12,16 +12,6 @@ const MainLayout: React.FC = ({ children }) => (
     <Hero />
     <main>
       <TopSection />
-      <section>
-        <a
-          href="https://www.finddx.org/covid-19/dx-imp-sim/about/"
-          target="_parent"
-        >
-          <button className="btn simple">
-            About the Dx Implementation Sim
-          </button>
-        </a>
-      </section>
       {children}
       <Footer />
     </main>

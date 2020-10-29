@@ -18,6 +18,13 @@ export enum TEST_TYPES {
   RDT = 'RDT',
 }
 
+export enum TESTING_STRATEGIES {
+  NONE = 'Counterfactual - no testing',
+  ALL = 'all symptomatic',
+  SPECIAL = 'special groups with symptoms',
+  OPEN = 'open public testing',
+}
+
 export type CountryData = {
   countryCode: string;
   population: number;
@@ -31,6 +38,7 @@ export type CountryData = {
 };
 
 export type Phase = {
+  testingStrategy: TESTING_STRATEGIES;
   importedInfectionsPerDay: number;
   trigger: string;
   triggerType: string;
@@ -43,12 +51,14 @@ export type Phase = {
   specificity: number;
   sensitivity: number;
   testSymptomaticOnly: boolean;
-  hospitalTestProportion: number;
-  otherHighContactPopulationTestProportion: number;
-  restOfPopulationTestProportion: number;
+  // hospitalTestProportion: number;
+  // otherHighContactPopulationTestProportion: number;
+  // restOfPopulationTestProportion: number;
   numTestsCare: number;
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
+  resultPeriod: number;
+  proportionAsymptomaticTested: number;
 };
 
 export type ClientPhase = Phase & {

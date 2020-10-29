@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { ClientSimulationRequest } from '../../types/simulation';
-import { save, load } from '../../libs/stateLoader';
+import { load } from '../../libs/stateLoader';
 
-const SaveLoadButtons: React.FC<{
-  state: ClientSimulationRequest;
+const LoadScenariosButton: React.FC<{
   onLoad: (state: ClientSimulationRequest) => void;
-}> = ({ state, onLoad }) => {
+}> = ({ onLoad }) => {
   const inputRef = React.useRef(null);
-
-  const handleSave = () => {
-    save(state);
-  };
 
   const handleLoadClick = () => {
     inputRef.current.click();
@@ -25,16 +20,15 @@ const SaveLoadButtons: React.FC<{
 
   return (
     <div>
-      <button onClick={handleSave}>Save</button>
       <input
         type="file"
         style={{ display: 'none' }}
         ref={inputRef}
         onChange={handleLoad}
       />{' '}
-      <button onClick={handleLoadClick}>Load</button>
+      <button onClick={handleLoadClick}>Load Scenarios</button>
     </div>
   );
 };
 
-export default SaveLoadButtons;
+export default LoadScenariosButton;

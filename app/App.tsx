@@ -5,7 +5,8 @@ import Countries from './containers/countries';
 import Simulation from './containers/simulation';
 import { ClientSimulationRequest, Scenario } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
-import SaveLoadButtons from './components/SaveLoad';
+import SaveScenariosButton from './components/SaveScenariosButton';
+import LoadScenariosButton from './components/LoadScenariosButton';
 import useAPIContext from './hooks/useAPI';
 import useQueryString from './hooks/useQuerySring';
 import { decodeClientState, encodeClientState } from './libs/stateLoader';
@@ -79,6 +80,18 @@ const App: React.FC = () => {
 
   return (
     <>
+      <section>
+        <a
+          href="https://www.finddx.org/covid-19/dx-imp-sim/about/"
+          target="_parent"
+          style={{ marginRight: '1em' }}
+        >
+          <button className="btn simple">
+            About the Dx Implementation Sim
+          </button>
+        </a>
+        <LoadScenariosButton onLoad={handleLoadState} />
+      </section>
       {/* Panel 1 */}
       <Countries
         countrySelectFormReady={countrySelectFormReady}
@@ -128,7 +141,7 @@ const App: React.FC = () => {
       />
       {/* CONTROL PANEL */}
       <section>
-        <SaveLoadButtons state={state} onLoad={handleLoadState} />
+        <SaveScenariosButton state={state} />
       </section>
     </>
   );
