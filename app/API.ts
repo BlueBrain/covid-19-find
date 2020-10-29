@@ -1,24 +1,16 @@
-import { takeRight } from 'lodash';
-
 import { apiBase } from './config';
 import { CountryResponse } from './types/country';
 import {
-  SimulationRequest,
   SimulationResults,
   Scenario,
   Phase,
   ClientSimulationRequest,
 } from './types/simulation';
-import { roundAccurately } from './libs/numbers';
 import { toLetters } from './libs/strings';
 
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
   name: index === 0 ? 'Current Phase' : 'Next Phase',
-  // restOfPopulationTestProportion: roundAccurately(
-  //   phase.restOfPopulationTestProportion,
-  //   2,
-  // ),
 });
 
 const fixScenario = (scenario: Scenario, index: number) => ({

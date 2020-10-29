@@ -23,9 +23,6 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        // hospitalTestProportion: 0.5,
-        // otherHighContactPopulationTestProportion: 0.5,
-        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
@@ -47,9 +44,6 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
         sensitivity: 0.95,
         testSymptomaticOnly: true,
         confirmationTests: true,
-        // hospitalTestProportion: 0.5,
-        // otherHighContactPopulationTestProportion: 0.5,
-        // restOfPopulationTestProportion: 0,
         numTestsCare: 1000,
         typeTestsCare: TEST_TYPES.PCR,
         requiredDxTests: 1,
@@ -59,15 +53,6 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
       },
     ],
   },
-  // TODO: how shall default phases look like?
-  // {
-  //   name: 'Identify and isolate positive cases',
-  //   phases: [],
-  // },
-  // {
-  //   name: 'Protect hospital resources',
-  //   phases: [],
-  // },
 ];
 
 export const DEFAULT_SIMULATION_REQUEST_PARAMS = {

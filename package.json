@@ -82,6 +82,6 @@
     }
   },
   "prepush-if-changed": {
-    "app/**/*": "npm run lint"
+    "app/**/*.ts?(x)": "npm run lint"
   }
 }
