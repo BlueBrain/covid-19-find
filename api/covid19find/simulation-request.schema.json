@@ -83,10 +83,7 @@
                 "typeTestsMitigation",
                 "specificity",
                 "sensitivity",
-                "testSymptomaticOnly",
-                "hospitalTestProportion",
-                "otherHighContactPopulationTestProportion",
-                "restOfPopulationTestProportion",
+                "testingStrategy",
                 "numTestsCare",
                 "typeTestsCare",
                 "requiredDxTests"
@@ -143,23 +140,14 @@
                   "minimum": 0,
                   "maximum": 1
                 },
-                "testSymptomaticOnly": {
-                  "type": "boolean"
-                },
-                "hospitalTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
-                "otherHighContactPopulationTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
-                "restOfPopulationTestProportion": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
+                "testingStrategy": {
+                  "type": "string",
+                  "enum": [
+                    "all symptomatic",
+                    "special groups with symptoms",
+                    "open public testing",
+                    "no testing"
+                  ]
                 },
                 "numTestsCare": {
                   "type": "number",

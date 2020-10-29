@@ -57,12 +57,9 @@ class Simulator:
             "prop_contacts_traced": Simulator.__get_array_for_key(phases, "proportionOfContactsTraced"),
             "num_tests_mitigation": Simulator.__get_array_for_key(phases, "numTestsMitigation"),
             "type_tests_mitigation": Simulator.__get_array_for_key(phases, "typeTestsMitigation"),
+            "test_strategy": Simulator.__get_array_for_key(phases, "testingStrategy"),
             "sensitivity": Simulator.__get_array_for_key(phases, "sensitivity"),
             "specificity": Simulator.__get_array_for_key(phases, "specificity"),
-            "symptomatic_only": Simulator.__get_array_for_key(phases, "testSymptomaticOnly", str),
-            "prop_hospital": Simulator.__get_array_for_key(phases, "hospitalTestProportion"),
-            "prop_other_hc": Simulator.__get_array_for_key(phases, "otherHighContactPopulationTestProportion"),
-            "prop_rop": Simulator.__get_array_for_key(phases, "restOfPopulationTestProportion"),
             "test_multipliers": [0, 1, 2, 3],
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
@@ -90,6 +87,7 @@ class Simulator:
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(parameters["countryCode"])
         fixed_parameters = self.get_fixed_parameters(parameters)
+        fixed_parameters["expert_mode"] = False
         # TODO remove after tests
         with open(os.path.join(self.parameters_directory, "parameters.json")) as params_file:
             params_from_file = json.load(params_file)
@@ -172,37 +170,30 @@ class Simulator:
         }
 
     def __reverse_map_scenario(self, scenario_index):
-        covid_libscenario = get_system_params(
-            os.path.join(cl_path_prefix, self.parameters_directory, "SCENARIO {}_params.csv".format(scenario_index)))
-        # TODO we have only one phase for now
-        num_phases = 1
+        with open(os.path.join(cl_path_prefix, self.parameters_directory,
+                               "SCENARIO {}_params.json".format(scenario_index))) as params_file:
+            covid_libscenario = json.load(params_file)
         phases = []
-        for i in range(0, num_phases):
-            phases.append(
-                {
-                    "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
-                    "trigger": date.today().isoformat(),
-                    "triggerType": covid_libscenario["trig_def_type"],
-                    "triggerCondition": covid_libscenario["trig_op_type"],
-                    "severity": float(covid_libscenario["severity"][i]),
-                    "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
-                    "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
-                    "typeTestsMitigation": "PCR",
-                    "specificity": float(covid_libscenario["specificity"]),
-                    "sensitivity": float(covid_libscenario["sensitivity"]),
-                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"]),
-                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"]),
-                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"]),
-                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"]) - float(
-                        covid_libscenario["prop_other_hc"]),
-                    "numTestsCare": int(covid_libscenario["num_tests_care"]),
-                    "typeTestsCare": "PCR",
-                    "requiredDxTests": int(covid_libscenario["requireddxtests"])
-                }
-            )
+        phases.append(
+            {
+                "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
+                "trigger": date.today().isoformat(),
+                "triggerType": covid_libscenario["trig_def_type"],
+                "triggerCondition": covid_libscenario["trig_op_type"],
+                "severity": float(covid_libscenario["severity"]),
+                "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
+                "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
+                "typeTestsMitigation": "PCR",
+                "specificity": float(covid_libscenario["specificity"]),
+                "sensitivity": float(covid_libscenario["sensitivity"]),
+                "testingStrategy": covid_libscenario["test_strategy"],
+                "numTestsCare": int(covid_libscenario["num_tests_care"]),
+                "typeTestsCare": "PCR",
+                "requiredDxTests": int(covid_libscenario["requireddxtests"])
+            }
+        )
 
         return {"phases": phases}
 
     def default_scenarios(self):
-        # TODO change it back to 3 scenarios once testing is over
-        return list(map(self.__reverse_map_scenario, range(0, 1)))
+        return list(map(self.__reverse_map_scenario, range(0, 3)))
