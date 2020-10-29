@@ -171,7 +171,7 @@ class Simulator:
 
     def __reverse_map_scenario(self, scenario_index):
         with open(os.path.join(cl_path_prefix, self.parameters_directory,
-                               "SCENARIO {}_params.json".format(scenario_index))) as params_file:
+                               "scenario {}_params.json".format(scenario_index))) as params_file:
             covid_libscenario = json.load(params_file)
         phases = []
         phases.append(
