@@ -29,6 +29,12 @@ class CovidDataRepository:
         except ValueError:
             return None
 
+    def __int_or_zero(self, string_int):
+        try:
+            return int(float(string_int))
+        except ValueError:
+            return 0
+
     def __read_find(self, filename):
         grouped_country_data = dict()
         with open(os.path.join(self.raw_data_dir, filename)) as csvfile:
@@ -84,7 +90,7 @@ class CovidDataRepository:
             for date, value in data.items():
                 iso_date = datetime.datetime.strptime(date, "%m/%d/%y").date().isoformat()
                 current_count = country_data.get(iso_date, 0)
-                country_data[iso_date] = current_count + int(value)
+                country_data[iso_date] = current_count + self.__int_or_zero(value)
             summed_country_data[country] = country_data
         return summed_country_data
 
