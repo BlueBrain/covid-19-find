@@ -19,7 +19,7 @@ export enum TEST_TYPES {
 }
 
 export enum TESTING_STRATEGIES {
-  NONE = 'Counterfactual - no testing',
+  NONE = 'no testing',
   ALL = 'all symptomatic',
   SPECIAL = 'special groups with symptoms',
   OPEN = 'open public testing',
@@ -51,9 +51,6 @@ export type Phase = {
   specificity: number;
   sensitivity: number;
   testSymptomaticOnly: boolean;
-  // hospitalTestProportion: number;
-  // otherHighContactPopulationTestProportion: number;
-  // restOfPopulationTestProportion: number;
   numTestsCare: number;
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
