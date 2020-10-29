@@ -1,17 +1,19 @@
-from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
+import json
 import math
-import pandas as pd
 import os
 from datetime import date
 
+import pandas as pd
+
+from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
+
 
 class Simulator:
-    SIMULATION_DAYS = 186
+    IS_SCENARIO_COUNTERFACTUAL = [False, False, False]
 
-    IS_SCENARIO_COUNTERFACTUAL = [True, False, False]
-
-    def __init__(self, covid_repository):
+    def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
+        self.parameters_directory = parameters_directory
 
     @staticmethod
     def __map_datapoint(dp):
@@ -19,15 +21,14 @@ class Simulator:
             "Date": dp["date"],
             "accumulated_deaths": dp["totalDeaths"],
             "accumulated_cases": dp["totalConfirmed"],
-            "tests": dp["newTests"]
+            "tests": 0 if dp["newTests"] is None else dp["newTests"]
         }
 
     def get_country_df(self, country_code):
-        covid_data = self.covid_repository.data_for(country_code)["timeseries"][:self.SIMULATION_DAYS]
+        covid_data = self.covid_repository.data_for(country_code)["timeseries"]
         return pd.DataFrame.from_records(list(map(self.__map_datapoint, covid_data)))
 
-    @staticmethod
-    def get_fixed_parameters(parameters):
+    def get_fixed_parameters(self, parameters):
         return {
             "total_pop": parameters["population"],
             "hospital_beds": parameters["hospitalBeds"],
@@ -36,7 +37,8 @@ class Simulator:
             "prop_urban": parameters["urbanPopulationProportion"],
             "prop_below_pl": parameters["belowPovertyLineProportion"],
             "prop_woh": parameters["workingOutsideHomeProportion"],
-            "staff_per_bed": parameters["hospitalStaffPerBed"]
+            "staff_per_bed": parameters["hospitalStaffPerBed"],
+            "test_directory": self.parameters_directory
         }
 
     @staticmethod
@@ -55,17 +57,14 @@ class Simulator:
             "prop_contacts_traced": Simulator.__get_array_for_key(phases, "proportionOfContactsTraced"),
             "num_tests_mitigation": Simulator.__get_array_for_key(phases, "numTestsMitigation"),
             "type_tests_mitigation": Simulator.__get_array_for_key(phases, "typeTestsMitigation"),
+            "test_strategy": Simulator.__get_array_for_key(phases, "testingStrategy"),
             "sensitivity": Simulator.__get_array_for_key(phases, "sensitivity"),
             "specificity": Simulator.__get_array_for_key(phases, "specificity"),
-            "symptomatic_only": Simulator.__get_array_for_key(phases, "testSymptomaticOnly", str),
-            "prop_hospital": Simulator.__get_array_for_key(phases, "hospitalTestProportion"),
-            "prop_other_hc": Simulator.__get_array_for_key(phases, "otherHighContactPopulationTestProportion"),
-            "prop_rop": Simulator.__get_array_for_key(phases, "restOfPopulationTestProportion"),
             "test_multipliers": [0, 1, 2, 3],
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
-            "is_counterfactual": [Simulator.IS_SCENARIO_COUNTERFACTUAL[index] for _ in range(len(phases))]
+            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))]
         }
 
     @staticmethod
@@ -87,7 +86,17 @@ class Simulator:
     def run(self, parameters):
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(parameters["countryCode"])
-        result = run_simulation(country_df, self.get_fixed_parameters(parameters), scenarios=scenarios)
+        fixed_parameters = self.get_fixed_parameters(parameters)
+        fixed_parameters["expert_mode"] = False
+        # TODO remove after tests
+        with open(os.path.join(self.parameters_directory, "parameters.json")) as params_file:
+            params_from_file = json.load(params_file)
+
+        fixed_parameters["past_severities"] = params_from_file["fixed_params"]["past_severities"]
+        fixed_parameters["past_dates"] = params_from_file["fixed_params"]["past_dates"]
+        fixed_parameters["expert_mode"] = params_from_file["fixed_params"]["expert_mode"]
+
+        result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
         scenario_data = []
         scenario_dfs = result[0]
@@ -160,38 +169,31 @@ class Simulator:
             "detectionRate": row.get("detection_rate", None)
         }
 
-    @staticmethod
-    def __reverse_map_scenario(scenario_index):
-        covid_libscenario = get_system_params(
-            os.path.join(cl_path_prefix, "SCENARIO {}_params.csv".format(scenario_index)))
-        # TODO we have only one phase for now
-        num_phases = 1
+    def __reverse_map_scenario(self, scenario_index):
+        with open(os.path.join(cl_path_prefix, self.parameters_directory,
+                               "scenario {}_params.json".format(scenario_index))) as params_file:
+            covid_libscenario = json.load(params_file)
         phases = []
-        for i in range(0, num_phases):
-            phases.append(
-                {
-                    "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
-                    "trigger": date.today().isoformat(),
-                    "triggerType": covid_libscenario["trig_def_type"],
-                    "triggerCondition": covid_libscenario["trig_op_type"],
-                    "severity": float(covid_libscenario["severity"][i]),
-                    "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
-                    "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
-                    "typeTestsMitigation": "PCR",
-                    "specificity": float(covid_libscenario["specificity"]),
-                    "sensitivity": float(covid_libscenario["sensitivity"]),
-                    "testSymptomaticOnly": bool(covid_libscenario["symptomatic_only"]),
-                    "hospitalTestProportion": float(covid_libscenario["prop_hospital"]),
-                    "otherHighContactPopulationTestProportion": float(covid_libscenario["prop_other_hc"]),
-                    "restOfPopulationTestProportion": 1.0 - float(covid_libscenario["prop_hospital"]) - float(
-                        covid_libscenario["prop_other_hc"]),
-                    "numTestsCare": int(covid_libscenario["num_tests_care"]),
-                    "typeTestsCare": "PCR",
-                    "requiredDxTests": int(covid_libscenario["requireddxtests"])
-                }
-            )
+        phases.append(
+            {
+                "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
+                "trigger": date.today().isoformat(),
+                "triggerType": covid_libscenario["trig_def_type"],
+                "triggerCondition": covid_libscenario["trig_op_type"],
+                "severity": float(covid_libscenario["severity"]),
+                "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
+                "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
+                "typeTestsMitigation": "PCR",
+                "specificity": float(covid_libscenario["specificity"]),
+                "sensitivity": float(covid_libscenario["sensitivity"]),
+                "testingStrategy": covid_libscenario["test_strategy"],
+                "numTestsCare": int(covid_libscenario["num_tests_care"]),
+                "typeTestsCare": "PCR",
+                "requiredDxTests": int(covid_libscenario["requireddxtests"])
+            }
+        )
 
         return {"phases": phases}
 
     def default_scenarios(self):
-        return list(map(Simulator.__reverse_map_scenario, range(0, 3)))
+        return list(map(self.__reverse_map_scenario, range(0, 3)))

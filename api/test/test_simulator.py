@@ -6,8 +6,10 @@ import os
 
 path_prefix = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(path_prefix, "data")
+simulation_test_data_dir = os.path.join(path_prefix, "../covid19find/simulation")
 
-simulator = Simulator(CovidDataRepository(data_dir))
+simulator = Simulator(CovidDataRepository(data_dir),
+                      parameters_directory=os.path.join(simulation_test_data_dir, "BBP_testing"))
 
 
 class TestSimulator:

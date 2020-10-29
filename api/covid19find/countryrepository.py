@@ -22,3 +22,9 @@ class CountryRepository:
                 return json.load(country_file)
         except FileNotFoundError:
             return None
+
+    def country_details_with_defaults(self, country_code, default):
+        country_details = self.country_details(country_code)
+        if country_details is None:
+            country_details = default
+        return country_details

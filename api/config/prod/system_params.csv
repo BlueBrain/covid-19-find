@@ -1,4 +1,4 @@
-num_days,242
+num_days,300
 background_rate_symptomatic,0.02
 latency_period,2
 incubation_period,5
@@ -6,6 +6,7 @@ recovery_period,10
 death_period,21
 beta_adaptation_days,10
 prop_asymptomatic,0.2
+infection_fatality_rate,0.01
 prop_urban,0
 degraded,0
 ge_65,0.045
@@ -25,8 +26,6 @@ IFR_gt_64,0.03936
 IFR_corrected,0
 max_contacts_per_case,10
 min_contacts_per_case,2.5
-pc_contacts_isolated,0.0
+pc_contacts_isolated,0.5
 design_effect,2
 test_multipliers, 1,2,3,4
-beta_lockdown,0.03
-beta_initial,0.35
