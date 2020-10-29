@@ -1,4 +1,5 @@
 import json
+import csv
 import math
 import os
 from datetime import date
@@ -14,6 +15,7 @@ class Simulator:
     def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
+        self.past_phases = self.__load_past_phases()
 
     @staticmethod
     def __map_datapoint(dp):
@@ -84,17 +86,14 @@ class Simulator:
         return list(map(Simulator.__tests_dataframe_row_to_response, test_df.iterrows()))
 
     def run(self, parameters):
+        country_code = parameters["countryCode"]
         scenarios = self.get_scenario_parameters(parameters)
-        country_df = self.get_country_df(parameters["countryCode"])
+        country_df = self.get_country_df(country_code)
+
         fixed_parameters = self.get_fixed_parameters(parameters)
         fixed_parameters["expert_mode"] = False
-        # TODO remove after tests
-        with open(os.path.join(self.parameters_directory, "parameters.json")) as params_file:
-            params_from_file = json.load(params_file)
-
-        fixed_parameters["past_severities"] = params_from_file["fixed_params"]["past_severities"]
-        fixed_parameters["past_dates"] = params_from_file["fixed_params"]["past_dates"]
-        fixed_parameters["expert_mode"] = params_from_file["fixed_params"]["expert_mode"]
+        fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
+        fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
 
         result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
@@ -194,6 +193,21 @@ class Simulator:
         )
 
         return {"phases": phases}
+
+    def __load_past_phases(self):
+        past_phases = {}
+        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
+            csv_reader = csv.reader(past_phases_file, delimiter=',')
+            # skip header
+            next(csv_reader)
+            for row in csv_reader:
+                country_code = row[0]
+                past_phases[country_code] = {
+                    "severities": json.loads(row[2]),
+                    "dates": json.loads(row[3])
+                }
+
+        return past_phases
 
     def default_scenarios(self):
         return list(map(self.__reverse_map_scenario, range(0, 3)))
