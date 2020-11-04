@@ -36,7 +36,7 @@ fixed_params={
     'past_severities':past_severities,\
     'expert_mode':True,
     'run_multiple_test_scenarios':True,
-    'save_results':True}
+    'save_results':False}
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -48,14 +48,14 @@ scenario_params.append({
     'trig_values':['2020-09-15','2020-12-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[130000,130000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[1,1],\
+    'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['no testing','no testing'],\
@@ -64,7 +64,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.7, 0.95],\
+    'severity':[0.9, 0.95],\
     'trig_values':['2020-09-15','2020-10-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
@@ -75,7 +75,7 @@ scenario_params.append({
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
+    'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['special groups with symptoms','special groups with symptoms'],\
@@ -84,7 +84,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.7, 0.95],\
+    'severity':[0.9, 0.95],\
     'trig_values':['2020-09-15','2020-10-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
@@ -95,7 +95,7 @@ scenario_params.append({
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
+    'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['all symptomatic','all symptomatic'],\
@@ -104,7 +104,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.7, 0.95],\
+    'severity':[0.9, 0.95],\
     'trig_values':['2020-09-15','2020-10-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
@@ -115,7 +115,7 @@ scenario_params.append({
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[100,100],\
+    'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['open public testing','open public testing'],\
@@ -125,15 +125,27 @@ scenario_params.append({
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')
 except FileNotFoundError:
+    print('')
     print('parameters file in ', fixed_params['test_directory'], ' not found')
     sys.exit()
 cl.write_parameters(filename,fixed_params,scenario_params)
 try:
     dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
-except FileNotFoundError:
+except FileNotFoundError as inst:
+    print('')
+    print('Exception raised by simulation:',inst)
     sys.exit()
-except KeyError:
+except KeyError as inst:
+    print('')
+    print('Exception raised by simulation:',inst)
     sys.exit()
+# The following lines protect the program against unexpected errors. Commented for testing purposes to get full error messages
+# =============================================================================
+# except Exception as inst :
+#     print(' ')
+#     print('Exception raised by simulation:',inst)
+#     sys.exit()
+# =============================================================================
 print ('total deaths by scenario')
 for i in range (0,len(results_dict['total_deaths_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['total_deaths_by_scenario'][i])

@@ -232,9 +232,17 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']
-   sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
-   sysfilejson=os.path.join(cl_path_prefix, params_dir, 'system_params.json')
-   initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
+#   sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
+   try:
+       sysfilejson=os.path.join(cl_path_prefix, params_dir, 'system_params.json')
+   except FileNotFoundError:
+       raise CustomError ('system parameter file not found')
+       return()
+   try:
+       initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
+   except FileNotFoundError:
+       raise FileNotFoundError('initial_betas file not found')
+       return()
    win_length=28
    country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df['Date']=country_df_raw['Date']
@@ -256,7 +264,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
        with open(sysfilejson) as infile: 
            p=json.load(infile)
    except FileNotFoundError:
-       raise
+       raise FileNotFoundError('System parameters file not found')
+       return()
   # write_json(p,sysfilejson) 
    update_system_params2(p, fixed_params) # note: p is updated
 
@@ -269,8 +278,11 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
    if end_day==None:
        end_day=p['num_days']
-   results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
-
+   try:
+       results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
+   except:
+       raise
+       return()
    return results
 
 ######################################################################
@@ -314,8 +326,12 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          print ('*************')
          print ('scenario_name')
          print ('*************')
-      parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
-      parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
+#      parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
+      try:
+          parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
+      except FileNotFoundError:
+          raise FileNotFoundError ('Scenario parameters file not found')
+          return()
       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
       summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
    #   scenario_default=get_system_params(parameters_filename)
@@ -323,7 +339,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           with open(parameters_filename_json) as infile: 
                scenario_default=json.load(infile)
       except FileNotFoundError:
-          raise#get_system parameters should gave a different name
+          raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
+          return()
  #     write_json(scenario_default,parameters_filename_json)
         # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
       
@@ -736,7 +753,7 @@ class Sim:
         newsymptomatic=np.zeros(par.num_compartments)
         testsperformed=np.zeros(par.num_compartments)
         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
-        #it is possible we should divide this by 10 to get daily rate
+        #it is possible we should divide this by 10 to get daily rate - not convinced by this
         othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
         newsymptomatic=othersymptomatic+symptomatic_covid
         total_symptomatic=newsymptomatic.sum()
@@ -789,39 +806,94 @@ class Sim:
         return testsperformed
    
     
-   def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
-       
-        testsperformed=np.zeros(par.num_compartments)
-        symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
-        #the proportion of non_symptomatic tested is expressed as a proportion of the symptomatic
-        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/par.recovery_period
-        allsymptomatic=othersymptomatic+symptomatic_covid
-        asymptomatic=(sim.population[t-1]-allsymptomatic)*par.prop_asymptomatic_tested[phase]
-        total2btested=allsymptomatic+asymptomatic
-        
-        total_symptomatic=allsymptomatic.sum()
-        if total_symptomatic.sum()>0:
-           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic
+# =============================================================================
+#    def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
+#         symptomatic_tested=np.zeros(par.num_compartments)
+#         asymptomatic_tested=np.zeros(par.num_compartments)
+#         total2btested=np.zeros(par.num_compartments)
+#         testsperformed=np.zeros(par.num_compartments)
+#         expected_infected=np.zeros(par.num_compartments)
+#         p_infected_if_symptomatic=np.zeros(par.num_compartments)
+#         p_infected_if_asymptomatic=np.zeros(par.num_compartments)
+#         p_infected=np.zeros(par.num_compartments)
+#         
+#         #This should use infectednotisolated but this is not reliable here
+#         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+#         othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/par.recovery_period
+#         allsymptomatic=othersymptomatic+symptomatic_covid
+#         total_symptomatic=allsymptomatic.sum()
+#         asymptomatic=(sim.population[t-1]-allsymptomatic) # *par.prop_asymptomatic_tested[phase]
+#         total_asymptomatic=asymptomatic.sum()
+#         prop_tests=allsymptomatic/total_symptomatic
+#         if (use_real_testdata) and ispast(par.day1,t):
+#           tests_available=sim.totaltestsperformed_mit[t]*prop_tests
+#         else:
+#           tests_available=prop_tests*par.num_tests_mitigation[phase]
+#         if tests_available.sum()>0:
+#             for i in range(0,par.num_compartments):
+#                 if allsymptomatic[i]>=tests_available[i]:
+#                     symptomatic_tested[i]=tests_available[i]
+#                     asymptomatic_tested[i]=0
+#                 else:
+#                     symptomatic_tested[i]=allsymptomatic[i]
+#             #        asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]
+#                     asymptomatic_tested[i]=0
+#                 if i==2:
+#                     print('t=',t,'tests_available',tests_available[i],'symptomatic tested=',symptomatic_tested[i],'asymptomatic tested=',asymptomatic_tested[i])
+#                 total2btested[i]=symptomatic_tested[i]+asymptomatic_tested[i]
+#                 testsperformed[i]=total2btested[i]
+#                 if allsymptomatic[i]>0:
+#                    p_infected_if_symptomatic[i]=symptomatic_covid[i]/allsymptomatic[i]
+#                    p_infected_if_asymptomatic[i]=sim.infected[t-1,i]/sim.population[t-1,i]*par.relative_prob_infected
+#                 else:
+#                    p_infected_if_symptomatic[i]=0
+#                    p_infected_if_asymptomatic[i]=0
+#                 expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
+#                 p_infected[i]=expected_infected[i]/total2btested[i]
+#             adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
+# 
+#         return(testsperformed)
+# =============================================================================
     
-           p_infected_if_asymptomatic=(sim.infected[t-1].sum()/sim.population[t-1].sum())*par.relative_prob_infected
+   def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
+        symptomatic_tested=np.zeros(par.num_compartments)
+        asymptomatic_tested=np.zeros(par.num_compartments)
+        newsymptomatic=np.zeros(par.num_compartments)
+        testsperformed=np.zeros(par.num_compartments)
+        p_infected_if_symptomatic=np.zeros(par.num_compartments)
+        p_infected_if_asymptomatic=np.zeros(par.num_compartments)
+        p_infected=np.zeros(par.num_compartments)
+        expected_infected=np.zeros(par.num_compartments)
+        symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+        #it is possible we should divide this by 10 to get daily rate - not convinced by this
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        newsymptomatic=othersymptomatic+symptomatic_covid
+        total_symptomatic=newsymptomatic.sum()
+        if total_symptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
         else:
            p_infected_if_symptomatic=0
-           p_infected_if_asymptomatic=0
-        expected_infected=p_infected_if_symptomatic*allsymptomatic+p_infected_if_asymptomatic*asymptomatic
-        p_infected=expected_infected/total2btested
-        prop_tests=total2btested/total2btested.sum()
+        asymptomatic=(sim.population[t-1]-newsymptomatic) 
+    #    prop_tests=newsymptomatic/total_symptomatic
+        prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.totaltestsperformed_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         if tests_available.sum()>0:
             for i in range(0,par.num_compartments):
-                if total2btested[i] >= tests_available[i]:
-                    testsperformed[i] = tests_available[i]
+                if newsymptomatic[i] >= tests_available[i]:
+                    symptomatic_tested[i]=tests_available[i]
+                    asymptomatic_tested[i]=0
                 else:
-                    testsperformed[i]=total2btested[i]
-        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
+                    symptomatic_tested[i]=newsymptomatic[i]
+                    asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]
+                testsperformed[i]=symptomatic_tested[i]+asymptomatic_tested[i]
+                expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
+                p_infected[i]=expected_infected[i]/testsperformed[i]
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)   
         return(testsperformed)
+
    
    def trigger_next_phase(sim,params,t,phase):
        #This function returns true if t meets the criteria previous defined to trigger next phase
@@ -1042,7 +1114,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        for i in range(0,par.num_compartments):
            #perform mitigation testing 
            if np.array(accum_tests_performed).sum()>0:
-               truepositivessecondaries,falsepositivessecondaries=compute_secondaries(par,i,sim.truepositives[t,i]+sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
+               truepositivessecondaries,falsepositivessecondaries=compute_secondaries(par,i,sim.truepositives[t,i],sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
                sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
                sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
            else:
@@ -1289,18 +1361,19 @@ def normalize_betas(p,beta,target):
     adjust=target/np.sum(expected_infections)
     return beta*adjust
 
-def compute_secondaries(par,i,primary_infected,contacts_per_person,meanbeta,phase):
-    n_contacts=primary_infected*contacts_per_person
-    #not quite sure about this calculation
+def compute_secondaries(par,i,true_positives, false_positives,contacts_per_person,meanbeta,phase):
+    n_contacts=(true_positives+false_positives)*contacts_per_person
+    #not quite sure about this calculation - we actually get true and false positives
     expectedsecondaries_per_primary=meanbeta[i]*par.recovery_period
-    totalexpectedinfections=expectedsecondaries_per_primary*primary_infected
-    if n_contacts>0 and totalexpectedinfections/n_contacts<=1:
-        p_infected=totalexpectedinfections/n_contacts
-    else:
-        p_infected=0
-    secondary_infected=p_infected*n_contacts
+    totalexpectedinfections=expectedsecondaries_per_primary*true_positives
+# =============================================================================
+#     if n_contacts>0 and totalexpectedinfections/n_contacts<=1:
+#         p_infected=totalexpectedinfections/n_contacts
+#     else:
+#         p_infected=0
+# =============================================================================
     #need to add true and false negatives. Need to update sim
-    true_positives=secondary_infected*par.sensitivity[phase]
+    true_positives=totalexpectedinfections*par.sensitivity[phase]
     false_positives=n_contacts*(1-par.specificity[phase])
     return true_positives, false_positives
 

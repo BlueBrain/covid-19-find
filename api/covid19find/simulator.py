@@ -66,7 +66,8 @@ class Simulator:
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
-            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))]
+            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))],
+            "results_period": [1] * len(phases),
         }
 
     @staticmethod
