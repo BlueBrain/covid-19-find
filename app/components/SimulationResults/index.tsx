@@ -68,12 +68,14 @@ const SimulationResults: React.FC<{
     {
       title: 'Deaths',
       key: 'totalDeaths',
+      actualKey: 'actualDeaths',
       cohort: 'total',
       color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
       key: 'newConfirmed',
+      actualKey: 'actualCases',
       cohort: 'total',
       color: colors.blueGray,
     },
@@ -141,12 +143,20 @@ const SimulationResults: React.FC<{
             scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
               graph.key
             ];
+          if (graph.actualKey) {
+            day[graph.actualKey] =
+              scenariosResults[scenarioIndex].data[graph.cohort][
+                timeseriesIndex
+              ][graph.actualKey];
+          }
         });
         memo[key] = day;
         return memo;
       }, {}),
     };
   });
+
+  console.log(datasets[selectedScenarioIndex]);
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -553,31 +563,45 @@ const SimulationResults: React.FC<{
                             },
                           }}
                           data={{
-                            datasets: datasets.map((dataset, index) => {
-                              const selected = selectedScenarioIndex === index;
-                              return {
-                                label: dataset.label,
-                                data: Object.values(dataset.data).map(
-                                  values => values[graph.key],
-                                ),
-                                borderColor: [
-                                  selected
-                                    ? graph.color
-                                    : Color(graph.color)
-                                        .alpha(0.2)
-                                        .toString(),
-                                ],
-                                backgroundColor: [
-                                  selected
-                                    ? Color(graph.color)
-                                        .alpha(0.2)
-                                        .toString()
-                                    : Color(graph.color)
-                                        .alpha(0)
-                                        .toString(),
-                                ],
-                              };
-                            }),
+                            datasets: [
+                              ...datasets.map((dataset, index) => {
+                                const selected =
+                                  selectedScenarioIndex === index;
+                                return {
+                                  label: dataset.label,
+                                  data: Object.values(dataset.data).map(
+                                    values => values[graph.key],
+                                  ),
+                                  borderColor: [
+                                    selected
+                                      ? graph.color
+                                      : Color(graph.color)
+                                          .alpha(0.2)
+                                          .toString(),
+                                  ],
+                                  backgroundColor: [
+                                    selected
+                                      ? Color(graph.color)
+                                          .alpha(0.2)
+                                          .toString()
+                                      : Color(graph.color)
+                                          .alpha(0)
+                                          .toString(),
+                                  ],
+                                };
+                              }),
+                              ...(graph.actualKey
+                                ? [
+                                    {
+                                      label: 'Actual',
+                                      data: Object.values(
+                                        datasets[selectedScenarioIndex].data,
+                                      ).map(values => values[graph.actualKey]),
+                                      borderColor: 'black',
+                                    },
+                                  ]
+                                : []),
+                            ],
                             labels: selectedScenario.data.total.map(
                               entry => entry.date,
                             ),
@@ -647,7 +671,12 @@ const SimulationResults: React.FC<{
                 </div>
                 <hr />
                 <div className="charts">
-                  <LivesSaved testingImpact={simulationResults.scenarios[selectedScenarioIndex].testingImpact} />
+                  <LivesSaved
+                    testingImpact={
+                      simulationResults.scenarios[selectedScenarioIndex]
+                        .testingImpact
+                    }
+                  />
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
