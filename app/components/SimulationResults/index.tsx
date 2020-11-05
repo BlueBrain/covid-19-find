@@ -4,6 +4,7 @@ import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
 import moment from 'moment';
 import { maxBy } from 'lodash';
+import { generate } from 'patternomaly';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
 import {
@@ -155,8 +156,6 @@ const SimulationResults: React.FC<{
       }, {}),
     };
   });
-
-  console.log(datasets[selectedScenarioIndex]);
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -567,11 +566,24 @@ const SimulationResults: React.FC<{
                               ...datasets.map((dataset, index) => {
                                 const selected =
                                   selectedScenarioIndex === index;
+                                const patterns = generate([
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                ]);
                                 return {
                                   label: dataset.label,
                                   data: Object.values(dataset.data).map(
                                     values => values[graph.key],
                                   ),
+                                  borderDash:
+                                    index === 0 ? [] : [index * 4, index * 4],
                                   borderColor: [
                                     selected
                                       ? graph.color
@@ -579,15 +591,11 @@ const SimulationResults: React.FC<{
                                           .alpha(0.2)
                                           .toString(),
                                   ],
-                                  backgroundColor: [
-                                    selected
-                                      ? Color(graph.color)
-                                          .alpha(0.2)
-                                          .toString()
-                                      : Color(graph.color)
-                                          .alpha(0)
-                                          .toString(),
-                                  ],
+                                  backgroundColor: selected
+                                    ? Color(graph.color)
+                                        .alpha(0.2)
+                                        .toString()
+                                    : patterns[index],
                                 };
                               }),
                               ...(graph.actualKey
