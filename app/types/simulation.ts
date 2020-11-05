@@ -35,6 +35,7 @@ export type CountryData = {
   urbanPopulationProportion: number;
   over64Proportion: number;
   belowPovertyLineProportion: number;
+  fatalityReduction: number;
 };
 
 export type Phase = {
