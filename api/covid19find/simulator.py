@@ -66,7 +66,9 @@ class Simulator:
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
-            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))]
+            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))],
+            "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
+            "prop_asymptomatic_tested": Simulator.__get_array_for_key(phases, "proportionAsymptomaticTested")
         }
 
     @staticmethod
@@ -188,7 +190,9 @@ class Simulator:
                 "testingStrategy": covid_libscenario["test_strategy"],
                 "numTestsCare": int(covid_libscenario["num_tests_care"]),
                 "typeTestsCare": "PCR",
-                "requiredDxTests": int(covid_libscenario["requireddxtests"])
+                "requiredDxTests": int(covid_libscenario["requireddxtests"]),
+                "resultsPeriod": int(covid_libscenario["results_period"]),
+                "proportionAsymptomaticTested": int(covid_libscenario["prop_asymptomatic_tested"])
             }
         )
 
