@@ -40,6 +40,7 @@ class Simulator:
             "prop_below_pl": parameters["belowPovertyLineProportion"],
             "prop_woh": parameters["workingOutsideHomeProportion"],
             "staff_per_bed": parameters["hospitalStaffPerBed"],
+            "fatality_reduction": parameters["fatalityReduction"],
             "test_directory": self.parameters_directory
         }
 
@@ -68,7 +69,7 @@ class Simulator:
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
             "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))],
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
-            "prop_asymptomatic_tested": Simulator.__get_array_for_key(phases, "proportionAsymptomaticTested")
+            "fatality_reduction_recent": Simulator.__get_array_for_key(phases, "fatalityReductionRecent")
         }
 
     @staticmethod
@@ -192,7 +193,7 @@ class Simulator:
                 "typeTestsCare": "PCR",
                 "requiredDxTests": int(covid_libscenario["requireddxtests"]),
                 "resultsPeriod": int(covid_libscenario["results_period"]),
-                "proportionAsymptomaticTested": int(covid_libscenario["prop_asymptomatic_tested"])
+                "fatalityReductionRecent": int(covid_libscenario["fatality_reduction_recent"])
             }
         )
 
