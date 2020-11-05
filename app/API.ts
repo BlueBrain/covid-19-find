@@ -74,9 +74,12 @@ export default class API {
     const formattedParams = {
       ...simulationParams,
       scenarios: simulationParams.scenarios.map(scenario => ({
-        phases: scenario.phases.map(({ name, ...rest }) => ({
-          ...rest,
-        })),
+        phases: scenario.phases.map(
+          ({ name, fatalityReductionRecent, ...rest }) => ({
+            ...rest,
+            fatalityReductionRecent: fatalityReductionRecent / 100,
+          }),
+        ),
       })),
       population: Number(simulationParams.population),
       urbanPopulationProportion:
