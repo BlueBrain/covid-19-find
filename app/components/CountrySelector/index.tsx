@@ -23,6 +23,7 @@ export type CountrySelectorResponse = {
   hospitalEmployment: number | null;
   activePopulationProportion: number | null;
   over64Proportion: number | null;
+  fatalityReduction: number | null;
 };
 
 const CountrySelector: React.FC<{
@@ -77,6 +78,11 @@ const CountrySelector: React.FC<{
     'Enter... [1 - 100]',
     true,
   );
+  const fatalityReduction = useFormInput(
+    countryInfo.fatalityReduction,
+    null,
+    true,
+  );
 
   const selectCountry = ({ value, label }) => {
     onClickSelectCountry(value);
@@ -97,6 +103,7 @@ const CountrySelector: React.FC<{
           belowPovertyLineProportion: belowPovertyLineProportion.value,
           activePopulationProportion: activePopulationProportion.value,
           over64Proportion: over64Proportion.value,
+          fatalityReduction: fatalityReduction.value,
         },
         e.target.checkValidity(),
       );
@@ -186,6 +193,28 @@ const CountrySelector: React.FC<{
                 required
                 min="0"
                 step="0.01"
+                type="number"
+              />
+
+              <a data-tip data-for="fataliyReduction-tooltip">
+                <label>
+                  Est. Reduction
+                  <br />
+                  in fatality rate (%) <IoIosInformationCircleOutline />
+                </label>
+              </a>
+              <ReactTooltip id="fataliyReduction-tooltip">
+                <p>
+                  Current estimated reduction in infection fatality rate (IFR)
+                  since start of epidemic
+                </p>
+              </ReactTooltip>
+              <input
+                {...fatalityReduction}
+                required
+                min="0"
+                max="100"
+                step="0.5"
                 type="number"
               />
             </div>

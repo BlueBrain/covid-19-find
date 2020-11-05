@@ -85,6 +85,7 @@ const Countries: React.FC<{
       over64Proportion: null,
       belowPovertyLineProportion: null,
       urbanPopulationProportion: null,
+      fatalityReduction: null,
     });
   };
 

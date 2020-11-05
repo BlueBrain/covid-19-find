@@ -8,4 +8,5 @@ export type CountryResponse = {
   remoteAreasPopulationProportion: number | null;
   belowPovertyLineProportion: number | null;
   urbanPopulationProportion: number | null;
+  fatalityReduction: number | null;
 };

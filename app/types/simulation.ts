@@ -5,6 +5,7 @@ export enum TRIGGER_TYPE {
   INCREASE_DEATHS = 'increase deaths',
   INCREASE_CASES = 'increase cases',
   POSITIVES = 'positives',
+  CASES_PER_MILLSION = 'cases per million',
 }
 
 export enum TRIGGER_CONDITION {
@@ -35,6 +36,7 @@ export type CountryData = {
   urbanPopulationProportion: number;
   over64Proportion: number;
   belowPovertyLineProportion: number;
+  fatalityReduction: number;
 };
 
 export type Phase = {
@@ -55,7 +57,7 @@ export type Phase = {
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
   resultPeriod: number;
-  proportionAsymptomaticTested: number;
+  fatalityReductionRecent: number;
 };
 
 export type ClientPhase = Phase & {

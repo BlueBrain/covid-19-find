@@ -69,51 +69,19 @@ export default [
         label: 'Trigger Type',
         type: INPUT_TYPES.select,
         key: 'triggerType',
-        options: [
-          {
-            label: TRIGGER_TYPE.DATE,
-            value: TRIGGER_TYPE.DATE,
-          },
-          {
-            label: TRIGGER_TYPE.CASES,
-            value: TRIGGER_TYPE.CASES,
-          },
-          {
-            label: TRIGGER_TYPE.DEATHS,
-            value: TRIGGER_TYPE.DEATHS,
-          },
-          {
-            label: TRIGGER_TYPE.POSITIVES,
-            value: TRIGGER_TYPE.POSITIVES,
-          },
-          {
-            label: TRIGGER_TYPE.INCREASE_CASES,
-            value: TRIGGER_TYPE.INCREASE_CASES,
-          },
-          {
-            label: TRIGGER_TYPE.INCREASE_DEATHS,
-            value: TRIGGER_TYPE.INCREASE_DEATHS,
-          },
-        ],
+        options: Object.values(TRIGGER_TYPE).map(str => ({
+          label: str,
+          value: str,
+        })),
       },
       {
         label: 'Trigger Condition',
         type: INPUT_TYPES.select,
         key: 'triggerCondition',
-        options: [
-          {
-            label: TRIGGER_CONDITION.EQUAL,
-            value: TRIGGER_CONDITION.EQUAL,
-          },
-          {
-            label: TRIGGER_CONDITION.LESS_THAN,
-            value: TRIGGER_CONDITION.LESS_THAN,
-          },
-          {
-            label: TRIGGER_CONDITION.GREATER_OR_EQUAL,
-            value: TRIGGER_CONDITION.GREATER_OR_EQUAL,
-          },
-        ],
+        options: Object.values(TRIGGER_CONDITION).map(str => ({
+          label: str,
+          value: str,
+        })),
       },
       {
         label: 'Trigger Value',
@@ -166,24 +134,10 @@ export default [
         type: INPUT_TYPES.select,
         min: 0,
         key: 'testingStrategy',
-        options: [
-          {
-            label: TESTING_STRATEGIES.NONE,
-            value: TESTING_STRATEGIES.NONE,
-          },
-          {
-            label: TESTING_STRATEGIES.ALL,
-            value: TESTING_STRATEGIES.ALL,
-          },
-          {
-            label: TESTING_STRATEGIES.OPEN,
-            value: TESTING_STRATEGIES.OPEN,
-          },
-          {
-            label: TESTING_STRATEGIES.SPECIAL,
-            value: TESTING_STRATEGIES.SPECIAL,
-          },
-        ],
+        options: Object.values(TESTING_STRATEGIES).map(str => ({
+          label: str,
+          value: str,
+        })),
       },
       {
         label: 'Number of tests per day',
@@ -236,47 +190,14 @@ export default [
         key: 'resultPeriod',
       },
       {
-        label: 'Proportion asymptomatic tested per day',
+        label:
+          'Estimated reduction in infection fatality rate (IFR) since start of epidemic (%)',
         type: INPUT_TYPES.number,
         min: 0,
-        max: 1,
-        step: 0.01,
-        key: 'proportionAsymptomaticTested',
+        max: 100,
+        step: 0.1,
+        key: 'fatalityReductionRecent',
       },
-      // {
-      //   label: 'Proportion of tests for other high contact groups',
-      //   type: INPUT_TYPES.number,
-      //   min: 0,
-      //   max: 1,
-      //   step: 0.01,
-      //   validation: {
-      //     type: 'equals',
-      //     value: 1,
-      //     keysToMatch: [
-      //       'hospitalTestProportion',
-      //       'otherHighContactPopulationTestProportion',
-      //       'restOfPopulationTestProportion',
-      //     ],
-      //   },
-      //   key: 'otherHighContactPopulationTestProportion',
-      // },
-      // {
-      //   label: 'Proportion of tests for rest of population',
-      //   type: INPUT_TYPES.number,
-      //   min: 0,
-      //   max: 1,
-      //   step: 0.01,
-      //   validation: {
-      //     type: 'equals',
-      //     value: 1,
-      //     keysToMatch: [
-      //       'hospitalTestProportion',
-      //       'otherHighContactPopulationTestProportion',
-      //       'restOfPopulationTestProportion',
-      //     ],
-      //   },
-      //   key: 'restOfPopulationTestProportion',
-      // },
     ],
   },
   {

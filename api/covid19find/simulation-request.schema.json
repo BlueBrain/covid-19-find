@@ -11,6 +11,7 @@
     "urbanPopulationProportion",
     "over64Proportion",
     "belowPovertyLineProportion",
+    "fatalityReduction",
     "scenarios"
   ],
   "type": "object",
@@ -57,6 +58,11 @@
       "minimum": 0,
       "maximum": 1
     },
+    "fatalityReduction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
     "scenarios": {
       "type": "array",
       "minItems": 1,
@@ -88,7 +94,7 @@
                 "typeTestsCare",
                 "requiredDxTests",
                 "resultsPeriod",
-                "proportionAsymptomaticTested"
+                "fatalityReductionRecent"
               ],
               "properties": {
                 "importedInfectionsPerDay": {
@@ -100,7 +106,14 @@
                 "triggerType": {
                   "type": "string",
                   "enum": [
-                    "date"
+                    "date",
+                    "new deaths",
+                    "new cases",
+                    "new cases per million",
+                    "increase cases",
+                    "accumulated deaths",
+                    "accumulated cases",
+                    "R0"
                   ]
                 },
                 "triggerCondition": {
@@ -117,11 +130,6 @@
                   "maximum": 1
                 },
                 "proportionOfContactsTraced": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
-                },
-                "proportionAsymptomaticTested": {
                   "type": "number",
                   "minimum": 0,
                   "maximum": 1
@@ -173,6 +181,11 @@
                 },
                 "resultsPeriod": {
                   "type": "integer"
+                },
+                "fatalityReductionRecent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
                 }
               }
             }

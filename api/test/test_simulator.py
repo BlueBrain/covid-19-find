@@ -26,6 +26,7 @@ class TestSimulator:
             "urbanPopulationProportion": 0.73,
             "over64Proportion": 0.20,
             "belowPovertyLineProportion": 0.10,
+            "fatalityReduction": 0.35,
             "scenarios": default_scenarios
         }
         response = simulator.run(request)
@@ -49,6 +50,7 @@ class TestSimulator:
             "urbanPopulationProportion": 0.73,
             "over64Proportion": 0.20,
             "belowPovertyLineProportion": 0.10,
+            "fatalityReduction": 0.35,
             "scenarios": default_scenarios
         }
         validate(instance=request, schema=schema)

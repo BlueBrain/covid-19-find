@@ -56,6 +56,9 @@ export default class API {
         over64Proportion: response.over64Proportion
           ? Number((response.over64Proportion * 100).toFixed(2))
           : null,
+        fatalityReduction: response.fatalityReduction
+          ? Number((response.fatalityReduction * 100).toFixed(2))
+          : null,
       }));
   }
 
@@ -71,9 +74,12 @@ export default class API {
     const formattedParams = {
       ...simulationParams,
       scenarios: simulationParams.scenarios.map(scenario => ({
-        phases: scenario.phases.map(({ name, ...rest }) => ({
-          ...rest,
-        })),
+        phases: scenario.phases.map(
+          ({ name, fatalityReductionRecent, ...rest }) => ({
+            ...rest,
+            fatalityReductionRecent: fatalityReductionRecent / 100,
+          }),
+        ),
       })),
       population: Number(simulationParams.population),
       urbanPopulationProportion:
@@ -85,6 +91,7 @@ export default class API {
       activePopulationProportion:
         simulationParams.activePopulationProportion / 100,
       over64Proportion: simulationParams.over64Proportion / 100,
+      fatalityReduction: simulationParams.fatalityReduction / 100,
     };
 
     const response = await fetch(`${this.base}/simulation`, {

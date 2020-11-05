@@ -40,6 +40,7 @@ class Simulator:
             "prop_below_pl": parameters["belowPovertyLineProportion"],
             "prop_woh": parameters["workingOutsideHomeProportion"],
             "staff_per_bed": parameters["hospitalStaffPerBed"],
+            "fatality_reduction": parameters["fatalityReduction"],
             "test_directory": self.parameters_directory
         }
 
@@ -68,7 +69,7 @@ class Simulator:
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
             "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))],
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
-            "prop_asymptomatic_tested": Simulator.__get_array_for_key(phases, "proportionAsymptomaticTested")
+            "fatality_reduction_recent": Simulator.__get_array_for_key(phases, "fatalityReductionRecent")
         }
 
     @staticmethod
@@ -119,7 +120,7 @@ class Simulator:
                             scenarios_compartments_df[scenarios_compartments_df.compartment.eq("Other high contact ")]),
                         "restOfPopulation": self.__dataframe_to_response(
                             scenarios_compartments_df[scenarios_compartments_df.compartment.eq("Rest of population")]),
-                        "total": self.__dataframe_to_response(scenario_dfs[i * 2 + 1])
+                        "total": self.__total_dataframe_to_response(scenario_dfs[i * 2 + 1])
                     },
                     "testingImpact": self.__tests_dataframe_to_response(test_df[test_df.scenario.eq(i)])
                 }
@@ -129,6 +130,19 @@ class Simulator:
     @staticmethod
     def __dataframe_to_response(df):
         return list(map(Simulator.__dataframe_row_to_response, df.iterrows()))
+
+    @staticmethod
+    def __total_dataframe_to_response(df):
+        return list(map(Simulator.__total_dataframe_row_to_response, df.iterrows()))
+
+    @staticmethod
+    def __total_dataframe_row_to_response(index_row):
+        row = index_row[1]
+        result = Simulator.__dataframe_row_to_response(index_row)
+        result["actualDeaths"] = None if math.isnan(row["actualdeaths"]) else int(row["actualdeaths"])
+        result["actualCases"] = None if math.isnan(row["actualcases"]) else int(row["actualcases"])
+        result["actualTests"] = None if math.isnan(row["actualtests_mit"]) else int(row["actualtests_mit"])
+        return result
 
     @staticmethod
     def __dataframe_row_to_response(index_row):
@@ -192,7 +206,7 @@ class Simulator:
                 "typeTestsCare": "PCR",
                 "requiredDxTests": int(covid_libscenario["requireddxtests"]),
                 "resultsPeriod": int(covid_libscenario["results_period"]),
-                "proportionAsymptomaticTested": int(covid_libscenario["prop_asymptomatic_tested"])
+                "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
             }
         )
 

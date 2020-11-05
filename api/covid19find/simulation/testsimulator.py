@@ -19,6 +19,9 @@ country_df = cl.getcountrydata('Switzerland.csv')
 datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc['CH']['Severities'])
 past_dates=json.loads(datesandseverities.loc['CH']['Trigger Dates'])
+#TEMP HACK VALID FOR CH ONLY - DO NOT INCLUDE IN PRODUCTION
+past_severities=[0.0, 0.85, 0.95, 1.0, 0.85, 1.0, 0.9, 0.75, 0.95]
+past_dates=[1, 46, 63, 81, 106, 123, 150, 204, 220]
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
  #temporary. Front_end will provide real data
@@ -36,7 +39,8 @@ fixed_params={
     'past_severities':past_severities,\
     'expert_mode':True,
     'run_multiple_test_scenarios':True,
-    'save_results':False}
+    'save_results':True,
+    'fatality_reduction':0.35}
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -60,7 +64,8 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['no testing','no testing'],\
     'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
+    'prop_asymptomatic_tested':[0.02,0.02],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
@@ -80,7 +85,8 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['special groups with symptoms','special groups with symptoms'],\
     'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
+    'prop_asymptomatic_tested':[0.02,0.02],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
@@ -100,14 +106,15 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['all symptomatic','all symptomatic'],\
     'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
+    'prop_asymptomatic_tested':[0.02,0.02],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':[0.9, 0.95],\
-    'trig_values':['2020-09-15','2020-10-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
+    'severity':[0.8, 1.0],\
+    'trig_values':['2020-09-15',50],\
+    'trig_def_type':['date','increase deaths'],\
+    'trig_op_type':['=','>'],\
     'num_tests_mitigation':[13000,13000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
@@ -120,7 +127,8 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02]
+    'prop_asymptomatic_tested':[0.02,0.02],
+    'fatality_reduction_recent':[0.35,0.35]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')
@@ -135,10 +143,12 @@ except FileNotFoundError as inst:
     print('')
     print('Exception raised by simulation:',inst)
     sys.exit()
-except KeyError as inst:
-    print('')
-    print('Exception raised by simulation:',inst)
-    sys.exit()
+# =============================================================================
+# except KeyError as inst:
+#     print('')
+#     print('Exception raised by simulation:',inst)
+#     sys.exit()
+# =============================================================================
 # The following lines protect the program against unexpected errors. Commented for testing purposes to get full error messages
 # =============================================================================
 # except Exception as inst :
