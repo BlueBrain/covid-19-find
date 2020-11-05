@@ -206,7 +206,7 @@ class Simulator:
                 "typeTestsCare": "PCR",
                 "requiredDxTests": int(covid_libscenario["requireddxtests"]),
                 "resultsPeriod": int(covid_libscenario["results_period"]),
-                "fatalityReductionRecent": int(covid_libscenario["fatality_reduction_recent"])
+                "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
             }
         )
 
