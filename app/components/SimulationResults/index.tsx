@@ -4,6 +4,7 @@ import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
 import moment from 'moment';
 import { maxBy } from 'lodash';
+import { generate } from 'patternomaly';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
 import {
@@ -68,12 +69,14 @@ const SimulationResults: React.FC<{
     {
       title: 'Deaths',
       key: 'totalDeaths',
+      actualKey: 'actualDeaths',
       cohort: 'total',
       color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
       key: 'newConfirmed',
+      actualKey: 'actualCases',
       cohort: 'total',
       color: colors.blueGray,
     },
@@ -141,6 +144,12 @@ const SimulationResults: React.FC<{
             scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
               graph.key
             ];
+          if (graph.actualKey) {
+            day[graph.actualKey] =
+              scenariosResults[scenarioIndex].data[graph.cohort][
+                timeseriesIndex
+              ][graph.actualKey];
+          }
         });
         memo[key] = day;
         return memo;
@@ -553,31 +562,54 @@ const SimulationResults: React.FC<{
                             },
                           }}
                           data={{
-                            datasets: datasets.map((dataset, index) => {
-                              const selected = selectedScenarioIndex === index;
-                              return {
-                                label: dataset.label,
-                                data: Object.values(dataset.data).map(
-                                  values => values[graph.key],
-                                ),
-                                borderColor: [
-                                  selected
-                                    ? graph.color
-                                    : Color(graph.color)
-                                        .alpha(0.2)
-                                        .toString(),
-                                ],
-                                backgroundColor: [
-                                  selected
+                            datasets: [
+                              ...datasets.map((dataset, index) => {
+                                const selected =
+                                  selectedScenarioIndex === index;
+                                const patterns = generate([
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                  Color(graph.color)
+                                    .alpha(0.1)
+                                    .toString(),
+                                ]);
+                                return {
+                                  label: dataset.label,
+                                  data: Object.values(dataset.data).map(
+                                    values => values[graph.key],
+                                  ),
+                                  borderDash:
+                                    index === 0 ? [] : [index * 4, index * 4],
+                                  borderColor: [
+                                    selected
+                                      ? graph.color
+                                      : Color(graph.color)
+                                          .alpha(0.2)
+                                          .toString(),
+                                  ],
+                                  backgroundColor: selected
                                     ? Color(graph.color)
                                         .alpha(0.2)
                                         .toString()
-                                    : Color(graph.color)
-                                        .alpha(0)
-                                        .toString(),
-                                ],
-                              };
-                            }),
+                                    : patterns[index],
+                                };
+                              }),
+                              ...(graph.actualKey
+                                ? [
+                                    {
+                                      label: 'Actual',
+                                      data: Object.values(
+                                        datasets[selectedScenarioIndex].data,
+                                      ).map(values => values[graph.actualKey]),
+                                      borderColor: 'black',
+                                    },
+                                  ]
+                                : []),
+                            ],
                             labels: selectedScenario.data.total.map(
                               entry => entry.date,
                             ),
@@ -647,7 +679,12 @@ const SimulationResults: React.FC<{
                 </div>
                 <hr />
                 <div className="charts">
-                  <LivesSaved testingImpact={simulationResults.scenarios[selectedScenarioIndex].testingImpact} />
+                  <LivesSaved
+                    testingImpact={
+                      simulationResults.scenarios[selectedScenarioIndex]
+                        .testingImpact
+                    }
+                  />
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
