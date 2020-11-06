@@ -201,7 +201,8 @@
           "totalInfected",
           "maxIsolated",
           "data",
-          "testingImpact"
+          "testingImpact",
+          "samplesRequiredForSerologicalStudies"
         ],
         "properties": {
           "totalTests": {
@@ -244,6 +245,26 @@
           },
           "testingImpact": {
             "$ref": "#/definitions/testsData"
+          },
+          "samplesRequiredForSerologicalStudies": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "required": [
+                "numSubgroups",
+                "testsRequired"
+              ],
+              "properties": {
+                "numSubgroups": {
+                  "type": "integer"
+                },
+                "testsRequired": {
+                  "type": "integer"
+                }
+              }
+            }
           }
         }
       }

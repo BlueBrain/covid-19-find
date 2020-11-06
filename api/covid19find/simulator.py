@@ -97,6 +97,7 @@ class Simulator:
         fixed_parameters["expert_mode"] = False
         fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
         fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
+        fixed_parameters["run_multiple_test_scenarios"] = True
 
         result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
@@ -122,10 +123,24 @@ class Simulator:
                             scenarios_compartments_df[scenarios_compartments_df.compartment.eq("Rest of population")]),
                         "total": self.__total_dataframe_to_response(scenario_dfs[i * 2 + 1])
                     },
-                    "testingImpact": self.__tests_dataframe_to_response(test_df[test_df.scenario.eq(i)])
+                    "testingImpact": self.__tests_dataframe_to_response(test_df[test_df.scenario.eq(i)]),
+                    "samplesRequiredForSerologicalStudies": self.__get_serological_data(i, scenario_totals)
                 }
             )
         return {"scenarios": scenario_data}
+
+    @staticmethod
+    def __get_serological_data(scenario_index, scenario_totals):
+        result = []
+        for i in [5, 10, 100, 1000]:
+            result.append(
+                {
+                    "numSubgroups": i,
+                    "testsRequired": int(scenario_totals["total_serotests_by_scenario_{}".format(i)][scenario_index])
+                }
+            )
+
+        return result
 
     @staticmethod
     def __dataframe_to_response(df):
@@ -189,26 +204,27 @@ class Simulator:
                                "scenario {}_params.json".format(scenario_index))) as params_file:
             covid_libscenario = json.load(params_file)
         phases = []
-        phases.append(
-            {
-                "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
-                "trigger": date.today().isoformat(),
-                "triggerType": covid_libscenario["trig_def_type"],
-                "triggerCondition": covid_libscenario["trig_op_type"],
-                "severity": float(covid_libscenario["severity"]),
-                "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
-                "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
-                "typeTestsMitigation": "PCR",
-                "specificity": float(covid_libscenario["specificity"]),
-                "sensitivity": float(covid_libscenario["sensitivity"]),
-                "testingStrategy": covid_libscenario["test_strategy"],
-                "numTestsCare": int(covid_libscenario["num_tests_care"]),
-                "typeTestsCare": "PCR",
-                "requiredDxTests": int(covid_libscenario["requireddxtests"]),
-                "resultsPeriod": int(covid_libscenario["results_period"]),
-                "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
-            }
-        )
+        phase = {
+            "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
+            "trigger": date.today().isoformat(),
+            "triggerType": covid_libscenario["trig_def_type"],
+            "triggerCondition": covid_libscenario["trig_op_type"],
+            "severity": float(covid_libscenario["severity"]),
+            "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
+            "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
+            "typeTestsMitigation": "PCR",
+            "specificity": float(covid_libscenario["specificity"]),
+            "sensitivity": float(covid_libscenario["sensitivity"]),
+            "testingStrategy": covid_libscenario["test_strategy"],
+            "numTestsCare": int(covid_libscenario["num_tests_care"]),
+            "typeTestsCare": "PCR",
+            "requiredDxTests": int(covid_libscenario["requireddxtests"]),
+            "resultsPeriod": int(covid_libscenario["results_period"]),
+            "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
+        }
+        # we only have one phase but frontend requires two
+        phases.append(phase)
+        phases.append(phase)
 
         return {"phases": phases}
 
