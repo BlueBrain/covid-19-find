@@ -4,7 +4,7 @@ import * as ChartAnnotation from 'chartjs-plugin-annotation';
 import Color from 'color';
 import moment from 'moment';
 import { maxBy } from 'lodash';
-import { generate } from 'patternomaly';
+import { draw } from 'patternomaly';
 
 import useWindowWidth from '../../hooks/useWindowWidth';
 import {
@@ -19,9 +19,9 @@ import LivesSaved from './Graphs/LivesSaved';
 import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
+import { truncate } from '../../libs/strings';
 
 import './simulation-results.less';
-import { truncate } from '../../libs/strings';
 
 const SCALE_VALUE = 3;
 
@@ -64,6 +64,8 @@ const SimulationResults: React.FC<{
   const isMobile = screenWidth.width < 400;
 
   const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
+
+  const patterns = ['circle', 'ring', 'dash', 'diagonal'];
 
   const graphs = [
     {
@@ -317,12 +319,19 @@ const SimulationResults: React.FC<{
                           return {
                             data: [data],
                             label: clientScenariosInput[index].name,
+                            backgroundColor: patterns.map(patternKey =>
+                              draw(
+                                // @ts-ignore
+                                patternKey,
+                                Color(colors.aubergine)
+                                  .alpha(0.5)
+                                  .toString(),
+                              ),
+                            )[index],
                           };
                         },
                       ),
-                      backgroundColor: Color(colors.aubergine)
-                        .alpha(0.5)
-                        .toString(),
+
                       borderColor: Color(colors.aubergine).toString(),
                       labels: clientScenariosInput.map(
                         scenario => scenario.name,
@@ -566,17 +575,16 @@ const SimulationResults: React.FC<{
                               ...datasets.map((dataset, index) => {
                                 const selected =
                                   selectedScenarioIndex === index;
-                                const patterns = generate([
-                                  Color(graph.color)
-                                    .alpha(0.1)
-                                    .toString(),
-                                  Color(graph.color)
-                                    .alpha(0.1)
-                                    .toString(),
-                                  Color(graph.color)
-                                    .alpha(0.1)
-                                    .toString(),
-                                ]);
+                                const graphPatterns = patterns.map(patternKey =>
+                                  draw(
+                                    // @ts-ignore
+                                    patternKey,
+                                    Color(graph.color)
+                                      .alpha(0.2)
+                                      .toString(),
+                                  ),
+                                );
+
                                 return {
                                   label: dataset.label,
                                   data: Object.values(dataset.data).map(
@@ -595,7 +603,7 @@ const SimulationResults: React.FC<{
                                     ? Color(graph.color)
                                         .alpha(0.2)
                                         .toString()
-                                    : patterns[index],
+                                    : graphPatterns[index],
                                 };
                               }),
                               ...(graph.actualKey
