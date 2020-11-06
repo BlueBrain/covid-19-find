@@ -17,9 +17,9 @@ const fixPhases = (phase: Phase, index: number) => ({
 const fixScenario = (scenario: Scenario, index: number) => ({
   name: match(index)
     .with(0, () => 'Counterfactual: No tests and no intervention')
-    .with(1, () => 'special groups with symptoms')
-    .with(2, () => 'Call symptomatic')
-    .with(3, () => 'open public testing')
+    .with(1, () => 'Special groups with symptoms')
+    .with(2, () => 'All symptomatic')
+    .with(3, () => 'Open public testing')
     .otherwise(() => `Scenario ${toLetters(index).toLocaleUpperCase()}`),
   phases: scenario.phases.map(fixPhases),
 });
