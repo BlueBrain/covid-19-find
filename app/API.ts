@@ -12,6 +12,7 @@ import { match } from 'ts-pattern';
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
   name: index === 0 ? 'Current Phase' : 'Next Phase',
+  fatalityReductionRecent: phase.fatalityReductionRecent * 100,
 });
 
 const fixScenario = (scenario: Scenario, index: number) => ({
