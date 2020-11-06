@@ -654,20 +654,30 @@ const SimulationResults: React.FC<{
                       mitigation
                     </span>
                   </h3>
-                  <h3>
-                    {Math.ceil(
-                      selectedScenario.data.total.reduce(
-                        (memo, entry) => memo + entry.requiredDxTests,
-                        0,
-                      ),
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    <br />
-                    <span className="subtitle">
-                      Number of tests required to <br /> estimate seroprevalence
-                    </span>
-                  </h3>
                 </div>
-                <div></div>
+                <div style={{ margin: '0 auto', width: '50%' }}>
+                  <h3 style={{ color: '#697881', textAlign: 'center' }}>
+                    Samples Required for Serological Studies
+                  </h3>
+                  <table>
+                    <tr>
+                      <th>Group</th>
+                      <th>Number of Subgroups</th>
+                      <th>Tests Required</th>
+                    </tr>
+                    {scenariosResults[
+                      selectedScenarioIndex
+                    ].samplesRequiredForSerologicalStudies.map(
+                      (entry, index) => (
+                        <tr>
+                          <td>Group {index}</td>
+                          <td>{entry.numSubgroups}</td>
+                          <td>{entry.numSubgroups}</td>
+                        </tr>
+                      ),
+                    )}
+                  </table>
+                </div>
                 <div className="charts">
                   <NumberOfTestsPerDay
                     clientScenariosInput={clientScenariosInput}
