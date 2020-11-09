@@ -104,6 +104,10 @@ export type ScenarioResult = {
   totalDeaths: number;
   totalInfected: number;
   totalTests: number;
+  samplesRequiredForSerologicalStudies: {
+    numSubgroups: number;
+    testsRequired: number;
+  }[];
 };
 
 export type ScenarioResultDatasetTimeSeries = {

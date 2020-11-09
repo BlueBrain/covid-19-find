@@ -72,6 +72,7 @@
     "react-switch": "^5.0.1",
     "react-tabs": "^3.1.0",
     "react-tooltip": "^4.2.3",
+    "ts-pattern": "^1.1.0",
     "use-query-params": "^0.6.0"
   },
   "browserslist": [

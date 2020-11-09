@@ -7,17 +7,21 @@ import {
   ClientSimulationRequest,
 } from './types/simulation';
 import { toLetters } from './libs/strings';
+import { match } from 'ts-pattern';
 
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
   name: index === 0 ? 'Current Phase' : 'Next Phase',
+  fatalityReductionRecent: phase.fatalityReductionRecent * 100,
 });
 
 const fixScenario = (scenario: Scenario, index: number) => ({
-  name:
-    index === 0
-      ? 'Counterfactual: No tests and no intervention'
-      : `Scenario ${toLetters(index).toLocaleUpperCase()}`,
+  name: match(index)
+    .with(0, () => 'Counterfactual: No tests and no intervention')
+    .with(1, () => 'Special groups with symptoms')
+    .with(2, () => 'All symptomatic')
+    .with(3, () => 'Open public testing')
+    .otherwise(() => `Scenario ${toLetters(index).toLocaleUpperCase()}`),
   phases: scenario.phases.map(fixPhases),
 });
 

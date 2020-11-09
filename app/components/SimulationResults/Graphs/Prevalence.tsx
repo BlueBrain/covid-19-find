@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
 import Color from 'color';
+import { draw } from 'patternomaly';
 
 import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import colors from '../../../colors';
+
+const patterns = ['circle', 'ring', 'dash', 'diagonal'];
 
 const Prevalence: React.FC<{
   scenariosResults: ScenarioResult[];
@@ -87,6 +90,15 @@ const Prevalence: React.FC<{
         data={{
           datasets: scenariosResults.map((scenario, index) => {
             const selected = selectedScenarioIndex === index;
+            const graphPatterns = patterns.map(patternKey =>
+              draw(
+                // @ts-ignore
+                patternKey,
+                Color(color)
+                  .alpha(0.2)
+                  .toString(),
+              ),
+            );
             return {
               label: clientScenariosInput[index].name,
               data: scenario.data.total.map(entry => entry.prevalence),
@@ -97,15 +109,11 @@ const Prevalence: React.FC<{
                       .alpha(0.2)
                       .toString(),
               ],
-              backgroundColor: [
-                selected
-                  ? Color(color)
-                      .alpha(0.2)
-                      .toString()
-                  : Color(color)
-                      .alpha(0)
-                      .toString(),
-              ],
+              backgroundColor: selected
+                ? Color(color)
+                    .alpha(0.4)
+                    .toString()
+                : graphPatterns[index],
             };
           }),
           labels: scenariosResults[selectedScenarioIndex].data.total.map(
