@@ -20,8 +20,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc['CH']['Severities'])
 past_dates=json.loads(datesandseverities.loc['CH']['Trigger Dates'])
 #TEMP HACK VALID FOR CH ONLY - DO NOT INCLUDE IN PRODUCTION
-past_severities=[0.0, 0.85, 0.95, 1.0, 0.85, 1.0, 0.9, 0.75, 0.95]
-past_dates=[1, 46, 63, 81, 106, 123, 150, 204, 220]
+#past_severities=[0.0, 0.85, 0.95, 1.0, 0.85, 1.0, 0.9, 0.75, 0.95]
+#past_dates=[1, 46, 63, 81, 106, 123, 150, 204, 220]
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
  #temporary. Front_end will provide real data
@@ -37,7 +37,7 @@ fixed_params={
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':True,
+    'expert_mode':False,
     'run_multiple_test_scenarios':True,
     'save_results':False,
     'fatality_reduction':0.35}
@@ -52,7 +52,7 @@ scenario_params.append({
     'trig_values':['2020-09-15','2020-12-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[130000,130000],\
+    'num_tests_mitigation':[13000,13000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.8,0.8],\
     'specificity':[0.8,0.8],\
@@ -69,24 +69,24 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.8, 0.8],\
-    'trig_values':['2020-09-15','2020-10-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[50,50],\
-    'requireddxtests':[2,2],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['special groups with symptoms','special groups with symptoms'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02],
-    'fatality_reduction_recent':[0.35,0.35]
+    'severity':[0.8],\
+    'trig_values':['2020-09-15'],\
+    'trig_def_type':['date'],\
+    'trig_op_type':['='],\
+    'num_tests_mitigation':[13000],\
+    'type_test_mitigation':['PCR'],\
+    'sensitivity':[0.95],\
+    'specificity':[0.95],\
+    'num_tests_care':[10000],\
+    'type_tests_care':['PCR'],\
+    'prop_contacts_traced':[0.25],\
+    'imported_infections_per_day':[50],\
+    'requireddxtests':[2],\
+    'is_counterfactual':['False'],\
+    'test_strategy':['special groups with symptoms'],\
+    'results_period':[1],\
+    'prop_asymptomatic_tested':[0.02],
+    'fatality_reduction_recent':[0.35]
     })
     
 scenario_params.append({
@@ -112,8 +112,8 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':[0.8, 0.8],\
-    'trig_values':['2020-09-15',50],\
-    'trig_def_type':['date','increase deaths'],\
+    'trig_values':['2020-09-15','2020-10-15'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','>'],\
     'num_tests_mitigation':[13000,13000],\
     'type_test_mitigation':['PCR','PCR'],\
