@@ -1,57 +1,9 @@
-import moment from 'moment';
-import {
-  ClientScenarioData,
-  TESTING_STRATEGIES,
-  TEST_TYPES,
-} from './types/simulation';
+import { ClientScenarioData } from './types/simulation';
 
 export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
   {
     name: 'Counterfactual: No tests and no intervention',
-    phases: [
-      {
-        name: 'Current Phase',
-        importedInfectionsPerDay: 20,
-        trigger: moment(Date.now()).format('YYYY-MM-DD'),
-        triggerType: 'date',
-        triggerCondition: '>=',
-        severity: 0.8,
-        proportionOfContactsTraced: 0.25,
-        numTestsMitigation: 1000,
-        typeTestsMitigation: TEST_TYPES.PCR,
-        specificity: 0.95,
-        sensitivity: 0.95,
-        testSymptomaticOnly: true,
-        confirmationTests: true,
-        numTestsCare: 1000,
-        typeTestsCare: TEST_TYPES.PCR,
-        requiredDxTests: 1,
-        testingStrategy: TESTING_STRATEGIES.NONE,
-        resultPeriod: 5,
-        fatalityReductionRecent: 0.01,
-      },
-      {
-        name: 'Next Phase',
-        importedInfectionsPerDay: 30,
-        trigger: moment(Date.now()).format('YYYY-MM-DD'),
-        triggerType: 'date',
-        triggerCondition: '>=',
-        severity: 0.6,
-        proportionOfContactsTraced: 0.5,
-        numTestsMitigation: 1000,
-        typeTestsMitigation: TEST_TYPES.PCR,
-        specificity: 0.95,
-        sensitivity: 0.95,
-        testSymptomaticOnly: true,
-        confirmationTests: true,
-        numTestsCare: 1000,
-        typeTestsCare: TEST_TYPES.PCR,
-        requiredDxTests: 1,
-        testingStrategy: TESTING_STRATEGIES.NONE,
-        resultPeriod: 5,
-        fatalityReductionRecent: 0.01,
-      },
-    ],
+    phases: [],
   },
 ];
 
