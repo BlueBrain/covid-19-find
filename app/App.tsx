@@ -69,7 +69,13 @@ const App: React.FC = () => {
       document.querySelector('#tests-form'),
     ];
 
-    forms.forEach(form => form.reportValidity());
+    for (let i = 0; i <= forms.length - 1; i++) {
+      const form = forms[i];
+      const valid = form.reportValidity();
+      if (!valid) {
+        break;
+      }
+    }
   };
 
   const handleLoadState = state => {

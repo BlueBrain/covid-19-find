@@ -19,6 +19,7 @@ const PhaseNumberInput: React.FC<{
   return (
     <input
       className="phase number"
+      data-key={inputProps.key}
       min={inputProps.min}
       max={inputProps.max}
       step={inputProps.step}
