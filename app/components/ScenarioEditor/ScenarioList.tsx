@@ -41,7 +41,7 @@ const ScenarioList: React.FC<{
   return (
     <div className="scenario-editor">
       <div className="scenario-list">
-        <Tabs>
+        <Tabs forceRenderTabPanel={true}>
           <TabList>
             {scenarios.map((scenario, index) => {
               return (
