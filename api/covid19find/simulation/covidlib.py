@@ -413,8 +413,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             test_par=Par(p)
             test_par.day1=day1  #here this means today
             test_par.shift=shift
-            simphase,simday=computetoday(day1,par.trig_values)
             test_par.fatality_reduction_per_day=math.exp(np.log(1-(test_par.fatality_reduction))/(simday-test_par.no_improvement_period))
+            simphase,simday=computetoday(day1,par.trig_values)
             sim = Sim(par.num_days,par.num_compartments)
     # =============================================================================
     #         test_sim=Sim(par.num_days,test_par.num_compartments)
@@ -422,6 +422,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
     # =============================================================================
             
             current_phase,today=computetoday(par.day1,par.trig_values)
+            start_current_phase=par.trig_values[current_phase]
             for k in range(current_phase,len(par.trig_values)):
                 test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
             sim = Sim(par.num_days,par.num_compartments)
@@ -433,8 +434,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             if j==0:
                 baseline_deaths=dfsum_tests['newdeaths'].sum()
             lives_saved=baseline_deaths-deaths
-            tests_administered=dfsum_tests['newtested_mit'][today:par.num_days].sum()
-            print('tests administered from today',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
+            tests_administered=dfsum_tests['newtested_mit'][start_current_phase:par.num_days].sum()
+            print('tests administered from start of phase',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
             a_dict={
             'scenario':i,\
             'tests administered':tests_administered,\
@@ -590,6 +591,7 @@ class Par:
       self.fatality_reduction_per_day=0
       self.fatality_reduction_recent=list(map(float, params['fatality_reduction_recent']))
       self.no_improvement_period=params['no_improvement_period']
+      self.retest_period_asymptomatics=params['retest_period_asymptomatics']
   #    for i in range(0,len(params['is_counterfactual'])):
   #        self.is_counterfactual.append(params['is_counterfactual'][i].upper() == 'TRUE')
      
@@ -604,6 +606,7 @@ class Par:
       self.results_period=list(map(int,params['results_period']))
       self.prop_asymptomatic_tested=list(map(float,params['prop_asymptomatic_tested']))
       self.relative_prob_infected=float(params['relative_prob_infected'])
+      self.prop_tested_asymptomatic=float(params['prop_tested_asymptomatic'])
   #    print ('num_tests=',self.num_tests)
  
       #if we wrote these variables as lists we could copy them without the loops
@@ -767,112 +770,113 @@ class Sim:
         return (testsperformed)
    
    def perform_tests_symptomatic_only(sim,par:Par,t,phase,use_real_testdata):
+   # tests are performed for symptomatic patients first - if there are any  left over they are used to test asymptomatics
         newsymptomatic=np.zeros(par.num_compartments)
         testsperformed=np.zeros(par.num_compartments)
+        symptomatic_tested=np.zeros(par.num_compartments)
+        asymptomatic_tested=np.zeros(par.num_compartments)
+        othersymptomatic=np.zeros(par.num_compartments)
+        asymptomatic=np.zeros(par.num_compartments)
+        testsperformed=np.zeros(par.num_compartments)
+        p_infected=np.zeros(par.num_compartments)
+        expected_infected=np.zeros(par.num_compartments)
         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
+        asymptomatic_covid=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
         #it is possible we should divide this by 10 to get daily rate - not convinced by this
-        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic
         newsymptomatic=othersymptomatic+symptomatic_covid
+        asymptomatic=sim.population[t-1]-newsymptomatic
         total_symptomatic=newsymptomatic.sum()
-        if total_symptomatic.sum()>0:
-           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
+        if newsymptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/newsymptomatic        
         else:
            p_infected_if_symptomatic=0
+        p_infected_if_asymptomatic=asymptomatic_covid/sim.population[t-1]
         prop_tests=newsymptomatic/total_symptomatic
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.actualtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         if tests_available.sum()>0:
+        #test all symptomatics first
             for i in range(0,par.num_compartments):
                 if newsymptomatic[i] >= tests_available[i]:
                     testsperformed[i] = tests_available[i]
+                    symptomatic_tested[i]=tests_available[i]
                 else:
                     testsperformed[i]=newsymptomatic[i]
+        #use remaining tests to test asymptomatics
+            remaining_tests=(tests_available-testsperformed).sum()*asymptomatic/asymptomatic.sum()
+            for i in range(0,par.num_compartments):                
+                        testsperformed[i] = testsperformed[i]+remaining_tests[i]
+                        asymptomatic_tested[i]=remaining_tests[i]     
+            expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
+            if testsperformed[i]>0:
+                p_infected[i]=expected_infected[i]/testsperformed[i]
+            else:
+                p_infected[i]=0
         adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)   
         return(testsperformed)
     
    def perform_tests_with_priorities(sim,par:Par,t,phase,use_real_testdata,priorities):
+       #tests are used first for health workers (symptomatic and asymptomatic), then for other high risk groups, then for the rest of the population
+       # if the number of tests is low only health workers will get tested
         newsymptomatic=np.zeros(par.num_compartments)
+        symptomatic_tested=np.zeros(par.num_compartments)
+        asymptomatic_tested=np.zeros(par.num_compartments)
+        othersymptomatic=np.zeros(par.num_compartments)
+        asymptomatic=np.zeros(par.num_compartments)
         testsperformed=np.zeros(par.num_compartments)
+        expected_infected=np.zeros(par.num_compartments)
+        p_infected=np.zeros(par.num_compartments)
         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
-        #it is possible we should divide this by 10 to get daily rate
-        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        asymptomatic_covid=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic
         newsymptomatic=othersymptomatic+symptomatic_covid
-        total_symptomatic=newsymptomatic.sum()
-        if total_symptomatic.sum()>0:
-           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
+        asymptomatic=sim.population[t-1]-newsymptomatic
+        if newsymptomatic.sum()>0:
+           p_infected_if_symptomatic=symptomatic_covid/newsymptomatic        
         else:
            p_infected_if_symptomatic=0
+        p_infected_if_asymptomatic=asymptomatic_covid/sim.population[t-1]
         if (use_real_testdata) and ispast(par.day1,t):
-          testsavailable=sim.actualtests_mit[t]
+          tests_available=sim.actualtests_mit[t]
         else:
-          testsavailable=par.num_tests_mitigation[phase]
+          tests_available=par.num_tests_mitigation[phase]
         for k in range(0, par.num_compartments):
             i=priorities[k]
-            if testsavailable>0:
-                if newsymptomatic[i] >= testsavailable:
-                    testsperformed[i] = testsavailable         
+            if tests_available>0:
+    #asymptomatics are tested periodically (period in retest_period_asymptomatics)
+                asymptomatic_patients=asymptomatic[i]/par.retest_period_asymptomatics
+                patients=newsymptomatic[i] +asymptomatic_patients
+                if patients>= tests_available:
+                    testsperformed[i] = tests_available
+                    symptomatic_tested[i]=testsperformed[i]*newsymptomatic[i]/patients
+                    asymptomatic_tested[i]=testsperformed[i]*asymptomatic_patients/patients
                 else:
-                    testsperformed[i]=newsymptomatic[i]
-                if testsavailable-testsperformed[i]>0:
-                    testsavailable=testsavailable-testsperformed[i]
+                    testsperformed[i]=newsymptomatic[i]+asymptomatic[i]/par.retest_period_asymptomatics
+                    symptomatic_tested[i]=newsymptomatic[i]
+                    asymptomatic_tested[i]=asymptomatic_patients
+                if tests_available-testsperformed[i]>0:
+                    tests_available=tests_available-testsperformed[i]
                 else:
-                    testsavailable=0
-            adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)      
+                    tests_available=0
+            expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
+            if testsperformed[i]>0:
+                p_infected[i]=expected_infected[i]/testsperformed[i]
+            else:
+                p_infected[i]=0
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)
         return testsperformed
    
-    
-# =============================================================================
-#    def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
-#         symptomatic_tested=np.zeros(par.num_compartments)
-#         asymptomatic_tested=np.zeros(par.num_compartments)
-#         total2btested=np.zeros(par.num_compartments)
-#         testsperformed=np.zeros(par.num_compartments)
-#         expected_infected=np.zeros(par.num_compartments)
-#         p_infected_if_symptomatic=np.zeros(par.num_compartments)
-#         p_infected_if_asymptomatic=np.zeros(par.num_compartments)
-#         p_infected=np.zeros(par.num_compartments)
-#         
-#         #This should use infectednotisolated but this is not reliable here
-#         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
-#         othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/par.recovery_period
-#         allsymptomatic=othersymptomatic+symptomatic_covid
-#         total_symptomatic=allsymptomatic.sum()
-#         asymptomatic=(sim.population[t-1]-allsymptomatic) # *par.prop_asymptomatic_tested[phase]
-#         total_asymptomatic=asymptomatic.sum()
-#         prop_tests=allsymptomatic/total_symptomatic
-#         if (use_real_testdata) and ispast(par.day1,t):
-#           tests_available=sim.actualtests_mit[t]*prop_tests
-#         else:
-#           tests_available=prop_tests*par.num_tests_mitigation[phase]
-#         if tests_available.sum()>0:
-#             for i in range(0,par.num_compartments):
-#                 if allsymptomatic[i]>=tests_available[i]:
-#                     symptomatic_tested[i]=tests_available[i]
-#                     asymptomatic_tested[i]=0
-#                 else:
-#                     symptomatic_tested[i]=allsymptomatic[i]
-#             #        asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]
-#                     asymptomatic_tested[i]=0
-#                 if i==2:
-#                     print('t=',t,'tests_available',tests_available[i],'symptomatic tested=',symptomatic_tested[i],'asymptomatic tested=',asymptomatic_tested[i])
-#                 total2btested[i]=symptomatic_tested[i]+asymptomatic_tested[i]
-#                 testsperformed[i]=total2btested[i]
-#                 if allsymptomatic[i]>0:
-#                    p_infected_if_symptomatic[i]=symptomatic_covid[i]/allsymptomatic[i]
-#                    p_infected_if_asymptomatic[i]=sim.infected[t-1,i]/sim.population[t-1,i]*par.relative_prob_infected
-#                 else:
-#                    p_infected_if_symptomatic[i]=0
-#                    p_infected_if_asymptomatic[i]=0
-#                 expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
-#                 p_infected[i]=expected_infected[i]/total2btested[i]
-#             adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
-# 
-#         return(testsperformed)
-# =============================================================================
+   
     
    def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
+      #tests are offered to anyone who asks to be tested - with or without symptoms.
+      # Two parameters govern the proportion of those tested who are asymptomatic
+      # and the relative risk of being infected of the asymptomatic. 
+      # It is assumed asymptomatic patients who ask to be tested are at higher risk
+      # than the general asymptomatic population
         symptomatic_tested=np.zeros(par.num_compartments)
         asymptomatic_tested=np.zeros(par.num_compartments)
         newsymptomatic=np.zeros(par.num_compartments)
@@ -882,33 +886,36 @@ class Sim:
         p_infected=np.zeros(par.num_compartments)
         expected_infected=np.zeros(par.num_compartments)
         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
-        #it is possible we should divide this by 10 to get daily rate - not convinced by this
-        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic/10
+        asymptomatic_covid=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
+        othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic
         newsymptomatic=othersymptomatic+symptomatic_covid
         total_symptomatic=newsymptomatic.sum()
         if total_symptomatic.sum()>0:
-           p_infected_if_symptomatic=symptomatic_covid/total_symptomatic        
+           p_infected_if_symptomatic=symptomatic_covid/newsymptomatic       
         else:
            p_infected_if_symptomatic=0
         asymptomatic=(sim.population[t-1]-newsymptomatic) 
+        p_infected_if_asymptomatic=p_infected_if_symptomatic*par.relative_prob_infected
     #    prop_tests=newsymptomatic/total_symptomatic
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.actualtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
+        tests_available_asymptomatic=tests_available-tests_available_symptomatic
         if tests_available.sum()>0:
             for i in range(0,par.num_compartments):
-                if newsymptomatic[i] >= tests_available[i]:
-                    symptomatic_tested[i]=tests_available[i]
-                    asymptomatic_tested[i]=0
+                if newsymptomatic[i] >= tests_available_symptomatic[i]:
+                    symptomatic_tested[i]=tests_available_symptomatic[i]
+                    asymptomatic_tested[i]=tests_available_asymptomatic[i]
                 else:
                     symptomatic_tested[i]=newsymptomatic[i]
                     asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]
                 testsperformed[i]=symptomatic_tested[i]+asymptomatic_tested[i]
                 expected_infected[i]=p_infected_if_symptomatic[i]*symptomatic_tested[i]+p_infected_if_asymptomatic[i]*asymptomatic_tested[i]
                 p_infected[i]=expected_infected[i]/testsperformed[i]
-        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)   
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
         return(testsperformed)
 
    
@@ -953,7 +960,6 @@ class Sim:
            else:
                if params.trig_op_type[phase]=='>':
                    if value>params.trig_values[phase]:
-                       print('found gt with t=',t,'phase=',phase)
                        return(True)
        return(False)
    
@@ -1093,6 +1099,7 @@ def adjust_beta(par,beta,final_beta,alpha):
     
 def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,phase=0,use_real_testdata=False):
    
+    #why is this -1
     num_phases=len(par.severity)-1
     pops_for_beta=par.init_infected  #temp instruction]
     
@@ -1225,7 +1232,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day 
        else: #future phases
-          tau=par.tau*par.fatality_reduction_recent[phase]
+          tau=par.tau*(1-par.fatality_reduction_recent[phase])
        gamma=1-tau
        meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
  # =============================================================================
