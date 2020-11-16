@@ -10,6 +10,8 @@ export const MAX_SCENARIOS_COUNT = 3;
 // How many phases are supported per scenario
 export const MAX_PHASE_COUNT = 3;
 
+// The types of patterns assigned to each scenario by index
+// https://www.npmjs.com/package/patternomaly
 export const GRAPH_PATTERNS_LIST = [
   'line-vertical',
   'line',
