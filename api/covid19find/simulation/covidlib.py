@@ -320,31 +320,41 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    dataframes=[]
    test_column_names=['scenario','tests administered','deaths', 'lives saved']
    test_df= pd.DataFrame(columns=test_column_names)
+   default_scenarios=[]
+# =============================================================================
+   parfile=os.path.join(cl_path_prefix, params_dir, 'default_parameters.json')
+   with open(parfile) as infile: 
+       try:
+           default_scenarios=json.load(infile)
+       except FileNotFoundError:
+           raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
+           return()
+# =============================================================================
    for i in range(0,num_scenarios):
+# =============================================================================
       scenario_name='scenario' + ' '+ str(i) #it should have a proper name
-      if expert_mode:
-         print ('*************')
-         print ('scenario_name')
-         print ('*************')
-#      parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
-      try:
-          parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
-      except FileNotFoundError:
-          raise FileNotFoundError ('Scenario parameters file not found')
-          return()
-      filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
-      summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
-   #   scenario_default=get_system_params(parameters_filename)
-      try:
-          with open(parameters_filename_json) as infile: 
-               scenario_default=json.load(infile)
-      except FileNotFoundError:
-          raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
-          return()
+# =============================================================================
+#       parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
+#       try:
+#            parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
+#       except FileNotFoundError:
+#            raise FileNotFoundError ('Scenario parameters file not found')
+#            return()
+#       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
+# # =============================================================================
+#  #     summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
+#    #   scenario_default=get_system_params(parameters_filename)
+#       try:
+#           with open(parameters_filename_json) as infile: 
+#                default_scenarios.append(json.load(infile))
+#       except FileNotFoundError:
+#           raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
+#           return()
+# =============================================================================
  #     write_json(scenario_default,parameters_filename_json)
         # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
       
-      past=create_past(p,scenario_default,p['past_dates'],p['past_severities'])
+      past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
      # min_betas=normalize_betas(p,raw_min_betas,float(p['beta_lockdown']))
@@ -401,8 +411,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['actualcases']=sim.actualcases
       dfsum['actualtests_mit']=sim.actualtests_mit
       dataframes.append(dfsum)
-      if par.save_results==True:
-          dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
+  #    if par.save_results==True:
+    #      dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
       
       # do extra simulations to test different test strategies
       # loops through the test_kit multipliers
@@ -543,6 +553,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    'max_isolated_by_scenario':max_isolated_by_scenario})
       
 #      p=original_p
+   
+# =============================================================================
+#    with open(parfile,'w') as outfile:      
+#         json.dump(default_scenarios,outfile)
+# =============================================================================
    return(dataframes, test_df,results_dict)
 
 ######################################################################
