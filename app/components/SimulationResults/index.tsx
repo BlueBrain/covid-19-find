@@ -20,6 +20,7 @@ import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
 import { truncate } from '../../libs/strings';
+import { GRAPH_PATTERNS_LIST } from '../../config';
 
 import './simulation-results.less';
 
@@ -65,7 +66,7 @@ const SimulationResults: React.FC<{
 
   const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
 
-  const patterns = ['circle', 'ring', 'dash', 'diagonal'];
+  const patterns = GRAPH_PATTERNS_LIST;
 
   const graphs = [
     {
@@ -347,6 +348,18 @@ const SimulationResults: React.FC<{
                     <h3 className="title">Cross-Scenario Comparison</h3>
                     <div className="flex">
                       {comparisons.map(({ key, title, color }, index) => {
+                        const graphPatterns = simulationResults.scenarios.map(
+                          (scenario, scenarioIndex) => {
+                            const patternKey = patterns[scenarioIndex];
+                            return draw(
+                              // @ts-ignore
+                              patternKey,
+                              Color(color)
+                                .alpha(0.2)
+                                .toString(),
+                            );
+                          },
+                        );
                         return (
                           <div className="graph">
                             <Bar
@@ -423,9 +436,7 @@ const SimulationResults: React.FC<{
                                     data: simulationResults.scenarios.map(
                                       scenario => scenario[key],
                                     ),
-                                    backgroundColor: Color(color)
-                                      .alpha(0.5)
-                                      .toString(),
+                                    backgroundColor: graphPatterns,
                                     borderColor: Color(color).toString(),
                                   },
                                 ],

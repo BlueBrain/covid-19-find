@@ -11,9 +11,7 @@ import {
 } from '../../libs/arrays';
 
 import './scenario-editor.less';
-import { DEFAULT_SCENARIO_LIST } from '../../defaults';
-
-const MAX_PHASE_COUNT = 3;
+import { MAX_PHASE_COUNT } from '../../config';
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;

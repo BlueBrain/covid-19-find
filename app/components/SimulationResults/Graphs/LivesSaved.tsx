@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
-import Color from 'color';
 
 import { TestingImpact } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
-import colors from '../../../colors';
 
 const LivesSaved: React.FC<{
   testingImpact: TestingImpact[];
 }> = ({ testingImpact }) => {
   const title = 'Lives Saved';
-  const color = colors.turqouise;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
