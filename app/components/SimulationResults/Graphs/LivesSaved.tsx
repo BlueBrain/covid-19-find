@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 
 import { TestingImpact } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
+import TooltipLabel from '../../TooltipLabel';
 
 const LivesSaved: React.FC<{
   testingImpact: TestingImpact[];
@@ -20,7 +21,11 @@ const LivesSaved: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <h3 className="title">{title}</h3>
+      <TooltipLabel
+        tooltipKey="livesSaved"
+        label={title}
+        wrapper={({ children }) => <h3 className="title">{children}</h3>}
+      ></TooltipLabel>
       <Line
         width={null}
         height={null}
