@@ -12,6 +12,7 @@ import {
 
 import './scenario-editor.less';
 import { MAX_PHASE_COUNT } from '../../config';
+import TooltipLabel from '../TooltipLabel';
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
@@ -125,7 +126,10 @@ const ScenarioEditor: React.FC<{
                       key={`${formSection.title}-${input.label}-${formSectionInputIndex}`}
                     >
                       <div className="col">
-                        <label>{input.label}</label>
+                        <TooltipLabel
+                          label={input.label}
+                          tooltipKey={input.key}
+                        ></TooltipLabel>
                       </div>
                       {phases.map((phase, index) => {
                         return (
