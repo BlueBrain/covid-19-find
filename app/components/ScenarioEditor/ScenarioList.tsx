@@ -5,11 +5,10 @@ import { IoIosClose, IoIosAdd } from 'react-icons/io';
 import ScenarioEditor from './ScenarioEditor';
 import { ClientScenarioData } from '../../types/simulation';
 import { toLetters } from '../../libs/strings';
+import { MAX_SCENARIOS_COUNT } from '../../config';
 
 import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';
-
-const MAX_SCENARIOS = 3;
 
 const ScenarioList: React.FC<{
   defaultScenarios: ClientScenarioData[];
@@ -57,7 +56,7 @@ const ScenarioList: React.FC<{
                 </Tab>
               );
             })}
-            {scenarios.length < MAX_SCENARIOS && (
+            {scenarios.length < MAX_SCENARIOS_COUNT && (
               <a className="add-scenario" onClick={addScenario}>
                 Add Scenario
                 <IoIosAdd />

@@ -6,6 +6,7 @@ import { draw } from 'patternomaly';
 import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import colors from '../../../colors';
+import { GRAPH_PATTERNS_LIST } from '../../../config';
 
 const NumberOfTestsPerDay: React.FC<{
   scenariosResults: ScenarioResult[];
@@ -18,7 +19,7 @@ const NumberOfTestsPerDay: React.FC<{
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
 
-  const patterns = ['circle', 'ring', 'dash', 'diagonal'];
+  const patterns = GRAPH_PATTERNS_LIST;
 
   return (
     <div

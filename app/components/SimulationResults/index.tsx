@@ -20,6 +20,7 @@ import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
 import { truncate } from '../../libs/strings';
+import { GRAPH_PATTERNS_LIST } from '../../config';
 
 import './simulation-results.less';
 
@@ -65,7 +66,7 @@ const SimulationResults: React.FC<{
 
   const selectedScenario = (scenariosResults || [])[selectedScenarioIndex];
 
-  const patterns = ['circle', 'ring', 'dash', 'diagonal'];
+  const patterns = GRAPH_PATTERNS_LIST;
 
   const graphs = [
     {
@@ -125,12 +126,21 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const largestDeathsValue =
+  const maxDeaths =
     maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
       return scenario.data.total.reduce((memo, entry) => {
         return memo + entry.newDeaths;
       }, 0);
     })?.totalDeaths || 0;
+
+  const maxIsolated =
+    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
+      return scenario.data.total.reduce((memo, entry) => {
+        return memo + entry.newIsolated;
+      }, 0);
+    })?.data.total.reduce((memo, entry) => {
+      return memo + entry.newIsolated;
+    }, 0) || 0;
 
   const datasets = Array.from(scenariosResults).map((entry, scenarioIndex) => {
     return {
@@ -221,6 +231,10 @@ const SimulationResults: React.FC<{
                 </div>
                 <div className="chart">
                   <h3 className="title">Scenarios Summary Graph</h3>
+                  <p style={{ textAlign: 'center', opacity: '0.5' }}>
+                    The size of the circles represents the number of simulated
+                    deaths
+                  </p>
                   <Bubble
                     width={null}
                     height={null}
@@ -244,7 +258,7 @@ const SimulationResults: React.FC<{
                       scales: {
                         yAxes: [
                           {
-                            suggestedMin: 0,
+                            // suggestedMin: 0,
                             beginAtZero: true,
                             scaleLabel: {
                               display: true,
@@ -255,14 +269,14 @@ const SimulationResults: React.FC<{
                             },
                             ticks: {
                               // beginAtZero: true,
-                              // Include a dollar sign in the ticks
                               callback: function(value) {
                                 return value?.toLocaleString(undefined, {
                                   maximumFractionDigits: 0,
                                 });
                               },
-                              beginAtZero: true,
-                              suggestedMax: 100,
+                              // beginAtZero: true,
+                              // suggestedMax: 100,
+                              max: maxIsolated * 1.2,
                             },
                           },
                         ],
@@ -281,11 +295,18 @@ const SimulationResults: React.FC<{
                                   maximumFractionDigits: 0,
                                 });
                               },
-                              beginAtZero: true,
                               maxRotation: isMobile ? 90 : 0, // angle in degrees
                             },
                           },
                         ],
+                      },
+                      layout: {
+                        padding: {
+                          left: 60,
+                          right: 60,
+                          top: 60,
+                          bottom: 60,
+                        },
                       },
                     }}
                     data={{
@@ -310,10 +331,7 @@ const SimulationResults: React.FC<{
                           // this is a grim line of code.
                           // we need to scale deaths down to a viewable scale
                           data.r =
-                            scaleValueFromLargestValue(
-                              data.r,
-                              largestDeathsValue,
-                            ) / 2;
+                            scaleValueFromLargestValue(data.r, maxDeaths) / 3;
 
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
@@ -347,6 +365,18 @@ const SimulationResults: React.FC<{
                     <h3 className="title">Cross-Scenario Comparison</h3>
                     <div className="flex">
                       {comparisons.map(({ key, title, color }, index) => {
+                        const graphPatterns = simulationResults.scenarios.map(
+                          (scenario, scenarioIndex) => {
+                            const patternKey = patterns[scenarioIndex];
+                            return draw(
+                              // @ts-ignore
+                              patternKey,
+                              Color(color)
+                                .alpha(0.2)
+                                .toString(),
+                            );
+                          },
+                        );
                         return (
                           <div className="graph">
                             <Bar
@@ -423,9 +453,7 @@ const SimulationResults: React.FC<{
                                     data: simulationResults.scenarios.map(
                                       scenario => scenario[key],
                                     ),
-                                    backgroundColor: Color(color)
-                                      .alpha(0.5)
-                                      .toString(),
+                                    backgroundColor: graphPatterns,
                                     borderColor: Color(color).toString(),
                                   },
                                 ],
@@ -661,7 +689,6 @@ const SimulationResults: React.FC<{
                   </h3>
                   <table>
                     <tr>
-                      <th>Group</th>
                       <th>Number of Subgroups</th>
                       <th>Tests Required</th>
                     </tr>
@@ -670,7 +697,6 @@ const SimulationResults: React.FC<{
                     ].samplesRequiredForSerologicalStudies.map(
                       (entry, index) => (
                         <tr>
-                          <td>Group {index}</td>
                           <td>{entry.numSubgroups}</td>
                           <td>{entry.numSubgroups}</td>
                         </tr>
