@@ -59,19 +59,31 @@ const ScenarioEditorPanel: React.FC<{
   onSubmit?: (props: { scenarios: ClientScenarioData[] }) => void;
   testsFormReady: boolean;
   setTestsFormReady: (value: boolean) => void;
-}> = ({
-  defaultScenarios,
-  scenarios,
-  onSubmit,
-  testsFormReady,
-  setTestsFormReady,
-}) => {
+}> = ({ defaultScenarios, scenarios, onSubmit, setTestsFormReady }) => {
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
-  const formRef = React.useRef();
+  const [isValid, setValidity] = React.useState(false);
+  const [errorMessages, setErrorMessages] = React.useState<string[]>([]);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
   // Reset default if url changes
   React.useEffect(() => {
     setScenariosValue({ scenarios });
   }, [scenarios]);
+
+  React.useEffect(() => {
+    const errors: string[] = [];
+    const checkValidity = input => () => {
+      console.log(input.checkValidity());
+      // errors.push(input.validationMessage as string);
+    };
+    const eventListeners = Array.from(
+      formRef.current?.querySelectorAll('input') || [],
+    ).forEach(input => {
+      const listener = checkValidity(input);
+      // return { input, listener };
+    });
+    setErrorMessages(errors);
+  }, [formRef, setErrorMessages]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,10 +92,12 @@ const ScenarioEditorPanel: React.FC<{
       scenariosValue.scenarios,
     );
     setTestsFormReady((e.target as HTMLFormElement).checkValidity());
+    setValidity((formRef.current as HTMLFormElement).checkValidity());
     onSubmit && onSubmit(scenariosValue);
   };
 
   const handleChange = () => {
+    setValidity((formRef.current as HTMLFormElement).checkValidity());
     setTestsFormReady(false);
   };
 
@@ -91,6 +105,8 @@ const ScenarioEditorPanel: React.FC<{
     formRef.current &&
       validateFormWithCustomRules(formRef.current, scenariosValue.scenarios);
   };
+
+  console.log({ isValid });
 
   return (
     <section>
@@ -116,6 +132,11 @@ const ScenarioEditorPanel: React.FC<{
             onSubmit={setScenariosValue}
           />
           <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
+            {!isValid && (
+              <div className="error-report">
+                <p>There are still errors present in the form.</p>
+              </div>
+            )}
             <div className="submit-button">
               <button
                 className="action submit-button"
