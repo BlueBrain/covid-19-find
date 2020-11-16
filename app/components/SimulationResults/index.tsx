@@ -245,8 +245,8 @@ const SimulationResults: React.FC<{
                       scales: {
                         yAxes: [
                           {
-                            suggestedMin: 0,
-                            beginAtZero: true,
+                            // suggestedMin: 0,
+                            // beginAtZero: true,
                             scaleLabel: {
                               display: true,
                               labelString: 'Total people in Isolation',
@@ -256,14 +256,13 @@ const SimulationResults: React.FC<{
                             },
                             ticks: {
                               // beginAtZero: true,
-                              // Include a dollar sign in the ticks
                               callback: function(value) {
                                 return value?.toLocaleString(undefined, {
                                   maximumFractionDigits: 0,
                                 });
                               },
-                              beginAtZero: true,
-                              suggestedMax: 100,
+                              // beginAtZero: true,
+                              // suggestedMax: 100,
                             },
                           },
                         ],
@@ -282,11 +281,19 @@ const SimulationResults: React.FC<{
                                   maximumFractionDigits: 0,
                                 });
                               },
-                              beginAtZero: true,
+                              // beginAtZero: true,
                               maxRotation: isMobile ? 90 : 0, // angle in degrees
                             },
                           },
                         ],
+                      },
+                      layout: {
+                        padding: {
+                          left: 60,
+                          right: 60,
+                          top: 60,
+                          bottom: 60,
+                        },
                       },
                     }}
                     data={{
@@ -314,7 +321,7 @@ const SimulationResults: React.FC<{
                             scaleValueFromLargestValue(
                               data.r,
                               largestDeathsValue,
-                            ) / 2;
+                            ) / 3;
 
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
