@@ -15,20 +15,17 @@ simulator = Simulator(CovidDataRepository(data_dir),
 class TestSimulator:
 
     def test_response_format(self):
-        default_scenarios = simulator.default_scenarios()
-        request = {
-            "countryCode": "CH",
-            "population": 8655000,
-            "activePopulationProportion": 0.66,
-            "hospitalBeds": 34620,
-            "hospitalStaffPerBed": 2.5,
-            "workingOutsideHomeProportion": 0.2,
-            "urbanPopulationProportion": 0.73,
-            "over64Proportion": 0.20,
-            "belowPovertyLineProportion": 0.10,
-            "fatalityReduction": 0.35,
-            "scenarios": default_scenarios
-        }
+        request = simulator.default_scenarios()
+        request["countryCode"] = "CH"
+        request["population"] = 8655000
+        request["activePopulationProportion"] = 0.66
+        request["hospitalBeds"] = 34620
+        request["hospitalStaffPerBed"] = 2.5
+        request["workingOutsideHomeProportion"] = 0.2
+        request["urbanPopulationProportion"] = 0.73
+        request["over64Proportion"] = 0.20
+        request["belowPovertyLineProportion"] = 0.10
+
         response = simulator.run(request)
         with open(os.path.join(path_prefix, "simulation-response.schema.json")) as schema_file:
             schema = json.load(schema_file)
@@ -39,18 +36,15 @@ class TestSimulator:
         with open(os.path.join(path_prefix, "../covid19find/simulation-request.schema.json")) as schema_file:
             schema = json.load(schema_file)
 
-        default_scenarios = simulator.default_scenarios()
-        request = {
-            "countryCode": "CH",
-            "population": 8655000,
-            "activePopulationProportion": 0.66,
-            "hospitalBeds": 34620,
-            "hospitalStaffPerBed": 2.5,
-            "workingOutsideHomeProportion": 0.2,
-            "urbanPopulationProportion": 0.73,
-            "over64Proportion": 0.20,
-            "belowPovertyLineProportion": 0.10,
-            "fatalityReduction": 0.35,
-            "scenarios": default_scenarios
-        }
+        request = simulator.default_scenarios()
+        request["countryCode"] = "CH"
+        request["population"] = 8655000
+        request["activePopulationProportion"] = 0.66
+        request["hospitalBeds"] = 34620
+        request["hospitalStaffPerBed"] = 2.5
+        request["workingOutsideHomeProportion"] = 0.2
+        request["urbanPopulationProportion"] = 0.73
+        request["over64Proportion"] = 0.20
+        request["belowPovertyLineProportion"] = 0.10
+
         validate(instance=request, schema=schema)

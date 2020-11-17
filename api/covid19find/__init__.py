@@ -57,9 +57,7 @@ def create_app():
 
     @app.route(f'{app_path_prefix}/api/scenarios')
     def fetch_scenarios():
-        return {
-            "scenarios": simulator.default_scenarios()
-        }
+        return simulator.default_scenarios()
 
     @app.route(f'{app_path_prefix}/api/covid19data/<country_code>')
     def country_covid19_data(country_code):
