@@ -17,6 +17,7 @@ export type InputProp = {
   key: string;
   disabled?: boolean;
   required?: boolean;
+  name?: string;
 };
 
 export type NumberInputProp = InputProp & {

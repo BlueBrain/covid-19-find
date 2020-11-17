@@ -12,6 +12,24 @@ const validateFormWithCustomRules = (
 ) => {
   // Here we will validate the form
   // Trigger Dates of each scenario must come after the preceeding date.
+  const invalidScenarios = new Set<number>();
+  const inputs = Array.from(form.querySelectorAll(`input`));
+  const inputsByScenario = inputs.reduce((memo, input) => {
+    const [scenarioIndex, phaseIndex, inputKey] = input.name.split('-');
+    // do validation here?
+    const isValid = input.checkValidity();
+    if (!isValid) {
+      invalidScenarios.add(Number(scenarioIndex));
+    }
+
+    if (!memo[scenarioIndex]) {
+      memo[scenarioIndex] = [];
+    }
+
+    memo[scenarioIndex].push(input);
+    return memo;
+  }, invalidScenarios);
+
   const triggers = Array.from(
     form.querySelectorAll(`input[data-key="trigger"]`),
   );
@@ -24,7 +42,7 @@ const validateFormWithCustomRules = (
       };
     });
   });
-  scenarioDateTriggers.forEach(triggerPhaseInputList => {
+  scenarioDateTriggers.forEach((triggerPhaseInputList, scenarioIndex) => {
     // lets check the values from the back
     // we only care about validating dates
     triggerPhaseInputList
@@ -38,11 +56,14 @@ const validateFormWithCustomRules = (
           const isAfter = moment(phaseInput.triggerValue).isAfter(
             moment(previousPhaseTriggerValue),
           );
+          if (isAfter) {
+            phaseInput.triggerInput.setCustomValidity('');
+            return;
+          }
           phaseInput.triggerInput.setCustomValidity(
-            isAfter
-              ? ''
-              : `this date must come after ${previousPhaseTriggerValue}`,
+            `this date must come after ${previousPhaseTriggerValue}`,
           );
+          invalidScenarios.add(scenarioIndex);
         }
       });
   });
@@ -51,6 +72,8 @@ const validateFormWithCustomRules = (
   // split inputs into phases
   // for each phase list, find if the value for trigger is a date
   // if so, the they must be higher than the last phase
+
+  return invalidScenarios;
 };
 
 const ScenarioEditorPanel: React.FC<{
@@ -62,7 +85,9 @@ const ScenarioEditorPanel: React.FC<{
 }> = ({ defaultScenarios, scenarios, onSubmit, setTestsFormReady }) => {
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
   const [isValid, setValidity] = React.useState(false);
-  const [errorMessages, setErrorMessages] = React.useState<string[]>([]);
+  const [invalidScenarioIndexes, setInvalidScenarioIndexes] = React.useState<
+    number[]
+  >([]);
   const formRef = React.useRef<HTMLFormElement>(null);
 
   // Reset default if url changes
@@ -70,43 +95,30 @@ const ScenarioEditorPanel: React.FC<{
     setScenariosValue({ scenarios });
   }, [scenarios]);
 
-  React.useEffect(() => {
-    const errors: string[] = [];
-    const checkValidity = input => () => {
-      console.log(input.checkValidity());
-      // errors.push(input.validationMessage as string);
-    };
-    const eventListeners = Array.from(
-      formRef.current?.querySelectorAll('input') || [],
-    ).forEach(input => {
-      const listener = checkValidity(input);
-      // return { input, listener };
-    });
-    setErrorMessages(errors);
-  }, [formRef, setErrorMessages]);
+  const runValidator = () => {
+    setTestsFormReady((formRef.current as HTMLFormElement).checkValidity());
+    setValidity((formRef.current as HTMLFormElement).checkValidity());
+    const invalidScenarios = validateFormWithCustomRules(
+      formRef.current as HTMLFormElement,
+      scenariosValue.scenarios,
+    );
+    setInvalidScenarioIndexes(Array.from(invalidScenarios.keys()).sort());
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    validateFormWithCustomRules(
-      e.target as HTMLFormElement,
-      scenariosValue.scenarios,
-    );
-    setTestsFormReady((e.target as HTMLFormElement).checkValidity());
-    setValidity((formRef.current as HTMLFormElement).checkValidity());
+    runValidator();
     onSubmit && onSubmit(scenariosValue);
   };
 
   const handleChange = () => {
-    setValidity((formRef.current as HTMLFormElement).checkValidity());
+    runValidator();
     setTestsFormReady(false);
   };
 
   const handleFormSubmitButtonClicked = e => {
-    formRef.current &&
-      validateFormWithCustomRules(formRef.current, scenariosValue.scenarios);
+    runValidator();
   };
-
-  console.log({ isValid });
 
   return (
     <section>
@@ -132,9 +144,16 @@ const ScenarioEditorPanel: React.FC<{
             onSubmit={setScenariosValue}
           />
           <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
-            {!isValid && (
+            {!isValid && !!invalidScenarioIndexes.length && (
               <div className="error-report">
-                <p>There are still errors present in the form.</p>
+                <p>
+                  There are still errors present in the following scenarios.
+                </p>
+                <ul>
+                  {invalidScenarioIndexes.map(scenarioIndex => {
+                    return <li>{scenarios[scenarioIndex].name}</li>;
+                  })}
+                </ul>
               </div>
             )}
             <div className="submit-button">

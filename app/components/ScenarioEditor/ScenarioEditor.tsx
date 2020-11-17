@@ -19,11 +19,12 @@ const ScenarioEditor: React.FC<{
   defaultPhase: ClientPhase;
   onChange?: (scenario: ClientScenarioData) => void;
   disabled: boolean;
-}> = ({ defaultPhase, scenario, onChange, disabled }) => {
+  scenarioIndex: number;
+}> = ({ defaultPhase, scenario, onChange, disabled, scenarioIndex }) => {
   const name = useTextInput(scenario.name, null, true);
   const { phases } = scenario;
 
-  const scenarioFormId = `#scenario-editor-${scenario.name
+  const scenarioFormId = `#scenario-editor-${scenarioIndex}-${scenario.name
     .split(' ')
     .join('-')}`;
 
@@ -132,6 +133,7 @@ const ScenarioEditor: React.FC<{
                         ></TooltipLabel>
                       </div>
                       {phases.map((phase, index) => {
+                        input.name = `${scenarioIndex}-${index}-${input.key}`;
                         return (
                           <div
                             className="col"

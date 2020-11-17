@@ -79,6 +79,7 @@ const ScenarioList: React.FC<{
                     triggerCondition: null,
                     trigger: null,
                   }}
+                  scenarioIndex={index}
                   scenario={scenario}
                   onChange={handleSubmit}
                   disabled={index === 0}
