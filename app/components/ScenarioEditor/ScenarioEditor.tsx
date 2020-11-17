@@ -2,9 +2,13 @@ import * as React from 'react';
 import { IoIosClose } from 'react-icons/io';
 
 import { useTextInput } from '../../hooks/useFormInput';
-import { ClientScenarioData, ClientPhase } from '../../types/simulation';
+import {
+  ClientScenarioData,
+  ClientPhase,
+  TRIGGER_TYPE,
+} from '../../types/simulation';
 import PhaseInput from './PhaseInput';
-import phaseForm, { AnyInputProp } from './phaseForm';
+import phaseForm, { AnyInputProp, INPUT_TYPES } from './phaseForm';
 import {
   replaceAtIndexWithoutMutation,
   removeAtIndexWithoutMutation,
@@ -132,16 +136,34 @@ const ScenarioEditor: React.FC<{
                           tooltipKey={input.key}
                         ></TooltipLabel>
                       </div>
-                      {phases.map((phase, index) => {
-                        input.name = `${scenarioIndex}-${index}-${input.key}`;
+                      {phases.map((phase, phaseIndex) => {
+                        // change type of trigger for validation
+                        if (
+                          input.key === 'trigger' &&
+                          phase.triggerType === TRIGGER_TYPE.DATE
+                        ) {
+                          // @ts-ignore
+                          input.type = INPUT_TYPES.text;
+                        }
+
+                        if (
+                          input.key === 'trigger' &&
+                          phase.triggerType !== TRIGGER_TYPE.DATE
+                        ) {
+                          input.type = INPUT_TYPES.number;
+                        }
+
                         return (
                           <div
                             className="col"
-                            key={`${phase.name}-${input.label}-${index}`}
+                            key={`${phase.name}-${input.label}-${phaseIndex}`}
                           >
                             <PhaseInput
-                              inputProps={input}
-                              onChange={handlePhaseChange(input, index)}
+                              inputProps={{
+                                ...input,
+                                name: `${scenarioIndex}-${phaseIndex}-${input.key}-${phase.name}`,
+                              }}
+                              onChange={handlePhaseChange(input, phaseIndex)}
                               value={phase[input.key]}
                             />
                           </div>

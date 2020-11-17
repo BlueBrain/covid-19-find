@@ -17,6 +17,42 @@ const validateFormWithCustomRules = (
   const inputsByScenario = inputs.reduce((memo, input) => {
     const [scenarioIndex, phaseIndex, inputKey] = input.name.split('-');
     // do validation here?
+
+    if (inputKey === 'trigger') {
+      // check type
+      // get triggerType
+      const triggerType =
+        scenarios[scenarioIndex]?.phases[phaseIndex].triggerType;
+      if (triggerType === TRIGGER_TYPE.DATE) {
+        // now we should validate if its a proper date
+        const date = moment(input.value);
+        input.setCustomValidity(
+          date.isValid() ? '' : 'Please enter a valid date',
+        );
+
+        // we should also check if the date occurs after
+        // any of the previous date values
+        const getPreviousDateValue = (phaseIndex: number) => {
+          const prevPhase = scenarios[scenarioIndex].phases[phaseIndex - 1];
+          if (!prevPhase) {
+            return null;
+          }
+          if (prevPhase.triggerType === TRIGGER_TYPE.DATE) {
+            return prevPhase.trigger;
+          }
+          return getPreviousDateValue(phaseIndex - 2);
+        };
+
+        const prevPhaseDateValue = getPreviousDateValue(Number(phaseIndex));
+        if (prevPhaseDateValue) {
+          const isAfter = date.isAfter(moment(prevPhaseDateValue));
+          input.setCustomValidity(
+            isAfter ? '' : `this date must come after ${prevPhaseDateValue}`,
+          );
+        }
+      }
+    }
+
     const isValid = input.checkValidity();
     if (!isValid) {
       invalidScenarios.add(Number(scenarioIndex));
@@ -29,49 +65,6 @@ const validateFormWithCustomRules = (
     memo[scenarioIndex].push(input);
     return memo;
   }, invalidScenarios);
-
-  const triggers = Array.from(
-    form.querySelectorAll(`input[data-key="trigger"]`),
-  );
-  const scenarioDateTriggers = scenarios.map(({ phases }, scenarioIndex) => {
-    return phases.map((phase, phaseIndex) => {
-      return {
-        triggerType: phase.triggerType,
-        triggerInput: triggers[phaseIndex + scenarioIndex] as HTMLInputElement,
-        triggerValue: phase.trigger,
-      };
-    });
-  });
-  scenarioDateTriggers.forEach((triggerPhaseInputList, scenarioIndex) => {
-    // lets check the values from the back
-    // we only care about validating dates
-    triggerPhaseInputList
-      .reverse()
-      .filter(({ triggerType }) => triggerType === TRIGGER_TYPE.DATE)
-      .forEach((phaseInput, phaseInputIndex) => {
-        // the current phase's date value must come later than the previous phase's date value
-        const previousPhaseTriggerValue =
-          triggerPhaseInputList[phaseInputIndex + 1]?.triggerValue;
-        if (previousPhaseTriggerValue) {
-          const isAfter = moment(phaseInput.triggerValue).isAfter(
-            moment(previousPhaseTriggerValue),
-          );
-          if (isAfter) {
-            phaseInput.triggerInput.setCustomValidity('');
-            return;
-          }
-          phaseInput.triggerInput.setCustomValidity(
-            `this date must come after ${previousPhaseTriggerValue}`,
-          );
-          invalidScenarios.add(scenarioIndex);
-        }
-      });
-  });
-  // get only the input list attributes we want
-  // form.querySelectorAll("input[data-key="trigger"])
-  // split inputs into phases
-  // for each phase list, find if the value for trigger is a date
-  // if so, the they must be higher than the last phase
 
   return invalidScenarios;
 };
@@ -102,21 +95,20 @@ const ScenarioEditorPanel: React.FC<{
       formRef.current as HTMLFormElement,
       scenariosValue.scenarios,
     );
+    (formRef.current as HTMLFormElement).reportValidity();
     setInvalidScenarioIndexes(Array.from(invalidScenarios.keys()).sort());
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    runValidator();
     onSubmit && onSubmit(scenariosValue);
   };
 
   const handleChange = () => {
-    runValidator();
     setTestsFormReady(false);
   };
 
-  const handleFormSubmitButtonClicked = e => {
+  const handleSubmitButtonClicked = () => {
     runValidator();
   };
 
@@ -151,7 +143,11 @@ const ScenarioEditorPanel: React.FC<{
                 </p>
                 <ul>
                   {invalidScenarioIndexes.map(scenarioIndex => {
-                    return <li>{scenarios[scenarioIndex].name}</li>;
+                    return (
+                      <li style={{ marginBottom: '0.5em' }}>
+                        {scenarios[scenarioIndex].name}
+                      </li>
+                    );
                   })}
                 </ul>
               </div>
@@ -160,7 +156,7 @@ const ScenarioEditorPanel: React.FC<{
               <button
                 className="action submit-button"
                 type="submit"
-                onClick={handleFormSubmitButtonClicked}
+                onClick={handleSubmitButtonClicked}
               >
                 See Scenarios
               </button>
