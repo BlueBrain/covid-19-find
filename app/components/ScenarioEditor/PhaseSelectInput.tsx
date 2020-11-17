@@ -3,17 +3,13 @@ import Select from 'react-select';
 import Color from 'color';
 import { SelectInputProp } from './phaseForm';
 import colors from '../../colors';
-import { useSelectInput } from '../../hooks/useFormInput';
-
 const PhaseSelectInput: React.FC<{
   inputProps: SelectInputProp;
   onChange: (number) => void;
   value?: string | number | null;
 }> = ({ inputProps, onChange, value }) => {
-  const select = useSelectInput(null, null, true);
-
-  const handleBlur = () => {
-    onChange(select.value);
+  const handleChange = ({ value }) => {
+    onChange(value);
   };
 
   return (
@@ -23,8 +19,7 @@ const PhaseSelectInput: React.FC<{
       defaultValue={inputProps.options.find(
         ({ value: optionValue }) => optionValue === value,
       )}
-      onChange={select.onChange}
-      onBlur={handleBlur}
+      onChange={handleChange}
       options={inputProps.options}
       // @ts-ignore
       theme={theme => ({

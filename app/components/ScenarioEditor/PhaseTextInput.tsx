@@ -19,6 +19,7 @@ const PhaseTextInput: React.FC<{
   return (
     <input
       className="phase text"
+      name={inputProps.name || inputProps.key}
       data-key={inputProps.key}
       type="text"
       defaultValue={inputValue}
