@@ -10,7 +10,6 @@ from .simulation.covidlib import run_simulation, get_system_params, cl_path_pref
 
 
 class Simulator:
-    IS_SCENARIO_COUNTERFACTUAL = [False, False, False]
 
     def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
@@ -46,10 +45,10 @@ class Simulator:
 
     @staticmethod
     def get_scenario_parameters(parameters):
-        return [Simulator.__map_scenario(i, scenario) for i, scenario in enumerate(parameters["scenarios"])]
+        return list(map(Simulator.__map_scenario, parameters["scenarios"]))
 
     @staticmethod
-    def __map_scenario(index, input_scenario):
+    def __map_scenario(input_scenario):
         phases = input_scenario["phases"]
         return {
             "imported_infections_per_day": Simulator.__get_array_for_key(phases, "importedInfectionsPerDay"),
@@ -67,7 +66,6 @@ class Simulator:
             "num_tests_care": Simulator.__get_array_for_key(phases, "numTestsCare"),
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
-            "is_counterfactual": [str(Simulator.IS_SCENARIO_COUNTERFACTUAL[index]) for _ in range(len(phases))],
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
             "fatality_reduction_recent": Simulator.__get_array_for_key(phases, "fatalityReductionRecent")
         }
@@ -199,10 +197,7 @@ class Simulator:
             "detectionRate": row.get("detection_rate", None)
         }
 
-    def __reverse_map_scenario(self, scenario_index):
-        with open(os.path.join(cl_path_prefix, self.parameters_directory,
-                               "scenario {}_params.json".format(scenario_index))) as params_file:
-            covid_libscenario = json.load(params_file)
+    def __reverse_map_scenario(self, covid_libscenario):
         phases = []
         phase = {
             "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
@@ -244,4 +239,12 @@ class Simulator:
         return past_phases
 
     def default_scenarios(self):
-        return list(map(self.__reverse_map_scenario, range(0, 3)))
+        with open(os.path.join(cl_path_prefix, self.parameters_directory, "default_parameters.json")) as params_file:
+            scenarios_from_file = json.load(params_file)
+        scenarios = list(map(self.__reverse_map_scenario, scenarios_from_file))
+        with open(os.path.join(cl_path_prefix, self.parameters_directory, "parameters.json")) as params_file:
+            fixed_parameters_from_file = json.load(params_file)
+        return {
+            "scenarios": scenarios,
+            "fatalityReduction": fixed_parameters_from_file["fixed_params"]["fatality_reduction"]
+        }
