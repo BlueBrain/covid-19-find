@@ -2,7 +2,7 @@ import json
 import csv
 import math
 import os
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 
@@ -201,7 +201,7 @@ class Simulator:
 
     def __reverse_map_scenario(self, covid_libscenario):
         phases = []
-        phase = {
+        phase1 = {
             "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
             "trigger": date.today().isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
@@ -219,9 +219,11 @@ class Simulator:
             "resultsPeriod": int(covid_libscenario["results_period"]),
             "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
         }
+        phase2 = dict(phase1)
+        phase2["trigger"] = (date.today() + timedelta(days=10)).isoformat()
         # we only have one phase but frontend requires two
-        phases.append(phase)
-        phases.append(phase)
+        phases.append(phase1)
+        phases.append(phase2)
 
         return {"phases": phases}
 
