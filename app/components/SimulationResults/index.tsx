@@ -722,10 +722,9 @@ const SimulationResults: React.FC<{
                 <hr />
                 <div className="charts">
                   <LivesSaved
-                    testingImpact={
-                      simulationResults.scenarios[selectedScenarioIndex]
-                        .testingImpact
-                    }
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
                   />
                 </div>
                 <div className="disclaimer">
