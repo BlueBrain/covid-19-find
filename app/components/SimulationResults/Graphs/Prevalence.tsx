@@ -119,6 +119,7 @@ const Prevalence: React.FC<{
               backgroundColor: selected
                 ? graphPatterns[index].selected
                 : graphPatterns[index].unselected,
+              hidden: !selected,
             };
           }),
           labels: scenariosResults[selectedScenarioIndex].data.total.map(

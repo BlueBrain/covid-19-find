@@ -633,6 +633,7 @@ const SimulationResults: React.FC<{
                                   backgroundColor: selected
                                     ? graphPatterns[index].selected
                                     : graphPatterns[index].unselected,
+                                  hidden: !selected,
                                 };
                               }),
                               ...(graph.actualKey
