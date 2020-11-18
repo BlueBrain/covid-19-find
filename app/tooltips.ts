@@ -64,7 +64,7 @@ export default {
     * RDT: Rapid diagnostic test - an antibody or antigen based test. Cheaper and faster than PCR but may be less accurate, particularly during the early days of infection `,
   requiredDxTests:
     'the average number of tests performed on a patient from diagnosis to discharge, excluding the initial test used to diagnose the patient.',
-  resultPeriod:
+  resultsPeriod:
     'the average number of days between the first appearance of symptoms and the return of results from testing. ',
   fatalityReductionRecent:
     ' the percentage reduction in the average fatality rate from the start of the epidemic to the start of the phase',

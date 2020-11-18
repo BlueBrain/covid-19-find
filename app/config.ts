@@ -1,3 +1,5 @@
+import colors from './colors';
+
 const apiURL = process.env.API_URL || '/api';
 
 // Where to look for the API
@@ -18,3 +20,21 @@ export const GRAPH_PATTERNS_LIST = [
   'dash',
   'diagonal',
 ];
+
+// Labels for Scenarios
+export const DEFAULT_SCENARIO_LABELS = [
+  'No testing',
+  'High contact groups first',
+  'Symptomatic first',
+  'Open public testing',
+];
+
+export const COLORS_BY_SCENARIO_INDEX = [
+  colors.pomegranate,
+  colors.blueGray,
+  colors.turqouise,
+  colors.aubergine,
+];
+
+export const UNSELECTED_COLOR_ALPHA = 0.2;
+export const SELECTED_COLOR_ALPHA = 0.5;

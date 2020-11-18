@@ -20,7 +20,12 @@ import { PDFFromElement } from '../../libs/download';
 import colors from '../../colors';
 import AwaitingInput from './AwaitingInput';
 import { truncate } from '../../libs/strings';
-import { GRAPH_PATTERNS_LIST } from '../../config';
+import {
+  COLORS_BY_SCENARIO_INDEX,
+  GRAPH_PATTERNS_LIST,
+  SELECTED_COLOR_ALPHA,
+  UNSELECTED_COLOR_ALPHA,
+} from '../../config';
 
 import './simulation-results.less';
 
@@ -74,32 +79,27 @@ const SimulationResults: React.FC<{
       key: 'totalDeaths',
       actualKey: 'actualDeaths',
       cohort: 'total',
-      color: colors.pomegranate,
     },
     {
       title: 'Confirmed Cases',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
-      color: colors.blueGray,
     },
     {
       title: 'Recovered',
       key: 'newRecovered',
       cohort: 'total',
-      color: colors.turqouise,
     },
     {
       title: 'Infected hospital staff ',
       key: 'totalInfected',
       cohort: 'hospitals',
-      color: colors.aubergine,
     },
     {
       title: 'Total Infections',
       key: 'totalInfected',
       cohort: 'total',
-      color: colors.aubergine,
     },
   ];
 
@@ -107,22 +107,18 @@ const SimulationResults: React.FC<{
     {
       key: 'totalDeaths',
       title: 'Total Deaths',
-      color: colors.pomegranate,
     },
     {
       key: 'totalInfected',
       title: 'Total Infected',
-      color: colors.aubergine,
     },
     {
       key: 'maxInfected',
       title: 'Peak Infected',
-      color: colors.aubergine,
     },
     {
       key: 'maxIsolated',
       title: 'Peak Isolated',
-      color: colors.turqouise,
     },
   ];
 
@@ -341,8 +337,8 @@ const SimulationResults: React.FC<{
                               draw(
                                 // @ts-ignore
                                 patternKey,
-                                Color(colors.aubergine)
-                                  .alpha(0.5)
+                                Color(COLORS_BY_SCENARIO_INDEX[index])
+                                  .alpha(SELECTED_COLOR_ALPHA)
                                   .toString(),
                               ),
                             )[index],
@@ -350,7 +346,9 @@ const SimulationResults: React.FC<{
                         },
                       ),
 
-                      borderColor: Color(colors.aubergine).toString(),
+                      borderColor: COLORS_BY_SCENARIO_INDEX.map(color =>
+                        Color(color).toString(),
+                      ),
                       labels: clientScenariosInput.map(
                         scenario => scenario.name,
                       ),
@@ -364,15 +362,15 @@ const SimulationResults: React.FC<{
                   >
                     <h3 className="title">Cross-Scenario Comparison</h3>
                     <div className="flex">
-                      {comparisons.map(({ key, title, color }, index) => {
+                      {comparisons.map(({ key, title }, index) => {
                         const graphPatterns = simulationResults.scenarios.map(
                           (scenario, scenarioIndex) => {
                             const patternKey = patterns[scenarioIndex];
                             return draw(
                               // @ts-ignore
                               patternKey,
-                              Color(color)
-                                .alpha(0.2)
+                              Color(COLORS_BY_SCENARIO_INDEX[scenarioIndex])
+                                .alpha(UNSELECTED_COLOR_ALPHA)
                                 .toString(),
                             );
                           },
@@ -429,7 +427,6 @@ const SimulationResults: React.FC<{
                                             MAX_CHAR_LENGTH,
                                           );
                                         },
-                                        maxRotation: isMobile ? 90 : 0, // angle in degrees
                                       },
                                     },
                                   ],
@@ -454,7 +451,9 @@ const SimulationResults: React.FC<{
                                       scenario => scenario[key],
                                     ),
                                     backgroundColor: graphPatterns,
-                                    borderColor: Color(color).toString(),
+                                    borderColor: COLORS_BY_SCENARIO_INDEX.map(
+                                      color => Color(color).toString(),
+                                    ),
                                   },
                                 ],
                                 labels: clientScenariosInput.map(
@@ -603,14 +602,23 @@ const SimulationResults: React.FC<{
                               ...datasets.map((dataset, index) => {
                                 const selected =
                                   selectedScenarioIndex === index;
-                                const graphPatterns = patterns.map(patternKey =>
-                                  draw(
-                                    // @ts-ignore
-                                    patternKey,
-                                    Color(graph.color)
-                                      .alpha(0.2)
-                                      .toString(),
-                                  ),
+                                const graphPatterns = patterns.map(
+                                  patternKey => ({
+                                    selected: draw(
+                                      // @ts-ignore
+                                      patternKey,
+                                      Color(COLORS_BY_SCENARIO_INDEX[index])
+                                        .alpha(SELECTED_COLOR_ALPHA)
+                                        .toString(),
+                                    ),
+                                    unselected: draw(
+                                      // @ts-ignore
+                                      patternKey,
+                                      Color(COLORS_BY_SCENARIO_INDEX[index])
+                                        .alpha(UNSELECTED_COLOR_ALPHA)
+                                        .toString(),
+                                    ),
+                                  }),
                                 );
 
                                 return {
@@ -620,18 +628,10 @@ const SimulationResults: React.FC<{
                                   ),
                                   borderDash:
                                     index === 0 ? [] : [index * 4, index * 4],
-                                  borderColor: [
-                                    selected
-                                      ? graph.color
-                                      : Color(graph.color)
-                                          .alpha(0.2)
-                                          .toString(),
-                                  ],
+                                  borderColor: COLORS_BY_SCENARIO_INDEX[index],
                                   backgroundColor: selected
-                                    ? Color(graph.color)
-                                        .alpha(0.2)
-                                        .toString()
-                                    : graphPatterns[index],
+                                    ? graphPatterns[index].selected
+                                    : graphPatterns[index].unselected,
                                 };
                               }),
                               ...(graph.actualKey
@@ -658,24 +658,20 @@ const SimulationResults: React.FC<{
                 <hr />
                 <div className="stats horizontal">
                   <h3>
-                    {Math.ceil(
-                      selectedScenario.data.hospitals.reduce(
-                        (memo, entry) => memo + entry.newTests,
-                        0,
-                      ),
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {selectedScenario.testsNeededForCare.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                     <br />
                     <span className="subtitle">
                       Number of tests <br /> used for patient care
                     </span>
                   </h3>
                   <h3>
-                    {Math.ceil(
-                      selectedScenario.data.total.reduce(
-                        (memo, entry) => memo + entry.requiredDxTests,
-                        0,
-                      ),
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {selectedScenario.testsNeededForMitigation.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                     <br />
                     <span className="subtitle">
                       Number of tests used and required <br /> for epidemic
@@ -698,7 +694,7 @@ const SimulationResults: React.FC<{
                       (entry, index) => (
                         <tr>
                           <td>{entry.numSubgroups}</td>
-                          <td>{entry.numSubgroups}</td>
+                          <td>{entry.testsRequired}</td>
                         </tr>
                       ),
                     )}

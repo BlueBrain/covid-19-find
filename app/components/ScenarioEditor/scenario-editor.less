@@ -49,12 +49,17 @@
 }
 
 .scenario-list {
+  .react-tabs__tab-list {
+    display: flex;
+  }
   .react-tabs__tab {
     color: white;
     border: 1px solid white;
     border-right: none;
     padding: 1em;
     text-transform: uppercase;
+    display: flex;
+    flex-grow: 1;
     &:focus {
       outline: none;
     }

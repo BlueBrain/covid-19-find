@@ -1,4 +1,4 @@
-import { apiBase } from './config';
+import { apiBase, DEFAULT_SCENARIO_LABELS } from './config';
 import { CountryResponse } from './types/country';
 import {
   SimulationResults,
@@ -7,7 +7,7 @@ import {
   ClientSimulationRequest,
 } from './types/simulation';
 import { toLetters } from './libs/strings';
-import { match } from 'ts-pattern';
+import { match, when } from 'ts-pattern';
 
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
@@ -17,10 +17,10 @@ const fixPhases = (phase: Phase, index: number) => ({
 
 const fixScenario = (scenario: Scenario, index: number) => ({
   name: match(index)
-    .with(0, () => 'Counterfactual: No tests and no intervention')
-    .with(1, () => 'Special groups with symptoms')
-    .with(2, () => 'All symptomatic')
-    .with(3, () => 'Open public testing')
+    .with(
+      when(index => index <= DEFAULT_SCENARIO_LABELS.length - 1),
+      index => DEFAULT_SCENARIO_LABELS[index],
+    )
     .otherwise(() => `Scenario ${toLetters(index).toLocaleUpperCase()}`),
   phases: scenario.phases.map(fixPhases),
 });

@@ -4,7 +4,6 @@ import { IoIosClose, IoIosAdd } from 'react-icons/io';
 
 import ScenarioEditor from './ScenarioEditor';
 import { ClientScenarioData } from '../../types/simulation';
-import { toLetters } from '../../libs/strings';
 import { MAX_SCENARIOS_COUNT } from '../../config';
 
 import 'react-tabs/style/react-tabs.css';
@@ -45,9 +44,7 @@ const ScenarioList: React.FC<{
             {scenarios.map((scenario, index) => {
               return (
                 <Tab key={`tab-${scenario.name}-${index}`}>
-                  {index === 0
-                    ? 'Counterfactual: No tests and no intervention'
-                    : `Scenario ${toLetters(index).toLocaleUpperCase()}`}{' '}
+                  <span className="label">{scenario.name}</span>
                   {scenarios.length > 1 && index !== 0 && (
                     <span className="clickable" onClick={removeScenario(index)}>
                       <IoIosClose />

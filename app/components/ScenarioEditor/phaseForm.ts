@@ -1,3 +1,4 @@
+import { DEFAULT_SCENARIO_LABELS } from '../../config';
 import {
   TRIGGER_TYPE,
   TRIGGER_CONDITION,
@@ -135,8 +136,8 @@ export default [
         type: INPUT_TYPES.select,
         min: 0,
         key: 'testingStrategy',
-        options: Object.values(TESTING_STRATEGIES).map(str => ({
-          label: str,
+        options: Object.values(TESTING_STRATEGIES).map((str, index) => ({
+          label: DEFAULT_SCENARIO_LABELS[index],
           value: str,
         })),
       },
@@ -188,7 +189,7 @@ export default [
         min: 0,
         max: 30,
         step: 1,
-        key: 'resultPeriod',
+        key: 'resultsPeriod',
       },
       {
         label:

@@ -56,7 +56,7 @@ export type Phase = {
   numTestsCare: number;
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
-  resultPeriod: number;
+  resultsPeriod: number;
   fatalityReductionRecent: number;
 };
 
@@ -104,6 +104,8 @@ export type ScenarioResult = {
   totalDeaths: number;
   totalInfected: number;
   totalTests: number;
+  testsNeededForCare: number;
+  testsNeededForMitigation: number;
   samplesRequiredForSerologicalStudies: {
     numSubgroups: number;
     testsRequired: number;
