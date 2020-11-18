@@ -104,6 +104,8 @@ export type ScenarioResult = {
   totalDeaths: number;
   totalInfected: number;
   totalTests: number;
+  testsNeededForCare: number;
+  testsNeededForMitigation: number;
   samplesRequiredForSerologicalStudies: {
     numSubgroups: number;
     testsRequired: number;

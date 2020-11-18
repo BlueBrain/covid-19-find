@@ -658,24 +658,20 @@ const SimulationResults: React.FC<{
                 <hr />
                 <div className="stats horizontal">
                   <h3>
-                    {Math.ceil(
-                      selectedScenario.data.hospitals.reduce(
-                        (memo, entry) => memo + entry.newTests,
-                        0,
-                      ),
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {selectedScenario.testsNeededForCare.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                     <br />
                     <span className="subtitle">
                       Number of tests <br /> used for patient care
                     </span>
                   </h3>
                   <h3>
-                    {Math.ceil(
-                      selectedScenario.data.total.reduce(
-                        (memo, entry) => memo + entry.requiredDxTests,
-                        0,
-                      ),
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {selectedScenario.testsNeededForMitigation.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                     <br />
                     <span className="subtitle">
                       Number of tests used and required <br /> for epidemic
