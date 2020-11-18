@@ -56,7 +56,7 @@ export type Phase = {
   numTestsCare: number;
   typeTestsCare: TEST_TYPES;
   requiredDxTests: number;
-  resultPeriod: number;
+  resultsPeriod: number;
   fatalityReductionRecent: number;
 };
 

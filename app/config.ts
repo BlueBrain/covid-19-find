@@ -23,9 +23,9 @@ export const GRAPH_PATTERNS_LIST = [
 
 // Labels for Scenarios
 export const DEFAULT_SCENARIO_LABELS = [
-  'Counterfactual - no testing',
-  'Special groups with symptoms',
-  'All symptomatic',
+  'No testing',
+  'High contact groups first',
+  'Symptomatic first',
   'Open public testing',
 ];
 
