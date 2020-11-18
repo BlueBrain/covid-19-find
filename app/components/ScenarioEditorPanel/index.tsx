@@ -139,7 +139,7 @@ const ScenarioEditorPanel: React.FC<{
             {!isValid && !!invalidScenarioIndexes.length && (
               <div className="error-report">
                 <p>
-                  There are still errors present in the following scenarios.
+                  There are still errors present in the following scenarios:
                 </p>
                 <ul>
                   {invalidScenarioIndexes.map(scenarioIndex => {

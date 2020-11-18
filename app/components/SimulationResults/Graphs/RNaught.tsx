@@ -6,7 +6,12 @@ import { draw } from 'patternomaly';
 import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import colors from '../../../colors';
-import { GRAPH_PATTERNS_LIST } from '../../../config';
+import {
+  COLORS_BY_SCENARIO_INDEX,
+  GRAPH_PATTERNS_LIST,
+  SELECTED_COLOR_ALPHA,
+  UNSELECTED_COLOR_ALPHA,
+} from '../../../config';
 
 const RNaught: React.FC<{
   scenariosResults: ScenarioResult[];
@@ -91,30 +96,31 @@ const RNaught: React.FC<{
         data={{
           datasets: scenariosResults.map((scenario, index) => {
             const selected = selectedScenarioIndex === index;
-            const graphPatterns = patterns.map(patternKey =>
-              draw(
+
+            const graphPatterns = patterns.map(patternKey => ({
+              selected: draw(
                 // @ts-ignore
                 patternKey,
-                Color(color)
-                  .alpha(0.2)
+                Color(COLORS_BY_SCENARIO_INDEX[index])
+                  .alpha(SELECTED_COLOR_ALPHA)
                   .toString(),
               ),
-            );
+              unselected: draw(
+                // @ts-ignore
+                patternKey,
+                Color(COLORS_BY_SCENARIO_INDEX[index])
+                  .alpha(UNSELECTED_COLOR_ALPHA)
+                  .toString(),
+              ),
+            }));
+
             return {
               label: clientScenariosInput[index].name,
               data: scenario.data.total.map(entry => entry.rEff),
-              borderColor: [
-                selected
-                  ? color
-                  : Color(color)
-                      .alpha(0.2)
-                      .toString(),
-              ],
+              borderColor: COLORS_BY_SCENARIO_INDEX[index],
               backgroundColor: selected
-                ? Color(color)
-                    .alpha(0.4)
-                    .toString()
-                : graphPatterns[index],
+                ? graphPatterns[index].selected
+                : graphPatterns[index].unselected,
             };
           }),
           labels: scenariosResults[selectedScenarioIndex].data.total.map(
