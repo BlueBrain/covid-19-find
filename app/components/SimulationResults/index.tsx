@@ -698,7 +698,7 @@ const SimulationResults: React.FC<{
                       (entry, index) => (
                         <tr>
                           <td>{entry.numSubgroups}</td>
-                          <td>{entry.numSubgroups}</td>
+                          <td>{entry.testsRequired}</td>
                         </tr>
                       ),
                     )}
