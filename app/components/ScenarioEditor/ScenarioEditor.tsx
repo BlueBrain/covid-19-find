@@ -137,7 +137,6 @@ const ScenarioEditor: React.FC<{
                         ></TooltipLabel>
                       </div>
                       {phases.map((phase, phaseIndex) => {
-                        console.log({ phase });
                         // change type of trigger for validation
                         if (
                           input.key === 'trigger' &&

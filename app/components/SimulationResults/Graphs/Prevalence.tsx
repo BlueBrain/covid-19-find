@@ -5,7 +5,6 @@ import { draw } from 'patternomaly';
 
 import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
-import colors from '../../../colors';
 import {
   COLORS_BY_SCENARIO_INDEX,
   GRAPH_PATTERNS_LIST,
@@ -21,7 +20,6 @@ const Prevalence: React.FC<{
   clientScenariosInput: ClientScenarioData[];
 }> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
   const title = 'Prevalence';
-  const color = colors.aubergine;
 
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
@@ -119,6 +117,7 @@ const Prevalence: React.FC<{
               backgroundColor: selected
                 ? graphPatterns[index].selected
                 : graphPatterns[index].unselected,
+              hidden: !selected,
             };
           }),
           labels: scenariosResults[selectedScenarioIndex].data.total.map(

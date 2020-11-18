@@ -1,13 +1,24 @@
 import * as React from 'react';
 import { Line } from 'react-chartjs-2';
+import Color from 'color';
+import { draw } from 'patternomaly';
 
-import { TestingImpact } from '../../../types/simulation';
+import { ScenarioResult, ClientScenarioData } from '../../../types/simulation';
 import useWindowWidth from '../../../hooks/useWindowWidth';
-import TooltipLabel from '../../TooltipLabel';
+import {
+  COLORS_BY_SCENARIO_INDEX,
+  GRAPH_PATTERNS_LIST,
+  SELECTED_COLOR_ALPHA,
+  UNSELECTED_COLOR_ALPHA,
+} from '../../../config';
+
+const patterns = GRAPH_PATTERNS_LIST;
 
 const LivesSaved: React.FC<{
-  testingImpact: TestingImpact[];
-}> = ({ testingImpact }) => {
+  scenariosResults: ScenarioResult[];
+  selectedScenarioIndex: number;
+  clientScenariosInput: ClientScenarioData[];
+}> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
   const title = 'Lives Saved';
 
   const screenWidth = useWindowWidth();
@@ -21,18 +32,11 @@ const LivesSaved: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <TooltipLabel
-        tooltipKey="livesSaved"
-        label={title}
-        wrapper={({ children }) => <h3 className="title">{children}</h3>}
-      ></TooltipLabel>
+      <h3 className="title">{title}</h3>
       <Line
         width={null}
         height={null}
         options={{
-          legend: {
-            display: false,
-          },
           tooltips: {
             callbacks: {
               label: (tooltipItem, data) => {
@@ -40,7 +44,7 @@ const LivesSaved: React.FC<{
                   data.datasets[tooltipItem.datasetIndex].label || '';
                 return `${label}: ${tooltipItem.yLabel?.toLocaleString(
                   undefined,
-                  { maximumFractionDigits: 0 },
+                  { maximumFractionDigits: 8 },
                 )}`;
               },
             },
@@ -88,13 +92,37 @@ const LivesSaved: React.FC<{
           },
         }}
         data={{
-          labels: testingImpact.map((impact, index) => `${index + 1}x`),
-          datasets: [
-            {
-              label: 'Lives Saved',
-              data: testingImpact.map(impact => impact.livesSaved),
-            },
-          ],
+          datasets: scenariosResults.map((scenario, index) => {
+            const selected = selectedScenarioIndex === index;
+            const graphPatterns = patterns.map(patternKey => ({
+              selected: draw(
+                // @ts-ignore
+                patternKey,
+                Color(COLORS_BY_SCENARIO_INDEX[index])
+                  .alpha(SELECTED_COLOR_ALPHA)
+                  .toString(),
+              ),
+              unselected: draw(
+                // @ts-ignore
+                patternKey,
+                Color(COLORS_BY_SCENARIO_INDEX[index])
+                  .alpha(UNSELECTED_COLOR_ALPHA)
+                  .toString(),
+              ),
+            }));
+            return {
+              label: clientScenariosInput[index].name,
+              data: scenario.testingImpact.map(entry => entry.livesSaved),
+              borderColor: COLORS_BY_SCENARIO_INDEX[index],
+              backgroundColor: selected
+                ? graphPatterns[index].selected
+                : graphPatterns[index].unselected,
+              hidden: !selected,
+            };
+          }),
+          labels: scenariosResults[selectedScenarioIndex].testingImpact.map(
+            (impact, index) => `${index}x`,
+          ),
         }}
       />
     </div>

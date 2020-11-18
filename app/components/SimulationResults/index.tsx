@@ -82,7 +82,7 @@ const SimulationResults: React.FC<{
     },
     {
       title: 'Confirmed Cases',
-      key: 'newConfirmed',
+      key: 'totalConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
@@ -377,6 +377,7 @@ const SimulationResults: React.FC<{
                         );
                         return (
                           <div className="graph">
+                            <h4 className="title">{title}</h4>
                             <Bar
                               width={null}
                               height={null}
@@ -632,6 +633,7 @@ const SimulationResults: React.FC<{
                                   backgroundColor: selected
                                     ? graphPatterns[index].selected
                                     : graphPatterns[index].unselected,
+                                  hidden: !selected,
                                 };
                               }),
                               ...(graph.actualKey
@@ -720,10 +722,9 @@ const SimulationResults: React.FC<{
                 <hr />
                 <div className="charts">
                   <LivesSaved
-                    testingImpact={
-                      simulationResults.scenarios[selectedScenarioIndex]
-                        .testingImpact
-                    }
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
                   />
                 </div>
                 <div className="disclaimer">
