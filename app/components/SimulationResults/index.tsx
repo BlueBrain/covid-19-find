@@ -377,6 +377,7 @@ const SimulationResults: React.FC<{
                         );
                         return (
                           <div className="graph">
+                            <h4 className="title">{title}</h4>
                             <Bar
                               width={null}
                               height={null}
