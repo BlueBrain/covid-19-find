@@ -32,20 +32,26 @@ def write_json(adict,afilename):
     with open(afilename,'w') as outfile: 
         json.dump(adict2, outfile)
 
-def get_system_params(sysfile):
+def get_system_params(params_dir):
+   sysfile=os.path.join(cl_path_prefix, params_dir, 'system_params.json')
+   with open(sysfile) as infile: 
+       try:
+           system_params=json.load(infile)
+       except FileNotFoundError:
+           raise FileNotFoundError ('System parameters file not found')
+           return()
+   return(system_params)
+   
 
-   p = {}
-   csv_reader = csv.reader(open(sysfile), delimiter=',')
-   for a_row in csv_reader:
-        param_name=a_row[0]
-        if len(a_row)==2:
-            val=a_row[1]
-        else:
-            val=[]
-            for i in range(1,len(a_row)):
-                val.append(a_row[i])
-        p[param_name]=val
-   return p
+def get_default_scenarios(params_dir):
+   parfile=os.path.join(cl_path_prefix, params_dir, 'default_parameters.json')
+   with open(parfile) as infile: 
+       try:
+           default_scenarios=json.load(infile)
+       except FileNotFoundError:
+           raise FileNotFoundError ('Scenario parameters file not found')
+           return()
+   return(default_scenarios)
 
 ######################################################################
 # get_beta:
@@ -106,17 +112,6 @@ class Scenarios:
    #   self.num_scenarios = len(self.scenarios)
             self.num_scenarios = 1 #temporary instruction to speed up testing
 
-######################################################################
-# get_scenarios:
-#    reads parameters for a number of scenarios from a csv file
-#    returns:
-#       Scenarios object containing:
-#          scenarios - scenario code (keys for dictionary)
-#          scenario_labels - scenario name (for printing)
-#          scenarios_params - dictionary containing variables to be overridden
-#                            per scenario, with corresponding values
-######################################################################
-
 def get_scenarios(scenariosfile):
    sc = Scenarios()
    sc.read_from_csv(scenariosfile) #we might do without this
@@ -171,40 +166,7 @@ def update_system_params2(p, fixed_params):
     p['past_dates']=fixed_params['past_dates']
     p['past_severities']=fixed_params['past_severities']
    
-#  This is an old version of routine - to be removed if new version (uodate_system_parameters2) gives no problems   
-# =============================================================================
-# def update_system_params(p, fixed_params):
-#    num_compartments = int(p['num_compartments'])
-#    num_testkit_types=int(p['num_testkit_types'])
-#          
-#    #define size of compartments   
-#    hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
-#    poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
-#    remaining_pop=fixed_params['total_pop']-poor_urban-hosp_staff
-#    woh=remaining_pop*fixed_params['prop_15_64']*fixed_params['prop_woh'] #working outside home
-#    other_hc=poor_urban+woh
-#    rop=fixed_params['total_pop']-hosp_staff-other_hc
-#    p['init_pop'][0]=hosp_staff
-#    p['init_pop'][1]=other_hc
-#    p['init_pop'][2]=rop
-#    p['total_pop']=int(fixed_params['total_pop'])
-#    print('init pop=',p['init_pop'])
-#     #compute age_corrected IFR for country
-# 
-#    prop_gt_64=fixed_params['age_gt_64']
-#    prop_15_64=fixed_params['prop_15_64']
-#    prop_1_14=1-(prop_gt_64+prop_15_64)
-#    IFR_1_14=float(p['IFR_1_14'])
-#    IFR_15_64=float(p['IFR_15_64'])
-#    IFR_gt_64=float(p['IFR_gt_64'])
-#    p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
-#    p['past_dates']=fixed_params['past_dates']
-#    p['past_severities']=fixed_params['past_severities']
-#    p['expert_mode']=fixed_params['expert_mode']
-#    p['run_multiple_test_scenarios']=fixed_params['run_multiple_test_scenarios']
-#    p['save_results']=fixed_params['save_results']
-# =============================================================================
-   
+
 
     return
 
@@ -232,12 +194,6 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']
-#   sysfile = os.path.join(cl_path_prefix, params_dir, 'system_params.csv')
-   try:
-       sysfilejson=os.path.join(cl_path_prefix, params_dir, 'system_params.json')
-   except FileNotFoundError:
-       raise CustomError ('system parameter file not found')
-       return()
    try:
        initial_betafile = os.path.join(cl_path_prefix, params_dir, 'initial_betas.csv')
    except FileNotFoundError:
@@ -261,14 +217,12 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 
  #  p = get_system_params(sysfile)
    try:
-       with open(sysfilejson) as infile: 
-           p=json.load(infile)
+       p=get_system_params(params_dir) 
    except FileNotFoundError:
        raise FileNotFoundError('System parameters file not found')
        return()
   # write_json(p,sysfilejson) 
    update_system_params2(p, fixed_params) # note: p is updated
-
 
 # read initial beta matrix
 
@@ -297,6 +251,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #        results for each scenario
 ######################################################################
 
+    
 def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 
    num_compartments = int(p['num_compartments'])
@@ -321,45 +276,18 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    test_column_names=['scenario','tests administered','deaths', 'lives saved']
    test_df= pd.DataFrame(columns=test_column_names)
    default_scenarios=[]
-# =============================================================================
-   parfile=os.path.join(cl_path_prefix, params_dir, 'default_parameters.json')
-   with open(parfile) as infile: 
-       try:
-           default_scenarios=json.load(infile)
-       except FileNotFoundError:
-           raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
+   try:
+       default_scenarios=get_default_scenarios(params_dir)
+   except FileNotFoundError:
+           raise FileNotFoundError ('Default scenario parameters file not found')
            return()
-# =============================================================================
    for i in range(0,num_scenarios):
-# =============================================================================
       scenario_name='scenario' + ' '+ str(i) #it should have a proper name
-# =============================================================================
-#       parameters_filename = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.csv')
-#       try:
-#            parameters_filename_json = os.path.join(cl_path_prefix, params_dir, scenario_name+'_params.json')
-#       except FileNotFoundError:
-#            raise FileNotFoundError ('Scenario parameters file not found')
-#            return()
-#       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
-# # =============================================================================
-#  #     summary_filename=os.path.join(cl_path_prefix, params_dir, scenario_name+'_summary.csv')
-#    #   scenario_default=get_system_params(parameters_filename)
-#       try:
-#           with open(parameters_filename_json) as infile: 
-#                default_scenarios.append(json.load(infile))
-#       except FileNotFoundError:
-#           raise FileNotFoundError ('Scenario parameters file not found')#get_system parameters should gave a different name
-#           return()
-# =============================================================================
- #     write_json(scenario_default,parameters_filename_json)
-        # The next instruction is temporary: uses values entered in fixed_parameters. Will be replaced with values from optimization program
-      
+      filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv') 
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
-     # min_betas=normalize_betas(p,raw_min_betas,float(p['beta_lockdown']))
       max_betas = get_beta(no_intervention_betafile, num_compartments)
-     # max_betas=normalize_betas(p,raw_max_betas,float(p['beta_initial']))
       
  # runs an initial simulation to align dates with simulation days 
       date_par=Par(p)
@@ -380,10 +308,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
       scenario=create_scenario(past,scenarios[i])
-      p.update(scenario) 
- #     print('p after user input',p)
- #     beta_max = float(p['beta_max'][0]) #this is the maximum value of overall beta for any intervention
-#      beta_min=float(p['beta_min'][0]) #this is the lowest value of overall beta for any intervention
       nmultipliers=len(p['test_multipliers'])
       par = Par(p)
       #overwrites default value of day1
@@ -411,9 +335,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['actualcases']=sim.actualcases
       dfsum['actualtests_mit']=sim.actualtests_mit
       dataframes.append(dfsum)
-  #    if par.save_results==True:
-    #      dfsum.to_csv(summary_filename,index=False,date_format='%Y-%m-%d')
-      
       # do extra simulations to test different test strategies
       # loops through the test_kit multipliers
       
@@ -426,11 +347,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             test_par.fatality_reduction_per_day=math.exp(np.log(1-(test_par.fatality_reduction))/(simday-test_par.no_improvement_period))
             simphase,simday=computetoday(day1,par.trig_values)
             sim = Sim(par.num_days,par.num_compartments)
-    # =============================================================================
-    #         test_sim=Sim(par.num_days,test_par.num_compartments)
-    #         test_sim.set_initial_conditions(test_par)
-    # =============================================================================
-            
             current_phase,today=computetoday(par.day1,par.trig_values)
             start_current_phase=par.trig_values[current_phase]
             for k in range(current_phase,len(par.trig_values)):

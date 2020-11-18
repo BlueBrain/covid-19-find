@@ -1,0 +1,38 @@
+rm death_data.csv
+python getdeaths.py
+python -u fitdeathsbatch.py   1  15 dbxa >tracea.txt &
+sleep 1
+python -u fitdeathsbatch.py  16  30 dbxb >traceb.txt &
+sleep 1
+python -u fitdeathsbatch.py  31  45 dbxc >tracec.txt &
+sleep 1
+python -u fitdeathsbatch.py  46  60 dbxd >traced.txt &
+sleep 1
+python -u fitdeathsbatch.py  61  75 dbxe >tracee.txt &
+sleep 1
+python -u fitdeathsbatch.py  76  90 dbxf >tracef.txt &
+sleep 1
+python -u fitdeathsbatch.py  91 105 dbxg >traceg.txt &
+sleep 1
+python -u fitdeathsbatch.py 106 120 dbxh >traceh.txt &
+sleep 1
+python -u fitdeathsbatch.py 121 135 dbxi >tracei.txt &
+sleep 1
+python -u fitdeathsbatch.py 136 150 dbxj >tracej.txt &
+sleep 1
+python -u fitdeathsbatch.py 151 166 dbxk >tracek.txt &
+sleep 1
+python -u fitdeathsbatch.py 167 182 dbxl >tracel.txt &
+echo "waiting for background processes to complete..."
+wait
+echo "merging csv files..."
+head -1 dbxa.csv >dbx.csv
+for i in dbx?.csv
+do
+  tail -n +2 $i >>dbx.csv
+done
+head -1 dbxalong.csv >dblong.csv
+for i in dbx?long.csv
+do
+  tail -n +2 $i >>dblong.csv
+done

@@ -4,143 +4,41 @@ import covidlib as cl
 import pandas as pd
 import math
 import numpy as np
-import getdeaths as gd
 import sys
 import os
 import json
+import cdata as cd
+from coviddatarepository import CovidDataRepository
+from simulator import Simulator
+
+print("setting up...")
+data_repo = CovidDataRepository( "/tmp")
+data_repo.update_data()
+print("setup done ...")
+parameters_dir = ""
+simulator = Simulator(data_repo, parameters_dir)
+
+minphaselength = 14
+maxphaselength = 28
+shiftlag = 56
+horizon = 50
 
 countryname = 'Switzerland'
-DB = [
-      ['Philippines','PH'],
-      ['Switzerland','CH'],
-      ['Italy','IT'],
-      ['France','FR'],
-      ['US','US'],
-      ['India','IN'],
-      ['Brazil','BR'],
-      ['United Kingdom','GB'],
-      ['Sweden','SE'],
-      ['Spain','ES'],
-      ['Peru','PE'],
-      ['Canada','CA']
-     ]
-
-def getallcountries():
-   return DB
-
-def getcountrycode(countryname):
-   global DB
-   for country in DB:
-     if country[0] == countryname:
-        return country[1]
-   return 'XX'
-
-countrycode = getcountrycode(countryname)
-
-def fixparamnames(dict):
-   params={'total_pop':dict['population'],
-    'hospital_beds':dict['hospitalBeds'],
-    'prop_15_64':dict['activePopulationProportion'],
-    'age_gt_64':dict['over64Proportion'],
-    'prop_urban':dict['urbanPopulationProportion'],
-    'prop_below_pl':0.05,
-    'prop_woh':0.4,
-    'staff_per_bed':2.5
-   }
-   return params
-
-def getcountryparams(countrycode):
-
-   countrydata = [ {'countryCode': 'CH', 'population': 8655000, 'activePopulationProportion': 0.66, 'urbanPopulationProportion': 0.73, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.20232131715771232, 'hospitalBeds': 34620, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'PH', 'population': 109581000, 'activePopulationProportion': 0.63, 'urbanPopulationProportion': 0.46, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.060647064728374445, 'hospitalBeds': 109581, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'IT', 'population': 60462000, 'activePopulationProportion': 0.63, 'urbanPopulationProportion': 0.7, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.2453680989712547, 'hospitalBeds': 181386, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'FR', 'population': 65274000, 'activePopulationProportion': 0.62, 'urbanPopulationProportion': 0.8, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.2194590189049238, 'hospitalBeds': 391644, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'US', 'population': 331003000, 'activePopulationProportion': 0.65, 'urbanPopulationProportion': 0.82, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.17824813068159504, 'hospitalBeds': 662006, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'IN', 'population': 1380004000, 'activePopulationProportion': 0.66, 'urbanPopulationProportion': 0.34, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.07224416813284598, 'hospitalBeds': 1380004, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None},
-   {'countryCode': 'BR', 'population': 212559000, 'activePopulationProportion': 0.69, 'urbanPopulationProportion': 0.86, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.10405319934700485, 'hospitalBeds': 425118, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'GB', 'population': 67886000, 'activePopulationProportion': 0.63, 'urbanPopulationProportion': 0.83, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.19727496096396904, 'hospitalBeds': 135772, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'SE', 'population': 10099000, 'activePopulationProportion': 0.62, 'urbanPopulationProportion': 0.87, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.21408812753737994, 'hospitalBeds': 20198, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'ES', 'population': 46755000, 'activePopulationProportion': 0.65, 'urbanPopulationProportion': 0.8, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.21135401561330344, 'hospitalBeds': 140265, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'PE', 'population': 32972000, 'activePopulationProportion': 0.66, 'urbanPopulationProportion': 0.77, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.09428448380444011, 'hospitalBeds': 32972, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
-   {'countryCode': 'CA', 'population': 37742000, 'activePopulationProportion': 0.66, 'urbanPopulationProportion': 0.81, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.19382738063695618, 'hospitalBeds': 75484, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ]
-
-   for c in countrydata:
-     if c['countryCode'] == countrycode:
-       return fixparamnames(c)
-   print("fix country params function - no matching country")
-   return {}
-
-def getdeathdata(countryname):
-   df = gd.get_death_data_by_country(countryname)
-   return df.fillna(0)
-
-def getcountrydata(countryname):
-   df = getdeathdata(countryname)
-   n = len(df)
-   newdf = df.rename(columns = {'total_deaths': 'accumulated_deaths'}, inplace = False)
-   newdf['tests'] = 0
-   filename = countryname+'.csv'
-   resultdf = newdf.reset_index()[['Date','accumulated_deaths','tests']]
-   # print("df1")
-   # print(resultdf.reset_index()[['Date','accumulated_deaths','tests']])
-   # resultdf.to_csv(filename,index=False)
-   # resultdf2 = cl.getcountrydata(filename)
-   # print("df2")
-   # print(resultdf2)
-   return resultdf
-
-# functions for determining shift
+countrycode = 'CH'
+country_df = simulator.get_country_df(countrycode)
+# country_df = cd.getcountrydata(countryname)
+#country_df = cl.getcountrydata('Switzerland.csv')[['Date','accumulated_deaths','tests']]
+#country_df = cl.getcountrydata('swiss.csv')[['Date','accumulated_deaths','tests']]
 
 epsilon = 0.0001
-def zero(x):
-   return abs(x-0) < epsilon
 
-def positive(x):
-   return x > epsilon
-
-def negative(x):
-   epsilon = 0.0000001
-   return x < -epsilon
-
-def getshiftswin(df,win):
-   columndata = df.rolling(win,win_type='triang',center=True).mean().tolist()
-   n = len(columndata)
-   shifts = []
-   deltas = [0]
-   prevdelta = 0
-   sign = 1
-   for i in range(1,n):
-      newdelta = columndata[i]-columndata[i-1]
-      deltas.append(newdelta)
-      if zero(newdelta):
-         sign = sign # nochange
-      elif positive(newdelta) and sign == -1:
-         sign = 1
-         shifts.append(i)
-      elif negative(newdelta) and sign == 1:
-         sign = -1
-         shifts.append(i)
-   return shifts
-
-def checkgaps(shifts):
-   n = len(shifts)
-   min = shifts[0]
-   for i in range(1,n):
-      gap = shifts[i]-shifts[i-1]
-      if gap < min:
-         min = gap
-   return min
-
-def getshifts(df):
-   max = 20
-   thresh = 14
-   shifts = []
-   for win in range(1,max):
-      shifts = getshiftswin(df,win)
-      mingap = checkgaps(shifts)
-      if mingap >= thresh:
-         return shifts
-   return shifts
+def setlengths(minp,maxp,hor):
+   global minphaselength
+   global maxphaselength
+   global horizon
+   minphaselength = minp
+   maxphaselength = maxp
+   horizon = hor
 
 def aligntotest(dfactual,dfsimdeaths):
    simdeaths = dfsimdeaths['total_deaths'].tolist()
@@ -150,21 +48,17 @@ def aligntotest(dfactual,dfsimdeaths):
    # day0 = dfactual.iloc[shift]['Date']
    return dfactual
 
-country_df = getcountrydata(countryname)[['Date','accumulated_deaths','tests']]
-#country_df = cl.getcountrydata('Switzerland.csv')[['Date','accumulated_deaths','tests']]
-#country_df = cl.getcountrydata('swiss.csv')[['Date','accumulated_deaths','tests']]
-#country_df['tests'] = 0
-# country_df.to_csv('country.csv',index=False)
-end_date=len(country_df)-1
-
 def getsimdeaths(sev,trig):
 
-   fixed_params = getcountryparams(countrycode)
+   fixed_params = cd.getcountryparams(countrycode)
    fixed_params['test_directory'] = 'scratch1'
    fixed_params['past_severities'] = sev
    fixed_params['past_dates'] = trig
-   fixed_params['expert_mode'] = 'FALSE'
-   fixed_params['save_results'] = 'FALSE'
+   fixed_params['expert_mode'] = False
+   fixed_params['save_results'] = "False"
+   fixed_params['fatality_reduction'] = 0.35
+   fixed_params['num_days'] = len(country_df)
+
 
    scenario_params=[]
 
@@ -191,7 +85,8 @@ def getsimdeaths(sev,trig):
     'is_counterfactual':['False','False'],
     'test_strategy':['open public testing','open public testing'],
     'results_period':[1,1],
-    'prop_asymptomatic_tested':[0.01,0.01]
+    'prop_asymptomatic_tested':[0.01,0.01],
+    'fatality_reduction_recent':[0.35,0.35]
     })
 
    filename=os.path.join(fixed_params['test_directory'],'parameters.json')
@@ -199,7 +94,7 @@ def getsimdeaths(sev,trig):
        cl.write_parameters(filename,fixed_params,scenario_params)
 
    dataframes, test_df,results_dict=\
-                   cl.run_simulation(country_df,fixed_params,scenarios=scenario_params,end_date=end_date)
+                   cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
    firstdf = dataframes[1].rename(columns = {'deaths': 'total_deaths', 'newdeaths': 'new_deaths'}, inplace = False)
    dfsum = firstdf.groupby(['days']).sum().reset_index()
    
@@ -207,8 +102,10 @@ def getsimdeaths(sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   meandev = result['absdiff'].head(span).sum()/span
-   return meandev
+   meandev1 = result['absdiff'].head(span).sum()/span
+#   meandev2 = result['absdiff_new_deaths'].head(span).sum()/span
+#   meandev = (meandev1 + meandev2)/2
+   return meandev1
 
 def runandalignsim(dfx,sev,trig):
    simdeaths = getsimdeaths(sev,trig)
@@ -217,9 +114,9 @@ def runandalignsim(dfx,sev,trig):
    result['sim_growth'] = getgrowthrate(result['sim_total_deaths'],7)
    # result['absdiff'] = abs(result.growth - result.sim_growth)
    result['absdiff'] = abs(result.total_deaths - result.sim_total_deaths)
-   result['absdiff_deaths'] = abs(result.new_deaths - result.sim_new_deaths)
+   result['absdiff_new_deaths'] = abs(result.new_deaths - result.sim_new_deaths)
    result['roll'] = result['absdiff'].rolling(3).mean()
-   result['roll_deaths'] = result['absdiff_deaths'].rolling(3).mean()
+   result['roll_new_deaths'] = result['absdiff_new_deaths'].rolling(3).mean()
    return result
 
 def growth(x,y,roll):
@@ -239,35 +136,14 @@ def getgrowthrate(deaths,roll):
          ans[i] = growth(vals[i-roll],vals[i],roll)
    return ans
 
-def plotresult(result,figname,titlestr):
-# Length of plot reduced by 0 to get rid of anomalous last result
-  n = len(result['sim_total_deaths'])-10
-  fig = plt.figure()
-  plt.title(titlestr)
-  plt.plot(range(0,n),result['sim_total_deaths'][0:n],label='sim')
-  plt.plot(range(0,n),result['total_deaths'][0:n],label='actual')
-  plt.legend();
-  if figname == 'PLOT':
-    plt.show()
-  plt.savefig(figname+countryname+'TotalDeaths.png')
-  plt.clf()
-  plt.title(titlestr)
-  plt.plot(range(0,n),result['sim_new_deaths'][0:n],label='sim')
-  plt.plot(range(0,n),result['new_deaths'][0:n],label='actual')
-  plt.legend()
-  if figname == 'PLOT':
-    plt.show()
-  plt.savefig(figname+countryname+'NewDeaths.png')
-
-def showthiscase(dfx,sev,trig,figname):
-  print(sev)
-  print(trig)
-  result = runandalignsim(dfx,sev,trig)
-#  result.to_csv('onecase.csv',index=False)
-  plotresult(result,figname,countryname+':'+str(sev)+','+str(trig))
-
 def getactualdeaths(countryname):
-  dfactual = getdeathdata(countryname)
+  # dfactual = cd.getdeathdata(countryname)
+  # can i get the same stuff from country_df?
+  # yes! next three lines
+  dfactual = country_df.rename(columns = {'accumulated_deaths': 'total_deaths'}, inplace = False)
+  dfactual["New deaths"] = dfactual['total_deaths'].diff().fillna(dfactual['total_deaths'].iloc[0])
+  dfactual["New deaths"] = dfactual["New deaths"].astype(int)
+
   dfx = pd.DataFrame()
   dfx['Date'] = dfactual['Date']
   dfx['orig_new_deaths'] = dfactual['New deaths']
@@ -282,29 +158,25 @@ def lookahead(base,inc,bound):
     if (ans > bound):
        return bound
     else:
-       return ans
+       return ans   
 
 def findnexttrig(dfx, sev, trig, trignum):
    lastday = len(dfx)-1
    sev.append(0.00)
    trig.append(lastday)
-   sevsteps = 40
+   sevsteps = 20
    sevmult = 1.0/(sevsteps)
-   minphaselength = 14
-   maxphaselength = 90
-
    bestscore = 100000
    bests = 0
    besttrig = lastday # doesnt matter
    lowerbound = trig[trignum-1]+minphaselength
-   upperbound = trig[trignum-1]+maxphaselength
-   if upperbound>lastday-56:
-       upperbound=lastday-56
- #  span = lookahead(trig[trignum-1]+1,maxphaselength+50,lastday) # EXP1
-   print("trigger index:",trignum)
+   upperbound = trig[trignum-1]+maxphaselength # should not go beyond lastday-shiftlag
+   if upperbound > lastday-shiftlag:
+      upperbound = lastday-shiftlag
+#   print("trigger index:",trignum)
    for s in range(0,sevsteps+1):
       currsev = round(s*sevmult,2)
-      print(">severity:",currsev)
+#      print(">severity:",currsev)
       scorerun = 0
       score = 0
       for t in range(lowerbound,upperbound):
@@ -312,8 +184,58 @@ def findnexttrig(dfx, sev, trig, trignum):
          sev[trignum] = currsev
          trig[trignum] = t
          result = runandalignsim(dfx,sev,trig)
-         span = lookahead(t,100,lastday)
-         score = scorealignment(result,lastday) # span vs lastday
+         span = lookahead(t,horizon,lastday)
+         score = scorealignment(result,span) # span vs lastday
+         if abs(score - lastscore)<epsilon:
+            scorerun = scorerun + 1
+         else:
+            scorerun = 0
+         if scorerun == 5:
+            break
+#         print(currsev,t,score)
+         if score < bestscore:
+            bestscore = score
+            bests = currsev
+            besttrig = t
+#      print(bestscore,bests,besttrig)
+   print(">>best:",bests,besttrig,bestscore)
+   sev[trignum] = bests
+   trig[trignum] = besttrig
+   return bestscore, sev, trig
+
+def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
+   lastday = len(dfx)-1
+   sev.append(0.00)
+   trig.append(lastday)
+   sevsteps = 5
+   sevmult = 0.01
+   trigsteps = 1
+   bestscore = 100000
+   bests = 0
+   besttrig = lastday # doesnt matter
+   lowerbound = trigguide[trignum]-trigsteps
+   upperbound = trigguide[trignum]+trigsteps # should not go beyond lastday-shiftlag
+   if upperbound > lastday-shiftlag:
+      upperbound = lastday-shiftlag
+   print("trigger index:",trignum)
+   midsev = sevguide[trignum]
+   midtrig = trigguide[trignum]
+   for s in range(-sevsteps,sevsteps+1):
+      currsev = round(midsev+s*sevmult,2)
+      if currsev < 0:
+         continue
+      if currsev > 1:
+         continue 
+      print(">severity:",currsev)
+      scorerun = 0
+      score = 0
+      for t in range(lowerbound,upperbound+1):
+         lastscore = score
+         sev[trignum] = currsev
+         trig[trignum] = t
+         result = runandalignsim(dfx,sev,trig)
+         span = lookahead(t,horizon,lastday)
+         score = scorealignment(result,span) # span vs lastday
          if abs(score - lastscore)<epsilon:
             scorerun = scorerun + 1
          else:
@@ -331,68 +253,21 @@ def findnexttrig(dfx, sev, trig, trignum):
    trig[trignum] = besttrig
    return bestscore, sev, trig
 
-def finetune(cname, sev, trig):
-   setcountry(cname)
-   dfx = getactualdeaths(cname)
-   lastday = len(dfx)
-   sevsteps = 20
-   sevmult = 0.01
-   trigsteps = 10
-   n = len(trig)
-   bestscore = 0
-   for i in range(0,n):
-      midsev = sev[i]
-      midtrig = trig[i]
-      # severity
-      bestsev = midsev
-      bestscore = 1000
-      print(">severity:",i,midsev)
-      for j in range(-sevsteps,sevsteps):
-         trysev = round(midsev + j*sevmult,2)
-         if trysev < 0:
-            trysev = 0
-         if trysev > 1:
-            trysev = 1
-         sev[i] = trysev
-         result = runandalignsim(dfx,sev,trig)
-         span = lookahead(trig[i],100,lastday)
-         score = scorealignment(result,lastday)
-         print('-',trysev,score)
-         if score < bestscore:
-            bestscore = score
-            bestsev = trysev
-      print(">>best:",i,bestsev,bestscore)
-      sev[i] = bestsev
-      # trig
-      if i > 0:
-        besttrig = midtrig
-        bestscore = 1000
-        print(">trig:",i,midtrig)
-        for j in range(-trigsteps,trigsteps):
-           trytrig = midtrig + j
-           trig[i] = trytrig
-           result = runandalignsim(dfx,sev,trig)
-           span = lookahead(trig[i],50,lastday)
-           score = scorealignment(result,lastday)
-           print('-',trytrig,score)
-           if score < bestscore:
-              bestscore = score
-              besttrig = trytrig
-        print(">>best:",i,besttrig,bestscore)
-        trig[i] = besttrig
-
-   return bestscore, sev, trig
-
-def getbestfitwithtrig(dfx):
-   sev = [0.0]
-   trig = [1]
-   minphaselength = 14
+def getbestfit(dfx, sev, trig):
    sc = 0
-   lastday = len(dfx)-1
-   i = 1
-   while trig[-1]+minphaselength < (lastday-56):
+   lastday = len(dfx) - 1
+   i = len(sev)
+   while trig[-1] < (lastday-shiftlag-minphaselength):
       sc, sev, trig = findnexttrig(dfx,sev,trig,i)
       i = i + 1
+   return sc, sev, trig
+
+def getbestfit_finetune(dfx, sev, trig, sevguide, trigguide):
+   sc = 0
+   lastday = len(dfx) - 1
+   n = len(trigguide)
+   for i in range(1,n):
+      sc, sev, trig = findnexttrig_finetune(dfx,sev,trig,i, sevguide, trigguide)
    return sc, sev, trig
 
 def packseverities(sev,trig):
@@ -409,24 +284,131 @@ def packseverities(sev,trig):
          j = j + 1
    return newsev,newtrig
 
-def setcountry(cname):
+def setcountry(ccode):
    global countryname
    global country_df
    global countrycode
-   countryname = cname
-   countrycode = getcountrycode(countryname)
-   country_df = getcountrydata(countryname)
+   countrycode = ccode
+   countryname = cd.getcountryname(countrycode)
+#   country_df = cd.getcountrydata(countryname)
+   country_df = simulator.get_country_df(countrycode)
 
-def computephases(cname):
-   setcountry(cname)
-   dfx = getactualdeaths(cname)
-   score, sev, trig = getbestfitwithtrig(dfx)
+def computephases(ccode):
+   score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, [0.0], [1])
+   return score, dfx, sev, trig, longsev, longtrig
+
+def extendphases(ccode, sev, trig):
+   setcountry(ccode)
+   dfx = getactualdeaths(countryname)
+   score, sev, trig = getbestfit(dfx, sev, trig)
+   nsev, ntrig = packseverities(sev, trig)
+   result = runandalignsim(dfx,nsev,ntrig)
+   score = scorealignment(result,len(dfx))
+   return score, dfx, nsev, ntrig, sev, trig
+
+def finetune(ccode, sevguide, trigguide):
+   sev = [sevguide[0]]   # always 0.0
+   trig = [trigguide[0]] # always 1
+   setcountry(ccode)
+   dfx = getactualdeaths(countryname)
+   score, sev, trig = getbestfit_finetune(dfx, sev, trig, sevguide, trigguide)
    sev, trig = packseverities(sev, trig)
-   return score, dfx, sev, trig
+   result = runandalignsim(dfx,sev,trig)
+   score = scorealignment(result,len(dfx))
+   relscore = score/dfx['total_deaths'].mean()
+   return score, relscore, sev, trig
 
-def plotcase(cname,sev,trig,figname):
-   setcountry(cname)
-   dfx = getactualdeaths(cname)
-   showthiscase(dfx,sev,trig,figname)
+def finetune1(ccode, origsev, origtrig):
+   sev = [0.0]
+   trig = [1]
+   setcountry(ccode)
+   dfx = getactualdeaths(countryname)
+   lastday = len(dfx)-1
+   sevsteps = 20
+   sevmult = 0.01
+   trigsteps = 10
+   n = len(origtrig)
+   bestscore = 0
+   for i in range(1,n):
+      sev.append(origsev[i])
+      trig.append(origtrig[i])
+      midsev = sev[i]
+      midtrig = trig[i]
+      # severity
+      bestsev = midsev
+      bestscore = 10000000
+      print(">severity:",i,midsev)
+      for j in range(-sevsteps,sevsteps):
+         trysev = round(midsev + j*sevmult,2)
+         if trysev < 0:
+            trysev = 0
+         if trysev > 1:
+            trysev = 1
+         sev[i] = trysev
+         result = runandalignsim(dfx,sev,trig)
+         span = lookahead(trig[i],horizon,lastday)
+         score = scorealignment(result,span)
+         print('-',trysev,score)
+         if score < bestscore:
+            bestscore = score
+            bestsev = trysev
+      print(">>best:",bestsev,trig[i],bestscore)
+      sev[i] = bestsev
+      # trig
+      if i > 0:
+        besttrig = midtrig
+        bestscore = 10000000
+        print(">trig:",i,midtrig)
+        for j in range(-trigsteps,trigsteps):
+           trytrig = midtrig + j
+           trig[i] = trytrig
+           result = runandalignsim(dfx,sev,trig)
+           span = lookahead(trig[i],horizon,lastday)
+           score = scorealignment(result,span)
+           print('-',trytrig,score)
+           if score < bestscore:
+              bestscore = score
+              besttrig = trytrig
+        print(">>best:",sev[i],besttrig,bestscore)
+        trig[i] = besttrig
 
+   return bestscore, sev, trig
 
+def plotresult(result,figname,titlestr):
+# Length of plot reduced by 1 to get rid of anomalous last result
+  n = len(result['sim_total_deaths'])
+  # fig = plt.figure()
+  plt.title(titlestr)
+  plt.plot(range(0,n),result['sim_total_deaths'],label='sim')
+  plt.plot(range(0,n),result['total_deaths'],label='actual')
+  plt.legend();
+  plt.savefig(figname+countrycode+'TotalDeaths.png')
+  if figname == 'PLOT':
+    plt.show()
+  plt.clf()
+  plt.title(titlestr)
+  plt.plot(range(0,n),result['sim_new_deaths'],label='sim')
+  plt.plot(range(0,n),result['new_deaths'],label='actual')
+  plt.legend()
+  plt.savefig(figname+countrycode+'NewDeaths.png')
+  if figname == 'PLOT':
+    plt.show()
+  plt.close()
+
+def showthiscase(dfx,sev,trig,figname):
+#  print(sev)
+#  print(trig)
+  result = runandalignsim(dfx,sev,trig)
+#  result.to_csv('onecase.csv',index=False)
+  score = scorealignment(result,len(dfx))
+  relscore = score/dfx['total_deaths'].mean()
+#  print("SCORE:", score, relscore )
+  plotresult(result,figname,countryname+':'+str(sev)+','+str(trig))
+  return score, relscore
+
+def plotcase(ccode,sev,trig,figname):
+   setcountry(ccode)
+   dfx = getactualdeaths(countryname)
+#   print("LAST DAY:",len(dfx))
+   score, relscore = showthiscase(dfx,sev,trig,figname)
+   return score, relscore
