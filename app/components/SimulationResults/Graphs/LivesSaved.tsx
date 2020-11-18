@@ -88,7 +88,7 @@ const LivesSaved: React.FC<{
           },
         }}
         data={{
-          labels: testingImpact.map((impact, index) => `${index + 1}x`),
+          labels: testingImpact.map((impact, index) => `${index}x`),
           datasets: [
             {
               label: 'Lives Saved',
