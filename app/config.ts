@@ -18,3 +18,11 @@ export const GRAPH_PATTERNS_LIST = [
   'dash',
   'diagonal',
 ];
+
+// Labels for Scenarios
+export const DEFAULT_SCENARIO_LABELS = [
+  'Counterfactual - no testing',
+  'Special groups with symptoms',
+  'All symptomatic',
+  'Open public testing',
+];
