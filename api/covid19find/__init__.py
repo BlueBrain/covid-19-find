@@ -63,7 +63,7 @@ def create_app():
     def country_covid19_data(country_code):
         return not_found_if_none(data_repo.data_for(country_code), country_code)
 
-    parameters_dir = os.path.join(cl_path_prefix, os.environ.get("PARAMETERS_DIRECTORY", "production"))
+    parameters_dir = os.path.join(cl_path_prefix, os.environ.get("PARAMETERS_DIRECTORY", "BBP_testing"))
     simulator = Simulator(data_repo, parameters_dir)
 
     @app.route(f'{app_path_prefix}/api/simulation', methods=['POST'])
