@@ -1,4 +1,3 @@
-
 # contains function definitions for covid simulation
 # author:  JP Vergara
 
@@ -16,7 +15,6 @@ import ast
 
 class CustomError(Exception):
      pass
-
 
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
 
@@ -52,6 +50,23 @@ def get_default_scenarios(params_dir):
            raise FileNotFoundError ('Scenario parameters file not found')
            return()
    return(default_scenarios)
+
+def get_next_phases_scenarios(params_dir):
+   defaults=get_default_scenarios(params_dir)
+   next_phases=[]
+   today=dt.datetime.now()
+   next=today+dt.timedelta(days=14)
+   todaystr=today.strftime("%Y-%m-%d")
+   nextstr=next.strftime("%Y-%m-%d")
+   for i in range(0,len(defaults)):
+       adict={}
+       for akey in defaults[i].keys():
+           val=defaults[i][akey]
+           newval=[val,val]
+           adict.update({akey:newval})
+       adict.update({'trig_values':[todaystr,nextstr]})
+       next_phases.append(adict)
+   return(next_phases)
 
 ######################################################################
 # get_beta:
@@ -165,9 +180,7 @@ def update_system_params2(p, fixed_params):
     p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
     p['past_dates']=fixed_params['past_dates']
     p['past_severities']=fixed_params['past_severities']
-   
-
-
+    p['num_days']=fixed_params['num_days']
     return
 
 
@@ -339,7 +352,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       # loops through the test_kit multipliers
       
       if par.run_multiple_test_scenarios==True:
-          print('beginning simulations with different number of tests')
+#          print('beginning simulations with different number of tests')
           for j in range(0,len(par.test_multipliers)):
             test_par=Par(p)
             test_par.day1=day1  #here this means today
@@ -361,7 +374,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
                 baseline_deaths=dfsum_tests['newdeaths'].sum()
             lives_saved=baseline_deaths-deaths
             tests_administered=dfsum_tests['newtested_mit'][start_current_phase:par.num_days].sum()
-            print('tests administered from start of phase',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
+#           print('tests administered from start of phase',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
             a_dict={
             'scenario':i,\
             'tests administered':tests_administered,\
@@ -369,7 +382,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             'lives saved':lives_saved}
             #test_df.to_csv('testdf.csv',index=False,date_format='%Y-%m-%d')
             test_df=test_df.append(a_dict,ignore_index=True)
-      
      
         # gives results by day grouped by individual compartment
       
@@ -687,9 +699,9 @@ class Sim:
     
    def perform_tests(sim,par:Par,t,phase,use_real_testdata):
         testsperformed=[0,0,0]
-        if par.test_strategy[phase]=='all symptomatic':
+        if par.test_strategy[phase]=='symptomatic first':
             testsperformed=sim.perform_tests_symptomatic_only(par,t,phase,use_real_testdata)
-        elif par.test_strategy[phase]=='special groups with symptoms':
+        elif par.test_strategy[phase]=='high contact groups first':
             testsperformed=sim.perform_tests_with_priorities(par,t,phase,use_real_testdata,[0,1,2])      
         elif par.test_strategy[phase]=='open public testing':
             testsperformed=sim.perform_tests_open_public(par,t,phase,use_real_testdata)
@@ -1245,29 +1257,54 @@ def getcountrydata(csvfilename):
    df = pd.read_csv(csvfilename)
    return df.fillna(0)
 
-def aligndeaths(actual,simulated):
+# def aligndeaths(actual,simulated):
    
-   n = min(len(actual),len(simulated))
+#    n = min(len(actual),len(simulated))
+#    aligneddeaths = [0]*n
+#    amark = 0
+#    for i in range(0,n-1):
+#       if actual[i] >= 20:
+#          amark = i
+#          break
+#    smark = 0
+#    for i in range(0,n-1):
+#       if simulated[i] >= 20:
+#          smark = i
+#          break
+#    shift=amark-smark
+#    for i in range(0,n-1):
+#        #handle case of negative shifts
+#       if i<shift:
+#          aligneddeaths[i] = 0
+#       elif i-shift<len(aligneddeaths):
+#          aligneddeaths[i] = simulated[i-shift]
+   
+#    return aligneddeaths, shift
+def aligndeaths(actual,simulated):
+   n = len(actual)
+   m = len(simulated)
    aligneddeaths = [0]*n
    amark = 0
-   for i in range(0,n-1):
+   for i in range(0,n):
       if actual[i] >= 20:
          amark = i
          break
    smark = 0
-   for i in range(0,n-1):
+   for i in range(0,m):
       if simulated[i] >= 20:
          smark = i
          break
-   shift=amark-smark
-   for i in range(0,n-1):
-       #handle case of negative shifts
-      if i<shift:
+   for i in range(0,n):
+      if (i < (amark-smark)):
          aligneddeaths[i] = 0
-      elif i-shift<len(aligneddeaths):
-         aligneddeaths[i] = simulated[i-shift]
-   
-   return aligneddeaths, shift
+      else:
+         shiftedj = i-(amark-smark)
+         if shiftedj < 0:
+            shiftedj = 0
+         elif shiftedj > m-1:
+            shiftedj = m-1
+         aligneddeaths[i] = simulated[shiftedj]
+   return aligneddeaths, amark-smark
 
 def alignactualwithsimulated(dfactual,dfsimdeaths):
    simdeaths = dfsimdeaths.tolist()

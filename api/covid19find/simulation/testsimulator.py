@@ -1,4 +1,5 @@
-
+# This version of the test program is designed for tests where it is necessary
+# to manually change the test parameters
 # -*- coding: utf-8 -*-
 """
 Created on Fri Apr 10 09:25:47 2020
@@ -37,7 +38,8 @@ fixed_params={
     'expert_mode':False,
     'run_multiple_test_scenarios':True,
     'save_results':False,
-    'fatality_reduction':0.35}
+    'fatality_reduction':0.35,
+    'num_days':450}
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -80,7 +82,7 @@ scenario_params.append({
     'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
-    'test_strategy':['special groups with symptoms','special groups with symptoms'],\
+    'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[1,1],\
     'prop_asymptomatic_tested':[0.02,0.02],
     'fatality_reduction_recent':[0.35,0.35]
@@ -101,7 +103,7 @@ scenario_params.append({
     'imported_infections_per_day':[50,50],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
-    'test_strategy':['all symptomatic','all symptomatic'],\
+    'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[1,1],\
     'prop_asymptomatic_tested':[0.02,0.02],
     'fatality_reduction_recent':[0.35,0.35]
