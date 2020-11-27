@@ -8,27 +8,19 @@ import sys
 import os
 import json
 import cdata as cd
-from coviddatarepository import CovidDataRepository
-from simulator import Simulator
-
-print("setting up...")
-data_repo = CovidDataRepository( "/tmp")
-data_repo.update_data()
-print("setup done ...")
-parameters_dir = ""
-simulator = Simulator(data_repo, parameters_dir)
 
 minphaselength = 14
 maxphaselength = 28
-shiftlag = 56
+lag = 26
+sample =30
+shiftlag = lag+sample
 horizon = 50
 
 countryname = 'Switzerland'
 countrycode = 'CH'
-country_df = simulator.get_country_df(countrycode)
-# country_df = cd.getcountrydata(countryname)
-#country_df = cl.getcountrydata('Switzerland.csv')[['Date','accumulated_deaths','tests']]
-#country_df = cl.getcountrydata('swiss.csv')[['Date','accumulated_deaths','tests']]
+country_df = cd.getcountrydata(countrycode)
+
+#country_df = cl.getcountrydata('Switzerland.csv')[['Date','accumulated_deaths','tests','accumulated_cases']]
 
 epsilon = 0.0001
 
@@ -50,47 +42,27 @@ def aligntotest(dfactual,dfsimdeaths):
 
 def getsimdeaths(sev,trig):
 
-   fixed_params = cd.getcountryparams(countrycode)
-   fixed_params['test_directory'] = 'scratch1'
+   test_directory = 'scratch1'
+   fixed_params=cl.get_system_params(test_directory)
+   fixed_params.update(cd.getcountryparams(countrycode))
+
+   fixed_params['test_directory'] = test_directory
    fixed_params['past_severities'] = sev
    fixed_params['past_dates'] = trig
    fixed_params['expert_mode'] = False
    fixed_params['save_results'] = "False"
-   fixed_params['fatality_reduction'] = 0.35
+#   fixed_params['fatality_reduction'] = 0.35
    fixed_params['num_days'] = len(country_df)
-
-
+   print(len(country_df))
+   
    scenario_params=[]
-
-# scenario 0
-
-   scenario_params.append({   
-    'symptomatic_only':['True','True'], \
-    'prop_hospital': [0.3, 0.3],\
-    'prop_other_hc':[0.3,0.3],\
-    'prop_rop':[0.4,0.4],\
-    'severity':[0.8, 0.8],\
-    'trig_values':['2020-09-11','2020-12-30'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[0,0],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[50,50],
-    'requireddxtests':[1,2],
-    'is_counterfactual':['False','False'],
-    'test_strategy':['open public testing','open public testing'],
-    'results_period':[1,1],
-    'prop_asymptomatic_tested':[0.01,0.01],
-    'fatality_reduction_recent':[0.35,0.35]
-    })
-
-   filename=os.path.join(fixed_params['test_directory'],'parameters.json')
-   if fixed_params['save_results'].upper()=="TRUE":
+   scenario_params=cl.get_next_phases_scenarios(fixed_params['test_directory'])
+   try:
+       filename=os.path.join(fixed_params['test_directory'],'parameters.json')
+   except FileNotFoundError:
+       print('')
+       print('parameters file in ', fixed_params['test_directory'], ' not found')
+       sys.exit()
        cl.write_parameters(filename,fixed_params,scenario_params)
 
    dataframes, test_df,results_dict=\
@@ -102,10 +74,10 @@ def getsimdeaths(sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   meandev1 = result['absdiff'].head(span).sum()/span
-#   meandev2 = result['absdiff_new_deaths'].head(span).sum()/span
-#   meandev = (meandev1 + meandev2)/2
-   return meandev1
+   # meandev1 = result['absdiff'].head(span).mean()
+   meanreldev1 = result['absdiff'].head(span).mean()/result['total_deaths'].head(span).mean()
+   meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/result['new_deaths'].head(span).mean()
+   return (meanreldev1*0.7+meanreldev2*0.3)
 
 def runandalignsim(dfx,sev,trig):
    simdeaths = getsimdeaths(sev,trig)
@@ -161,7 +133,7 @@ def lookahead(base,inc,bound):
        return ans   
 
 def findnexttrig(dfx, sev, trig, trignum):
-   lastday = len(dfx)-1
+   lastday = len(dfx)
    sev.append(0.00)
    trig.append(lastday)
    sevsteps = 20
@@ -170,13 +142,15 @@ def findnexttrig(dfx, sev, trig, trignum):
    bests = 0
    besttrig = lastday # doesnt matter
    lowerbound = trig[trignum-1]+minphaselength
-   upperbound = trig[trignum-1]+maxphaselength # should not go beyond lastday-shiftlag
-   if upperbound > lastday-shiftlag:
-      upperbound = lastday-shiftlag
-#   print("trigger index:",trignum)
+   upperbound = trig[trignum-1]+maxphaselength # should not go beyond lastday-shiftlag+30
+   if upperbound > lastday-shiftlag+30:
+      upperbound = lastday-shiftlag+30
+   print("trigger index:",trignum)
+   print("try from",lowerbound,"to",upperbound)
+   span = lastday
    for s in range(0,sevsteps+1):
       currsev = round(s*sevmult,2)
-#      print(">severity:",currsev)
+      print(">severity:",currsev)
       scorerun = 0
       score = 0
       for t in range(lowerbound,upperbound):
@@ -192,19 +166,19 @@ def findnexttrig(dfx, sev, trig, trignum):
             scorerun = 0
          if scorerun == 5:
             break
-#         print(currsev,t,score)
+         print(currsev,t,score)
          if score < bestscore:
             bestscore = score
             bests = currsev
             besttrig = t
-#      print(bestscore,bests,besttrig)
-   print(">>best:",bests,besttrig,bestscore)
+      print(bestscore,bests,besttrig)
+   print(">>best:",bests,besttrig,bestscore,"*",span)
    sev[trignum] = bests
    trig[trignum] = besttrig
    return bestscore, sev, trig
 
 def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
-   lastday = len(dfx)-1
+   lastday = len(dfx)
    sev.append(0.00)
    trig.append(lastday)
    sevsteps = 5
@@ -255,9 +229,10 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
 
 def getbestfit(dfx, sev, trig):
    sc = 0
-   lastday = len(dfx) - 1
+   lastday = len(dfx)
    i = len(sev)
-   while trig[-1] < (lastday-shiftlag-minphaselength):
+   print(trig[-1],(lastday-shiftlag))
+   while trig[-1] < (lastday-shiftlag):
       sc, sev, trig = findnexttrig(dfx,sev,trig,i)
       i = i + 1
    return sc, sev, trig
@@ -290,8 +265,7 @@ def setcountry(ccode):
    global countrycode
    countrycode = ccode
    countryname = cd.getcountryname(countrycode)
-#   country_df = cd.getcountrydata(countryname)
-   country_df = simulator.get_country_df(countrycode)
+   country_df = cd.getcountrydata(countrycode)
 
 def computephases(ccode):
    score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, [0.0], [1])
@@ -301,9 +275,14 @@ def extendphases(ccode, sev, trig):
    setcountry(ccode)
    dfx = getactualdeaths(countryname)
    score, sev, trig = getbestfit(dfx, sev, trig)
+   print('LAST SCORE',sev,trig,score)
+   result = runandalignsim(dfx,sev,trig)
+   score = scorealignment(result,len(dfx))
+   print('RESCORE',sev,trig,score)
    nsev, ntrig = packseverities(sev, trig)
    result = runandalignsim(dfx,nsev,ntrig)
    score = scorealignment(result,len(dfx))
+   print('PACKED SCORE',nsev,ntrig,score)
    return score, dfx, nsev, ntrig, sev, trig
 
 def finetune(ccode, sevguide, trigguide):
@@ -315,15 +294,14 @@ def finetune(ccode, sevguide, trigguide):
    sev, trig = packseverities(sev, trig)
    result = runandalignsim(dfx,sev,trig)
    score = scorealignment(result,len(dfx))
-   relscore = score/dfx['total_deaths'].mean()
-   return score, relscore, sev, trig
+   return score,sev, trig
 
 def finetune1(ccode, origsev, origtrig):
    sev = [0.0]
    trig = [1]
    setcountry(ccode)
    dfx = getactualdeaths(countryname)
-   lastday = len(dfx)-1
+   lastday = len(dfx)
    sevsteps = 20
    sevmult = 0.01
    trigsteps = 10
@@ -401,14 +379,13 @@ def showthiscase(dfx,sev,trig,figname):
   result = runandalignsim(dfx,sev,trig)
 #  result.to_csv('onecase.csv',index=False)
   score = scorealignment(result,len(dfx))
-  relscore = score/dfx['total_deaths'].mean()
-#  print("SCORE:", score, relscore )
-  plotresult(result,figname,countryname+':'+str(sev)+','+str(trig))
-  return score, relscore
+#  print("SCORE:", score)
+  plotresult(result,figname,countryname+'\n'+str(sev)+'\n'+str(trig))
+  return score
 
 def plotcase(ccode,sev,trig,figname):
    setcountry(ccode)
    dfx = getactualdeaths(countryname)
 #   print("LAST DAY:",len(dfx))
-   score, relscore = showthiscase(dfx,sev,trig,figname)
-   return score, relscore
+   score = showthiscase(dfx,sev,trig,figname)
+   return dfx, score

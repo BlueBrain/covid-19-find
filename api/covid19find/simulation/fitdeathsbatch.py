@@ -5,7 +5,7 @@ import cdata as cd
 import sys
 
 
-figname = 'RUN4'
+figname = 'RUN7'
 dbname = 'dbx'
 start=1
 finish=182
@@ -38,16 +38,15 @@ for ccode in CDB:
          cname = cd.getcountryname(ccode)
          print("COUNTRY:",cname, '('+ccode+')')
          opt.setlengths(14,28,50)
-         absscore1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
-         score1 = absscore1/dfx1['total_deaths'].mean()
+         score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
          opt.setlengths(14,28,100)
-         absscore2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)
-         score2 = absscore2/dfx2['total_deaths'].mean()
+         score2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)
+         diff = abs(score1-score2)
          if score1 < score2:
-            dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50"
+            dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"+str(diff)
             longsev, longtrig = longsev1, longtrig1
          else:
-            dfx, sev, trig, score, method = dfx2, sev2, trig2, score2, "horizon=100"
+            dfx, sev, trig, score, method = dfx2, sev2, trig2, score2, "horizon=100"+str(diff)
             longsev, longtrig = longsev2, longtrig2
          print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score,",",method)
          opt.showthiscase(dfx,sev,trig,figname)

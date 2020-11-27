@@ -1,8 +1,12 @@
 import getdeaths as gd
 import pandas as pd
+import cdatabbp as bbp
 
+useBBPdata = True
+
+testcountries = ['IN','CH','US','FR']
 # testcountries = ['CH','SV','LA']
-testcountries = ['CH','US','IT','FR','ES','IN','PH','GB','CA','EG','BR','PE']
+# testcountries = ['CH','US','IT','FR','ES','IN','PH','GB','CA','EG','BR','PE']
 # testcountries = ['GT','ZA','BO','CO','CL','BD','PL','CN','UA','MD','KG','NG']
 
 def getdeathdata(countryname):
@@ -76,27 +80,33 @@ def fixparamnames(dict):
    return params
 
 def getcountryparams(countrycode):
-   global countrydata
-   return fixparamnames(countrydata[countrycode])
+   global countryparamdata
+   if useBBPdata:
+      paramdata = bbp.get_country_params(countrycode)
+      return bbp.get_fixed_parameters(paramdata)
+   else:
+      paramdata = countryparamdata[countrycode]
+      return fixparamnames(paramdata)
 
 def checkcountryparams(countrycode):
-   global countrydata
-   return countrydata[countrycode]
+   global countryparamdata
+   if useBBPdata:
+      paramdata = bbp.get_country_params(countrycode)
+   else:
+      paramdata = countryparamdata[countrycode]
+   return paramdata
 
-def getcountrydata(countryname):
-   df = getdeathdata(countryname)
-   df = merge_with_test_data(df, countryname)
-   n = len(df)
-   newdf = df.rename(columns = {'total_deaths': 'accumulated_deaths'}, inplace = False)
-   # newdf['tests'] = 0
-   resultdf = newdf.reset_index()[['Date','accumulated_deaths','tests']]
-   # filename = countryname+'.csv'
-   # print("df1")
-   # print(resultdf.reset_index()[['Date','accumulated_deaths','tests']])
-   # resultdf.to_csv(filename,index=False)
-   # resultdf2 = cl.getcountrydata(filename)
-   # print("df2")
-   # print(resultdf2)
+def getcountrydata(countrycode):
+   countryname = getcountryname(countrycode)
+   if useBBPdata:
+       resultdf = bbp.get_country_df(countrycode)
+   else:
+       df = getdeathdata(countryname)
+       df = merge_with_test_data(df, countryname)
+       n = len(df)
+       newdf = df.rename(columns = {'total_deaths': 'accumulated_deaths'}, inplace = False)
+       newdf['accumulated_cases'] = 0
+       resultdf = newdf.reset_index()[['Date','accumulated_deaths','tests','accumulated_cases']]
    return resultdf
 
 countries = {
@@ -352,7 +362,7 @@ countries = {
     'ZW': 'Zimbabwe'
     }
 
-countrydata = {
+countryparamdata = {
     'AF': {'countryCode': 'AF', 'population': 38928000, 'activePopulationProportion': 0.54, 'urbanPopulationProportion': 0.25, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.02926857274969174, 'hospitalBeds': None, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,
     'AX': None ,
     'AL': {'countryCode': 'AL', 'population': 2878000, 'activePopulationProportion': 0.68, 'urbanPopulationProportion': 0.6, 'urbanPopulationInDegradedHousingProportion': None, 'over64Proportion': 0.15895413481584433, 'hospitalBeds': 5756, 'highContactPopulation': None, 'remoteAreasPopulationProportion': None} ,

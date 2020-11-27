@@ -236,6 +236,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
        return()
   # write_json(p,sysfilejson) 
    update_system_params2(p, fixed_params) # note: p is updated
+   # print('JPV-',p['num_days'])
+   # print('JPV-',p['past_severities'])
+   # print('JPV-',p['past_dates'])
 
 # read initial beta matrix
 
@@ -304,7 +307,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       
  # runs an initial simulation to align dates with simulation days 
       date_par=Par(p)
-      date_par.fatality_reduction=0
+      date_par.ty_reduction=0
       date_par.fatality_reduction_per_day=0
       date_sim = Sim(date_par.num_days,date_par.num_compartments)
       date_sim.set_initial_conditions(date_par)

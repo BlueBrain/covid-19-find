@@ -3,7 +3,7 @@ import optlib as opt
 import countrydata as cd
 import ast
 
-dbdf = pd.read_csv("dblong.csv")
+dbdf = pd.read_csv("dbylong.csv")
 
 df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score'])
 dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score',
@@ -16,11 +16,12 @@ for index, row in dbdf.iterrows():
     sev = ast.literal_eval(row['Long Sev'])
     trig = ast.literal_eval(row['Long Trig'])
     score = row['Score']
-    longsev = sev
-    longtrig = trig
     if len(sev) > 1:
+       while (trig[-1] > 200):
+          sev.pop()
+          trig.pop()
+       print(sev,trig)
        score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,sev,trig)
-       score = score/dfx['total_deaths'].mean()
        print('extend attempted')
     print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score)
     opt.showthiscase(dfx,sev,trig,'EXT')

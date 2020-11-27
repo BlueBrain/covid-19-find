@@ -24,7 +24,6 @@ for index, row in onerow.iterrows():
     print("BEFORE:",ccode,",",cname,",",sev,",",trig,",",score)
     if len(sev) > 1:
        score,dfx,sev,trig = opt.extendphases(ccode,sev,trig)
-       score = score/dfx['total_deaths'].mean()
        print('extend attempted')
     print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score)
     opt.showthiscase(dfx,sev,trig,'PLOT')
