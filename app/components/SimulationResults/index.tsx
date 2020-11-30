@@ -29,25 +29,29 @@ import {
 
 import './simulation-results.less';
 
-const SCALE_VALUE = 3;
+function scaleValueFromLargestValueAgainstViewportWidth(
+  value: number,
+  minValue: number,
+  maxValue: number,
+) {
+  const vw = Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0,
+  );
 
-/*
- Scales the value by 10s according to the max digit
- in order to fit these large numbers as radius 
- for bubbles on a the client screen in pixels
- if max digit is 200,000,000
- then a value with 1,000,000
- will look like 1
- and 150,000,000
- will look like 150
-*/
-function scaleValueFromLargestValue(value: number, largestValue: number) {
-  const digits = Math.floor(largestValue).toString().length;
-  if (largestValue <= SCALE_VALUE) {
-    return Math.floor(value);
+  function scaleBetween(
+    unscaledNum: number,
+    minAllowed: number,
+    maxAllowed: number,
+    min: number,
+    max: number,
+  ) {
+    return (
+      ((maxAllowed - minAllowed) * (unscaledNum - min)) / (max - min) +
+      minAllowed
+    );
   }
-  const scalefactor = digits - SCALE_VALUE;
-  return Math.floor(value / Number(`1e${scalefactor}`));
+  return scaleBetween(value, 0, vw / 20, minValue, maxValue);
 }
 
 const SimulationResults: React.FC<{
@@ -138,32 +142,34 @@ const SimulationResults: React.FC<{
       return memo + entry.newIsolated;
     }, 0) || 0;
 
-  const datasets = Array.from(scenariosResults).map((entry, scenarioIndex) => {
-    return {
-      label: clientScenariosInput[scenarioIndex].name,
-      data: entry.data.total.reduce((memo, entry, timeseriesIndex) => {
-        const key = entry.date;
-        const day = {
-          ...(memo[key] || {}),
-        };
-        graphs.forEach(graph => {
-          // TODO: Accumulate values here, or just show the raw values
-          day[graph.key] =
-            scenariosResults[scenarioIndex].data[graph.cohort][timeseriesIndex][
-              graph.key
-            ];
-          if (graph.actualKey) {
-            day[graph.actualKey] =
-              scenariosResults[scenarioIndex].data[graph.cohort][
-                timeseriesIndex
-              ][graph.actualKey];
-          }
-        });
-        memo[key] = day;
-        return memo;
-      }, {}),
-    };
-  });
+  const datasets = Array.from(scenariosResults).map(
+    (scenarioResult, scenarioIndex) => {
+      return {
+        label: clientScenariosInput[scenarioIndex].name,
+        data: scenarioResult.data.total.reduce(
+          (memo, entry, timeseriesIndex) => {
+            const key = entry.date;
+            const day = {
+              ...(memo[key] || {}),
+            };
+            graphs.forEach(graph => {
+              day[`${graph.key}-${graph.cohort}`] =
+                scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
+              if (graph.actualKey) {
+                day[graph.actualKey] =
+                  scenarioResult.data[graph.cohort][timeseriesIndex][
+                    graph.actualKey
+                  ];
+              }
+            });
+            memo[key] = day;
+            return memo;
+          },
+          {},
+        ),
+      };
+    },
+  );
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -308,26 +314,31 @@ const SimulationResults: React.FC<{
                     data={{
                       datasets: simulationResults.scenarios.map(
                         (scenario, index) => {
-                          const data = scenario.data.total.reduce(
+                          const accumulatedIsolated = scenario.data.total.reduce(
                             (memo, entry) => {
-                              const x = memo.x + entry.newInfected;
-                              const y = memo.y + entry.newIsolated;
-                              const r = memo.r + entry.newDeaths;
-                              const deaths = memo.r + entry.newDeaths;
-                              return {
-                                x,
-                                y,
-                                r,
-                                deaths,
-                              };
+                              return memo + entry.newIsolated;
                             },
-                            { x: 0, y: 0, r: 0, deaths: 0 },
+                            0,
                           );
 
-                          // this is a grim line of code.
-                          // we need to scale deaths down to a viewable scale
-                          data.r =
-                            scaleValueFromLargestValue(data.r, maxDeaths) / 3;
+                          const totalDeaths = simulationResults.scenarios.map(
+                            scenario => scenario.totalDeaths,
+                          );
+                          const minDeaths = Math.min(...totalDeaths);
+                          const maxDeaths = Math.max(...totalDeaths);
+
+                          const data = {
+                            x: scenario.totalInfected,
+                            y: accumulatedIsolated,
+                            r: scaleValueFromLargestValueAgainstViewportWidth(
+                              scenario.totalDeaths,
+                              minDeaths,
+                              maxDeaths,
+                            ),
+                            deaths: scenario.totalDeaths,
+                          };
+
+                          console.log(data.r, maxDeaths);
 
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
@@ -625,7 +636,8 @@ const SimulationResults: React.FC<{
                                 return {
                                   label: dataset.label,
                                   data: Object.values(dataset.data).map(
-                                    values => values[graph.key],
+                                    values =>
+                                      values[`${graph.key}-${graph.cohort}`],
                                   ),
                                   borderDash:
                                     index === 0 ? [] : [index * 4, index * 4],

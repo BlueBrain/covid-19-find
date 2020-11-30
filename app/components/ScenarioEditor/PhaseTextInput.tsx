@@ -10,6 +10,7 @@ const PhaseTextInput: React.FC<{
 }> = ({ inputProps, onChange, value }) => {
   const ref = React.useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = React.useState(value);
+
   const handleBlur = () => {
     onChange(inputValue);
   };

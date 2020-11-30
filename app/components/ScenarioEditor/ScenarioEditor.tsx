@@ -95,7 +95,9 @@ const ScenarioEditor: React.FC<{
         </div>
         <div>
           {phases.length < MAX_PHASE_COUNT && (
-            <button onClick={handleAddPhase}>Add Phase</button>
+            <button type="button" onClick={handleAddPhase}>
+              Add Phase
+            </button>
           )}
         </div>
       </div>
