@@ -19,10 +19,11 @@ def create_app():
     CORS(app)
 
     data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
+    data_repo.initialize_past_phases_data()
 
     def update_covid_data():
         app.logger.info("Updating COVID-19 data.")
-        data_repo.update_data()
+        # data_repo.update_data()
         app.logger.info("Finished updating COVID-19 data.")
 
     country_repo = CountryRepository()

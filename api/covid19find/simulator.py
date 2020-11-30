@@ -14,7 +14,6 @@ class Simulator:
     def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
-        self.past_phases = self.__load_past_phases()
 
     @staticmethod
     def __map_datapoint(dp):
@@ -95,8 +94,11 @@ class Simulator:
             fixed_parameters_from_file = json.load(params_file)
         fixed_parameters = self.get_fixed_parameters(parameters)
         fixed_parameters["expert_mode"] = False
-        fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
-        fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
+
+        past_phases = self.covid_repository.past_phases_data_for(country_code)
+        fixed_parameters["past_severities"] = past_phases["severities"]
+        fixed_parameters["past_dates"] = past_phases["dates"]
+
         fixed_parameters["run_multiple_test_scenarios"] = True
         fixed_parameters["num_days"] = fixed_parameters_from_file["fixed_params"]["num_days"]
 
@@ -229,21 +231,6 @@ class Simulator:
         phases.append(phase2)
 
         return {"phases": phases}
-
-    def __load_past_phases(self):
-        past_phases = {}
-        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
-            csv_reader = csv.reader(past_phases_file, delimiter=',')
-            # skip header
-            next(csv_reader)
-            for row in csv_reader:
-                country_code = row[0]
-                past_phases[country_code] = {
-                    "severities": json.loads(row[2]),
-                    "dates": json.loads(row[3])
-                }
-
-        return past_phases
 
     def default_scenarios(self):
         with open(os.path.join(cl_path_prefix, self.parameters_directory, "default_parameters.json")) as params_file:
