@@ -29,25 +29,29 @@ import {
 
 import './simulation-results.less';
 
-const SCALE_VALUE = 3;
+function scaleValueFromLargestValueAgainstViewportWidth(
+  value: number,
+  minValue: number,
+  maxValue: number,
+) {
+  const vw = Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0,
+  );
 
-/*
- Scales the value by 10s according to the max digit
- in order to fit these large numbers as radius 
- for bubbles on a the client screen in pixels
- if max digit is 200,000,000
- then a value with 1,000,000
- will look like 1
- and 150,000,000
- will look like 150
-*/
-function scaleValueFromLargestValue(value: number, largestValue: number) {
-  const digits = Math.floor(largestValue).toString().length;
-  if (largestValue <= SCALE_VALUE) {
-    return Math.floor(value);
+  function scaleBetween(
+    unscaledNum: number,
+    minAllowed: number,
+    maxAllowed: number,
+    min: number,
+    max: number,
+  ) {
+    return (
+      ((maxAllowed - minAllowed) * (unscaledNum - min)) / (max - min) +
+      minAllowed
+    );
   }
-  const scalefactor = digits - SCALE_VALUE;
-  return Math.floor(value / Number(`1e${scalefactor}`));
+  return scaleBetween(value, 0, vw / 20, minValue, maxValue);
 }
 
 const SimulationResults: React.FC<{
@@ -316,17 +320,25 @@ const SimulationResults: React.FC<{
                             },
                             0,
                           );
+
+                          const totalDeaths = simulationResults.scenarios.map(
+                            scenario => scenario.totalDeaths,
+                          );
+                          const minDeaths = Math.min(...totalDeaths);
+                          const maxDeaths = Math.max(...totalDeaths);
+
                           const data = {
                             x: scenario.totalInfected,
                             y: accumulatedIsolated,
-                            r: scenario.totalDeaths,
+                            r: scaleValueFromLargestValueAgainstViewportWidth(
+                              scenario.totalDeaths,
+                              minDeaths,
+                              maxDeaths,
+                            ),
                             deaths: scenario.totalDeaths,
                           };
 
-                          // this is a grim line of code.
-                          // we need to scale deaths down to a viewable scale
-                          data.r =
-                            scaleValueFromLargestValue(data.r, maxDeaths) / 3;
+                          console.log(data.r, maxDeaths);
 
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
