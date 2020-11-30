@@ -310,21 +310,18 @@ const SimulationResults: React.FC<{
                     data={{
                       datasets: simulationResults.scenarios.map(
                         (scenario, index) => {
-                          const data = scenario.data.total.reduce(
+                          const accumulatedIsolated = scenario.data.total.reduce(
                             (memo, entry) => {
-                              const x = memo.x + entry.newInfected;
-                              const y = memo.y + entry.newIsolated;
-                              const r = memo.r + entry.newDeaths;
-                              const deaths = memo.r + entry.newDeaths;
-                              return {
-                                x,
-                                y,
-                                r,
-                                deaths,
-                              };
+                              return memo + entry.newIsolated;
                             },
-                            { x: 0, y: 0, r: 0, deaths: 0 },
+                            0,
                           );
+                          const data = {
+                            x: scenario.totalInfected,
+                            y: accumulatedIsolated,
+                            r: scenario.totalDeaths,
+                            deaths: scenario.totalDeaths,
+                          };
 
                           // this is a grim line of code.
                           // we need to scale deaths down to a viewable scale
