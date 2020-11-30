@@ -157,8 +157,8 @@
                 "testingStrategy": {
                   "type": "string",
                   "enum": [
-                    "all symptomatic",
-                    "special groups with symptoms",
+                    "symptomatic first",
+                    "high contact groups first",
                     "open public testing",
                     "no testing"
                   ]

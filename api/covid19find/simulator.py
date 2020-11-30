@@ -91,11 +91,14 @@ class Simulator:
         scenarios = self.get_scenario_parameters(parameters)
         country_df = self.get_country_df(country_code)
 
+        with open(os.path.join(cl_path_prefix, self.parameters_directory, "parameters.json")) as params_file:
+            fixed_parameters_from_file = json.load(params_file)
         fixed_parameters = self.get_fixed_parameters(parameters)
         fixed_parameters["expert_mode"] = False
         fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
         fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
+        fixed_parameters["num_days"] = fixed_parameters_from_file["fixed_params"]["num_days"]
 
         result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
