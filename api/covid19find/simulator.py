@@ -15,19 +15,6 @@ class Simulator:
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
 
-    @staticmethod
-    def __map_datapoint(dp):
-        return {
-            "Date": dp["date"],
-            "accumulated_deaths": dp["totalDeaths"],
-            "accumulated_cases": dp["totalConfirmed"],
-            "tests": 0 if dp["newTests"] is None else dp["newTests"]
-        }
-
-    def get_country_df(self, country_code):
-        covid_data = self.covid_repository.data_for(country_code)["timeseries"]
-        return pd.DataFrame.from_records(list(map(self.__map_datapoint, covid_data)))
-
     def get_fixed_parameters(self, parameters):
         return {
             "total_pop": parameters["population"],
@@ -88,7 +75,7 @@ class Simulator:
     def run(self, parameters):
         country_code = parameters["countryCode"]
         scenarios = self.get_scenario_parameters(parameters)
-        country_df = self.get_country_df(country_code)
+        country_df = self.covid_repository.get_country_df(country_code)
 
         with open(os.path.join(cl_path_prefix, self.parameters_directory, "parameters.json")) as params_file:
             fixed_parameters_from_file = json.load(params_file)

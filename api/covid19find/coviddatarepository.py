@@ -6,7 +6,9 @@ import datetime
 import csv
 import json
 import logging
-from .simulation.covidlib import cl_path_prefix
+import covidlib as cl
+import optlib
+import pandas as pd
 
 
 class CovidDataRepository:
@@ -184,17 +186,74 @@ class CovidDataRepository:
 
         logging.info("Initializing past phases data.")
         os.makedirs(self.past_phases_data_dir, exist_ok=True)
-        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
+        with open(os.path.join(cl.cl_path_prefix, "db1.csv")) as past_phases_file:
             csv_reader = csv.reader(past_phases_file, delimiter=',')
             # skip header
             next(csv_reader)
             for row in csv_reader:
                 country_code = row[0]
-                with open(os.path.join(self.past_phases_data_dir, country_code + ".json"), "w") as country_file:
-                    json.dump({
+                try:
+                    past_data = {
+                        "country_code": row[0],
                         "severities": json.loads(row[2]),
-                        "dates": json.loads(row[3])
-                    }, country_file)
+                        "dates": json.loads(row[3]),
+                        "score": float(row[4]),
+                        "long_severities": json.loads(row[2]),
+                        "long_dates": json.loads(row[3])
+                    }
+                except ValueError as ve:
+                    logging.warning("Error while parsing past phases data for {}: '{}'".format(country_code, ve))
+
+                with open(os.path.join(self.past_phases_data_dir, country_code + ".json"), "w") as country_file:
+                    json.dump(past_data, country_file)
+
+    @staticmethod
+    def __map_datapoint(dp):
+        return {
+            "Date": dp["date"],
+            "accumulated_deaths": dp["totalDeaths"],
+            "total_deaths": dp["totalDeaths"],
+            "new_deaths": dp["newDeaths"],
+            "accumulated_cases": dp["totalConfirmed"],
+            "tests": 0 if dp["newTests"] is None else dp["newTests"]
+        }
+
+    def get_country_df(self, country_code):
+        covid_data = self.data_for(country_code)["timeseries"]
+        return pd.DataFrame.from_records(list(map(self.__map_datapoint, covid_data)))
+
+    def update_past_phases_data(self):
+        current_files = os.listdir(self.past_phases_data_dir)
+        logging.info("Updating past phases.")
+        for file in current_files:
+            with open(os.path.join(self.past_phases_data_dir, file)) as past_phases_file:
+                past_phases = json.load(past_phases_file)
+            country_code = past_phases["country_code"]
+            logging.info(country_code)
+            try:
+                dfx = self.get_country_df(country_code)
+                sev = past_phases["long_severities"]
+                trig = past_phases["long_dates"]
+
+                score, sev, trig = optlib.getbestfit(dfx, sev, trig)
+                result = optlib.runandalignsim(dfx, sev, trig)
+                score = optlib.scorealignment(result, len(dfx))
+                nsev, ntrig = optlib.packseverities(sev, trig)
+                result = optlib.runandalignsim(dfx, nsev, ntrig)
+                score = optlib.scorealignment(result, len(dfx))
+                past_data = {
+                    "country_code": country_code,
+                    "severities": nsev,
+                    "dates": ntrig,
+                    "score": score,
+                    "long_severities": sev,
+                    "long_dates": trig
+                }
+                with open(os.path.join(self.past_phases_data_dir, file), "w") as past_phases_file:
+                    json.dump(past_data, past_phases_file)
+                    logging.info("Finished computing past phases for {}".format(country_code))
+            except Exception as e:
+                logging.warning("Failed computing past phases for {}, error: {}: {}".format(country_code, type(e), e))
 
     def past_phases_data_for(self, country_code):
         try:
