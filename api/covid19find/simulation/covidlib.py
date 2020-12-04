@@ -200,9 +200,6 @@ def update_system_params2(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
-   with open('kenny-1.json', 'w') as outfile:
-       json.dump(fixed_params, outfile)
-
    validation_result=validate_fixed_params(fixed_params)
    if validation_result==-1:
        raise CustomError('Invalid population numbers')

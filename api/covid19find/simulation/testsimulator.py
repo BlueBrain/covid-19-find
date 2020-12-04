@@ -1,18 +1,5 @@
-# This version of the test program is designed for tests where it is necessary
 
-# to manually change the test parameters
 
-# -*- coding: utf-8 -*-
-
-"""
-
-Created on Fri Apr 10 09:25:47 2020
-
-​
-
-@author: richard
-
-"""
 
 import covidlib as cl
 
@@ -26,10 +13,9 @@ import sys
 
 import cdata as cd
 
-
 ccode="FR"
 
-test_directory='bbp_testing'
+test_directory='BBP_testing'
 
 country_df = cd.getcountrydata(ccode)
 
@@ -42,6 +28,9 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 print('past_dates=',past_dates)
 
 print('past_severities=', past_severities)
+
+ #temporary. Front_end will provide real data
+
 # =============================================================================
 
 # fixed_params={
@@ -86,13 +75,16 @@ fixed_params.update(cd.getcountryparams(ccode))
 
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
 
+with open('kenny-test-3.json', 'w') as outfile:
+            json.dump(fixed_params, outfile)
+
 scenario_params=[]
 
 scenario_params.append({
 
     'severity':[0.95, 0.85],\
 
-    'trig_values':['2020-10-03','2020-12-13'],\
+    'trig_values':['2020-12-04','2020-12-14'],\
 
     'trig_def_type':['date','date'],\
 

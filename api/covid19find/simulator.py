@@ -96,6 +96,9 @@ class Simulator:
         fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
         fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
+        
+        with open('kenny-2.json', 'w') as outfile:
+            json.dump(fixed_parameters, outfile)
 
         result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
 
