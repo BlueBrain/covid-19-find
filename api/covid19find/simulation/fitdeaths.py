@@ -1,12 +1,13 @@
 
 import optlib as opt
 import sys
+import cdata as cd
 
-cname = 'India'
+ccode = 'CH'
 if len(sys.argv) > 1:
-   cname = sys.argv[1]
+   ccode = sys.argv[1]
 
-score,dfx,sev,trig = opt.computephases(cname)
-print("RESULT:",cname,",",sev,",",trig,",",score,",",score/dfx['total_deaths'].mean())
-opt.showthiscase(dfx,sev,trig,'PLOT')
-
+cname = cd.getcountryname(ccode)
+score,dfx,sev,trig,longsev,longtrig = opt.computephases(ccode)
+print("RESULT:",cname,",",sev,",",trig,",",score)
+opt.showthiscase(dfx,sev,trig,'TESTS')

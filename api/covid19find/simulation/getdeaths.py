@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import sys
+from pathlib import Path
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -23,8 +24,12 @@ def download_csv_from_url(csv_url, filename):
 
 deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 deaths_fn = "death_data.csv"
-download_csv_from_url(deaths_url, deaths_fn)
+if Path(deaths_fn).is_file():
+   print('using existing '+deaths_fn+' file')
+else:
+   download_csv_from_url(deaths_url, deaths_fn)
 deaths_df = melt_raw_data(deaths_fn, "Deaths")
+# print(deaths_df);
 
 def get_death_data_by_country(country):
 	global deaths_df
@@ -38,7 +43,7 @@ def get_death_data_by_country(country):
 	country_df["New deaths"] = country_df["New deaths"].astype(int)
 	country_df["Date"] = country_df["Date"].astype(str)
 
-	return country_df[["Date", "New deaths", "total_deaths"]];
+	return country_df[["Date", "New deaths", "total_deaths"]]
 
 def testmodule():
    country = "Spain"

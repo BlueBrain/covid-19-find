@@ -21,8 +21,8 @@ export enum TEST_TYPES {
 
 export enum TESTING_STRATEGIES {
   NONE = 'no testing',
-  ALL = 'all symptomatic',
-  SPECIAL = 'special groups with symptoms',
+  HIGH_CONTACT_FIRST = 'high contact groups first',
+  SYMPOMATIC_FIRST = 'symptomatic first',
   OPEN = 'open public testing',
 }
 

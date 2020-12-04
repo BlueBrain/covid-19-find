@@ -68,9 +68,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "phases"
-        ],
+        "required": ["phases"],
         "properties": {
           "phases": {
             "type": "array",
@@ -117,11 +115,7 @@
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": [
-                    "<",
-                    "=",
-                    ">="
-                  ]
+                  "enum": ["<", "=", ">="]
                 },
                 "severity": {
                   "type": "number",
@@ -139,10 +133,7 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "specificity": {
                   "type": "number",
@@ -157,8 +148,8 @@
                 "testingStrategy": {
                   "type": "string",
                   "enum": [
-                    "all symptomatic",
-                    "special groups with symptoms",
+                    "symptomatic first",
+                    "high contact groups first",
                     "open public testing",
                     "no testing"
                   ]
@@ -169,10 +160,7 @@
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "requiredDxTests": {
                   "type": "number",
