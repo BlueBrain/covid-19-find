@@ -95,7 +95,7 @@ export default class API {
       activePopulationProportion:
         simulationParams.activePopulationProportion / 100,
       over64Proportion: simulationParams.over64Proportion / 100,
-      fatalityReduction: simulationParams.fatalityReduction / 100,
+      fatalityReduction: simulationParams.fatalityReduction,
     };
 
     const response = await fetch(`${this.base}/simulation`, {
