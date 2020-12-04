@@ -1,1 +1,0 @@
-{"num_tests_mitigation": 0, "num_tests_care": 0, "trig_op_type": "=", "severity": 0.2, "trig_def_type": "date", "sensitivity": 0.95, "specificity": 0.95, "prop_contacts_traced": 0.25, "imported_infections_per_day": 4, "requireddxtests": 0, "is_counterfactual": false, "test_strategy": "special groups with symptoms", "results_period": 1, "prop_asymptomatic_tested": 0.01}

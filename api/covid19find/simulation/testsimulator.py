@@ -75,9 +75,6 @@ fixed_params.update(cd.getcountryparams(ccode))
 
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
 
-with open('kenny-test-3.json', 'w') as outfile:
-            json.dump(fixed_params, outfile)
-
 scenario_params=[]
 
 scenario_params.append({
