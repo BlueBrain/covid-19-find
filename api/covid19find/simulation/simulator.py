@@ -9,7 +9,7 @@ import pandas as pd
 class Simulator:
     IS_SCENARIO_COUNTERFACTUAL = [False, False, False]
 
-    def __init__(self, covid_repository, parameters_directory="production"):
+    def __init__(self, covid_repository, parameters_directory="bbp_testing"):
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
 

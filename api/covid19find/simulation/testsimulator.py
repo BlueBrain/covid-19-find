@@ -12,122 +12,134 @@ import pandas as pd
 import os
 import json
 import sys
+import cdata as cd
 
 
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
-country_df = cl.getcountrydata('Switzerland.csv')
+ccode="FR"
+test_directory='bbp_testing'
+country_df = cd.getcountrydata(ccode)
 datesandseverities=pd.read_csv('db1.csv',index_col='Code')
-past_severities=json.loads(datesandseverities.loc['FR']['Severities'])
-past_dates=json.loads(datesandseverities.loc['FR']['Trigger Dates'])
+past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
+past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
+# =============================================================================
+# past_severities=[0.0, 0.05, 0.0, 0.95, 1.0, 0.95, 0.85, 0.75, 0.65, 0.75]
+# past_dates=[1, 15, 38, 65, 80, 94, 148, 202, 250, 267]
+# =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
+
  #temporary. Front_end will provide real data
-fixed_params={
-    'test_directory':'bbp_testing',\
-    'total_pop':65274000, \
-    'hospital_beds':391644, \
-    'prop_15_64': 0.62, \
-    'age_gt_64':0.2195 ,\
-    'prop_urban': 0.8, \
-    'prop_below_pl':0.10, \
-    'prop_woh':0.4, \
-    'staff_per_bed':2.5,\
-    'past_dates':past_dates,\
-    'past_severities':past_severities,\
-    'expert_mode':False,
-    'run_multiple_test_scenarios':True,
-    'save_results':False,
-    'fatality_reduction':0.5,
-    'num_days':450}
+# =============================================================================
+# fixed_params={
+#     'test_directory':'bbp_testing',\
+#     'total_pop':8200000, \
+#     'hospital_beds':33000, \
+#     'prop_15_64': 0.66, \
+#     'age_gt_64':0.20 ,\
+#     'prop_urban': 0.72, \
+#     'prop_below_pl':0.05, \
+#     'prop_woh':0.4, \
+#     'staff_per_bed':2.5,\
+#     'past_dates':past_dates,\
+#     'past_severities':past_severities,\
+#     'expert_mode':False,\
+#     'run_multiple_test_scenarios':True,\
+#     'save_results':False,\
+#     'fatality_reduction':0.35,\
+#     'num_days':450}
+# =============================================================================
+fixed_params=cl.get_system_params(test_directory)
+fixed_params.update(cd.getcountryparams(ccode))
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
-# Here we only append 1 scenario. In the final version there will be 3 
-# Pls do not delecte
+
 
 scenario_params.append({
-    'severity':[0.85, 0.85],\
-    'trig_values':['2020-12-04','2020-12-14'],\
+    'severity':[0.89, 0.5],\
+    'trig_values':['2020-12-10','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[0,0],\
+    'num_tests_mitigation':[250000,250000],\
     'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.8,0.8],\
-    'specificity':[0.8,0.8],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.95,0.95],\
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
     'imported_infections_per_day':[4,4],\
-    'requireddxtests':[2,2],\
+    'requireddxtests':[0,0],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['no testing','no testing'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02],
-    'fatality_reduction_recent':[0.35,0.35]
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.45,0.45]
     })
     
 scenario_params.append({
-    'severity':[0.8],\
-    'trig_values':['2020-11-16','2020-11-17'],\
+    'severity':[0.89,0.5],\
+    'trig_values':['2020-12-10','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[250000,250000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[50,50],\
-    'requireddxtests':[2,2],\
+    'imported_infections_per_day':[4,4],\
+    'requireddxtests':[0,0],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02],
-    'fatality_reduction_recent':[0.35,0.35]
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.45,0.45]
     })
     
 scenario_params.append({
-    'severity':[0.8, 0.8],\
-    'trig_values':['2020-11-16','2020-11-17'],\
+    'severity':[0.89, 0.5],\
+    'trig_values':['2020-12-10','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[250000,250000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.95,0.95],\
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[50,50],\
-    'requireddxtests':[2,2],\
+    'imported_infections_per_day':[4,4],\
+    'requireddxtests':[0,0],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02],
-    'fatality_reduction_recent':[0.35,0.35]
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.45,0.45]
     })
     
 scenario_params.append({
-    'severity':[0.8, 0.8],\
-    'trig_values':['2020-11-16','2020-11-17'],\
+    'severity':[0.89, 0.5],\
+    'trig_values':['2020-12-10','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','>'],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[250000,250000],\
     'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
+    'sensitivity':[0.7,0.7],\
+    'specificity':[0.5,0.5],\
     'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[50,50],\
-    'requireddxtests':[2,2],\
+    'imported_infections_per_day':[4,4],\
+    'requireddxtests':[0,0],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['open public testing','open public testing'],\
-    'results_period':[1,1],\
-    'prop_asymptomatic_tested':[0.02,0.02],
-    'fatality_reduction_recent':[0.35,0.35]
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.45,0.45]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')
