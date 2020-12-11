@@ -2,12 +2,19 @@ import json
 import csv
 import math
 import os
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 import pandas as pd
 
 from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
 
+
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/simulation")
+
+print ((os.path.dirname(os.path.realpath(__file__)) + "/simulation"))
+
+import cdata
 
 class Simulator:
 
@@ -97,7 +104,25 @@ class Simulator:
         fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
 
-        result = run_simulation(country_df, fixed_parameters, scenarios=scenarios)
+        ## 
+        # TODO: please remove this and make it a nice function or so
+        # hack to load data like in testsimulation.py to get similar results
+        # There are necessary params that can change the results but we don't know them
+        ## 
+        datesandseverities=pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/simulation/db1.csv",index_col='Code')
+        n_records=0
+        day1 = datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d") - timedelta(days=n_records)
+        past_dates=json.loads(datesandseverities.loc[country_code]['Trigger Dates'])
+        #This loads the default system parameters
+        overrideableFixedParams=get_system_params(self.parameters_directory)
+        overrideableFixedParams.update(cdata.getcountryparams(country_code))
+        past_severities=json.loads(datesandseverities.loc[country_code]['Severities'])
+        overrideableFixedParams.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
+        ### end code from testSimulator2.py
+
+        overrideableFixedParams.update(fixed_parameters)
+
+        result = run_simulation(country_df, overrideableFixedParams, scenarios=scenarios)
 
         scenario_data = []
         scenario_dfs = result[0]

@@ -1,6 +1,7 @@
 import getdeaths as gd
 import pandas as pd
 import cdatabbp as bbp
+import os
 
 useBBPdata = True
 
@@ -13,7 +14,7 @@ def getdeathdata(countryname):
    df = gd.get_death_data_by_country(countryname)
    return df.fillna(0).reset_index()
 
-test_df = pd.read_csv("countrytests.csv")
+test_df = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/countrytests.csv")
 
 def merge_with_test_data(df, countryname):
   col = test_df.columns
