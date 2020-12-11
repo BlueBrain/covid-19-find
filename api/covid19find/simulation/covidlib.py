@@ -180,7 +180,10 @@ def update_system_params2(p, fixed_params):
     p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
     p['past_dates']=fixed_params['past_dates']
     p['past_severities']=fixed_params['past_severities']
-    # p['num_days']=fixed_params['num_days']
+    ## hack
+    fixed_params["num_days"]=450
+    print(fixed_params["num_days"])
+    p['num_days']=fixed_params['num_days']
     return
 
 
