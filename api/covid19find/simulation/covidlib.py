@@ -309,7 +309,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
 #optimization always uses 'no testing'. This also resolves open issue with results_period
      
-      past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'],'no testing')
+      past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
       max_betas = get_beta(no_intervention_betafile, num_compartments)
@@ -1388,7 +1388,7 @@ def computetoday(start_date,triggers):
             simphase=i
     return simphase,simday
 
-def create_past(param,defaults,trigger_values, severity,test_strategy):
+def create_past(param,defaults,trigger_values, severity):
     n_phases=len(trigger_values)
     past={}
     for a_key in defaults.keys():
@@ -1397,8 +1397,6 @@ def create_past(param,defaults,trigger_values, severity,test_strategy):
         past.update({a_key:a_list})
     past.update({'trig_values':trigger_values})
     past.update({'severity':severity})
-    strategy_list=[test_strategy]*n_phases
-    past.update({'test_strategy':strategy_list})
     return(past)
         
 
