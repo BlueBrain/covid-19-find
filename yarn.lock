@@ -7096,6 +7096,11 @@ react-chartjs-2@^2.9.0:
     lodash "^4.17.19"
     prop-types "^15.7.2"
 
+react-confirm-alert@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/react-confirm-alert/-/react-confirm-alert-2.6.2.tgz#775c6e5233cd2c4b06f4ddedd59b8de03e071876"
+  integrity sha512-lvlk+Sic7p3wbOcsetkCHVXA3LJCDViqjO8sV7FtCfJwjw36ZKCJv2FiaxUCiw3g8PXvmpjEtvAvLqPKb8yh/A==
+
 react-dom@^16.12.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"

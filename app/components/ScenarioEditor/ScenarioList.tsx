@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { IoIosClose, IoIosAdd } from 'react-icons/io';
+import { confirmAlert } from 'react-confirm-alert';
 
 import ScenarioEditor from './ScenarioEditor';
 import { ClientScenarioData } from '../../types/simulation';
 import { MAX_SCENARIOS_COUNT } from '../../config';
 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';
 
@@ -16,10 +18,26 @@ const ScenarioList: React.FC<{
 }> = ({ defaultScenarios, scenarios = [], onSubmit }) => {
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
-    onSubmit &&
-      onSubmit({
-        scenarios: newScenarios,
-      });
+    const scenario = scenarios[index];
+    confirmAlert({
+      title: `Delete Scenario: ${scenario.name}`,
+      message: 'Are you sure to delete this scenario?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            onSubmit &&
+              onSubmit({
+                scenarios: newScenarios,
+              });
+          },
+        },
+        {
+          label: 'No',
+          onClick: () => {}, // No op
+        },
+      ],
+    });
   };
 
   const addScenario = () => {
