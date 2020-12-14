@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { confirmAlert } from 'react-confirm-alert';
 import { IoIosClose } from 'react-icons/io';
 
 import { useTextInput } from '../../hooks/useFormInput';
@@ -13,10 +14,11 @@ import {
   replaceAtIndexWithoutMutation,
   removeAtIndexWithoutMutation,
 } from '../../libs/arrays';
-
-import './scenario-editor.less';
 import { MAX_PHASE_COUNT } from '../../config';
 import TooltipLabel from '../TooltipLabel';
+
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import './scenario-editor.less';
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
@@ -70,11 +72,27 @@ const ScenarioEditor: React.FC<{
   };
 
   const handleRemovePhase = (index: number) => () => {
-    onChange &&
-      onChange({
-        name: name.value,
-        phases: removeAtIndexWithoutMutation(phases, index),
-      });
+    const phase = phases[index];
+    confirmAlert({
+      title: `Delete ${phase.name}`,
+      message: 'Are you sure to delete this phase?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            onChange &&
+              onChange({
+                name: name.value,
+                phases: removeAtIndexWithoutMutation(phases, index),
+              });
+          },
+        },
+        {
+          label: 'No',
+          onClick: () => {}, // No op
+        },
+      ],
+    });
   };
 
   return (
