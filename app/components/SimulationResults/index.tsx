@@ -415,6 +415,7 @@ const SimulationResults: React.FC<{
                                         color: '#00000005',
                                       },
                                       ticks: {
+                                        beginAtZero: true, // comment out this line if you want chart to zoom in on the meaningful range
                                         callback: function(value) {
                                           return value?.toLocaleString(
                                             undefined,
