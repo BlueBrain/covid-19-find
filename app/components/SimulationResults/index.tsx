@@ -51,7 +51,14 @@ function scaleValueFromLargestValueAgainstViewportWidth(
       minAllowed
     );
   }
-  return scaleBetween(value, 0, vw / 20, minValue, maxValue);
+  const smallesetNonZeroMinValueInPixels = 20;
+  return scaleBetween(
+    value,
+    minValue === 0 ? 0 : smallesetNonZeroMinValueInPixels,
+    vw / 20,
+    minValue,
+    maxValue,
+  );
 }
 
 const SimulationResults: React.FC<{
@@ -338,7 +345,7 @@ const SimulationResults: React.FC<{
                             deaths: scenario.totalDeaths,
                           };
 
-                          console.log(data.r, maxDeaths);
+                          console.log({ scenario, index, data, maxDeaths });
 
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
