@@ -148,6 +148,13 @@ except FileNotFoundError:
     print('parameters file in ', fixed_params['test_directory'], ' not found')
     sys.exit()
 cl.write_parameters(filename,fixed_params,scenario_params)
+with open('kenny-input-orient-split.json') as json_file:
+    
+    data=json.load(json_file)
+    country_df= pd.read_json(data[0],orient='split',convert_dates=False)
+    fixed_params=data[1]
+    fixed_params['test_directory']='bbp_testing'
+    scenarios=data[2]
 try:
     dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
 except FileNotFoundError as inst:
