@@ -271,9 +271,9 @@ class Simulator:
         with open(os.path.join(cl_path_prefix, self.parameters_directory, "default_parameters.json")) as params_file:
             scenarios_from_file = json.load(params_file)
         scenarios = list(map(self.__reverse_map_scenario, scenarios_from_file))
-        with open(os.path.join(cl_path_prefix, self.parameters_directory, "parameters.json")) as params_file:
+        with open(os.path.join(cl_path_prefix, self.parameters_directory, "system_params.json")) as params_file:
             fixed_parameters_from_file = json.load(params_file)
         return {
             "scenarios": scenarios,
-            "fatalityReduction": fixed_parameters_from_file["fixed_params"]["fatality_reduction"]
+            "fatalityReduction": fixed_parameters_from_file["fatality_reduction"]
         }
