@@ -59,87 +59,87 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':[0.89, 0.5],\
-    'trig_values':['2020-12-10','2021-12-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[250000,250000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[4,4],\
-    'requireddxtests':[0,0],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['no testing','no testing'],\
-    'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
-    'fatality_reduction_recent':[0.45,0.45]
+    'severity':[0.95, 0.7,0.95],\
+    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'trig_def_type':['date','date','date'],\
+    'trig_op_type':['=','=','='],\
+    'num_tests_mitigation':[250000,250000,250000],\
+    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95],\
+    'num_tests_care':[10000,10000,10000],\
+    'type_tests_care':['PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25,0.25],\
+    'imported_infections_per_day':[4,4,4],\
+    'requireddxtests':[0,0,0],\
+    'is_counterfactual':['False','False','False'],\
+    'test_strategy':['no testing','no testing','no testing'],\
+    'results_period':[3,3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':[0.89,0.5],\
-    'trig_values':['2020-12-10','2021-12-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[250000,250000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[4,4],\
-    'requireddxtests':[0,0],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['high contact groups first','high contact groups first'],\
-    'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
-    'fatality_reduction_recent':[0.45,0.45]
+    'severity':[0.95, 0.7,0.95],\
+    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'trig_def_type':['date','date','date'],\
+    'trig_op_type':['=','=','='],\
+    'num_tests_mitigation':[250000,250000,250000],\
+    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95],\
+    'num_tests_care':[10000,10000,10000],\
+    'type_tests_care':['PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25,0.25],\
+    'imported_infections_per_day':[4,4,4],\
+    'requireddxtests':[0,0,0],\
+    'is_counterfactual':['False','False','False'],\
+    'test_strategy':['high contact groups first','high contact groups first','high contact groups first'],\
+    'results_period':[3,3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':[0.89, 0.5],\
-    'trig_values':['2020-12-10','2021-12-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','='],\
-    'num_tests_mitigation':[250000,250000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[4,4],\
-    'requireddxtests':[0,0],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['symptomatic first','symptomatic first'],\
-    'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
-    'fatality_reduction_recent':[0.45,0.45]
+    'severity':[0.95, 0.7,0.95],\
+    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'trig_def_type':['date','date','date'],\
+    'trig_op_type':['=','=','='],\
+    'num_tests_mitigation':[250000,250000,250000],\
+    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95],\
+    'num_tests_care':[10000,10000,10000],\
+    'type_tests_care':['PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25,0.25],\
+    'imported_infections_per_day':[4,4,4],\
+    'requireddxtests':[0,0,0],\
+    'is_counterfactual':['False','False','False'],\
+    'test_strategy':['no testing','symptomatic first','symptomatic first'],\
+    'results_period':[3,3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':[0.89, 0.5],\
-    'trig_values':['2020-12-10','2021-12-15'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','>'],\
-    'num_tests_mitigation':[250000,250000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.7,0.7],\
-    'specificity':[0.5,0.5],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[4,4],\
-    'requireddxtests':[0,0],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['open public testing','open public testing'],\
-    'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
-    'fatality_reduction_recent':[0.45,0.45]
+    'severity':[0.95, 0.7,0.95],\
+    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'trig_def_type':['date','date','date'],\
+    'trig_op_type':['=','=','='],\
+    'num_tests_mitigation':[250000,250000,250000],\
+    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95,0.95],\
+    'specificity':[0.95,0.95,0.95],\
+    'num_tests_care':[10000,10000,10000],\
+    'type_tests_care':['PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25,0.25],\
+    'imported_infections_per_day':[4,4,4],\
+    'requireddxtests':[0,0,0],\
+    'is_counterfactual':['False','False','False'],\
+    'test_strategy':['no testing','open public testing','open public testing'],\
+    'results_period':[3,3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35,0.35]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')
@@ -148,6 +148,13 @@ except FileNotFoundError:
     print('parameters file in ', fixed_params['test_directory'], ' not found')
     sys.exit()
 cl.write_parameters(filename,fixed_params,scenario_params)
+with open('kenny-input-orient-split.json') as json_file:
+    
+    data=json.load(json_file)
+    country_df= pd.read_json(data[0],orient='split',convert_dates=False)
+    fixed_params=data[1]
+    fixed_params['test_directory']='bbp_testing'
+    scenarios=data[2]
 try:
     dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
 except FileNotFoundError as inst:
