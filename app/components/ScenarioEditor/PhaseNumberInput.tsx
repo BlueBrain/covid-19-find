@@ -7,12 +7,12 @@ const PhaseNumberInput: React.FC<{
   inputProps: NumberInputProp;
   onChange: (number) => void;
   value: number;
-}> = ({ inputProps, onChange, value }) => {
+}> = ({ inputProps, onChange, value: defaultValue }) => {
   const ref = React.useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = React.useState(value.toString());
+  const [inputValue, setInputValue] = React.useState(defaultValue.toString());
   React.useEffect(() => {
-    setInputValue(value.toString());
-  }, [value]);
+    setInputValue(defaultValue.toString());
+  }, [defaultValue]);
   const handleBlur = () => {
     onChange(inputValue);
   };
@@ -27,7 +27,7 @@ const PhaseNumberInput: React.FC<{
       min={inputProps.min}
       max={inputProps.max}
       step={inputProps.step}
-      defaultValue={value}
+      defaultValue={defaultValue}
       value={inputValue}
       type="number"
       required
