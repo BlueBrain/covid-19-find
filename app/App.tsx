@@ -33,19 +33,19 @@ const App: React.FC = () => {
   );
 
   React.useEffect(() => {
-    // if (state.scenarios.length) {
-    api.scenarios().then(({ scenarios }: { scenarios: Scenario[] }) => {
-      // @ts-ignore
-      setDefaultScenarios(scenarios);
+    if (state.scenarios.length) {
+      api.scenarios().then(({ scenarios }: { scenarios: Scenario[] }) => {
+        // @ts-ignore
+        setDefaultScenarios(scenarios);
 
-      setScenarioRequestData({
-        state: {
-          scenarios,
-          ...state,
-        },
+        setScenarioRequestData({
+          state: {
+            scenarios,
+            ...state,
+          },
+        });
       });
-    });
-    // }
+    }
   }, []);
 
   const [
