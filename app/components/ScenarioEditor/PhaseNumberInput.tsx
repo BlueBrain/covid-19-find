@@ -5,20 +5,25 @@ import './phase-input.less';
 
 const PhaseNumberInput: React.FC<{
   inputProps: NumberInputProp;
-  onChange: (number) => void;
+  onChange: (number: number) => void;
   value: number;
 }> = ({ inputProps, onChange, value: defaultValue }) => {
   const ref = React.useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = React.useState(defaultValue.toString());
+  const [inputValue, setInputValue] = React.useState<string>(
+    defaultValue.toString(),
+  );
+
   React.useEffect(() => {
     setInputValue(defaultValue.toString());
   }, [defaultValue]);
+
   const handleBlur = () => {
-    onChange(inputValue);
+    onChange(Number(inputValue));
   };
   const handleChange = () => {
     setInputValue(ref?.current.value);
   };
+
   return (
     <input
       className="phase number"
