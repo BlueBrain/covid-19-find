@@ -8,9 +8,7 @@ import sys
 import os
 import json
 import cdata as cd
-import datetime as dt
 
-a=1
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -18,9 +16,9 @@ sample =30
 shiftlag = lag+sample
 horizon = 50
 
-#countryname = 'Switzerland'
-#countrycode = 'CH'
-#country_df = cd.getcountrydata(countrycode)
+countryname = 'Switzerland'
+countrycode = 'CH'
+country_df = cd.getcountrydata(countrycode)
 
 #country_df = cl.getcountrydata('Switzerland.csv')[['Date','accumulated_deaths','tests','accumulated_cases']]
 
@@ -37,9 +35,8 @@ def setlengths(minp,maxp,hor):
 def aligntotest(dfactual,dfsimdeaths):
    simdeaths = dfsimdeaths['total_deaths'].tolist()
    actdeaths = dfactual['total_deaths'].tolist()
-#   aligneddeaths, shift = cl.aligndeaths(actdeaths,simdeaths)
- #  dfactual['sim_total_deaths'] = aligneddeaths
-   dfactual['sim_total_deaths'] = simdeaths
+   aligneddeaths, shift = cl.aligndeaths(actdeaths,simdeaths)
+   dfactual['sim_total_deaths'] = aligneddeaths
    # day0 = dfactual.iloc[shift]['Date']
    return dfactual
 
@@ -54,10 +51,9 @@ def getsimdeaths(sev,trig):
    fixed_params['past_dates'] = trig
    fixed_params['expert_mode'] = False
    fixed_params['save_results'] = "False"
-   local_df=country_df
 #   fixed_params['fatality_reduction'] = 0.35
    fixed_params['num_days'] = len(country_df)
-#   print(len(country_df))
+   print(len(country_df))
    
    scenario_params=[]
    scenario_params=cl.get_next_phases_scenarios(fixed_params['test_directory'])
@@ -68,12 +64,7 @@ def getsimdeaths(sev,trig):
        print('parameters file in ', fixed_params['test_directory'], ' not found')
        sys.exit()
        cl.write_parameters(filename,fixed_params,scenario_params)
-# =============================================================================
-#    #I try to end the simulation ends 56 days after last day in simulation but this has bad effects
-#    endsim=trig[len(trig)-1]+56
-#    if endsim>fixed_params['num_days']:
-#        endsim=fixed_params['num_days']-1
-# =============================================================================
+
    dataframes, test_df,results_dict=\
                    cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
    firstdf = dataframes[1].rename(columns = {'deaths': 'total_deaths', 'newdeaths': 'new_deaths'}, inplace = False)
@@ -83,53 +74,10 @@ def getsimdeaths(sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   totweight=0.7
-   denom1 = result['total_deaths'].head(span).mean()
-   if abs(denom1) < 1:
-      denom1 = 1
-   meanreldev1 = result['absdiff'].head(span).mean()/denom1
-   denom2 = result['new_deaths'].head(span).mean()
-   if abs(denom2) < 1:
-      denom2 = 1
-   meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
-   return (meanreldev1*totweight+meanreldev2*(1-totweight))
-
-# =============================================================================
-# def scorealignment(result,span):
-#    # meandev1 = result['absdiff'].head(span).mean()
-#    meanreldev1 = result['absdiff'].head(span).mean()/result['total_deaths'].head(span).mean()
-#    meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/result['new_deaths'].head(span).mean()
-#    return (meanreldev1*0.7+meanreldev2*0.3)
-# =============================================================================
-
-# =============================================================================
-# def scorealignment(result,span):
-#    # meandev1 = result['absdiff'].head(span).mean()
-#    if result['total_deaths'].head(span).mean()>0:
-#        meanreldev1 = result['absdiff'].head(span).mean()/result['total_deaths'].head(span).mean()
-#    else:
-#        meanreldev1=0
-#    if result['new_deaths'].head(span).mean()>0:
-#        meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/result['new_deaths'].head(span).mean()
-#    else:
-#        meanreldev2=0
-#    return (meanreldev1*0.9+meanreldev2*0.1)
-# =============================================================================
-
-# =============================================================================
-# def scorealignment(result,span):
-#    #totweight is temporary. John defines it as a global in his code.
-#    totweight=0.7
-#    denom1 = result['total_deaths'].head(span).mean()
-#    if abs(denom1) < 1:
-#       denom1 = 1
-#    meanreldev1 = result['absdiff'].head(span).mean()/denom1
-#    denom2 = result['new_deaths'].head(span).mean()
-#    if abs(denom2) < 1:
-#       denom2 = 1
-#    meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
-#    return (meanreldev1*totweight+meanreldev2*(1-totweight))
-# =============================================================================
+   # meandev1 = result['absdiff'].head(span).mean()
+   meanreldev1 = result['absdiff'].head(span).mean()/result['total_deaths'].head(span).mean()
+   meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/result['new_deaths'].head(span).mean()
+   return (meanreldev1*0.7+meanreldev2*0.3)
 
 def runandalignsim(dfx,sev,trig):
    simdeaths = getsimdeaths(sev,trig)
@@ -166,12 +114,12 @@ def getactualdeaths(countryname):
   # yes! next three lines
   dfactual = country_df.rename(columns = {'accumulated_deaths': 'total_deaths'}, inplace = False)
   dfactual["New deaths"] = dfactual['total_deaths'].diff().fillna(dfactual['total_deaths'].iloc[0])
-  dfactual["New deaths"] = dfactual["New deaths"].astype(float)
+  dfactual["New deaths"] = dfactual["New deaths"].astype(int)
 
   dfx = pd.DataFrame()
   dfx['Date'] = dfactual['Date']
   dfx['orig_new_deaths'] = dfactual['New deaths']
-  dfx['new_deaths'] = dfactual['New deaths'].rolling(7,center=True).mean().rolling(28).mean()
+  dfx['new_deaths'] = dfactual['New deaths'].rolling(7,center=True).mean().rolling(10).mean()
   dfx['total_deaths'] = dfx['new_deaths'].cumsum()
   dfx['growth'] = getgrowthrate(dfx['total_deaths'],7)
   # dfx.to_csv('actualdeaths.csv',index=False)
@@ -185,7 +133,6 @@ def lookahead(base,inc,bound):
        return ans   
 
 def findnexttrig(dfx, sev, trig, trignum):
-   print('.')
    lastday = len(dfx)
    sev.append(0.00)
    trig.append(lastday)
@@ -198,20 +145,20 @@ def findnexttrig(dfx, sev, trig, trignum):
    upperbound = trig[trignum-1]+maxphaselength # should not go beyond lastday-shiftlag+30
    if upperbound > lastday-shiftlag+30:
       upperbound = lastday-shiftlag+30
- #  print("trigger index:",trignum)
-#   print("try from",lowerbound,"to",upperbound)
+   print("trigger index:",trignum)
+   print("try from",lowerbound,"to",upperbound)
    span = lastday
    for s in range(0,sevsteps+1):
       currsev = round(s*sevmult,2)
- #     print(">severity:",currsev)
+      print(">severity:",currsev)
       scorerun = 0
       score = 0
       for t in range(lowerbound,upperbound):
          lastscore = score
          sev[trignum] = currsev
          trig[trignum] = t
-         span = lookahead(t,horizon,lastday)
          result = runandalignsim(dfx,sev,trig)
+         span = lookahead(t,horizon,lastday)
          score = scorealignment(result,span) # span vs lastday
          if abs(score - lastscore)<epsilon:
             scorerun = scorerun + 1
@@ -219,13 +166,13 @@ def findnexttrig(dfx, sev, trig, trignum):
             scorerun = 0
          if scorerun == 5:
             break
- #        print(currsev,t,score)
+         print(currsev,t,score)
          if score < bestscore:
             bestscore = score
             bests = currsev
             besttrig = t
-#      print(bestscore,bests,besttrig)
-#   print(">>best:",bests,besttrig,bestscore,"*",span)
+      print(bestscore,bests,besttrig)
+   print(">>best:",bests,besttrig,bestscore,"*",span)
    sev[trignum] = bests
    trig[trignum] = besttrig
    return bestscore, sev, trig
@@ -260,8 +207,8 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
          lastscore = score
          sev[trignum] = currsev
          trig[trignum] = t
-         span = lookahead(t,horizon,lastday)
          result = runandalignsim(dfx,sev,trig)
+         span = lookahead(t,horizon,lastday)
          score = scorealignment(result,span) # span vs lastday
          if abs(score - lastscore)<epsilon:
             scorerun = scorerun + 1
@@ -316,38 +263,13 @@ def setcountry(ccode):
    global countryname
    global country_df
    global countrycode
-#   earlystarters=['CN']
-   n_records=60
    countrycode = ccode
    countryname = cd.getcountryname(countrycode)
-   #getcountrydata now returns a frame with new data
    country_df = cd.getcountrydata(countrycode)
 
-   
-def checkenoughdeaths(ccode):
-   setcountry(ccode)
-   dfx = getactualdeaths(countryname)
-   zerodeathsprefix = dfx['total_deaths'].head(shiftlag).mean() < epsilon
-   lessthantwenty = dfx['new_deaths'].sum() < 20
-   return dfx,zerodeathsprefix,lessthantwenty
-
 def computephases(ccode):
-   initsev = [0.0]
-   dfx,zerodeaths,lessthantwenty = checkenoughdeaths(ccode)
-# =============================================================================
-#    if zerodeaths:
-#       initsev = [1.0]
-#    if lessthantwenty:
-#       return 1.0,dfx,[1.0],[1],[1.0],[1]
-# =============================================================================
-   score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, initsev, [1])
+   score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, [0.0], [1])
    return score, dfx, sev, trig, longsev, longtrig
-
-# =============================================================================
-# def computephases(ccode):
-#    score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, [0.0], [1])
-#    return score, dfx, sev, trig, longsev, longtrig
-# =============================================================================
 
 def extendphases(ccode, sev, trig):
    setcountry(ccode)
@@ -393,7 +315,7 @@ def finetune1(ccode, origsev, origtrig):
       # severity
       bestsev = midsev
       bestscore = 10000000
-#      print(">severity:",i,midsev)
+      print(">severity:",i,midsev)
       for j in range(-sevsteps,sevsteps):
          trysev = round(midsev + j*sevmult,2)
          if trysev < 0:
@@ -404,28 +326,28 @@ def finetune1(ccode, origsev, origtrig):
          result = runandalignsim(dfx,sev,trig)
          span = lookahead(trig[i],horizon,lastday)
          score = scorealignment(result,span)
- #        print('-',trysev,score)
+         print('-',trysev,score)
          if score < bestscore:
             bestscore = score
             bestsev = trysev
-#      print(">>best:",bestsev,trig[i],bestscore)
+      print(">>best:",bestsev,trig[i],bestscore)
       sev[i] = bestsev
       # trig
       if i > 0:
         besttrig = midtrig
         bestscore = 10000000
- #       print(">trig:",i,midtrig)
+        print(">trig:",i,midtrig)
         for j in range(-trigsteps,trigsteps):
            trytrig = midtrig + j
            trig[i] = trytrig
            result = runandalignsim(dfx,sev,trig)
            span = lookahead(trig[i],horizon,lastday)
            score = scorealignment(result,span)
-   #        print('-',trytrig,score)
+           print('-',trytrig,score)
            if score < bestscore:
               bestscore = score
               besttrig = trytrig
-#        print(">>best:",sev[i],besttrig,bestscore)
+        print(">>best:",sev[i],besttrig,bestscore)
         trig[i] = besttrig
 
    return bestscore, sev, trig

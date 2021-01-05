@@ -1,11 +1,9 @@
 import getdeaths as gd
 import pandas as pd
 import cdatabbp as bbp
-import covidlib as cl
-import datetime as dt
+import os
 
 useBBPdata = True
-a=2
 
 testcountries = ['IN','CH','US','FR']
 # testcountries = ['CH','SV','LA']
@@ -16,7 +14,7 @@ def getdeathdata(countryname):
    df = gd.get_death_data_by_country(countryname)
    return df.fillna(0).reset_index()
 
-test_df = pd.read_csv("countrytests.csv")
+test_df = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/countrytests.csv")
 
 def merge_with_test_data(df, countryname):
   col = test_df.columns
@@ -100,7 +98,6 @@ def checkcountryparams(countrycode):
    return paramdata
 
 def getcountrydata(countrycode):
-   n_records=60
    countryname = getcountryname(countrycode)
    if useBBPdata:
        resultdf = bbp.get_country_df(countrycode)
@@ -111,10 +108,6 @@ def getcountrydata(countrycode):
        newdf = df.rename(columns = {'total_deaths': 'accumulated_deaths'}, inplace = False)
        newdf['accumulated_cases'] = 0
        resultdf = newdf.reset_index()[['Date','accumulated_deaths','tests','accumulated_cases']]
-   day1 = dt.datetime.strptime(resultdf.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=n_records)
-   empty_df=cl.create_empty_country_df(day1, n_records)
-   frames=[empty_df,resultdf]
-   resultdf=pd.concat(frames)
    return resultdf
 
 countries = {
@@ -364,7 +357,7 @@ countries = {
 #    'VG': 'Virgin Islands, British',
 #    'VI': 'Virgin Islands, U.S.',
 #    'WF': 'Wallis and Futuna',
-#    'EH': 'Western Sahara',
+    'EH': 'Western Sahara',
     'YE': 'Yemen',
     'ZM': 'Zambia',
     'ZW': 'Zimbabwe'
