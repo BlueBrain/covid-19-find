@@ -32,7 +32,6 @@ const PhaseNumberInput: React.FC<{
       min={inputProps.min}
       max={inputProps.max}
       step={inputProps.step}
-      defaultValue={defaultValue}
       value={inputValue}
       type="number"
       required
