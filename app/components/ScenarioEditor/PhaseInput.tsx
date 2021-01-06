@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { match } from 'ts-pattern';
 import {
   NumberInputProp,
   SelectInputProp,
@@ -22,19 +23,45 @@ const PhaseInput: React.FC<PhaseInputProps> = ({
   onChange,
   value,
 }) => {
-  let inputComponent: React.FC<PhaseInputProps> = PhaseNumberInput;
-  if (inputProps.type === INPUT_TYPES.select) {
-    inputComponent = PhaseSelectInput;
-  } else if (inputProps.type === INPUT_TYPES.boolean) {
-    inputComponent = PhaseSwitchInput;
-  } else if (inputProps.type === INPUT_TYPES.text) {
-    inputComponent = PhaseTextInput;
-  }
-  return inputComponent({
-    inputProps,
-    onChange,
-    value,
-  });
+  return match(inputProps.type)
+    .with(INPUT_TYPES.number, () => (
+      <PhaseNumberInput
+        {...{
+          inputProps: inputProps as NumberInputProp,
+          onChange,
+          value: value as number,
+        }}
+      />
+    ))
+    .with(INPUT_TYPES.select, () => (
+      <PhaseSelectInput
+        {...{
+          inputProps: inputProps as SelectInputProp,
+          onChange,
+          value: value as string,
+        }}
+      />
+    ))
+    .with(INPUT_TYPES.boolean, () => (
+      <PhaseSwitchInput
+        {...{
+          inputProps: inputProps as BooleanInputProp,
+          onChange,
+          value: value as boolean,
+        }}
+      />
+    ))
+
+    .with(INPUT_TYPES.text, () => (
+      <PhaseTextInput
+        {...{
+          inputProps,
+          onChange,
+          value: value as string,
+        }}
+      />
+    ))
+    .run();
 };
 
 export default PhaseInput;
