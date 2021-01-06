@@ -10,11 +10,11 @@ const PhaseNumberInput: React.FC<{
 }> = ({ inputProps, onChange, value: defaultValue }) => {
   const ref = React.useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = React.useState<string>(
-    defaultValue.toString(),
+    defaultValue?.toString(),
   );
 
   React.useEffect(() => {
-    setInputValue(defaultValue.toString());
+    setInputValue(defaultValue?.toString());
   }, [defaultValue]);
 
   const handleBlur = () => {
