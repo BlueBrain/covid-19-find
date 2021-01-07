@@ -121,10 +121,14 @@ button {
   background: #00a5b1;
   color: #fff;
 
-  &:hover {
+  &:active:hover:not([disabled]) {
     color: #00a5b1;
     border-color: #fff;
     background: #fff;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
   }
 
   &.clear {
