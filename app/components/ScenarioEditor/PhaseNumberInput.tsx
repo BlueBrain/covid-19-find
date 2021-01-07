@@ -5,7 +5,7 @@ import './phase-input.less';
 
 const PhaseNumberInput: React.FC<{
   inputProps: NumberInputProp;
-  onChange: (number: number) => void;
+  onChange: (value: number | string) => void;
   value: number;
 }> = ({ inputProps, onChange, value: defaultValue }) => {
   const ref = React.useRef<HTMLInputElement>(null);
@@ -18,7 +18,7 @@ const PhaseNumberInput: React.FC<{
   }, [defaultValue]);
 
   const handleBlur = () => {
-    onChange(Number(inputValue));
+    onChange(!isNaN(Number(inputValue)) ? Number(inputValue) : inputValue);
   };
   const handleChange = () => {
     setInputValue(ref?.current.value);
