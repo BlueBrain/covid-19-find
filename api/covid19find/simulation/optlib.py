@@ -171,7 +171,7 @@ def getactualdeaths(countryname):
   dfx = pd.DataFrame()
   dfx['Date'] = dfactual['Date']
   dfx['orig_new_deaths'] = dfactual['New deaths']
-  dfx['new_deaths'] = dfactual['New deaths'].rolling(7,center=True).mean().rolling(28).mean()
+  dfx['new_deaths'] = dfactual['New deaths'].rolling(28,center=True).mean()
   dfx['total_deaths'] = dfx['new_deaths'].cumsum()
   dfx['growth'] = getgrowthrate(dfx['total_deaths'],7)
   # dfx.to_csv('actualdeaths.csv',index=False)

@@ -314,9 +314,9 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       if total_actual_deaths==0:
           default_scenarios[i]['imported_infections_per_day']=0
       elif total_actual_deaths<=500:
-          default_scenarios[i]['imported_infections_per_day']=0.1
+          default_scenarios[i]['imported_infections_per_day']=0.05
       else:
-          default_scenarios[i]['imported_infections_per_day']=8
+          default_scenarios[i]['imported_infections_per_day']=10
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
@@ -428,6 +428,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
              
       if expert_mode:
          plot_results(scenario_name,'ALL',dfsumcomp['newtested_mit'],dfsum['dates'],dfsum['isolated'],dfsum['infected'],dfsum['tested_mit'],dfsum['infectednotisolated'],dfsum['confirmed'],dfsum['deaths'],dfsum['susceptibles'],dfsum['prevalence'],country_df['accumulated_deaths'],)
+         dfsum.to_csv('richard_dump.csv')
          print('************')
 
       prevalence=dfsum.iloc[par.num_days-1]['prevalence']  
@@ -1270,10 +1271,12 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      if len(actual_deaths)>0:
         if len(deaths)-len(actual_deaths)>0:
             padding=np.zeros(len(deaths)-len(actual_deaths))
+            padding=[]
             actual_deaths=np.concatenate((np.array(actual_deaths),padding))
         else: 
             actual_deaths=actual_deaths[0:len(deaths)]  
-        plt.plot(dates,actual_deaths,color='g', label='Actual deaths')
+        plt.plot(dates,actual_deaths,color='y', label='Actual deaths')
+      
      plt.title(scenario_name+': '+compartment+' - Deaths')
      plt.ylabel('Number')
      plt.xlabel('Date')
