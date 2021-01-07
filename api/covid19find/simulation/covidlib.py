@@ -180,9 +180,6 @@ def update_system_params2(p, fixed_params):
     p['IFR_corrected']=IFR_1_14*prop_1_14+IFR_15_64*prop_15_64+IFR_gt_64*prop_gt_64
     p['past_dates']=fixed_params['past_dates']
     p['past_severities']=fixed_params['past_severities']
-    ## hack
-    fixed_params["num_days"]=450
-    print(fixed_params["num_days"])
     p['num_days']=fixed_params['num_days']
     return
 
@@ -205,7 +202,12 @@ def update_system_params2(p, fixed_params):
 def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'no testing' - so simulations of past
 #also use 'no testing'. This is also a temp fix for open problem with result_period
-   
+# =============================================================================
+#    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
+#    empty_df=create_empty_country_df(day1, 60)
+#    frames=[empty_df,country_df_raw]
+#    country_df_raw=pd.concat(frames)
+# =============================================================================
    validation_result=validate_fixed_params(fixed_params)
    if validation_result==-1:
        raise CustomError('Invalid population numbers')
@@ -308,25 +310,33 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       scenario_name='scenario' + ' '+ str(i) #it should have a proper name
       filename =os.path.join(cl_path_prefix, params_dir, scenario_name+'_out.csv')
 #optimization always uses 'no testing'. This also resolves open issue with results_period
-     
+      total_actual_deaths=country_df['accumulated_deaths'].max()
+      if total_actual_deaths==0:
+          default_scenarios[i]['imported_infections_per_day']=0
+      elif total_actual_deaths<=500:
+          default_scenarios[i]['imported_infections_per_day']=0.05
+      else:
+          default_scenarios[i]['imported_infections_per_day']=10
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
       max_betas = get_beta(no_intervention_betafile, num_compartments)
       
- # runs an initial simulation to align dates with simulation days 
-      date_par=Par(p)
-      date_par.ty_reduction=0
-      date_par.fatality_reduction_per_day=0
-      date_sim = Sim(date_par.num_days,date_par.num_compartments)
-      date_sim.set_initial_conditions(date_par)
-      use_real_testdata=False #we can't yet use real testdata because we have no dates to align it with
-      throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75,0,use_real_testdata)
-      dfsum_dates = date_df.groupby(['days']).sum().reset_index()
-      # I have been playing with this- hope this is now right version for BBP
+ # runs an initial simulation to align dates with simulation days - this is no longer necessary. Simulation starts on first day of country_dfempty
+# =============================================================================
+#       date_par=Par(p)
+#       date_par.ty_reduction=0
+#       date_par.fatality_reduction_per_day=0
+#       date_sim = Sim(date_par.num_days,date_par.num_compartments)
+#       date_sim.set_initial_conditions(date_par)
+#       use_real_testdata=False #we can't yet use real testdata because we have no dates to align it with
+#       #throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75,0,use_real_testdata)
+#       dfsum_dates = date_df.groupby(['days']).sum().reset_index()
+#       # I have been playing with this- hope this is now right version for BBP
+# =============================================================================
       day1 = dt.datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d")
-     # shift=0
-      day1,shift = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
+      shift=0
+ #     day1,shift = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
       
       #reads the trig values in scenarios i and converts to simulation days - does not yet check for type of trigger
       # this code is very dicy and needs checking
@@ -418,6 +428,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
              
       if expert_mode:
          plot_results(scenario_name,'ALL',dfsumcomp['newtested_mit'],dfsum['dates'],dfsum['isolated'],dfsum['infected'],dfsum['tested_mit'],dfsum['infectednotisolated'],dfsum['confirmed'],dfsum['deaths'],dfsum['susceptibles'],dfsum['prevalence'],country_df['accumulated_deaths'],)
+         dfsum.to_csv('richard_dump.csv')
          print('************')
 
       prevalence=dfsum.iloc[par.num_days-1]['prevalence']  
@@ -544,7 +555,7 @@ class Par:
       self.prop_contacts_traced=list(map(float, params['prop_contacts_traced']))
       self.test_multipliers=list(map(int,params['test_multipliers']))
       self.requireddxtests=list(map(int,params['requireddxtests']))
-      self.imported_infections_per_day=list(map(int, params['imported_infections_per_day']))
+      self.imported_infections_per_day=list(map(float, params['imported_infections_per_day']))
       self.is_counterfactual=[]
       self.fatality_reduction=float(params['fatality_reduction'])
       self.fatality_reduction_per_day=0
@@ -738,6 +749,8 @@ class Sim:
         asymptomatic=np.zeros(par.num_compartments)
         testsperformed=np.zeros(par.num_compartments)
         p_infected=np.zeros(par.num_compartments)
+        p_infected_if_symptomatic=np.zeros(par.num_compartments)
+        p_infected_if_asymptomatic=np.zeros(par.num_compartments)
         expected_infected=np.zeros(par.num_compartments)
         symptomatic_covid=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
         asymptomatic_covid=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
@@ -746,14 +759,21 @@ class Sim:
         newsymptomatic=othersymptomatic+symptomatic_covid
         asymptomatic=sim.population[t-1]-newsymptomatic
         total_symptomatic=newsymptomatic.sum()
-        if newsymptomatic.sum()>0:
-           p_infected_if_symptomatic=symptomatic_covid/newsymptomatic        
+        for i in range(0,par.num_compartments):
+            if newsymptomatic[i]>0:
+                p_infected_if_symptomatic[i]=symptomatic_covid[i]/newsymptomatic[i]        
+            else:
+                p_infected_if_symptomatic[i]=0
+            if sim.population[t-1,i]>0:
+                p_infected_if_asymptomatic[i]=asymptomatic_covid[i]/sim.population[t-1,i]
+            else:
+                p_infected_if_asymptomatic[i]=0
+        if total_symptomatic>0:
+            prop_tests=newsymptomatic/total_symptomatic
         else:
-           p_infected_if_symptomatic=0
-        p_infected_if_asymptomatic=asymptomatic_covid/sim.population[t-1]
-        prop_tests=newsymptomatic/total_symptomatic
-    #    if (use_real_testdata) and ispast(par.day1,t):
-        if use_real_testdata and (t<272):
+            prop_tests=[0,0,0]
+        if (use_real_testdata) and ispast(par.day1,t):
+        #if use_real_testdata and (t<380):
           tests_available=sim.actualtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
@@ -1219,8 +1239,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                sim.incidence[t,i]=0
                sim.prevalence[t,i]=0
        #There is a contradiction here. I may already have defined a stable level for this
-       #if(ispast(par.day1,t)): replacement here is temporary
-       if t<272:
+       if(ispast(par.day1,t)): 
            if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day 
        else: #future phases
@@ -1252,10 +1271,12 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      if len(actual_deaths)>0:
         if len(deaths)-len(actual_deaths)>0:
             padding=np.zeros(len(deaths)-len(actual_deaths))
+            padding=[]
             actual_deaths=np.concatenate((np.array(actual_deaths),padding))
         else: 
             actual_deaths=actual_deaths[0:len(deaths)]  
-        plt.plot(dates,actual_deaths,color='g', label='Actual deaths')
+        plt.plot(dates,actual_deaths,color='y', label='Actual deaths')
+      
      plt.title(scenario_name+': '+compartment+' - Deaths')
      plt.ylabel('Number')
      plt.xlabel('Date')
@@ -1368,9 +1389,6 @@ def alignactualwithsimulated(dfactual,dfsimdeaths):
 
 
 def ispast(start_date,t):
-    #this is a hack to make sure initial simulation to find date always takes place in the past
-    if t<150:
-        return(True)
     today=dt.datetime.now()
     simday=(today-start_date).days
     if t<=simday:
@@ -1391,6 +1409,12 @@ def computetoday(start_date,triggers):
 def create_past(param,defaults,trigger_values, severity):
     n_phases=len(trigger_values)
     past={}
+# =============================================================================
+#     if param['total_pop']>=4000000:
+#         defaults['imported_infections_per_day']=4
+#     else:
+#         defaults['imported_infections_per_day']=0.1
+# =============================================================================
     for a_key in defaults.keys():
         a_value=defaults[a_key]
         a_list=[a_value]*n_phases
