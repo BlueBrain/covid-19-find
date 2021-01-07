@@ -259,10 +259,10 @@ class Simulator:
             # skip header
             next(csv_reader)
             for row in csv_reader:
-                country_code = row[0]
+                country_code = row[1]
                 past_phases[country_code] = {
-                    "severities": json.loads(row[2]),
-                    "dates": json.loads(row[3])
+                    "severities": json.loads(row[3]),
+                    "dates": json.loads(row[4])
                 }
 
         return past_phases
