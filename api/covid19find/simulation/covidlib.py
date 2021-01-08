@@ -202,12 +202,10 @@ def update_system_params2(p, fixed_params):
 def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'no testing' - so simulations of past
 #also use 'no testing'. This is also a temp fix for open problem with result_period
-# =============================================================================
-#    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
-#    empty_df=create_empty_country_df(day1, 60)
-#    frames=[empty_df,country_df_raw]
-#    country_df_raw=pd.concat(frames)
-# =============================================================================
+   day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
+   empty_df=create_empty_country_df(day1, 60)
+   frames=[empty_df,country_df_raw]
+   country_df_raw=pd.concat(frames)
    validation_result=validate_fixed_params(fixed_params)
    if validation_result==-1:
        raise CustomError('Invalid population numbers')
@@ -1271,7 +1269,6 @@ def plot_results(scenario_name,compartment,num_tests, dates,newisolated,newinfec
      if len(actual_deaths)>0:
         if len(deaths)-len(actual_deaths)>0:
             padding=np.zeros(len(deaths)-len(actual_deaths))
-            padding=[]
             actual_deaths=np.concatenate((np.array(actual_deaths),padding))
         else: 
             actual_deaths=actual_deaths[0:len(deaths)]  

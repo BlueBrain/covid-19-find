@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=1
+a=3
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -210,7 +210,8 @@ def findnexttrig(dfx, sev, trig, trignum):
          lastscore = score
          sev[trignum] = currsev
          trig[trignum] = t
-         span = lookahead(t,horizon,lastday)
+         #have taken 14 off this on John's suggestion
+         span = lookahead(t,horizon,lastday-14)
          result = runandalignsim(dfx,sev,trig)
          score = scorealignment(result,span) # span vs lastday
          if abs(score - lastscore)<epsilon:
@@ -320,7 +321,6 @@ def setcountry(ccode):
    n_records=60
    countrycode = ccode
    countryname = cd.getcountryname(countrycode)
-   #getcountrydata now returns a frame with new data
    country_df = cd.getcountrydata(countrycode)
 
    
