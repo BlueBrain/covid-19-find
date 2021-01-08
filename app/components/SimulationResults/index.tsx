@@ -345,8 +345,6 @@ const SimulationResults: React.FC<{
                             deaths: scenario.totalDeaths,
                           };
 
-                          console.log({ scenario, index, data, maxDeaths });
-
                           // The x axis will show the total number of infected, y axis the total number of people in isolation, and the diameter of the circle will be proportional to the total number of deaths
                           return {
                             data: [data],

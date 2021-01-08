@@ -15,7 +15,8 @@ const ScenarioList: React.FC<{
   defaultScenarios: ClientScenarioData[];
   scenarios: ClientScenarioData[];
   onSubmit?: (scenarioListSubmit: { scenarios: ClientScenarioData[] }) => void;
-}> = ({ defaultScenarios, scenarios = [], onSubmit }) => {
+  onChange: () => void;
+}> = ({ defaultScenarios, scenarios = [], onSubmit, onChange }) => {
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
     const scenario = scenarios[index];
@@ -30,6 +31,7 @@ const ScenarioList: React.FC<{
               onSubmit({
                 scenarios: newScenarios,
               });
+            onChange();
           },
         },
         {
@@ -52,6 +54,7 @@ const ScenarioList: React.FC<{
       onSubmit({
         scenarios: newScenarios,
       });
+    onChange();
   };
 
   return (
@@ -83,6 +86,7 @@ const ScenarioList: React.FC<{
               const newScenarios = scenarios;
               newScenarios[index] = changedScenario;
               onSubmit && onSubmit({ scenarios: newScenarios });
+              onChange();
             };
 
             return (

@@ -134,6 +134,7 @@ const ScenarioEditorPanel: React.FC<{
             defaultScenarios={defaultScenarios}
             scenarios={scenariosValue.scenarios}
             onSubmit={setScenariosValue}
+            onChange={handleChange}
           />
           <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
             {!isValid && !!invalidScenarioIndexes.length && (

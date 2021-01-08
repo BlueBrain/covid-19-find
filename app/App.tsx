@@ -147,7 +147,10 @@ const App: React.FC = () => {
       />
       {/* CONTROL PANEL */}
       <section>
-        <SaveScenariosButton state={state} />
+        <SaveScenariosButton
+          disabled={!countrySelectFormReady || !testsFormReady}
+          state={state}
+        />
       </section>
     </>
   );
