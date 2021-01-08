@@ -18,7 +18,7 @@ import datetime as dt
 
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
-ccode="FR"
+ccode="CH"
 test_directory='scratch1'
 n_records=60
 countrycode = ccode
@@ -34,8 +34,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
-# past_severities=[0.0, 0.05, 0.0, 0.95, 1.0, 0.95, 0.85, 0.75, 0.65, 0.75]
-# past_dates=[1, 15, 38, 65, 80, 94, 148, 202, 250, 267]
+#past_dates= [1, 15, 70, 84, 105, 126, 142, 163, 190, 217, 259, 300, 327, 364]
+#past_severities= [0.0, 1.0, 0.5, 0.45, 0.85, 0.95, 1.0, 0.95, 1.0, 0.95, 0.9, 0.45, 0.75, 0.8]
 # =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -113,24 +113,24 @@ scenario_params=[]
 # =============================================================================
     
 scenario_params.append({
-    'severity':[0.95, 0.7,0.95],\
-    'trig_values':['2022-12-29','2022-12-23','2022-01-03'],\
-    'trig_def_type':['date','date','date'],\
+    'severity':[0.9, 0.9],\
+    'trig_values':['2021-01-12','2022-01-18'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[250000,250000,250000],\
-    'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95],\
-    'num_tests_care':[10000,10000,10000],\
-    'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25,0.25],\
-    'imported_infections_per_day':[4,4,4],\
-    'requireddxtests':[0,0,0],\
-    'is_counterfactual':['False','False','False'],\
-    'test_strategy':['no testing','symptomatic first','symptomatic first'],\
-    'results_period':[3,3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4,0.4],
-    'fatality_reduction_recent':[0.35,0.35,0.35]
+    'num_tests_mitigation':[250000,250000],\
+    'type_test_mitigation':['PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.95,0.95],\
+    'num_tests_care':[10000,10000],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':[0.25,0.25],\
+    'imported_infections_per_day':[4,4],\
+    'requireddxtests':[0,0],\
+    'is_counterfactual':['False','False'],\
+    'test_strategy':['no testing','symptomatic first'],\
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 # =============================================================================

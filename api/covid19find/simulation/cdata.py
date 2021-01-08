@@ -1,9 +1,11 @@
 import getdeaths as gd
 import pandas as pd
 import cdatabbp as bbp
-import os
+import covidlib as cl
+import datetime as dt
 
 useBBPdata = True
+a=2
 
 testcountries = ['IN','CH','US','FR']
 # testcountries = ['CH','SV','LA']
@@ -14,7 +16,7 @@ def getdeathdata(countryname):
    df = gd.get_death_data_by_country(countryname)
    return df.fillna(0).reset_index()
 
-test_df = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/countrytests.csv")
+test_df = pd.read_csv("countrytests.csv")
 
 def merge_with_test_data(df, countryname):
   col = test_df.columns
@@ -98,6 +100,7 @@ def checkcountryparams(countrycode):
    return paramdata
 
 def getcountrydata(countrycode):
+   n_records=60
    countryname = getcountryname(countrycode)
    if useBBPdata:
        resultdf = bbp.get_country_df(countrycode)
@@ -114,7 +117,6 @@ def getcountrydata(countrycode):
 #    frames=[empty_df,resultdf]
 #    resultdf=pd.concat(frames)
 # =============================================================================
-
    return resultdf
 
 countries = {
@@ -364,7 +366,7 @@ countries = {
 #    'VG': 'Virgin Islands, British',
 #    'VI': 'Virgin Islands, U.S.',
 #    'WF': 'Wallis and Futuna',
-    'EH': 'Western Sahara',
+#    'EH': 'Western Sahara',
     'YE': 'Yemen',
     'ZM': 'Zambia',
     'ZW': 'Zimbabwe'
