@@ -112,9 +112,11 @@ def getcountrydata(countrycode):
        newdf['accumulated_cases'] = 0
        resultdf = newdf.reset_index()[['Date','accumulated_deaths','tests','accumulated_cases']]
    day1 = dt.datetime.strptime(resultdf.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=n_records)
-   empty_df=cl.create_empty_country_df(day1, n_records)
-   frames=[empty_df,resultdf]
-   resultdf=pd.concat(frames)
+# =============================================================================
+#    empty_df=cl.create_empty_country_df(day1, n_records)
+#    frames=[empty_df,resultdf]
+#    resultdf=pd.concat(frames)
+# =============================================================================
    return resultdf
 
 countries = {
