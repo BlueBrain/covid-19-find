@@ -152,7 +152,7 @@ const SimulationResults: React.FC<{
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {
       return {
-        label: clientScenariosInput[scenarioIndex].name,
+        label: clientScenariosInput[scenarioIndex]?.name,
         data: scenarioResult.data.total.reduce(
           (memo, entry, timeseriesIndex) => {
             const key = entry.date;
