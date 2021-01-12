@@ -8,13 +8,14 @@ import pandas as pd
 
 from .simulation.covidlib import run_simulation, get_system_params, cl_path_prefix
 
-
 import sys
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/simulation")
 
 print ((os.path.dirname(os.path.realpath(__file__)) + "/simulation"))
 
 import cdata
+
 
 class Simulator:
 
@@ -187,6 +188,7 @@ class Simulator:
     @staticmethod
     def __dataframe_row_to_response(index_row):
         row = index_row[1]
+        rEff = row.get("reff", math.nan)
         return {
             "day": int(row["days"]),
             "date": row["dates"].date().isoformat(),
@@ -201,7 +203,7 @@ class Simulator:
             "totalDeaths": int(row["deaths"]),
             "totalRecovered": int(row["recovered"]),
             "beta": row["beta"],
-            "rEff": row.get("reff", None),
+            "rEff": None if math.isnan(rEff) else rEff,
             "susceptibleProportion": row["susceptibleprop"],
             "newTests": int(row["newtested_mit"]),
             "newInfected": int(row["newinfected"]),
