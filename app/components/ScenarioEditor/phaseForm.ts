@@ -154,10 +154,6 @@ export default [
         key: 'typeTestsMitigation',
         options: [
           {
-            label: 'None',
-            value: null,
-          },
-          {
             label: TEST_TYPES.PCR,
             value: TEST_TYPES.PCR,
           },
@@ -211,10 +207,6 @@ export default [
         min: 0,
         key: 'typeTestsCare',
         options: [
-          {
-            label: 'None',
-            value: null,
-          },
           {
             label: TEST_TYPES.PCR,
             value: TEST_TYPES.PCR,
