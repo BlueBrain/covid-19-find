@@ -110,7 +110,7 @@ export default [
         options: [
           {
             label: 'None',
-            value: null,
+            value: 0,
           },
           {
             label: '10%',
