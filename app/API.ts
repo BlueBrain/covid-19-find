@@ -79,9 +79,10 @@ export default class API {
       ...simulationParams,
       scenarios: simulationParams.scenarios.map(scenario => ({
         phases: scenario.phases.map(
-          ({ name, fatalityReductionRecent, ...rest }) => ({
+          ({ name, fatalityReductionRecent, trigger, ...rest }) => ({
             ...rest,
             fatalityReductionRecent: fatalityReductionRecent / 100,
+            trigger: `${trigger}`,
           }),
         ),
       })),

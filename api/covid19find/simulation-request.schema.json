@@ -104,13 +104,12 @@
                   "type": "string",
                   "enum": [
                     "date",
-                    "new deaths",
-                    "new cases",
-                    "new cases per million",
+                    "deaths",
+                    "cases",
+                    "cases per million",
                     "increase cases",
-                    "accumulated deaths",
-                    "accumulated cases",
-                    "R0"
+                    "increase deaths",
+                    "positives"
                   ]
                 },
                 "triggerCondition": {
