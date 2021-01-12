@@ -140,7 +140,7 @@ const CovidResults: React.FC<{
                   {
                     scaleLabel: {
                       display: true,
-                      labelString: 'Number of People (per day)',
+                      labelString: 'Number of People',
                     },
                     gridLines: {
                       color: '#00000005',
