@@ -36,16 +36,22 @@ def setlengths(minp,maxp,hor):
 
 def aligntotest(dfactual,dfsimdeaths):
    simdeaths = dfsimdeaths['total_deaths'].tolist()
+   day1 = dt.datetime.strptime(dfactual.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
+   empty_df=cl.create_empty_country_df(day1, 60)
+   frames=[empty_df,dfactual]
+
+   results_df=pd.concat(frames)
    actdeaths = dfactual['total_deaths'].tolist()
 #   aligneddeaths, shift = cl.aligndeaths(actdeaths,simdeaths)
  #  dfactual['sim_total_deaths'] = aligneddeaths
-   dfactual['sim_total_deaths'] = simdeaths
+ #lengths do not match
+   results_df['sim_total_deaths'] = simdeaths
    # day0 = dfactual.iloc[shift]['Date']
-   return dfactual
+   return results_df
 
-def getsimdeaths(sev,trig):
+def getsimdeaths(dfx,sev,trig):
 
-   test_directory = 'scratch1'
+   test_directory = 'scratch2'
    fixed_params=cl.get_system_params(test_directory)
    fixed_params.update(cd.getcountryparams(countrycode))
 
@@ -54,9 +60,9 @@ def getsimdeaths(sev,trig):
    fixed_params['past_dates'] = trig
    fixed_params['expert_mode'] = False
    fixed_params['save_results'] = "False"
-   local_df=country_df
+   local_df=dfx
 #   fixed_params['fatality_reduction'] = 0.35
-   fixed_params['num_days'] = len(country_df)
+   fixed_params['num_days'] = len(country_df)+60
 #   print(len(country_df))
    
    scenario_params=[]
@@ -132,7 +138,7 @@ def scorealignment(result,span):
 # =============================================================================
 
 def runandalignsim(dfx,sev,trig):
-   simdeaths = getsimdeaths(sev,trig)
+   simdeaths = getsimdeaths(dfx,sev,trig)
    result = aligntotest(dfx,simdeaths)
    result['sim_new_deaths'] = result['sim_total_deaths'].diff().fillna(result['sim_total_deaths'].iloc[0]).rolling(7,center=True).mean()
    result['sim_growth'] = getgrowthrate(result['sim_total_deaths'],7)
@@ -186,7 +192,7 @@ def lookahead(base,inc,bound):
 
 def findnexttrig(dfx, sev, trig, trignum):
    print('.')
-   lastday = len(dfx)
+   lastday = len(dfx)+60
    sev.append(0.00)
    trig.append(lastday)
    sevsteps = 20
@@ -283,7 +289,8 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
 
 def getbestfit(dfx, sev, trig):
    sc = 0
-   lastday = len(dfx)
+   #This is addition to compensate for added extra frame
+   lastday = len(dfx)+60
    i = len(sev)
    print(trig[-1],(lastday-shiftlag))
    while trig[-1] < (lastday-shiftlag):
@@ -432,13 +439,15 @@ def finetune1(ccode, origsev, origtrig):
 
 def plotresult(result,figname,titlestr):
 # Length of plot reduced by 1 to get rid of anomalous last result
+  cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
   n = len(result['sim_total_deaths'])
   # fig = plt.figure()
   plt.title(titlestr)
   plt.plot(range(0,n),result['sim_total_deaths'],label='sim')
   plt.plot(range(0,n),result['total_deaths'],label='actual')
   plt.legend();
-  plt.savefig(figname+countrycode+'TotalDeaths.png')
+  filename=os.path.join(cl_path_prefix, 'results',figname+countrycode+'TotalDeaths.png' )
+  plt.savefig(filename)
   if figname == 'PLOT':
     plt.show()
   plt.clf()
@@ -446,6 +455,7 @@ def plotresult(result,figname,titlestr):
   plt.plot(range(0,n),result['sim_new_deaths'],label='sim')
   plt.plot(range(0,n),result['new_deaths'],label='actual')
   plt.legend()
+  filename=os.path.join(cl_path_prefix, 'results',figname+countrycode+'NewDeaths.png' )
   plt.savefig(figname+countrycode+'NewDeaths.png')
   if figname == 'PLOT':
     plt.show()
