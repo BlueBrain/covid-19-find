@@ -1,9 +1,12 @@
 import getdeaths as gd
 import pandas as pd
 import cdatabbp as bbp
+import covidlib as cl
+import datetime as dt
 import os
 
 useBBPdata = True
+a=2
 
 testcountries = ['IN','CH','US','FR']
 # testcountries = ['CH','SV','LA']
@@ -98,6 +101,7 @@ def checkcountryparams(countrycode):
    return paramdata
 
 def getcountrydata(countrycode):
+   n_records=60
    countryname = getcountryname(countrycode)
    if useBBPdata:
        resultdf = bbp.get_country_df(countrycode)
@@ -114,7 +118,6 @@ def getcountrydata(countrycode):
 #    frames=[empty_df,resultdf]
 #    resultdf=pd.concat(frames)
 # =============================================================================
-
    return resultdf
 
 countries = {
@@ -364,7 +367,7 @@ countries = {
 #    'VG': 'Virgin Islands, British',
 #    'VI': 'Virgin Islands, U.S.',
 #    'WF': 'Wallis and Futuna',
-    'EH': 'Western Sahara',
+#    'EH': 'Western Sahara',
     'YE': 'Yemen',
     'ZM': 'Zambia',
     'ZW': 'Zimbabwe'
