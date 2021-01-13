@@ -117,6 +117,10 @@ export default [
             value: 0.1,
           },
           {
+            label: '20%',
+            value: 0.2,
+          },
+          {
             label: '25%',
             value: 0.25,
           },
