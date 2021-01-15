@@ -99,7 +99,7 @@ const SimulationResults: React.FC<{
     },
     {
       title: 'Recovered',
-      key: 'newRecovered',
+      key: 'totalRecovered',
       cohort: 'total',
     },
     {
@@ -152,7 +152,7 @@ const SimulationResults: React.FC<{
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {
       return {
-        label: clientScenariosInput[scenarioIndex].name,
+        label: clientScenariosInput[scenarioIndex]?.name,
         data: scenarioResult.data.total.reduce(
           (memo, entry, timeseriesIndex) => {
             const key = entry.date;
@@ -579,7 +579,7 @@ const SimulationResults: React.FC<{
                                 {
                                   scaleLabel: {
                                     display: true,
-                                    labelString: 'Number of People (per day)',
+                                    labelString: 'Number of People',
                                   },
                                   gridLines: {
                                     color: '#00000005',
