@@ -769,7 +769,8 @@ class Sim:
             else:
                 p_infected_if_symptomatic[i]=0
             if sim.population[t-1,i]>0:
-                p_infected_if_asymptomatic[i]=asymptomatic_covid[i]/sim.population[t-1,i]
+                p_infected_if_asymptomatic=p_infected_if_symptomatic*par.relative_prob_infected
+                #p_infected_if_asymptomatic[i]=asymptomatic_covid[i]/sim.population[t-1,i]
             else:
                 p_infected_if_asymptomatic[i]=0
         if total_symptomatic>0:
@@ -791,7 +792,7 @@ class Sim:
                     testsperformed[i]=newsymptomatic[i]
                     symptomatic_tested[i]=newsymptomatic[i]
         #use remaining tests to test asymptomatics
-            remaining_tests=(tests_available-testsperformed).sum()*asymptomatic/asymptomatic.sum()
+            remaining_tests=(tests_available-testsperformed).sum()*prop_tests
             for i in range(0,par.num_compartments):                
                         testsperformed[i] = testsperformed[i]+remaining_tests[i]
                         asymptomatic_tested[i]=remaining_tests[i]     
@@ -800,7 +801,8 @@ class Sim:
                             p_infected[i]=expected_infected[i]/testsperformed[i]
                         else:
                             p_infected[i]=0
-        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected_if_symptomatic)   
+        #previously had p_infected_if_symptomatic
+        adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected)   
         return(testsperformed)
     
    def perform_tests_with_priorities(sim,par:Par,t,phase,use_real_testdata,priorities):
@@ -823,7 +825,7 @@ class Sim:
            p_infected_if_symptomatic=symptomatic_covid/newsymptomatic        
         else:
            p_infected_if_symptomatic=0
-        p_infected_if_asymptomatic=asymptomatic_covid/sim.population[t-1]
+        p_infected_if_asymptomatic=p_infected_if_symptomatic*par.relative_prob_infected
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=sim.actualtests_mit[t]
         else:

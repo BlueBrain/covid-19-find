@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=3
+a=4
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -456,7 +456,7 @@ def plotresult(result,figname,titlestr):
   plt.plot(range(0,n),result['new_deaths'],label='actual')
   plt.legend()
   filename=os.path.join(cl_path_prefix, 'results',figname+countrycode+'NewDeaths.png' )
-  plt.savefig(figname+countrycode+'NewDeaths.png')
+  plt.savefig(filename)
   if figname == 'PLOT':
     plt.show()
   plt.close()

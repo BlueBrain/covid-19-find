@@ -18,8 +18,8 @@ import datetime as dt
 
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
-ccode="CA"
-test_directory='BBP_testing'
+ccode="FR"
+test_directory='bbp_testing'
 n_records=60
 countrycode = ccode
 countryname = cd.getcountryname(countrycode)
@@ -34,15 +34,15 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
-#past_dates= [1, 15, 56, 70, 97, 118, 199, 226, 251, 295, 322, 343, 367]
-#past_severities= [0.0, 1.0, 0.8, 0.0, 0.55, 0.95, 0.9, 0.85, 0.75, 0.65, 0.8, 0.85, 0.9]
+#past_dates= [1, 15, 54, 68, 82, 105, 124, 151, 176, 259, 279, 301, 321, 362] 
+#past_severities= [0.0, 1.0, 0.55, 0.6, 0.35, 0.85, 1.0, 0.95, 1.0, 0.85, 1.0, 0.85, 1.0, 0.15]
 # =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
 
  #temporary. Front_end will provide real data
 fixed_params={
-    'test_directory':'bbp_testing',\
+    'test_directory':'BBP_testing',\
     'total_pop':8200000, \
     'hospital_beds':33000, \
     'prop_15_64': 0.66, \
@@ -110,7 +110,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':[0.9, 0.9],\
-    'trig_values':['2021-01-12','2022-01-18'],\
+    'trig_values':['2022-01-12','2022-01-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[13000,13000],\
