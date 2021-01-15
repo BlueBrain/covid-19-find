@@ -9,6 +9,8 @@ from multiprocessing import cpu_count
 from datetime import datetime
 import os
 
+a=2
+
 cl_path_prefix = os.path.abspath(os.path.dirname(__file__))
         
 def merge_files(in_name, out_name,out_name_long,n):
@@ -16,9 +18,9 @@ def merge_files(in_name, out_name,out_name_long,n):
     dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
     for i in range(0,n):
         dbname=in_name+str(i)+'.csv'
-        longdbname=in_name+str(i)+'long.csv'
+        dbname_long=in_name+str(i)+'long.csv'
         in_df=pd.read_csv(dbname,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
-        in_df_long=pd.read_csv(dbname,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
+        in_df_long=pd.read_csv(dbname_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
         df=df.append(in_df)
         dflong=dflong.append(in_df_long)
         #alist_long.append(origin_df_long)
@@ -30,17 +32,15 @@ def merge_files(in_name, out_name,out_name_long,n):
     
 
 def process_countries(a_tuple):
-    figname = 'RUN11RW'
+    figname = 'RUN12RW'
     dbname = 'dbx'
     start=a_tuple[0]
     finish=a_tuple[1]
     processor=a_tuple[2]
     testmode = False
     dbname = 'dbx_'+ str(processor)
-    
-    
-    fname1 = dbname+'.csv'
-    fname2 = dbname+'long.csv'
+    fname1 =os.path.join(cl_path_prefix, 'results', dbname+'.csv')
+    fname2 = os.path.join(cl_path_prefix, 'results',dbname+'long.csv')
     df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
     dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method',
                                    'Long Sev', 'Long Trig'])
@@ -104,8 +104,8 @@ if __name__=='__main__':
     
     with Pool(n_processors) as p:
         p.map(process_countries,tuples_list)
-    filename =os.path.join(cl_path_prefix, 'results', 'finaldb.csv')
-    filename_long =os.path.join(cl_path_prefix, 'results', 'finaldb_long.csv')
+    filename ='finaldb.csv'
+    filename_long ='finaldb_long.csv'
     dbxname=os.path.join(cl_path_prefix, 'results', 'dbx_')
-    merge_files('dbx_',filename,filename_long,n_processors)
+    merge_files(dbxname,filename,filename_long,n_processors)
     print('ending',datetime.now())
