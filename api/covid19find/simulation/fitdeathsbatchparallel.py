@@ -19,13 +19,16 @@ def merge_files(in_name, out_name,out_name_long,n):
     for i in range(0,n):
         dbname=in_name+str(i)+'.csv'
         dbname_long=in_name+str(i)+'long.csv'
-        in_df=pd.read_csv(dbname,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
-        in_df_long=pd.read_csv(dbname_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
+        dbfile=os.path.join(cl_path_prefix, 'results', dbname)
+        dbfile_long=os.path.join(cl_path_prefix, 'results', dbname_long)
+        in_df=pd.read_csv(dbfile,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
+        in_df_long=pd.read_csv(dbfile_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
         df=df.append(in_df)
         dflong=dflong.append(in_df_long)
         #alist_long.append(origin_df_long)
     df.to_csv(out_name)
     dflong.to_csv(out_name_long)
+#    out_dict_long.to_csv(out_name_long)
 #    out_dict_long.to_csv(out_name_long)
     
     
@@ -106,6 +109,6 @@ if __name__=='__main__':
         p.map(process_countries,tuples_list)
     filename ='finaldb.csv'
     filename_long ='finaldb_long.csv'
-    dbxname=os.path.join(cl_path_prefix, 'results', 'dbx_')
+    dbxname='dbx_'
     merge_files(dbxname,filename,filename_long,n_processors)
     print('ending',datetime.now())

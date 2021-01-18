@@ -820,6 +820,7 @@ class Sim:
         asymptomatic_covid=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
         othersymptomatic=sim.population[t-1]*par.background_rate_symptomatic
         newsymptomatic=othersymptomatic+symptomatic_covid
+        #should not include recovered
         asymptomatic=sim.population[t-1]-newsymptomatic
         if newsymptomatic.sum()>0:
            p_infected_if_symptomatic=symptomatic_covid/newsymptomatic        
@@ -1150,11 +1151,15 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        accum_tests_performed = sim.perform_tests(par,t,phase,use_real_testdata)  
        sim.newtested_mit[t]=accum_tests_performed
        for i in range(0,par.num_compartments):
-# Temporarily got rid of compute secondaries
+
 # =============================================================================
 #         #true positives and true negatives here are actually infected and not infected.  
 #            if np.array(accum_tests_performed).sum()>0:
-           infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[t,i],sim.falsepositives[t,i],contacts_per_person_isolated,meanbeta,phase)
+           if t-results_delay>0:
+               infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[t-results_delay,i],sim.falsepositives[t-results_delay,i],contacts_per_person_isolated,meanbeta,phase)
+           else:
+               infected_secondaries=0
+               non_infected_secondaries=0
 #                truepositives_before= sim.truepositives[t,i]
 #                sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
 #  #              sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
@@ -1165,14 +1170,14 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
 # =============================================================================
           
            if (t-results_delay)>0 and (time_in_isolation>0):
-               new_isolated_before=sim.newisolated[t,i]
                sim.newisolated[t,i] = sim.truepositives[t-results_delay,i]+sim.falsepositives[t-results_delay,i]+infected_secondaries+non_infected_secondaries
                sim.newisolatedinfected[t,i] = sim.truepositives[t-results_delay,i]+infected_secondaries
-               new_isolated_after=sim.newisolated[t,i]
+               
            else:
                sim.newisolated[t,i]=0
                sim.newisolatedinfected[t,i]=0
-           sim.newconfirmed[t,i] = sim.truepositives[t,i]+sim.falsepositives[t,i]
+          #This should also include results_delay
+           sim.newconfirmed[t,i] = sim.truepositives[t-results_delay,i]+sim.falsepositives[t-results_delay,i]
            if t-(par.recovery_period+par.incubation_period)>=0:
                sim.newrecovered[t,i] = sim.newinfected[t-(par.recovery_period+par.incubation_period),i]*gamma
            else:
