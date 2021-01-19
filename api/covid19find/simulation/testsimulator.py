@@ -34,8 +34,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
-#past_dates= [1, 15, 54, 68, 82, 105, 124, 151, 176, 259, 279, 301, 321, 362] 
-#past_severities= [0.0, 1.0, 0.55, 0.6, 0.35, 0.85, 1.0, 0.95, 1.0, 0.85, 1.0, 0.85, 1.0, 0.15]
+#past_dates= [1, 15, 97, 122, 206, 250, 276, 383]
+#past_severities=  [0.0, 1.0, 0.85, 1.0, 0.75, 0.9, 1.0, 0.0]
 # =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -53,32 +53,32 @@ fixed_params={
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':False,\
+    'expert_mode':True,\
     'run_multiple_test_scenarios':True,\
     'save_results':False,\
     'fatality_reduction':0.35,\
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 
 
 scenario_params.append({
-    'severity':[0.95, 0.7,0.95],\
-    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'severity':[0.75, 1.0],\
+    'trig_values':['2020-12-15','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[250000,250000,250000],\
+    'num_tests_mitigation':[0,0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25,0.25],\
-    'imported_infections_per_day':[4,4,4],\
+    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'imported_infections_per_day':[15,15,25],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
@@ -88,18 +88,18 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.95, 0.7,0.95],\
-    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'severity':[1.0, 1.0],\
+    'trig_values':['2020-12-15','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[250000,250000,250000],\
+    'num_tests_mitigation':[35000,35000,35000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25,0.25],\
-    'imported_infections_per_day':[4,4,4],\
+    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'imported_infections_per_day':[15,15,15],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first','high contact groups first'],\
@@ -109,42 +109,42 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.9, 0.9],\
-    'trig_values':['2022-01-12','2022-01-18'],\
-    'trig_def_type':['date','date'],\
-    'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[13000,13000],\
-    'type_test_mitigation':['PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.95,0.95],\
-    'num_tests_care':[10000,10000],\
-    'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25],\
-    'imported_infections_per_day':[4,4],\
-    'requireddxtests':[0,0],\
-    'is_counterfactual':['False','False'],\
-    'test_strategy':['symptomatic first','symptomatic first'],\
-    'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
-    'fatality_reduction_recent':[0.35,0.35]
-    })
-    
-scenario_params.append({
-    'severity':[0.95, 0.7,0.95],\
-    'trig_values':['2020-12-29','2020-12-23','2021-01-03'],\
+    'severity':[1.0, 1.0 ],\
+    'trig_values':['2020-12-15','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95],\
-    'specificity':[0.95,0.95,0.95],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.25,0.25,0.25],\
-    'imported_infections_per_day':[4,4,4],\
+    'prop_contacts_traced':[1.0,1.0,1.0],\
+    'imported_infections_per_day':[15,15,15],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
-    'test_strategy':['no testing','open public testing','open public testing'],\
+    'test_strategy':['symptomatic first','symptomatic first','symptomatic first'],\
+    'results_period':[3,3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35,0.35]
+    })
+    
+scenario_params.append({
+    'severity':[0.75, 1.0],\
+    'trig_values':['2020-12-15','2021-01-25'],\
+    'trig_def_type':['date','date','date'],\
+    'trig_op_type':['=','=','='],\
+    'num_tests_mitigation':[250000,250000,250000],\
+    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.99,0.998],\
+    'num_tests_care':[10000,10000,10000],\
+    'type_tests_care':['PCR','PCR','PCR'],\
+    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'imported_infections_per_day':[15,15,15],\
+    'requireddxtests':[0,0,0],\
+    'is_counterfactual':['False','False','False'],\
+    'test_strategy':['open public testing','open public testing','open public testing'],\
     'results_period':[3,3,3],\
     'prop_asymptomatic_tested':[0.4,0.4,0.4],
     'fatality_reduction_recent':[0.35,0.35,0.35]
