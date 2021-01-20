@@ -1098,8 +1098,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     final_betas=initial_betas
     alpha=(final_betas-initial_betas)/par.beta_adaptation_days
     sim.dates=[par.day1 + dt.timedelta(days=x) for x in range(0,par.num_days)]
-    #This is the time when the patient is isolated between getting a positive result and recovering
-    
     tau=par.tau
     gamma=par.gamma
     for i in range(0,len(sim.actualtests_mit)):
@@ -1125,17 +1123,13 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                else:  #this feels a little contorted
                    final_betas=initial_betas
                    alpha=(final_betas-initial_betas)/par.beta_adaptation_days
-       
-# =============================================================================
-#        if (t-last_phase)>par.results_period[phase]:
-#           results_delay=par.results_period[phase]
-#        else:
-#           results_delay=par.results_period[phase-1]
-# =============================================================================
        results_delay=par.results_period[phase]
        time_in_isolation=par.recovery_period-results_delay
        if time_in_isolation<0:
            time_in_isolation=0
+       if t==1:
+           last_target_recovery=0
+           last_target_isolation=0
        sim.days[t]=t
        sim.cross_infect(par,betas,t)
        sim.addup_infections(par,t)
@@ -1153,31 +1147,21 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        for i in range(0,par.num_compartments):
 
 # =============================================================================
-#         #true positives and true negatives here are actually infected and not infected.  
+#         
 #            if np.array(accum_tests_performed).sum()>0:
-           if t-results_delay>0:
-               infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[t-results_delay,i],sim.falsepositives[t-results_delay,i],contacts_per_person_isolated,meanbeta,phase)
-           else:
-               infected_secondaries=0
-               non_infected_secondaries=0
-#                truepositives_before= sim.truepositives[t,i]
-#                sim.truepositives[t,i]=sim.truepositives[t,i]+truepositivessecondaries
-#  #              sim.falsepositives[t,i]=sim.falsepositives[t,i]+falsepositivessecondaries
-#                truepositives_after= sim.truepositives[t,i]
-#            else:
-#                sim.truepositives[t,i]=0
-#                sim.falsepositives[t,i]=0
-# =============================================================================
-          
-           if (t-results_delay)>0 and (time_in_isolation>0):
-               sim.newisolated[t,i] = sim.truepositives[t-results_delay,i]+sim.falsepositives[t-results_delay,i]+infected_secondaries+non_infected_secondaries
-               sim.newisolatedinfected[t,i] = sim.truepositives[t-results_delay,i]+infected_secondaries
-               
-           else:
+           infected_secondaries=0
+           non_infected_secondaries=0
+           # The code below makes sure that if the results period changes no secondaries are counted double or missed
+           for target in range(last_target_isolation+1, t-par.results_period[phase]+1):
+               if target-results_delay>0:
+                   infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[target-results_delay,i],sim.falsepositives[target-results_delay,i],contacts_per_person_isolated,meanbeta,phase)
                sim.newisolated[t,i]=0
                sim.newisolatedinfected[t,i]=0
-          #This should also include results_delay
-           sim.newconfirmed[t,i] = sim.truepositives[t-results_delay,i]+sim.falsepositives[t-results_delay,i]
+               sim.newconfirmed[t,i]=0
+               if (t-results_delay)>0:
+                   sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
+                   sim.newisolatedinfected[t,i] =sim.newisolatedinfected[t,i]+ sim.truepositives[target-results_delay,i]+infected_secondaries
+                   sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
            if t-(par.recovery_period+par.incubation_period)>=0:
                sim.newrecovered[t,i] = sim.newinfected[t-(par.recovery_period+par.incubation_period),i]*gamma
            else:
@@ -1192,22 +1176,27 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
                sim.actualdxtests[t,i]=sim.requireddxtests[t,i]
            sim.tested_mit[t,i] = sim.tested_mit[t-1,i] + sim.newtested_mit[t,i]
-           if (t-time_in_isolation)>=0 and (time_in_isolation>0):
-               newisolatedrecovered=sim.newisolated[t-time_in_isolation,i]*gamma
-               newisolatedinfectedrecovered=sim.newisolatedinfected[t-time_in_isolation,i]*gamma
+           newisolatedrecovered=0
+           newisolatedinfectedrecovered=0
+           target=0
+         # The code below makes sure that if the results period changes no secondaries are counted double or missed
+           for target in range (last_target_recovery+1,t-time_in_isolation+1):
+               if target>=0:
+                   newisolatedrecovered=newisolatedrecovered+sim.newisolated[target,i]*gamma
+                   newisolatedinfectedrecovered=newisolatedinfectedrecovered+sim.newisolatedinfected[target,i]*gamma                   
                #subtract deaths
                if t-par.death_period>=0:
-                   newisolatedrecovered=newisolatedrecovered-sim.newisolated[t-par.death_period,i]*tau
-                   newisolatedinfectedrecovered=newisolatedinfectedrecovered-sim.newisolatedinfected[t-par.death_period,i]*tau
-           else:
-               newisolatedrecovered=0
-               newisolatedinfectedrecovered=0
+                   newisolatedrecovered=newisolatedrecovered-sim.newisolated[target-par.death_period,i]*tau
+                   newisolatedinfectedrecovered=newisolatedinfectedrecovered-sim.newisolatedinfected[target-par.death_period,i]*tau
+# =============================================================================
+#            else:
+#                newisolatedrecovered=0
+#                newisolatedinfectedrecovered=0
+# =============================================================================
+               
            
            
-           
-           
-           
-           
+    
            
            sim.isolated[t,i]=sim.isolated[t-1,i]+sim.newisolated[t,i]-newisolatedrecovered
            sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - newisolatedinfectedrecovered
@@ -1239,7 +1228,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                #false positives do not reduce the number of infected not isolated
               sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
               if sim.infectednotisolated[t,i]<0:
-                  sim.infectednotisolated[t,i]
+                  sim.infectednotisolated[t,i]=0
            else:
               sim.infectednotisolated[t,i] = 0.0
            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
@@ -1260,6 +1249,12 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
           tau=par.tau*(1-par.fatality_reduction_recent[phase])
        gamma=1-tau
        meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
+       # this defines where the loops for isolation and recoveries begins on next t
+       if last_target_isolation<t-par.results_period[phase]:
+           last_target_isolation=t-par.results_period[phase]
+       if last_target_recovery<t-time_in_isolation:
+           last_target_recovery=t-time_in_isolation
+       
  # =============================================================================
     df = sim.get_data_frame(par.num_days,par.num_compartments,par.compartment)
     return sim,df
