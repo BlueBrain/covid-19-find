@@ -34,8 +34,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
-#past_dates= [1, 15, 97, 122, 206, 250, 276, 383]
-#past_severities=  [0.0, 1.0, 0.85, 1.0, 0.75, 0.9, 1.0, 0.0]
+#past_dates= [1, 15, 72, 99, 123, 150, 165, 187, 213, 240, 263, 279, 300, 326, 347, 367]
+#past_severities=  [0.0, 1.0, 0.0, 0.75, 0.95, 1.0, 0.9, 0.95, 0.9, 0.85, 0.7, 0.75, 0.6, 0.8, 0.85, 0.8]
 # =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -53,14 +53,14 @@ fixed_params={
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':True,\
+    'expert_mode':False,\
     'run_multiple_test_scenarios':True,\
     'save_results':False,\
     'fatality_reduction':0.35,\
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -74,11 +74,11 @@ scenario_params.append({
     'num_tests_mitigation':[0,0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
-    'specificity':[0.99,0.998],\
+    'specificity':[0.99,0.99],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':[0.20,0.20,0.20],\
-    'imported_infections_per_day':[15,15,25],\
+    'imported_infections_per_day':[50,50,50],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
@@ -88,18 +88,18 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[1.0, 1.0],\
+    'severity':[0.75, 0.75],\
     'trig_values':['2020-12-15','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[35000,35000,35000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
-    'specificity':[0.99,0.998],\
+    'specificity':[0.99,0.99],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':[0.20,0.20,0.20],\
-    'imported_infections_per_day':[15,15,15],\
+    'imported_infections_per_day':[50,50,50],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first','high contact groups first'],\
@@ -109,7 +109,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[1.0, 1.0 ],\
+    'severity':[0.75, 0.75 ],\
     'trig_values':['2020-12-15','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
@@ -119,7 +119,7 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[1.0,1.0,1.0],\
+    'prop_contacts_traced':[0.2,0.2,0.2],\
     'imported_infections_per_day':[15,15,15],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
@@ -137,11 +137,11 @@ scenario_params.append({
     'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
-    'specificity':[0.99,0.998],\
+    'specificity':[0.99,0.99],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':[0.20,0.20,0.20],\
-    'imported_infections_per_day':[15,15,15],\
+    'imported_infections_per_day':[50,50,50],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing','open public testing'],\
