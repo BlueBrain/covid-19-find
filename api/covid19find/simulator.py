@@ -230,7 +230,7 @@ class Simulator:
         phases = []
         phase1 = {
             "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
-            "trigger": (date.today() - timedelta(days=54)).isoformat(),
+            "trigger": (date.today() - timedelta(days=35)).isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
             "severity": float(covid_libscenario["severity"]),
