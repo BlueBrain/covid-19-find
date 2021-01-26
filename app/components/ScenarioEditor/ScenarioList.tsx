@@ -64,7 +64,10 @@ const ScenarioList: React.FC<{
           <TabList>
             {scenarios.map((scenario, index) => {
               return (
-                <Tab key={`tab-${scenario.name}-${index}`}>
+                <Tab
+                  key={`tab-${scenario.name}-${index}`}
+                  style={{ justifyContent: 'space-between' }}
+                >
                   <span className="label">{scenario.name}</span>
                   {scenarios.length > 1 && index !== 0 && (
                     <span className="clickable" onClick={removeScenario(index)}>
