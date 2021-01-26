@@ -107,8 +107,8 @@ if __name__=='__main__':
     
     with Pool(n_processors) as p:
         p.map(process_countries,tuples_list)
-    filename ='finaldb.csv'
-    filename_long ='finaldb_long.csv'
+    filename ='db1.csv'
+    filename_long ='db1_long.csv'
     dbxname='dbx_'
     merge_files(dbxname,filename,filename_long,n_processors)
     print('ending',datetime.now())

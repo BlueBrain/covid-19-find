@@ -344,6 +344,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           if(scenarios[i]['trig_def_type'][j]=='date'):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
+     #fix test strategy to symptomatic first - this matches calibration. Does not change default file or future
+      scenarios[i]['test strategy']='symptomatic first'
       scenario=create_scenario(past,scenarios[i])
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
@@ -957,34 +959,34 @@ class Sim:
           'dates':self.dates[:],
           'day1':range(0,num_days),
           'compartment': np.full(num_days,compartment[0]),
-          'population' : np.round(self.population[:,0],1),
-          'susceptibles' : np.round(self.susceptibles[:,0],1),
-          'isolated': np.round(self.isolated[:,0],1),
-          'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
-          'infectednotisolated': np.round(self.infectednotisolated[:,0],1),
-          'infected': np.round(self.infected[:,0],1),
-          'importedinfections':np.round(self.importedinfections[:,0],1),
-          'accumulatedinfected': np.round(self.accumulatedinfected[:,0],1),
-          'tested_mit': np.round(self.tested_mit[:,0],1),
-          'confirmed': np.round(self.confirmed[:,0],1),
-          'deaths': np.round(self.deaths[:,0],1),
-          'recovered': np.round(self.recovered[:,0],1),
-          'beta': np.round(self.beta_arr[:,0],1),
-          'susceptibleprop' : np.round(self.susceptibleprop[:,0],1),
-          'newtested_mit': np.round(self.newtested_mit[:,0],1),
+          'population' : np.round(self.population[:,0],3),
+          'susceptibles' : np.round(self.susceptibles[:,0],3),
+          'isolated': np.round(self.isolated[:,0],3),
+          'isolatedinfected': np.round(self.isolatedinfected[:,0],3),
+          'infectednotisolated': np.round(self.infectednotisolated[:,0],3),
+          'infected': np.round(self.infected[:,0],3),
+          'importedinfections':np.round(self.importedinfections[:,0],3),
+          'accumulatedinfected': np.round(self.accumulatedinfected[:,0],3),
+          'tested_mit': np.round(self.tested_mit[:,0],3),
+          'confirmed': np.round(self.confirmed[:,0],3),
+          'deaths': np.round(self.deaths[:,0],3),
+          'recovered': np.round(self.recovered[:,0],3),
+          'beta': np.round(self.beta_arr[:,0],3),
+          'susceptibleprop' : np.round(self.susceptibleprop[:,0],3),
+          'newtested_mit': np.round(self.newtested_mit[:,0],3),
           'newimportedinfections':np.round(self.newimportedinfections[:,0],3),
           'newinfected': np.round(self.newinfected[:,0],3),
-          'newisolated': np.round(self.newisolated[:,0],1),
-          'newisolatedinfected': np.round(self.newisolatedinfected[:,0],1),
-          'newconfirmed': np.round(self.newconfirmed[:,0],1),
+          'newisolated': np.round(self.newisolated[:,0],3),
+          'newisolatedinfected': np.round(self.newisolatedinfected[:,0],3),
+          'newconfirmed': np.round(self.newconfirmed[:,0],3),
           'newrecovered': np.round(self.newrecovered[:,0],3),
-          'requireddxtests': np.round(self.requireddxtests[:,0],1),
-          'actualdxtests': np.round(self.actualdxtests[:,0],1),
-          'newdeaths': np.round(self.newdeaths[:,0],1),
-          'truepositives':np.round(self.truepositives[:,0],1),
-          'falsepositives':np.round(self.falsepositives[:,0],1),
-          'truenegatives':np.round(self.truenegatives[:,0],1),
-          'falsenegatives':np.round(self.falsenegatives[:,0],1),
+          'requireddxtests': np.round(self.requireddxtests[:,0],3),
+          'actualdxtests': np.round(self.actualdxtests[:,0],3),
+          'newdeaths': np.round(self.newdeaths[:,0],3),
+          'truepositives':np.round(self.truepositives[:,0],3),
+          'falsepositives':np.round(self.falsepositives[:,0],3),
+          'truenegatives':np.round(self.truenegatives[:,0],3),
+          'falsenegatives':np.round(self.falsenegatives[:,0],3),
           'ppv':np.round(self.ppv[:,0],3),
           'npv':np.round(self.npv[:,0],3),
           'incidence':np.round(self.incidence[:,0],3),
@@ -999,34 +1001,34 @@ class Sim:
             'dates': self.dates[:],
             'day1':range(0,num_days),
             'compartment': np.full(num_days,compartment[i]),
-            'population' : np.round(self.population[:,i],1),
-            'susceptibles' : np.round(self.susceptibles[:,i],1),
-            'isolated': np.round(self.isolated[:,i],1),
-            'isolatedinfected': np.round(self.isolatedinfected[:,0],1),
-            'infectednotisolated': np.round(self.infectednotisolated[:,i],1),
-            'infected': np.round(self.infected[:,i],1),
-            'importedinfections':np.round(self.importedinfections[:,i],1),
-            'accumulatedinfected': np.round(self.accumulatedinfected[:,i],1),
-            'tested_mit': np.round(self.tested_mit[:,i],1),  
-            'confirmed': np.round(self.confirmed[:,i],1),
-            'deaths': np.round(self.deaths[:,i],1),
-            'recovered': np.round(self.recovered[:,i],1),
-            'beta': np.round(self.beta_arr[:,i],1),
-            'susceptibleprop' : np.round(self.susceptibleprop[:,i],1),
-            'newtested_mit': np.round(self.newtested_mit[:,i],1),
+            'population' : np.round(self.population[:,i],3),
+            'susceptibles' : np.round(self.susceptibles[:,i],3),
+            'isolated': np.round(self.isolated[:,i],3),
+            'isolatedinfected': np.round(self.isolatedinfected[:,0],3),
+            'infectednotisolated': np.round(self.infectednotisolated[:,i],3),
+            'infected': np.round(self.infected[:,i],3),
+            'importedinfections':np.round(self.importedinfections[:,i],3),
+            'accumulatedinfected': np.round(self.accumulatedinfected[:,i],3),
+            'tested_mit': np.round(self.tested_mit[:,i],3),  
+            'confirmed': np.round(self.confirmed[:,i],3),
+            'deaths': np.round(self.deaths[:,i],3),
+            'recovered': np.round(self.recovered[:,i],3),
+            'beta': np.round(self.beta_arr[:,i],3),
+            'susceptibleprop' : np.round(self.susceptibleprop[:,i],3),
+            'newtested_mit': np.round(self.newtested_mit[:,i],3),
             'newimportedinfections':np.round(self.newimportedinfections[:,i],3),
             'newinfected': np.round(self.newinfected[:,i],3),
-            'newisolated': np.round(self.newisolated[:,i],1),
-            'newisolatedinfected': np.round(self.newisolatedinfected[:,i],1),
-            'newconfirmed': np.round(self.newconfirmed[:,i],1),
+            'newisolated': np.round(self.newisolated[:,i],3),
+            'newisolatedinfected': np.round(self.newisolatedinfected[:,i],3),
+            'newconfirmed': np.round(self.newconfirmed[:,i],3),
             'newrecovered': np.round(self.newrecovered[:,i],3),
-            'requireddxtests': np.round(self.requireddxtests[:,i],1),
-            'actualdxtests': np.round(self.actualdxtests[:,i],1),
-            'newdeaths': np.round(self.newdeaths[:,i],1),
-            'truepositives':np.round(self.truepositives[:,i],1),
-            'falsepositives':np.round(self.falsepositives[:,i],1),
-            'truenegatives':np.round(self.truenegatives[:,i],1),
-            'falsenegatives':np.round(self.falsenegatives[:,i],1),
+            'requireddxtests': np.round(self.requireddxtests[:,i],3),
+            'actualdxtests': np.round(self.actualdxtests[:,i],3),
+            'newdeaths': np.round(self.newdeaths[:,i],3),
+            'truepositives':np.round(self.truepositives[:,i],3),
+            'falsepositives':np.round(self.falsepositives[:,i],3),
+            'truenegatives':np.round(self.truenegatives[:,i],3),
+            'falsenegatives':np.round(self.falsenegatives[:,i],3),
             'ppv':np.round(self.ppv[:,i],3),
             'npv':np.round(self.npv[:,i],3),
             'incidence':np.round(self.incidence[:,i],3),
@@ -1137,6 +1139,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
  #      print('max contacts per case=', par.max_contacts_per_case,'prop contacts traced',par.prop_contacts_traced[phase])
  #      print('beta overall',beta_overall,)
    #    contacts_per_person=par.max_contacts_per_case*(1-par.severity[phase])+par.min_contacts_per_case*par.severity[phase]
+  
        contacts_per_person=10
        contacts_per_person_isolated=contacts_per_person*par.prop_contacts_traced[phase]
 #       print('t=',t,'contacts per person',contacts_per_person,'contacts per person isolated=',contacts_per_person_isolated)
@@ -1241,10 +1244,11 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
                sim.incidence[t,i]=0
                sim.prevalence[t,i]=0
-       #There is a contradiction here. I may already have defined a stable level for this
+       
        if(ispast(par.day1,t)): 
            if t>=par.no_improvement_period:
-               tau=tau=tau*par.fatality_reduction_per_day 
+               tau=tau=tau*par.fatality_reduction_per_day
+          
        else: #future phases
           tau=par.tau*(1-par.fatality_reduction_recent[phase])
        gamma=1-tau
@@ -1458,6 +1462,7 @@ def normalize_betas(p,beta,target):
     return beta*adjust
 
 def compute_secondaries(par,i,true_positives, false_positives,contacts_per_person,meanbeta,phase):
+
     n_contacts_traced=(true_positives+false_positives)*contacts_per_person
 
 # =============================================================================
@@ -1467,10 +1472,36 @@ def compute_secondaries(par,i,true_positives, false_positives,contacts_per_perso
 #         p_infected=0
 # =============================================================================
     infected=meanbeta[i]*par.recovery_period*true_positives*par.prop_contacts_traced[phase]
+  
     if infected>n_contacts_traced:
         infected=n_contacts_traced
-    #infected=true_positives*contacts_per_person*par.prop_contacts_traced[phase]*p_infected
     not_infected=n_contacts_traced-infected
+
+
+    return infected, not_infected
+
+# this function tests a new way of computing secondaries allowing for variable efficacy of terst and trace
+# It was not successful in resolving problem with excess cases in effective control scenarios and is not currently used. 
+# Left here for possible future work
+def compute_secondaries_experimental (par,i,true_positives, false_positives,contacts_per_person,meanbeta,phase):
+    efficacy=1000
+    n_contacts_traced=(true_positives+false_positives)*contacts_per_person
+
+# =============================================================================
+#     if n_contacts>0 and totalexpectedinfections/n_contacts<=1:
+#         p_infected=totalexpectedinfections/n_contacts
+#     else:
+#         p_infected=0
+# =============================================================================
+    infected2=meanbeta[i]*par.recovery_period*true_positives*par.prop_contacts_traced[phase]
+  
+    if infected2>n_contacts_traced:
+        infected2=n_contacts_traced
+     #experimental - do not use
+    infected=efficacy*true_positives
+#    infected=true_positives*contacts_per_person*par.prop_contacts_traced[phase]*p_infected
+    not_infected=infected*100
+
     return infected, not_infected
 
 def write_parameters(afilename,fixed_params,scenario_params):
