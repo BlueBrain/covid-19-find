@@ -7,9 +7,13 @@ const PhaseTextInput: React.FC<{
   inputProps: InputProp;
   onChange: (value: string) => void;
   value: string;
-}> = ({ inputProps, onChange, value }) => {
+}> = ({ inputProps, onChange, value: defaultValue }) => {
   const ref = React.useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = React.useState(value);
+  const [inputValue, setInputValue] = React.useState(defaultValue);
+
+  React.useEffect(() => {
+    setInputValue(defaultValue?.toString());
+  }, [defaultValue]);
 
   const handleBlur = () => {
     onChange(inputValue);
@@ -23,7 +27,7 @@ const PhaseTextInput: React.FC<{
       name={inputProps.name || inputProps.key}
       data-key={inputProps.key}
       type="text"
-      defaultValue={inputValue}
+      value={inputValue}
       required
       ref={ref}
       onBlur={handleBlur}

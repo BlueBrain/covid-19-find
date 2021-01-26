@@ -91,7 +91,7 @@ export default [
         key: 'trigger',
       },
       {
-        label: 'Severity',
+        label: 'Effectiveness',
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
@@ -180,7 +180,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.01,
+        step: 0.001,
         key: 'specificity',
       },
       {
