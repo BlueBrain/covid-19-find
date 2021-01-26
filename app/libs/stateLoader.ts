@@ -4,7 +4,7 @@ import { leftToRightCompose } from './func';
 import { compress, decompress } from 'compressed-json';
 
 export const save = (state: ClientSimulationRequest) => {
-  const fileName = 'FIND-Covid-Scenarios.json';
+  const fileName = `${state.countryCode.toUpperCase()}-Covid-Scenarios.json`;
   const mediaType = 'application/json';
   const data = JSON.stringify(state);
   download(fileName, mediaType, data);
