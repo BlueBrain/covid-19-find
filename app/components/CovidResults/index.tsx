@@ -138,9 +138,29 @@ const CovidResults: React.FC<{
               scales: {
                 yAxes: [
                   {
+                    id: 'A',
+                    position: 'left',
                     scaleLabel: {
                       display: true,
                       labelString: 'Number of People',
+                    },
+                    gridLines: {
+                      color: '#00000005',
+                    },
+                    ticks: {
+                      beginAtZero: true,
+                      // Include a dollar sign in the ticks
+                      callback: value => {
+                        return value?.toLocaleString();
+                      },
+                    },
+                  },
+                  {
+                    id: 'B',
+                    position: 'right',
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Number of Deaths',
                     },
                     gridLines: {
                       color: '#00000005',
@@ -187,6 +207,7 @@ const CovidResults: React.FC<{
               datasets: [
                 {
                   label: 'New Cases',
+                  yAxisID: 'A',
                   data: chartData
                     .map(makeSlidingAverage(chartData, 'newConfirmed'))
                     .map(entry => Math.floor(Number(entry))),
@@ -199,6 +220,8 @@ const CovidResults: React.FC<{
                 },
                 {
                   label: 'New Deaths',
+                  yAxisID: 'B',
+
                   data: chartData
                     .map(makeSlidingAverage(chartData, 'newDeaths'))
                     .map(entry => Math.floor(Number(entry))),
@@ -212,6 +235,7 @@ const CovidResults: React.FC<{
                 },
                 {
                   label: 'New Recovered',
+                  yAxisID: 'A',
                   data: chartData
                     .map(makeSlidingAverage(chartData, 'newRecovered'))
                     .map(entry => Math.floor(Number(entry))),
