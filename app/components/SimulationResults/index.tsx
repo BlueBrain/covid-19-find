@@ -268,6 +268,7 @@ const SimulationResults: React.FC<{
                         yAxes: [
                           {
                             // suggestedMin: 0,
+                            // type: 'logarithmic',
                             beginAtZero: true,
                             scaleLabel: {
                               display: true,
@@ -291,6 +292,7 @@ const SimulationResults: React.FC<{
                         ],
                         xAxes: [
                           {
+                            // type: 'logarithmic',
                             gridLines: {
                               color: '#00000005',
                             },
@@ -339,9 +341,10 @@ const SimulationResults: React.FC<{
                             y: accumulatedIsolated,
                             r: scaleValueFromLargestValueAgainstViewportWidth(
                               scenario.totalDeaths,
-                              minDeaths,
+                              0,
                               maxDeaths,
                             ),
+                            // r: scenario.totalDeaths,
                             deaths: scenario.totalDeaths,
                           };
 
