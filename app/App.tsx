@@ -96,7 +96,7 @@ const App: React.FC = () => {
             About the Dx Implementation Sim
           </button>
         </a>
-        <LoadScenariosButton onLoad={handleLoadState} />
+        <LoadScenariosButton onLoad={handleLoadState} state={state} />
       </section>
       {/* Panel 1 */}
       <Countries
