@@ -11,8 +11,11 @@ export const save = (state: ClientSimulationRequest) => {
 };
 
 export const load = async (e: Event) => {
-  const file = (await readSingleFile(e)) as string;
-  return JSON.parse(file) as ClientSimulationRequest;
+  const { contents, name } = await readSingleFile(e);
+  return {
+    name,
+    contents: JSON.parse(contents as string) as ClientSimulationRequest,
+  };
 };
 
 export const decodeClientState = (stateString: string) =>
