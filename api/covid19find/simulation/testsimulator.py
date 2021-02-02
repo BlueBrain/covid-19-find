@@ -18,7 +18,7 @@ import datetime as dt
 
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
-ccode="AU"
+ccode="FR"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -34,8 +34,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
-past_dates= [1, 15, 97, 122, 206, 229, 251, 272]
-past_severities=  [0.0, 1.0, 0.85, 1.0, 0.75, 0.8, 0.9, 1.0] 
+#past_dates= [1, 15, 70, 117, 144, 168, 195, 222, 249, 276, 296, 322, 341, 363, 383] 
+#past_severities= [0.0, 1.0, 0.0, 0.95, 0.9, 0.85, 0.7, 0.75, 0.65, 0.85, 0.9, 0.8, 0.85]
 # =============================================================================
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -109,18 +109,18 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[1.0, 1.0 ],\
-    'trig_values':['2020-12-15','2021-01-25'],\
+    'severity':[0.75,0.75],\
+    'trig_values':['2021-01-04','2021-01-25'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[32000,32000,32000],\
+    'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
-    'specificity':[0.99,0.998],\
+    'specificity':[0.998,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.2,0.2,0.2],\
-    'imported_infections_per_day':[1,1,1],\
+    'prop_contacts_traced':[20,20,20],\
+    'imported_infections_per_day':[15,15,15],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['symptomatic first','symptomatic first','symptomatic first'],\
@@ -190,6 +190,8 @@ for i in range (0,len(results_dict['total_infected_by_scenario'])):
 print('Total cases by scenario')
 for i in range (0,len(results_dict['total_cases_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['total_cases_by_scenario'][i])
+    
+print('test_df=',test_df)
         
 #print ('results dict=',results_dict)
 

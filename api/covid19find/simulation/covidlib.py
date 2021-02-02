@@ -717,6 +717,14 @@ class Sim:
        imported_infections=prop_population_in_compart*par.imported_infections_per_day[phase]
    #    sim.newinfected[t]=sim.newinfected[t]+imported_infections
        return imported_infections
+   
+   def get_imported2(sim,par:Par, t,phase):
+ #it would be better to make this proportional to population
+       prop_population_in_compart=np.zeros(par.num_compartments)
+       prop_population_in_compart=par.init_pop/np.sum(par.init_pop)
+       imported_infections=prop_population_in_compart*par.imported_infections_per_day[phase]
+   #    sim.newinfected[t]=sim.newinfected[t]+imported_infections
+       return imported_infections
        
    #Computes the sample size required for a national wide seroprevalence survey in which max
    # n. of groups for stratified analysis is given by n_groups
@@ -923,18 +931,19 @@ class Sim:
            value=np.sum(sim.newdeaths[t-7:t])/7
        elif params.trig_def_type[phase]=='increase cases':
            if t>7:               
-              value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newisolated[t-14:t-7,:])-1)*100
+              value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newisolated[t-14:t-7,:])-1)
            else:
               value=float('NaN')
               raise CustomError('Unable to compute increase in cases')
        elif params.trig_def_type[phase]=='increase deaths':
            if t>7:
-              value=(np.sum(sim.newdeaths[t-7:t,:])/np.sum(sim.newdeaths[t-14:t-7,:])-1)*100           
+              value=(np.sum(sim.newdeaths[t-7:t,:])/np.sum(sim.newdeaths[t-14:t-7,:])-1)        
            else:
               value=float('NaN')
               raise CustomError('Unable to compute increase in deaths')
        elif params.trig_def_type[phase]=='positives':
-           value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))*100
+           value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
+           print ('positives calculated at',value)
        else:
            raise CustomError('trig_def_type for phase ',str(phase),' does not exist')
            
@@ -950,6 +959,8 @@ class Sim:
            else:
                if params.trig_op_type[phase]=='>':
                    if value>params.trig_values[phase]:
+                       if params.trig_def_type[phase]=='positives':
+                           print ('t=',t,'positives=',value, 'new phase triggered')
                        return(True)
        return(False)
    
@@ -1135,6 +1146,8 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        sim.days[t]=t
        sim.cross_infect(par,betas,t)
        sim.addup_infections(par,t)
+       #lines below are new - previously were at end of simulation . should maybe go back to end of simulation - this means imported infections do not get immediately tested
+       
        # works out number of contacts per person. Maximum when target beta=max beta
  #      print('max contacts per case=', par.max_contacts_per_case,'prop contacts traced',par.prop_contacts_traced[phase])
  #      print('beta overall',beta_overall,)
@@ -1154,22 +1167,38 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
 #            if np.array(accum_tests_performed).sum()>0:
            infected_secondaries=0
            non_infected_secondaries=0
-           # The code below makes sure that if the results period changes no secondaries are counted double or missed
+           #In the past we estimate all data from current cases - in future we do full simulation
+               # The code below makes sure that if the results period changes no secondaries are counted double or missed
            for target in range(last_target_isolation+1, t-par.results_period[phase]+1):
-               if target-results_delay>0:
-                   infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[target-results_delay,i],sim.falsepositives[target-results_delay,i],contacts_per_person_isolated,meanbeta,phase)
-               sim.newisolated[t,i]=0
-               sim.newisolatedinfected[t,i]=0
-               sim.newconfirmed[t,i]=0
-               if (t-results_delay)>0:
+                if target-results_delay>0:
+                    infected_secondaries,non_infected_secondaries=compute_secondaries(par,i,sim.truepositives[target-results_delay,i],sim.falsepositives[target-results_delay,i],contacts_per_person_isolated,meanbeta,phase)
+                  #  infected_secondaries,non_infected_secondaries=compute_secondaries2(par, sim, i,t, sim.truepositives[target-results_delay,i],sim.falsepositives[target-results_delay,i],phase)
+                sim.newisolated[t,i]=0
+                sim.newisolatedinfected[t,i]=0
+                sim.newconfirmed[t,i]=0
+                if (t-results_delay)>0: 
                    sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
                    sim.newisolatedinfected[t,i] =sim.newisolatedinfected[t,i]+ sim.truepositives[target-results_delay,i]+infected_secondaries
-                   sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
+                   if not ispast(par.day1, t):
+                       sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
+                   else:
+                       new_cases=sim.actualcases[t]-sim.actualcases[t-1]
+                       if not np.isnan(new_cases):
+                           sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
+                       else:
+                           sim.newconfirmed[t,i]=0
+        
+          #  else:
+          #       sim.
+              #   sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
+#                sim.newisolated[t,i]==sim.newconfirmed[t,i]+infected_secondaries+non_infected_secondaries
+#                sim.newisolatedinfected[t,i]=sim.newisolated[t,i] *par.specificity[phase]
            if t-(par.recovery_period+par.incubation_period)>=0:
                sim.newrecovered[t,i] = sim.newinfected[t-(par.recovery_period+par.incubation_period),i]*gamma
            else:
                sim.newrecovered[t,i]=0
-           if t-par.death_period>=0:
+         
+           if t- par.death_period>=0:
                sim.newdeaths[t,i] = sim.newinfected[t-(par.death_period+par.incubation_period),i]*tau 
            else:
                sim.newdeaths[t,i]=0
@@ -1205,16 +1234,14 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - newisolatedinfectedrecovered
            sim.deaths[t,i] = sim.deaths[t-1,i]+sim.newdeaths[t,i]
            sim.recovered[t,i] = sim.recovered[t-1,i]+sim.newrecovered[t,i]
+           sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
            sim.infected[t,i] = sim.infected[t-1,i]+sim.newinfected[t,i]-sim.newrecovered[t,i]-sim.newdeaths[t,i]
-           
+           if sim.infected[t,i]>sim.population[t,i]:
+               sim.infected[t,i]=sim.population[t,i]
            if sim.infected[t,i]>0:
                sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*par.recovery_period
            else:
                sim.reff[t,i]=np.nan
-           sim.infected[t,i]=sim.infected[t,i]
-           sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]
-           sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
-   
            sim.susceptibles[t,i]=sim.population[t,i]-sim.infected[t,i]-sim.recovered[t,i] #deaths have already been subtracted from pop
    
            if sim.susceptibles[t,i]<0:  #defensive programming - I don't know why they go negative but they do
@@ -1224,7 +1251,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
               sim.susceptibleprop[t,i] = sim.susceptibles[t,i]/sim.population[t,i] #another accounting identity
            else:
               sim.susceptibleprop[t,i]=0 #avoids a divide by zero error with zero pop in one compartment
-   
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
    
            if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
@@ -1235,9 +1261,23 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
               sim.infectednotisolated[t,i] = 0.0
            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
-            #makes sure number of infected never falls below number of imported infections
-           sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
-           sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
+           #   makes sure number of new infections not so great as to make accum infections greater than population - e.g. if there is an enormous number of imported infections
+           sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]+sim.newimportedinfections[t,i]
+           if sim.accumulatedinfected[t,i]<sim.population[t-1,i]:
+                sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
+ #               sim.newinfected[t,i]=sim.newinfected[t,i]+sim.newimportedinfections[t,i]
+                sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
+           else:
+                sim.infected[t,i]=sim.population[t-1,i]
+                sim.newinfected[t,i]=0
+                sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]
+                sim.infectednotisolated[t,i]=sim.infectednotisolated[t-1,i]
+# =============================================================================
+#            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
+#             #makes sure number of infected never falls below number of imported infections
+#            sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
+#           sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
+# =============================================================================
            if sim.population[t,i]>0:
                sim.incidence[t,i]=sim.newinfected[t,i]/sim.population[t,i]
                sim.prevalence[t,i]=sim.accumulatedinfected[t,i]/sim.population[t,i]
@@ -1477,32 +1517,28 @@ def compute_secondaries(par,i,true_positives, false_positives,contacts_per_perso
         infected=n_contacts_traced
     not_infected=n_contacts_traced-infected
 
-
     return infected, not_infected
 
-# this function tests a new way of computing secondaries allowing for variable efficacy of terst and trace
-# It was not successful in resolving problem with excess cases in effective control scenarios and is not currently used. 
-# Left here for possible future work
-def compute_secondaries_experimental (par,i,true_positives, false_positives,contacts_per_person,meanbeta,phase):
-    efficacy=1000
-    n_contacts_traced=(true_positives+false_positives)*contacts_per_person
+#===================================================================================
+# This is an alternative method to compute the number of secondaries
+#It assumes each case leads to the isolation of a certain number of other cases
+# The number is computed by multiplying the positivity rate of those tested by the number of people isolated
+# Simulation results are very sensitive to this - not sure how to parameterize it correctly
+# For the moment will use previous method - "compute_secondaries"
+# ====================================================================================
+def compute_secondaries2(par,sim,i,t,false_positives,true_positives,phase):
+    isolated_per_case=10000
+    isolated=isolated_per_case*(false_positives+true_positives)
+    if (false_positives+true_positives)>0:
+        infected=isolated*true_positives/(true_positives+false_positives)
+    else:
+        infected=0
+    if isolated>0:
+        non_infected=isolated-infected
+    else:
+        non_infected=0
+    return infected,non_infected
 
-# =============================================================================
-#     if n_contacts>0 and totalexpectedinfections/n_contacts<=1:
-#         p_infected=totalexpectedinfections/n_contacts
-#     else:
-#         p_infected=0
-# =============================================================================
-    infected2=meanbeta[i]*par.recovery_period*true_positives*par.prop_contacts_traced[phase]
-  
-    if infected2>n_contacts_traced:
-        infected2=n_contacts_traced
-     #experimental - do not use
-    infected=efficacy*true_positives
-#    infected=true_positives*contacts_per_person*par.prop_contacts_traced[phase]*p_infected
-    not_infected=infected*100
-
-    return infected, not_infected
 
 def write_parameters(afilename,fixed_params,scenario_params):
     param_dict={'fixed_params':fixed_params,\
