@@ -45,10 +45,18 @@ const LoadScenariosButton: React.FC<{
     <>
       <div>
         <input
+          id="fileLoader"
           type="file"
           style={{ display: 'none' }}
           ref={inputRef}
           onChange={handleLoad}
+          onClick={e => {
+            // @ts-ignore
+            // this allows re-loading the onChange event
+            // on chrome & safari
+            // TODO: make it more REACTy with useEffect and null
+            e.target.value = '';
+          }}
         />{' '}
         <button onClick={handleLoadClick}>Load Scenarios</button>
       </div>
