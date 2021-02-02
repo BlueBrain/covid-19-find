@@ -188,6 +188,7 @@ const ScenarioEditor: React.FC<{
                           ) {
                             (inputProps as NumberInputProp).min = 0;
                             (inputProps as NumberInputProp).max = 100;
+                            (inputProps as NumberInputProp).step = 0.01;
                           }
                         }
 
