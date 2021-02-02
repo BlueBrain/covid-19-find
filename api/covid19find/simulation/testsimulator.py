@@ -110,8 +110,8 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':[0.75,0.75],\
-    'trig_values':['2021-01-04','2021-01-25'],\
-    'trig_def_type':['date','date','date'],\
+    'trig_values':[20,'2021-01-25'],\
+    'trig_def_type':['deaths','date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\

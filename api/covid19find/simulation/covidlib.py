@@ -923,11 +923,11 @@ class Sim:
      
        if params.trig_def_type[phase]=='date': 
            value=t
-       elif params.trig_def_type[phase]=='new cases':
+       elif params.trig_def_type[phase]=='cases':
            value=(np.sum(sim.newconfirmed[t-7:t,:])/7)
        elif params.trig_def_type[phase]=='cases per million':
            value=(np.sum(sim.newconfirmed[t-7:t,:])/7)/(params.total_pop/1000000)
-       elif params.trig_def_type[phase]=='new deaths':
+       elif params.trig_def_type[phase]=='deaths':
            value=np.sum(sim.newdeaths[t-7:t])/7
        elif params.trig_def_type[phase]=='increase cases':
            if t>7:               
