@@ -3,6 +3,7 @@ import {
   TRIGGER_TYPE,
   TRIGGER_CONDITION,
   TESTING_STRATEGIES,
+  triggerTypeLabels,
 } from '../../types/simulation';
 
 export enum INPUT_TYPES {
@@ -72,7 +73,7 @@ export default [
         type: INPUT_TYPES.select,
         key: 'triggerType',
         options: Object.values(TRIGGER_TYPE).map(str => ({
-          label: str,
+          label: triggerTypeLabels[str],
           value: str,
         })),
       },
