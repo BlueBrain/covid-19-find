@@ -52,7 +52,7 @@ export type CountryData = {
 export type Phase = {
   testingStrategy: TESTING_STRATEGIES;
   importedInfectionsPerDay: number;
-  trigger: string;
+  trigger: string | number;
   triggerType: string;
   triggerCondition: string;
   severity: number;

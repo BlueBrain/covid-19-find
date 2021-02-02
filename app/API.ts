@@ -94,10 +94,16 @@ export default class API {
               // Some trigger types should be percentages
               // https://github.com/BlueBrain/covid-19-find/issues/201
               trigger: match(triggerType)
-                .with(TRIGGER_TYPE.POSITIVES, () => Number(trigger) / 100)
-                .with(TRIGGER_TYPE.INCREASE_CASES, () => Number(trigger) / 100)
-                .with(TRIGGER_TYPE.INCREASE_DEATHS, () => Number(trigger) / 100)
-                .otherwise(() => trigger),
+                .with(TRIGGER_TYPE.POSITIVES, () => `${Number(trigger) / 100}`)
+                .with(
+                  TRIGGER_TYPE.INCREASE_CASES,
+                  () => `${Number(trigger) / 100}`,
+                )
+                .with(
+                  TRIGGER_TYPE.INCREASE_DEATHS,
+                  () => `${Number(trigger) / 100}`,
+                )
+                .otherwise(() => `${trigger}`),
             };
           },
         ),
