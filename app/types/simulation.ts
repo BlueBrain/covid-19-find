@@ -8,6 +8,16 @@ export enum TRIGGER_TYPE {
   CASES_PER_MILLSION = 'cases per million',
 }
 
+export const triggerTypeLabels = {
+  [TRIGGER_TYPE.DATE]: 'Date',
+  [TRIGGER_TYPE.DEATHS]: 'Deaths',
+  [TRIGGER_TYPE.CASES]: 'Cases',
+  [TRIGGER_TYPE.INCREASE_DEATHS]: 'Increased Deaths (%)',
+  [TRIGGER_TYPE.INCREASE_CASES]: 'Increased Cases (%)',
+  [TRIGGER_TYPE.POSITIVES]: 'Positives (%)',
+  [TRIGGER_TYPE.CASES_PER_MILLSION]: 'Cases per million',
+};
+
 export enum TRIGGER_CONDITION {
   EQUAL = '=',
   LESS_THAN = '<',
@@ -42,7 +52,7 @@ export type CountryData = {
 export type Phase = {
   testingStrategy: TESTING_STRATEGIES;
   importedInfectionsPerDay: number;
-  trigger: string;
+  trigger: string | number;
   triggerType: string;
   triggerCondition: string;
   severity: number;
