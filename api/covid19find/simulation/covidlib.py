@@ -1182,7 +1182,11 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                    if not ispast(par.day1, t):
                        sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
                    else:
-                       sim.newconfirmed[t,i]=(sim.actualcases[t]-sim.actualcases[t-1])*sim.population[t-1,i]/sim.population[t-1].sum()
+                       new_cases=sim.actualcases[t]-sim.actualcases[t-1]
+                       if not np.isnan(new_cases):
+                           sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
+                       else:
+                           sim.newconfirmed[t,i]=0
         
           #  else:
           #       sim.
@@ -1247,7 +1251,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
               sim.susceptibleprop[t,i] = sim.susceptibles[t,i]/sim.population[t,i] #another accounting identity
            else:
               sim.susceptibleprop[t,i]=0 #avoids a divide by zero error with zero pop in one compartment
-   
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
    
            if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
