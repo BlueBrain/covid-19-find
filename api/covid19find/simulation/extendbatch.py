@@ -46,6 +46,10 @@ def process_countries(a_tuple):
        CDB = cd.gettestcountries()
     else:
        CDB = list(cd.getallcountrycodes())   
+    today=datetime.now()
+    day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
+    sim_days=(today-day1).days
+    start_extend=sim_days-60 #should be 56 - have made it bigger for safety
     #for index, row in dbdf.iterrows():
     for ccode in CDB[start-1:finish]:
           if cd.checkcountryparams(ccode) is not None:
@@ -53,13 +57,13 @@ def process_countries(a_tuple):
              print('row=',row)
              cname = row['Country']
              print("COUNTRY:",cname, '('+ccode+')')
-             sev = json.loads(row['Long Sev'].tolist()[0])
+             sev = json.loads(row['Long Sev'].tolist()[0])                    
              print('sev=',sev)
              trig = json.loads(row['Long Trig'].tolist()[0])
              score = row['Score']
              if len(sev) > 1:
              #this is a hardcoded start for recomputation - could make it much higher now
-               while (trig[-1] > 300):
+               while (trig[-1] > start_extend):
                   sev.pop()
                   trig.pop()
                print(sev,trig)
@@ -72,8 +76,8 @@ def process_countries(a_tuple):
                dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig]
                df.to_csv(fname1,index=False,header=False)
                dflong.to_csv(fname2,index=False,header=False)
-    df.to_csv("dbnew.csv",index=False)
-    dflong.to_csv("dbnewlong.csv",index=False)
+#    df.to_csv("dbnew.csv",index=False)
+ #   dflong.to_csv("dbnewlong.csv",index=False)
 
 
 
@@ -82,7 +86,7 @@ if __name__=='__main__':
   #  CDB = cd.gettestcountries()
     print('starting',datetime.now())
     n_processors=cpu_count()-2
-    n_countries=10
+    n_countries=181
     countries_per_processor=int(n_countries/n_processors)+1
     tuples_list=[]
     last1=1
