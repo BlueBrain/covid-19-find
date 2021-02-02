@@ -34,7 +34,7 @@
 "beta_initial": 0.35, 
 "relative_prob_infected": 0.01, 
 "run_multiple_test_scenarios": false, 
-"save_results": true, 
+"save_results": false, 
 "test_directory": "scratch2",
 "expert_mode":"false",
 "fatality_reduction":0.35,
