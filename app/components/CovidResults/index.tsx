@@ -79,6 +79,15 @@ const CovidResults: React.FC<{
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 500;
 
+  console.log({ chartData });
+
+  const totalConfirmed = getLastWeekNumbers('totalConfirmed', data.timeseries);
+  const totalDeaths = getLastWeekNumbers('totalDeaths', data.timeseries);
+  const totalRecovered = getLastWeekNumbers('totalRecovered', data.timeseries);
+
+  const showRecovered =
+    Number(totalRecovered.present) > Number(totalConfirmed.present) * 0.2;
+
   return (
     <div className="result covid-results">
       <div className="stats">
@@ -86,7 +95,7 @@ const CovidResults: React.FC<{
           <span>{data.totalConfirmed.toLocaleString()}</span>{' '}
           <TrendIndicator
             {...({
-              ...getLastWeekNumbers('totalConfirmed', data.timeseries),
+              ...totalConfirmed,
               upIsGood: false,
             } as { previous: number; present: number })}
           />
@@ -96,21 +105,31 @@ const CovidResults: React.FC<{
           <span>{data.totalDeaths.toLocaleString()}</span>{' '}
           <TrendIndicator
             {...({
-              ...getLastWeekNumbers('totalDeaths', data.timeseries),
+              ...totalDeaths,
               upIsGood: false,
             } as { previous: number; present: number })}
           />
           <span className="subtitle">Deaths attributed to COVID-19</span>
         </h3>
         <h3>
-          <span>{data.totalRecovered.toLocaleString()}</span>{' '}
-          <TrendIndicator
-            {...(getLastWeekNumbers('totalRecovered', data.timeseries) as {
-              previous: number;
-              present: number;
-            })}
-          />
-          <span className="subtitle"> People Recovered from COVID-19</span>
+          {showRecovered ? (
+            <>
+              {' '}
+              <span>{data.totalRecovered.toLocaleString()}</span>{' '}
+              <TrendIndicator
+                {...(totalRecovered as {
+                  previous: number;
+                  present: number;
+                })}
+              />
+              <span className="subtitle"> People Recovered from COVID-19</span>
+            </>
+          ) : (
+            <>
+              <span>N/A</span>{' '}
+              <span className="subtitle"> People Recovered from COVID-19</span>
+            </>
+          )}
         </h3>
       </div>
       <div className="charts">
@@ -233,20 +252,23 @@ const CovidResults: React.FC<{
                       .toString(),
                   ],
                 },
-                {
-                  label: 'New Recovered',
-                  yAxisID: 'A',
-                  data: chartData
-                    .map(makeSlidingAverage(chartData, 'newRecovered'))
-                    .map(entry => Math.floor(Number(entry))),
-                  borderColor: [colors.turqouise],
-                  backgroundColor: [
-                    Color(colors.turqouise)
-                      .alpha(0.2)
-                      .toString(),
-                  ],
-                },
-              ],
+
+                showRecovered
+                  ? {
+                      label: 'New Recovered',
+                      yAxisID: 'A',
+                      data: chartData
+                        .map(makeSlidingAverage(chartData, 'newRecovered'))
+                        .map(entry => Math.floor(Number(entry))),
+                      borderColor: [colors.turqouise],
+                      backgroundColor: [
+                        Color(colors.turqouise)
+                          .alpha(0.2)
+                          .toString(),
+                      ],
+                    }
+                  : null,
+              ].filter(Boolean),
               labels: chartData.map(entry => entry.date),
             }}
           />
