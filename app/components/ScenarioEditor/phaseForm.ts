@@ -61,6 +61,7 @@ export default [
         label: 'Imported infections per day',
         type: INPUT_TYPES.number,
         min: 0,
+        max: 1000,
         key: 'importedInfectionsPerDay',
       },
     ],
