@@ -111,6 +111,8 @@ const LivesSaved: React.FC<{
               ),
             }));
             return {
+              lineTension: 0,
+
               label: clientScenariosInput[index].name,
               data: scenario.testingImpact.map(entry => entry.livesSaved),
               borderColor: COLORS_BY_SCENARIO_INDEX[index],

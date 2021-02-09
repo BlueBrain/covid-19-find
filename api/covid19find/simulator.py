@@ -12,8 +12,6 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/simulation")
 
-print ((os.path.dirname(os.path.realpath(__file__)) + "/simulation"))
-
 import cdata
 
 
@@ -128,7 +126,6 @@ class Simulator:
         scenario_data = []
         scenario_dfs = result[0]
         scenario_totals = result[2]
-        print(scenario_totals)
         test_df = result[1]
         for i in range(0, len(scenario_totals["total_deaths_by_scenario"])):
             scenarios_compartments_df = scenario_dfs[i * 2]
@@ -155,7 +152,7 @@ class Simulator:
                     "samplesRequiredForSerologicalStudies": self.__get_serological_data(i, scenario_totals)
                 }
             )
-        return {"scenarios": scenario_data}
+        return {"scenarios": scenario_data, "score": self.past_phases[country_code]["score"]}
 
     @staticmethod
     def __get_serological_data(scenario_index, scenario_totals):
@@ -231,7 +228,7 @@ class Simulator:
     def __reverse_map_scenario(self, covid_libscenario):
         phases = []
         phase1 = {
-            "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
+            "importedInfectionsPerDay": covid_libscenario["imported_infections_per_day"],
             "trigger": (date.today() - timedelta(days=35)).isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
@@ -266,7 +263,8 @@ class Simulator:
                 country_code = row[1]
                 past_phases[country_code] = {
                     "severities": json.loads(row[3]),
-                    "dates": json.loads(row[4])
+                    "dates": json.loads(row[4]),
+                    "score": float(row[5])
                 }
 
         return past_phases

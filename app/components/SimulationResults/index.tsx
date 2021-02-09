@@ -26,9 +26,10 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
+import { CovidData } from '../CovidResults';
+import { isScoreValid } from '../../API';
 
 import './simulation-results.less';
-import { CovidData } from '../CovidResults';
 
 function scaleValueFromLargestValueAgainstViewportWidth(
   value: number,
@@ -255,6 +256,14 @@ const SimulationResults: React.FC<{
                   <h2 className="underline">
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
+
+                  {!isScoreValid(simulationResults.score) && (
+                    <h3 className="warning">
+                      Current estimates of epidemic parameters for this country
+                      are not reliable
+                    </h3>
+                  )}
+
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                   <button onClick={handlePDFDownloadClick}>
                     Download As PDF

@@ -4,6 +4,8 @@ import {
   TRIGGER_CONDITION,
   TESTING_STRATEGIES,
   triggerTypeLabels,
+  IMPORTED_INFECTIONS,
+  ImportedInfectionLabels,
 } from '../../types/simulation';
 
 export enum INPUT_TYPES {
@@ -58,11 +60,13 @@ export default [
     title: 'Epidemic',
     input: [
       {
-        label: 'Imported infections per day',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 1000,
+        label: 'Border controls',
+        type: INPUT_TYPES.select,
         key: 'importedInfectionsPerDay',
+        options: Object.values(IMPORTED_INFECTIONS).map(str => ({
+          label: ImportedInfectionLabels[str],
+          value: str,
+        })),
       },
     ],
   },
