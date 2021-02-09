@@ -79,8 +79,6 @@ const CovidResults: React.FC<{
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 500;
 
-  console.log({ chartData });
-
   const totalConfirmed = getLastWeekNumbers('totalConfirmed', data.timeseries);
   const totalDeaths = getLastWeekNumbers('totalDeaths', data.timeseries);
   const totalRecovered = getLastWeekNumbers('totalRecovered', data.timeseries);
