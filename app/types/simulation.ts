@@ -36,6 +36,18 @@ export enum TESTING_STRATEGIES {
   OPEN = 'open public testing',
 }
 
+export enum IMPORTED_INFECTIONS {
+  HIGHLY_EFFECTIVE = 'highly effective',
+  FAIRLY_EFFECTIVE = 'fairly effective',
+  NOT_EFFECTIVE = 'not effective',
+}
+
+export const ImportedInfectionLabels = {
+  [IMPORTED_INFECTIONS.HIGHLY_EFFECTIVE]: 'Highly Effective',
+  [IMPORTED_INFECTIONS.FAIRLY_EFFECTIVE]: 'Fairly Effective',
+  [IMPORTED_INFECTIONS.NOT_EFFECTIVE]: 'Not Effective',
+};
+
 export type CountryData = {
   countryCode: string;
   population: number;
