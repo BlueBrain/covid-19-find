@@ -205,7 +205,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
-   country_df_raw=pd.concat(frames)
+   country_df_raw=pd.concat(frames,ignore_index=True)
    validation_result=validate_fixed_params(fixed_params)
    if validation_result==-1:
        raise CustomError('Invalid population numbers')
@@ -335,7 +335,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 # =============================================================================
       day1 = dt.datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d")
       shift=0
- #     day1,shift = alignactualwithsimulated(country_df,dfsum_dates['deaths'])
+ 
       
       #reads the trig values in scenarios i and converts to simulation days - does not yet check for type of trigger
       # this code is very dicy and needs checking
@@ -344,8 +344,25 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           if(scenarios[i]['trig_def_type'][j]=='date'):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
-     #fix test strategy to symptomatic first - this matches calibration. Does not change default file or future
-      scenarios[i]['test strategy']='symptomatic first'
+     #This does not seem to do anything useful. I have commented it.
+ #         scenarios[i]['test strategy']='symptomatic first'
+ # Converts qualitative labels for user parameters into numerical values read from the system parameters file
+          if scenarios[i]['imported_infections_per_day'][j]=='highly effective':
+              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_below_limit']
+          elif scenarios[i]['imported_infections_per_day'][j]=='fairly effective':
+              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_above_limit']
+          elif scenarios[i]['imported_infections_per_day'][j]=='not effective':
+              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_very_high']
+          if scenarios[i]['prop_contacts_traced'][j]=='none':
+              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_no_tracing']
+          elif scenarios[i]['prop_contacts_traced'][j]=='fairly effective':
+              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_fair_tracing']
+          elif scenarios[i]['prop_contacts_traced'][j]=='highly effective':
+              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_good_tracing']
+              
+        
+              
+              
       scenario=create_scenario(past,scenarios[i])
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
@@ -558,6 +575,7 @@ class Par:
       self.prop_contacts_traced=list(map(float, params['prop_contacts_traced']))
       self.test_multipliers=list(map(int,params['test_multipliers']))
       self.requireddxtests=list(map(int,params['requireddxtests']))
+      #params is not properly updated with the new scenarios per day
       self.imported_infections_per_day=list(map(float, params['imported_infections_per_day']))
       self.is_counterfactual=[]
       self.fatality_reduction=float(params['fatality_reduction'])
@@ -788,7 +806,6 @@ class Sim:
         else:
             prop_tests=[0,0,0]
         if (use_real_testdata) and ispast(par.day1,t):
-        #if use_real_testdata and (t<380):
           tests_available=sim.actualtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
@@ -1121,6 +1138,11 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
         elif i+par.shift<len(country_df): 
             index=i+par.shift
             sim.actualtests_mit[i]=country_df.iloc[i+par.shift]['tests']
+#Because of rolling av. last 15 days of test values are nans. Here we fill them in with rolling av. for previous 28 days. We only do it for high value of ts. 
+# If we did it for low values we would overwrite the initial nans which are correct
+    
+            if np.isnan(sim.actualtests_mit[i]) and i>350:
+                sim.actualtests_mit[i]=sim.actualtests_mit[i-29:i-1].mean()
             sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
             sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
     last_phase=0
