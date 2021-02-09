@@ -105,6 +105,7 @@ export type SimulationRequest = CountryData & {
 
 export type SimulationResults = {
   scenarios: ScenarioResult[];
+  score: number;
 };
 
 export type TestingImpact = {
