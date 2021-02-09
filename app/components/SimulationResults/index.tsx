@@ -28,6 +28,7 @@ import {
 } from '../../config';
 
 import './simulation-results.less';
+import { isScoreValid } from '../../API';
 
 function scaleValueFromLargestValueAgainstViewportWidth(
   value: number,
@@ -233,6 +234,14 @@ const SimulationResults: React.FC<{
                   <h2 className="underline">
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
+
+                  {!isScoreValid(simulationResults.score) && (
+                    <h3 className="warning">
+                      Current estimates of epidemic parameters for this country
+                      are not reliable
+                    </h3>
+                  )}
+
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                   <button onClick={handlePDFDownloadClick}>
                     Download As PDF
