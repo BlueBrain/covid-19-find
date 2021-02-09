@@ -492,11 +492,11 @@ const SimulationResults: React.FC<{
                 <div className="stats horizontal">
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxInfected,
+                      selectedScenario.totalInfected,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> expected infections
+                      Total number of <br /> expected infections
                     </span>
                   </h3>
                   <h3>
@@ -504,15 +504,17 @@ const SimulationResults: React.FC<{
                       selectedScenario.totalDeaths,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Total expected deaths</span>
+                    <span className="subtitle">
+                      Total number of <br /> expected deaths
+                    </span>
                   </h3>
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxIsolated,
+                      selectedScenario.totalPositiveTests,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> people in isolation
+                      Total number of <br /> positive tests
                     </span>
                   </h3>
                   <h3>

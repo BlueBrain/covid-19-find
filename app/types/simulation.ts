@@ -116,6 +116,7 @@ export type ScenarioResult = {
   totalTests: number;
   testsNeededForCare: number;
   testsNeededForMitigation: number;
+  totalPositiveTests: number;
   samplesRequiredForSerologicalStudies: {
     numSubgroups: number;
     testsRequired: number;

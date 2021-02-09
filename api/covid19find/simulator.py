@@ -128,6 +128,7 @@ class Simulator:
         scenario_data = []
         scenario_dfs = result[0]
         scenario_totals = result[2]
+        print(scenario_totals)
         test_df = result[1]
         for i in range(0, len(scenario_totals["total_deaths_by_scenario"])):
             scenarios_compartments_df = scenario_dfs[i * 2]
@@ -135,6 +136,7 @@ class Simulator:
                 {
                     "totalTests": int(scenario_totals["total_tests_mit_by_scenario"][i]),
                     "totalDeaths": int(scenario_totals["total_deaths_by_scenario"][i]),
+                    "totalPositiveTests": int(scenario_totals["total_cases_by_scenario"][i]),
                     "maxInfected": int(scenario_totals["max_infected_by_scenario"][i]),
                     "totalInfected": int(scenario_totals["total_infected_by_scenario"][i]),
                     "maxIsolated": int(scenario_totals["max_isolated_by_scenario"][i]),
