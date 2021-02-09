@@ -87,29 +87,29 @@ const SimulationResults: React.FC<{
   const graphs = [
     {
       title: 'Deaths',
-      key: 'totalDeaths',
+      key: 'newDeaths',
       actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
       title: 'Positive Tests',
-      key: 'totalConfirmed',
+      key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
     {
       title: 'Recovered',
-      key: 'totalRecovered',
+      key: 'newRecovered',
       cohort: 'total',
     },
     {
       title: 'Infected hospital staff ',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'hospitals',
     },
     {
       title: 'Total Infections',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'total',
     },
   ];
