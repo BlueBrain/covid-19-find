@@ -228,7 +228,7 @@ class Simulator:
     def __reverse_map_scenario(self, covid_libscenario):
         phases = []
         phase1 = {
-            "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
+            "importedInfectionsPerDay": covid_libscenario["imported_infections_per_day"],
             "trigger": (date.today() - timedelta(days=35)).isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
