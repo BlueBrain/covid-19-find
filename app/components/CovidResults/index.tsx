@@ -10,7 +10,7 @@ import TrendIndicator from '../TrendIndicator';
 
 import './covid-results.less';
 
-const makeSlidingAverage = (
+export const makeSlidingAverage = (
   array: { [key: string]: number | string }[],
   key: string,
 ) => (entry, index) => {

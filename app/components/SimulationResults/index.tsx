@@ -28,6 +28,7 @@ import {
 } from '../../config';
 
 import './simulation-results.less';
+import { CovidData } from '../CovidResults';
 
 function scaleValueFromLargestValueAgainstViewportWidth(
   value: number,
@@ -67,7 +68,15 @@ const SimulationResults: React.FC<{
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
+  countryData: CovidData;
+}> = ({
+  loading,
+  ready,
+  error,
+  simulationResults,
+  clientScenariosInput,
+  countryData,
+}) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -88,13 +97,13 @@ const SimulationResults: React.FC<{
     {
       title: 'Deaths',
       key: 'newDeaths',
-      actualKey: 'actualDeaths',
+      actualKey: 'newDeaths',
       cohort: 'total',
     },
     {
       title: 'Positive Tests',
       key: 'newConfirmed',
-      actualKey: 'actualCases',
+      actualKey: 'newConfirmed',
       cohort: 'total',
     },
     {
@@ -149,6 +158,16 @@ const SimulationResults: React.FC<{
       return memo + entry.newIsolated;
     }, 0) || 0;
 
+  const countryDataByDate = (countryData?.timeseries || []).reduce(
+    (memo, time) => {
+      memo[time.date] = {
+        ...time,
+      };
+      return memo;
+    },
+    {},
+  );
+
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {
       return {
@@ -163,10 +182,13 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                day[graph.actualKey] =
-                  scenarioResult.data[graph.cohort][timeseriesIndex][
-                    graph.actualKey
-                  ];
+                const countryData = countryDataByDate[key];
+                if (countryData) {
+                  day[`actual-${graph.actualKey}`] =
+                    Math.floor(countryDataByDate[key][graph.actualKey]) > 0
+                      ? Math.floor(countryDataByDate[key][graph.actualKey])
+                      : 0;
+                }
               }
             });
             memo[key] = day;
@@ -665,7 +687,10 @@ const SimulationResults: React.FC<{
                                       label: 'Actual',
                                       data: Object.values(
                                         datasets[selectedScenarioIndex].data,
-                                      ).map(values => values[graph.actualKey]),
+                                      ).map(
+                                        values =>
+                                          values[`actual-${graph.actualKey}`],
+                                      ),
                                       borderColor: 'black',
                                     },
                                   ]
