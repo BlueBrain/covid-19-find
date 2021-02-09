@@ -92,7 +92,7 @@ const SimulationResults: React.FC<{
       cohort: 'total',
     },
     {
-      title: 'Confirmed Cases',
+      title: 'Positive Tests',
       key: 'totalConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
