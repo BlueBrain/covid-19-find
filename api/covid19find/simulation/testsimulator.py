@@ -60,7 +60,7 @@ fixed_params={
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
@@ -110,8 +110,8 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':[0.75,0.75],\
-    'trig_values':[20,'2021-01-25'],\
-    'trig_def_type':['deaths','date','date'],\
+    'trig_values':['2021-01-04','2021-01-25'],\
+    'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
@@ -119,8 +119,8 @@ scenario_params.append({
     'specificity':[0.998,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[20,20,20],\
-    'imported_infections_per_day':[15,15,15],\
+    'prop_contacts_traced':['none','none'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['symptomatic first','symptomatic first','symptomatic first'],\
