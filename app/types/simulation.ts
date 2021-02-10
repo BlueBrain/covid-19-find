@@ -42,10 +42,22 @@ export enum IMPORTED_INFECTIONS {
   NOT_EFFECTIVE = 'not effective',
 }
 
+export enum CONTACT_TRACING {
+  NONE = 'none',
+  HIGHLY_EFFECTIVE = 'highly effective',
+  FAIRLY_EFFECTIVE = 'fairly effective',
+}
+
 export const ImportedInfectionLabels = {
   [IMPORTED_INFECTIONS.HIGHLY_EFFECTIVE]: 'Highly Effective',
   [IMPORTED_INFECTIONS.FAIRLY_EFFECTIVE]: 'Fairly Effective',
   [IMPORTED_INFECTIONS.NOT_EFFECTIVE]: 'Not Effective',
+};
+
+export const ContractTracingLabels = {
+  [CONTACT_TRACING.NONE]: 'None',
+  [CONTACT_TRACING.FAIRLY_EFFECTIVE]: 'Fairly Effective',
+  [CONTACT_TRACING.HIGHLY_EFFECTIVE]: 'Highly Effective',
 };
 
 export type CountryData = {
