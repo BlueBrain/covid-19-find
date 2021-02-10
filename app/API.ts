@@ -10,9 +10,10 @@ import {
 import { toLetters } from './libs/strings';
 import { match, when } from 'ts-pattern';
 
-export const USEFUL_SCORE_THRESHOLD = 0.2;
+export const INVALID_SCORE_THRESHOLD = 0.2;
 
-export const isScoreValid = (score: number) => score > USEFUL_SCORE_THRESHOLD;
+export const isScoreInvalid = (score: number) =>
+  score > INVALID_SCORE_THRESHOLD;
 
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
