@@ -1,6 +1,6 @@
 {
   "name": "covid-19-find",
-  "version": "0.0.129",
+  "version": "0.0.130",
   "main": "index.js",
   "repository": "https://github.com/wwajerowicz/covid-19-find.git",
   "license": "MIT",
