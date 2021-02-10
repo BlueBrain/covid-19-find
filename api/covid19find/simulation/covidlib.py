@@ -222,7 +222,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
  
    country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df['Date']=country_df_raw['Date']
-   country_df['accumulated_deaths']=country_df_raw['accumulated_deaths']
+ #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
    keys=kwargs.keys()
    if len(kwargs)>0:
@@ -390,7 +390,10 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['prevalence']=(dfsum['accumulatedinfected']-dfsum['deaths'])/dfsum['population']
       dfsum['actualdeaths']=sim.actualdeaths
       dfsum['actualcases']=sim.actualcases
-      dfsum['actualtests_mit']=sim.actualtests_mit
+      dfsum['actualnewtests_mit']=sim.actualnewtests_mit
+      dfsum['actualnewdeaths']=sim.actualnewdeaths
+      dfsum['actualnewcases']=sim.actualnewcases
+  
       dataframes.append(dfsum)
       # do extra simulations to test different test strategies
       # loops through the test_kit multipliers
@@ -685,8 +688,10 @@ class Sim:
       self.maxinfected=np.zeros(num_compartments)
       self.maxisolated=np.zeros(num_compartments)
       self.totalisolated=np.zeros(num_compartments)
-      self.actualtests_mit=np.zeros(num_days)
       self.actualcases=np.zeros(num_days)
+      self.actualnewdeaths=np.zeros(num_days)
+      self.actualnewcases=np.zeros(num_days)
+      self.actualnewtests_mit=np.zeros(num_days)
      
       
       
@@ -806,7 +811,7 @@ class Sim:
         else:
             prop_tests=[0,0,0]
         if (use_real_testdata) and ispast(par.day1,t):
-          tests_available=sim.actualtests_mit[t]*prop_tests
+          tests_available=sim.actualnewtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         if tests_available.sum()>0:
@@ -855,7 +860,7 @@ class Sim:
            p_infected_if_symptomatic=0
         p_infected_if_asymptomatic=p_infected_if_symptomatic*par.relative_prob_infected
         if (use_real_testdata) and ispast(par.day1,t):
-          tests_available=sim.actualtests_mit[t]
+          tests_available=sim.actualnewtests_mit[t]
         else:
           tests_available=par.num_tests_mitigation[phase]
         for k in range(0, par.num_compartments):
@@ -914,7 +919,7 @@ class Sim:
     #    prop_tests=newsymptomatic/total_symptomatic
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
-          tests_available=sim.actualtests_mit[t]*prop_tests
+          tests_available=sim.actualnewtests_mit[t]*prop_tests
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
@@ -1130,21 +1135,25 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     sim.dates=[par.day1 + dt.timedelta(days=x) for x in range(0,par.num_days)]
     tau=par.tau
     gamma=par.gamma
-    for i in range(0,len(sim.actualtests_mit)):
+    for i in range(0,len(sim.actualnewtests_mit)):
         if i+par.shift<0:
-            sim.actualtests_mit[i]=0
+            sim.actualnewtests_mit[i]=0
             sim.actualdeaths[i]=0
             sim.actualcases[i]=0
         elif i+par.shift<len(country_df): 
             index=i+par.shift
-            sim.actualtests_mit[i]=country_df.iloc[i+par.shift]['tests']
-#Because of rolling av. last 15 days of test values are nans. Here we fill them in with rolling av. for previous 28 days. We only do it for high value of ts. 
-# If we did it for low values we would overwrite the initial nans which are correct
+            sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
+#Because of rolling av. last 15 days of  values from country_df are nans. Here we fill them in with rolling av. for previous 28 days. We only do it for high value of ts. 
+# If we did it for low values we would overwrite the initial nans which are actually correct
     
-            if np.isnan(sim.actualtests_mit[i]) and i>350:
-                sim.actualtests_mit[i]=sim.actualtests_mit[i-29:i-1].mean()
+            if np.isnan(sim.actualnewtests_mit[i]) and i>350:
+                sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
+                sim.actualcases[i]=sim.actualcases[i-29:i-1].mean()
+                sim.actualdeaths[i]=sim.actualdeaths[i-29:i-1].mean()
             sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
+            sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
             sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
+            sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
     for t in range(start_day,end_day):
        if phase+1<=num_phases:
