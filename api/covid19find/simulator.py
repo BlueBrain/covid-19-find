@@ -233,7 +233,7 @@ class Simulator:
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
             "severity": float(covid_libscenario["severity"]),
-            "proportionOfContactsTraced": float(covid_libscenario["prop_contacts_traced"]),
+            "proportionOfContactsTraced": covid_libscenario["prop_contacts_traced"],
             "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
             "typeTestsMitigation": "PCR",
             "specificity": float(covid_libscenario["specificity"]),

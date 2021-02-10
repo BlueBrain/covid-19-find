@@ -6,6 +6,8 @@ import {
   triggerTypeLabels,
   IMPORTED_INFECTIONS,
   ImportedInfectionLabels,
+  CONTACT_TRACING,
+  ContractTracingLabels,
 } from '../../types/simulation';
 
 export enum INPUT_TYPES {
@@ -108,28 +110,10 @@ export default [
         label: 'Trace and isolate contacts',
         type: INPUT_TYPES.select,
         key: 'proportionOfContactsTraced',
-        options: [
-          {
-            label: 'None',
-            value: 0,
-          },
-          {
-            label: '10%',
-            value: 0.1,
-          },
-          {
-            label: '20%',
-            value: 0.2,
-          },
-          {
-            label: '25%',
-            value: 0.25,
-          },
-          {
-            label: '50%',
-            value: 0.5,
-          },
-        ],
+        options: Object.values(CONTACT_TRACING).map(str => ({
+          label: ContractTracingLabels[str],
+          value: str,
+        })),
       },
     ],
   },

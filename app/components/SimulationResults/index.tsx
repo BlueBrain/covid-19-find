@@ -179,8 +179,6 @@ const SimulationResults: React.FC<{
     },
   );
 
-  console.log({ datasets });
-
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
       PDFFromElement(PDFRef.current);

@@ -68,9 +68,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "phases"
-        ],
+        "required": ["phases"],
         "properties": {
           "phases": {
             "type": "array",
@@ -105,10 +103,7 @@
                   ]
                 },
                 "trigger": {
-                  "type": [
-                    "string",
-                    "number"
-                  ]
+                  "type": ["string", "number"]
                 },
                 "triggerType": {
                   "type": "string",
@@ -124,11 +119,7 @@
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": [
-                    "<",
-                    "=",
-                    ">="
-                  ]
+                  "enum": ["<", "=", ">="]
                 },
                 "severity": {
                   "type": "number",
@@ -136,9 +127,8 @@
                   "maximum": 1
                 },
                 "proportionOfContactsTraced": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
+                  "type": "string",
+                  "enum": ["highly effective", "fairly effective", "none"]
                 },
                 "numTestsMitigation": {
                   "type": "number",
@@ -146,10 +136,7 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "specificity": {
                   "type": "number",
@@ -176,10 +163,7 @@
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "requiredDxTests": {
                   "type": "number",
