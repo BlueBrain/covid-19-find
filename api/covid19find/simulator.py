@@ -180,7 +180,7 @@ class Simulator:
         row = index_row[1]
         result = Simulator.__dataframe_row_to_response(index_row)
         result["actualDeaths"] = None if math.isnan(row["actualnewdeaths"]) else int(row["actualnewdeaths"])
-        result["actualCases"] = None if math.isnan(row["actualnewcases "]) else int(row["actualnewcases "])
+        result["actualCases"] = None if math.isnan(row["actualnewcases"]) else int(row["actualnewcases"])
         result["actualTests"] = None if math.isnan(row["actualnewtests_mit"]) else int(row["actualnewtests_mit"])
         return result
 

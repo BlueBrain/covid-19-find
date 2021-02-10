@@ -26,7 +26,6 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
-import { CovidData } from '../CovidResults';
 import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
@@ -135,13 +134,6 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const maxDeaths =
-    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
-      return scenario.data.total.reduce((memo, entry) => {
-        return memo + entry.newDeaths;
-      }, 0);
-    })?.totalDeaths || 0;
-
   const maxIsolated =
     maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
       return scenario.data.total.reduce((memo, entry) => {
@@ -165,25 +157,13 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                // The actualData is accumulated, need to make it a daily value.
                 const actualDataToday =
                   scenarioResult.data[graph.cohort][timeseriesIndex][
                     graph.actualKey
                   ] || 0;
 
-                const actualDataYesterday = scenarioResult.data[graph.cohort][
-                  timeseriesIndex - 1
-                ]
-                  ? scenarioResult.data[graph.cohort][timeseriesIndex - 1][
-                      graph.actualKey
-                    ]
-                  : 0;
-
-                const dailyChange = Math.floor(
-                  actualDataToday - actualDataYesterday,
-                );
-
-                const dailyChangeClamped = dailyChange > 0 ? dailyChange : 0;
+                const dailyChangeClamped =
+                  actualDataToday > 0 ? actualDataToday : 0;
 
                 day[
                   `actual-${graph.cohort}-${graph.actualKey}`
