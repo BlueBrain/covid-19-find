@@ -69,15 +69,7 @@ const SimulationResults: React.FC<{
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-  countryData: CovidData;
-}> = ({
-  loading,
-  ready,
-  error,
-  simulationResults,
-  clientScenariosInput,
-  countryData,
-}) => {
+}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -158,16 +150,6 @@ const SimulationResults: React.FC<{
     })?.data.total.reduce((memo, entry) => {
       return memo + entry.newIsolated;
     }, 0) || 0;
-
-  const countryDataByDate = (countryData?.timeseries || []).reduce(
-    (memo, time) => {
-      memo[time.date] = {
-        ...time,
-      };
-      return memo;
-    },
-    {},
-  );
 
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {

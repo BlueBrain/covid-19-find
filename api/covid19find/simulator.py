@@ -179,9 +179,9 @@ class Simulator:
     def __total_dataframe_row_to_response(index_row):
         row = index_row[1]
         result = Simulator.__dataframe_row_to_response(index_row)
-        result["actualDeaths"] = None if math.isnan(row["actualdeaths"]) else int(row["actualdeaths"])
-        result["actualCases"] = None if math.isnan(row["actualcases"]) else int(row["actualcases"])
-        result["actualTests"] = None if math.isnan(row["actualtests_mit"]) else int(row["actualtests_mit"])
+        result["actualDeaths"] = None if math.isnan(row["actualnewdeaths"]) else int(row["actualnewdeaths"])
+        result["actualCases"] = None if math.isnan(row["actualnewcases "]) else int(row["actualnewcases "])
+        result["actualTests"] = None if math.isnan(row["actualnewtests_mit"]) else int(row["actualnewtests_mit"])
         return result
 
     @staticmethod
