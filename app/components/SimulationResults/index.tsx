@@ -98,13 +98,13 @@ const SimulationResults: React.FC<{
     {
       title: 'Deaths',
       key: 'newDeaths',
-      actualKey: 'newDeaths',
+      actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
       title: 'Positive Tests',
       key: 'newConfirmed',
-      actualKey: 'newConfirmed',
+      actualKey: 'actualCases',
       cohort: 'total',
     },
     {
@@ -183,13 +183,29 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                const countryData = countryDataByDate[key];
-                if (countryData) {
-                  day[`actual-${graph.actualKey}`] =
-                    Math.floor(countryDataByDate[key][graph.actualKey]) > 0
-                      ? Math.floor(countryDataByDate[key][graph.actualKey])
-                      : 0;
-                }
+                // The actualData is accumulated, need to make it a daily value.
+                const actualDataToday =
+                  scenarioResult.data[graph.cohort][timeseriesIndex][
+                    graph.actualKey
+                  ] || 0;
+
+                const actualDataYesterday = scenarioResult.data[graph.cohort][
+                  timeseriesIndex - 1
+                ]
+                  ? scenarioResult.data[graph.cohort][timeseriesIndex - 1][
+                      graph.actualKey
+                    ]
+                  : 0;
+
+                const dailyChange = Math.floor(
+                  actualDataToday - actualDataYesterday,
+                );
+
+                const dailyChangeClamped = dailyChange > 0 ? dailyChange : 0;
+
+                day[
+                  `actual-${graph.cohort}-${graph.actualKey}`
+                ] = dailyChangeClamped;
               }
             });
             memo[key] = day;
@@ -200,6 +216,8 @@ const SimulationResults: React.FC<{
       };
     },
   );
+
+  console.log({ datasets });
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -698,7 +716,9 @@ const SimulationResults: React.FC<{
                                         datasets[selectedScenarioIndex].data,
                                       ).map(
                                         values =>
-                                          values[`actual-${graph.actualKey}`],
+                                          values[
+                                            `actual-${graph.cohort}-${graph.actualKey}`
+                                          ],
                                       ),
                                       borderColor: 'black',
                                     },
