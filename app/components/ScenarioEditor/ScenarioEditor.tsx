@@ -9,7 +9,11 @@ import {
   TRIGGER_TYPE,
 } from '../../types/simulation';
 import PhaseInput from './PhaseInput';
-import phaseForm, { AnyInputProp, INPUT_TYPES } from './phaseForm';
+import phaseForm, {
+  AnyInputProp,
+  INPUT_TYPES,
+  NumberInputProp,
+} from './phaseForm';
 import {
   replaceAtIndexWithoutMutation,
   removeAtIndexWithoutMutation,
@@ -157,34 +161,52 @@ const ScenarioEditor: React.FC<{
                         ></TooltipLabel>
                       </div>
                       {phases.map((phase, phaseIndex) => {
+                        // TODO refactor as pattern
                         // change type of trigger for validation
+                        const inputProps = { ...input };
                         if (
-                          input.key === 'trigger' &&
+                          inputProps.key === 'trigger' &&
                           phase.triggerType === TRIGGER_TYPE.DATE
                         ) {
                           // @ts-ignore
-                          input.type = INPUT_TYPES.text;
+                          inputProps.type = INPUT_TYPES.text;
                         }
 
                         if (
-                          input.key === 'trigger' &&
+                          inputProps.key === 'trigger' &&
                           phase.triggerType !== TRIGGER_TYPE.DATE
                         ) {
-                          input.type = INPUT_TYPES.number;
+                          inputProps.type = INPUT_TYPES.number;
+
+                          // These trigger types should be percentages
+                          // min 0, max 100
+                          // https://github.com/BlueBrain/covid-19-find/issues/201
+                          if (
+                            phase.triggerType === TRIGGER_TYPE.POSITIVES ||
+                            phase.triggerType === TRIGGER_TYPE.INCREASE_CASES ||
+                            phase.triggerType === TRIGGER_TYPE.INCREASE_DEATHS
+                          ) {
+                            (inputProps as NumberInputProp).min = 0;
+                            (inputProps as NumberInputProp).max = 100;
+                            (inputProps as NumberInputProp).step = 0.01;
+                          }
                         }
 
                         return (
                           <div
                             className="col"
-                            key={`${phase.name}-${input.label}-${phaseIndex}`}
+                            key={`${phase.name}-${inputProps.label}-${phaseIndex}`}
                           >
                             <PhaseInput
                               inputProps={{
-                                ...input,
-                                name: `${scenarioIndex}-${phaseIndex}-${input.key}-${phase.name}`,
+                                ...inputProps,
+                                name: `${scenarioIndex}-${phaseIndex}-${inputProps.key}-${phase.name}`,
                               }}
-                              onChange={handlePhaseChange(input, phaseIndex)}
-                              value={phase[input.key]}
+                              onChange={handlePhaseChange(
+                                inputProps,
+                                phaseIndex,
+                              )}
+                              value={phase[inputProps.key]}
                             />
                           </div>
                         );

@@ -68,7 +68,9 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["phases"],
+        "required": [
+          "phases"
+        ],
         "properties": {
           "phases": {
             "type": "array",
@@ -95,10 +97,18 @@
               ],
               "properties": {
                 "importedInfectionsPerDay": {
-                  "type": "number"
+                  "type": "string",
+                  "enum": [
+                    "highly effective",
+                    "fairly effective",
+                    "not effective"
+                  ]
                 },
                 "trigger": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "number"
+                  ]
                 },
                 "triggerType": {
                   "type": "string",
@@ -114,7 +124,11 @@
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": ["<", "=", ">="]
+                  "enum": [
+                    "<",
+                    "=",
+                    ">="
+                  ]
                 },
                 "severity": {
                   "type": "number",
@@ -132,7 +146,10 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": ["PCR", "RDT"]
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
                 },
                 "specificity": {
                   "type": "number",
@@ -159,7 +176,10 @@
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": ["PCR", "RDT"]
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
                 },
                 "requiredDxTests": {
                   "type": "number",

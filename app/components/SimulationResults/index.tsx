@@ -26,6 +26,8 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
+import { CovidData } from '../CovidResults';
+import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
 
@@ -67,7 +69,15 @@ const SimulationResults: React.FC<{
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
+  countryData: CovidData;
+}> = ({
+  loading,
+  ready,
+  error,
+  simulationResults,
+  clientScenariosInput,
+  countryData,
+}) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -87,29 +97,29 @@ const SimulationResults: React.FC<{
   const graphs = [
     {
       title: 'Deaths',
-      key: 'totalDeaths',
-      actualKey: 'actualDeaths',
+      key: 'newDeaths',
+      actualKey: 'newDeaths',
       cohort: 'total',
     },
     {
-      title: 'Confirmed Cases',
-      key: 'totalConfirmed',
-      actualKey: 'actualCases',
+      title: 'Positive Tests',
+      key: 'newConfirmed',
+      actualKey: 'newConfirmed',
       cohort: 'total',
     },
     {
       title: 'Recovered',
-      key: 'totalRecovered',
+      key: 'newRecovered',
       cohort: 'total',
     },
     {
       title: 'Infected hospital staff ',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'hospitals',
     },
     {
       title: 'Total Infections',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'total',
     },
   ];
@@ -149,6 +159,16 @@ const SimulationResults: React.FC<{
       return memo + entry.newIsolated;
     }, 0) || 0;
 
+  const countryDataByDate = (countryData?.timeseries || []).reduce(
+    (memo, time) => {
+      memo[time.date] = {
+        ...time,
+      };
+      return memo;
+    },
+    {},
+  );
+
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {
       return {
@@ -163,10 +183,13 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                day[graph.actualKey] =
-                  scenarioResult.data[graph.cohort][timeseriesIndex][
-                    graph.actualKey
-                  ];
+                const countryData = countryDataByDate[key];
+                if (countryData) {
+                  day[`actual-${graph.actualKey}`] =
+                    Math.floor(countryDataByDate[key][graph.actualKey]) > 0
+                      ? Math.floor(countryDataByDate[key][graph.actualKey])
+                      : 0;
+                }
               }
             });
             memo[key] = day;
@@ -233,6 +256,14 @@ const SimulationResults: React.FC<{
                   <h2 className="underline">
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
+
+                  {isScoreInvalid(simulationResults.score) && (
+                    <h3 className="warning">
+                      Current estimates of epidemic parameters for this country
+                      are not reliable
+                    </h3>
+                  )}
+
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                   <button onClick={handlePDFDownloadClick}>
                     Download As PDF
@@ -268,6 +299,7 @@ const SimulationResults: React.FC<{
                         yAxes: [
                           {
                             // suggestedMin: 0,
+                            // type: 'logarithmic',
                             beginAtZero: true,
                             scaleLabel: {
                               display: true,
@@ -291,6 +323,7 @@ const SimulationResults: React.FC<{
                         ],
                         xAxes: [
                           {
+                            // type: 'logarithmic',
                             gridLines: {
                               color: '#00000005',
                             },
@@ -339,9 +372,10 @@ const SimulationResults: React.FC<{
                             y: accumulatedIsolated,
                             r: scaleValueFromLargestValueAgainstViewportWidth(
                               scenario.totalDeaths,
-                              minDeaths,
+                              0,
                               maxDeaths,
                             ),
+                            // r: scenario.totalDeaths,
                             deaths: scenario.totalDeaths,
                           };
 
@@ -489,11 +523,11 @@ const SimulationResults: React.FC<{
                 <div className="stats horizontal">
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxInfected,
+                      selectedScenario.totalInfected,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> expected infections
+                      Total number of <br /> expected infections
                     </span>
                   </h3>
                   <h3>
@@ -501,15 +535,17 @@ const SimulationResults: React.FC<{
                       selectedScenario.totalDeaths,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Total expected deaths</span>
+                    <span className="subtitle">
+                      Total number of <br /> expected deaths
+                    </span>
                   </h3>
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxIsolated,
+                      selectedScenario.totalPositiveTests,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> people in isolation
+                      Total number of <br /> positive tests
                     </span>
                   </h3>
                   <h3>
@@ -660,7 +696,10 @@ const SimulationResults: React.FC<{
                                       label: 'Actual',
                                       data: Object.values(
                                         datasets[selectedScenarioIndex].data,
-                                      ).map(values => values[graph.actualKey]),
+                                      ).map(
+                                        values =>
+                                          values[`actual-${graph.actualKey}`],
+                                      ),
                                       borderColor: 'black',
                                     },
                                   ]

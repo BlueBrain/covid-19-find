@@ -3,6 +3,9 @@ import {
   TRIGGER_TYPE,
   TRIGGER_CONDITION,
   TESTING_STRATEGIES,
+  triggerTypeLabels,
+  IMPORTED_INFECTIONS,
+  ImportedInfectionLabels,
 } from '../../types/simulation';
 
 export enum INPUT_TYPES {
@@ -57,10 +60,13 @@ export default [
     title: 'Epidemic',
     input: [
       {
-        label: 'Imported infections per day',
-        type: INPUT_TYPES.number,
-        min: 0,
+        label: 'Border controls',
+        type: INPUT_TYPES.select,
         key: 'importedInfectionsPerDay',
+        options: Object.values(IMPORTED_INFECTIONS).map(str => ({
+          label: ImportedInfectionLabels[str],
+          value: str,
+        })),
       },
     ],
   },
@@ -72,7 +78,7 @@ export default [
         type: INPUT_TYPES.select,
         key: 'triggerType',
         options: Object.values(TRIGGER_TYPE).map(str => ({
-          label: str,
+          label: triggerTypeLabels[str],
           value: str,
         })),
       },
@@ -91,7 +97,7 @@ export default [
         key: 'trigger',
       },
       {
-        label: 'Severity',
+        label: 'Effectiveness',
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
@@ -180,7 +186,7 @@ export default [
         type: INPUT_TYPES.number,
         min: 0,
         max: 1,
-        step: 0.01,
+        step: 0.001,
         key: 'specificity',
       },
       {

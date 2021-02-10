@@ -10,9 +10,11 @@ import LoadScenariosButton from './components/LoadScenariosButton';
 import useAPIContext from './hooks/useAPI';
 import useQueryString from './hooks/useQuerySring';
 import { decodeClientState, encodeClientState } from './libs/stateLoader';
+import { CovidData } from './components/CovidResults';
 
 const App: React.FC = () => {
   const api = useAPIContext();
+  const [countryData, setCountryData] = React.useState<CovidData | null>(null);
   const [defaultScenarios, setDefaultScenarios] = React.useState(
     DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
   );
@@ -96,10 +98,11 @@ const App: React.FC = () => {
             About the Dx Implementation Sim
           </button>
         </a>
-        <LoadScenariosButton onLoad={handleLoadState} />
+        <LoadScenariosButton onLoad={handleLoadState} state={state} />
       </section>
       {/* Panel 1 */}
       <Countries
+        onCountryDataLoaded={setCountryData}
         countrySelectFormReady={countrySelectFormReady}
         setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
           setFormsReady({
@@ -142,6 +145,7 @@ const App: React.FC = () => {
       />
       {/* Panel 3 */}
       <Simulation
+        countryData={countryData}
         clientSimulationRequest={state}
         ready={countrySelectFormReady && testsFormReady}
       />

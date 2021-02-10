@@ -10,6 +10,7 @@ const validateFormWithCustomRules = (
   form: HTMLFormElement,
   scenarios: ClientScenarioData[],
 ) => {
+  const MAX_EARLIEST_DAYS_AGO = 35;
   // Here we will validate the form
   // Trigger Dates of each scenario must come after the preceeding date.
   const invalidScenarios = new Set<number>();
@@ -48,6 +49,18 @@ const validateFormWithCustomRules = (
           const isAfter = date.isAfter(moment(prevPhaseDateValue));
           input.setCustomValidity(
             isAfter ? '' : `this date must come after ${prevPhaseDateValue}`,
+          );
+        }
+
+        // Users should not be able to enter a date MAX_EARLIEST_DAYS_AGO (35) days before today
+        // https://github.com/BlueBrain/covid-19-find/issues/179
+        if (
+          date.isBefore(
+            moment(new Date()).subtract(MAX_EARLIEST_DAYS_AGO + 1, 'days'),
+          )
+        ) {
+          input.setCustomValidity(
+            `Please enter a date no earlier than ${MAX_EARLIEST_DAYS_AGO} days in the past`,
           );
         }
       }

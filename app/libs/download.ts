@@ -13,7 +13,9 @@ export const download = (filename: string, mediaType: string, data: any) => {
   }
 };
 
-export const readSingleFile = (e: Event): Promise<string | ArrayBuffer> => {
+export const readSingleFile = (
+  e: Event,
+): Promise<{ name: string; contents: string | ArrayBuffer }> => {
   return new Promise((resolve, reject) => {
     const file = (e.target as HTMLInputElement).files[0];
     if (!file) {
@@ -22,7 +24,7 @@ export const readSingleFile = (e: Event): Promise<string | ArrayBuffer> => {
     const reader = new FileReader();
     reader.onload = e => {
       const contents = e.target.result;
-      resolve(contents);
+      resolve({ name: file.name, contents });
     };
     reader.onerror = reject;
     reader.readAsText(file);

@@ -16,11 +16,13 @@ const Countries: React.FC<{
     value: CountrySelectorResponse | { countryCode?: string | null },
   ) => void;
   values: CountryData;
+  onCountryDataLoaded: (countryData: CovidData) => void;
 }> = ({
   onSubmit,
   values,
   setCountrySelectFormReady,
   countrySelectFormReady,
+  onCountryDataLoaded,
 }) => {
   const [countries, setCountries] = React.useState([]);
   const [countryInfo, setCountryInfo] = React.useState<{
@@ -50,6 +52,7 @@ const Countries: React.FC<{
       });
       const countryInfo = await api.country(countryCode);
       const covidData = await api.countryCovidData(countryCode);
+      onCountryDataLoaded(covidData);
       setCountryInfo({
         loading: false,
         error: null,
