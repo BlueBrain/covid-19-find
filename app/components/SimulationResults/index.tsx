@@ -26,6 +26,7 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
+import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
 
@@ -87,29 +88,29 @@ const SimulationResults: React.FC<{
   const graphs = [
     {
       title: 'Deaths',
-      key: 'totalDeaths',
+      key: 'newDeaths',
       actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
-      title: 'Confirmed Cases',
-      key: 'totalConfirmed',
+      title: 'Positive Tests',
+      key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
     {
       title: 'Recovered',
-      key: 'totalRecovered',
+      key: 'newRecovered',
       cohort: 'total',
     },
     {
       title: 'Infected hospital staff ',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'hospitals',
     },
     {
       title: 'Total Infections',
-      key: 'totalInfected',
+      key: 'newInfected',
       cohort: 'total',
     },
   ];
@@ -132,13 +133,6 @@ const SimulationResults: React.FC<{
       title: 'Peak Isolated',
     },
   ];
-
-  const maxDeaths =
-    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
-      return scenario.data.total.reduce((memo, entry) => {
-        return memo + entry.newDeaths;
-      }, 0);
-    })?.totalDeaths || 0;
 
   const maxIsolated =
     maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
@@ -163,10 +157,17 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                day[graph.actualKey] =
+                const actualDataToday =
                   scenarioResult.data[graph.cohort][timeseriesIndex][
                     graph.actualKey
-                  ];
+                  ] || 0;
+
+                const dailyChangeClamped =
+                  actualDataToday > 0 ? actualDataToday : 0;
+
+                day[
+                  `actual-${graph.cohort}-${graph.actualKey}`
+                ] = dailyChangeClamped;
               }
             });
             memo[key] = day;
@@ -177,6 +178,8 @@ const SimulationResults: React.FC<{
       };
     },
   );
+
+  console.log({ datasets });
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -233,6 +236,14 @@ const SimulationResults: React.FC<{
                   <h2 className="underline">
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
+
+                  {isScoreInvalid(simulationResults.score) && (
+                    <h3 className="warning">
+                      Current estimates of epidemic parameters for this country
+                      are not reliable
+                    </h3>
+                  )}
+
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
                   <button onClick={handlePDFDownloadClick}>
                     Download As PDF
@@ -268,6 +279,7 @@ const SimulationResults: React.FC<{
                         yAxes: [
                           {
                             // suggestedMin: 0,
+                            // type: 'logarithmic',
                             beginAtZero: true,
                             scaleLabel: {
                               display: true,
@@ -291,6 +303,7 @@ const SimulationResults: React.FC<{
                         ],
                         xAxes: [
                           {
+                            // type: 'logarithmic',
                             gridLines: {
                               color: '#00000005',
                             },
@@ -339,9 +352,10 @@ const SimulationResults: React.FC<{
                             y: accumulatedIsolated,
                             r: scaleValueFromLargestValueAgainstViewportWidth(
                               scenario.totalDeaths,
-                              minDeaths,
+                              0,
                               maxDeaths,
                             ),
+                            // r: scenario.totalDeaths,
                             deaths: scenario.totalDeaths,
                           };
 
@@ -489,11 +503,11 @@ const SimulationResults: React.FC<{
                 <div className="stats horizontal">
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxInfected,
+                      selectedScenario.totalInfected,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> expected infections
+                      Total number of <br /> expected infections
                     </span>
                   </h3>
                   <h3>
@@ -501,15 +515,17 @@ const SimulationResults: React.FC<{
                       selectedScenario.totalDeaths,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
-                    <span className="subtitle">Total expected deaths</span>
+                    <span className="subtitle">
+                      Total number of <br /> expected deaths
+                    </span>
                   </h3>
                   <h3>
                     {Math.ceil(
-                      selectedScenario.maxIsolated,
+                      selectedScenario.totalPositiveTests,
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Maximum number of <br /> people in isolation
+                      Total number of <br /> positive tests
                     </span>
                   </h3>
                   <h3>
@@ -660,7 +676,12 @@ const SimulationResults: React.FC<{
                                       label: 'Actual',
                                       data: Object.values(
                                         datasets[selectedScenarioIndex].data,
-                                      ).map(values => values[graph.actualKey]),
+                                      ).map(
+                                        values =>
+                                          values[
+                                            `actual-${graph.cohort}-${graph.actualKey}`
+                                          ],
+                                      ),
                                       borderColor: 'black',
                                     },
                                   ]

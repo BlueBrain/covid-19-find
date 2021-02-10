@@ -5,9 +5,15 @@ import {
   Scenario,
   Phase,
   ClientSimulationRequest,
+  TRIGGER_TYPE,
 } from './types/simulation';
 import { toLetters } from './libs/strings';
 import { match, when } from 'ts-pattern';
+
+export const INVALID_SCORE_THRESHOLD = 0.2;
+
+export const isScoreInvalid = (score: number) =>
+  score > INVALID_SCORE_THRESHOLD;
 
 const fixPhases = (phase: Phase, index: number) => ({
   ...phase,
@@ -79,11 +85,26 @@ export default class API {
       ...simulationParams,
       scenarios: simulationParams.scenarios.map(scenario => ({
         phases: scenario.phases.map(
-          ({ name, fatalityReductionRecent, trigger, ...rest }) => ({
-            ...rest,
-            fatalityReductionRecent: fatalityReductionRecent / 100,
-            trigger: `${trigger}`,
-          }),
+          ({
+            name,
+            fatalityReductionRecent,
+            trigger,
+            triggerType,
+            ...rest
+          }) => {
+            return {
+              ...rest,
+              fatalityReductionRecent: fatalityReductionRecent / 100,
+              triggerType,
+              // Some trigger types should be percentages
+              // https://github.com/BlueBrain/covid-19-find/issues/201
+              trigger: match<string, string | number>(triggerType)
+                .with(TRIGGER_TYPE.POSITIVES, () => Number(trigger) / 100)
+                .with(TRIGGER_TYPE.INCREASE_CASES, () => Number(trigger) / 100)
+                .with(TRIGGER_TYPE.INCREASE_DEATHS, () => Number(trigger) / 100)
+                .otherwise(() => `${trigger}`),
+            };
+          },
         ),
       })),
       population: Number(simulationParams.population),

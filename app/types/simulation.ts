@@ -8,6 +8,16 @@ export enum TRIGGER_TYPE {
   CASES_PER_MILLSION = 'cases per million',
 }
 
+export const triggerTypeLabels = {
+  [TRIGGER_TYPE.DATE]: 'Date',
+  [TRIGGER_TYPE.DEATHS]: 'Deaths',
+  [TRIGGER_TYPE.CASES]: 'Cases',
+  [TRIGGER_TYPE.INCREASE_DEATHS]: 'Increased Deaths (%)',
+  [TRIGGER_TYPE.INCREASE_CASES]: 'Increased Cases (%)',
+  [TRIGGER_TYPE.POSITIVES]: 'Positives (%)',
+  [TRIGGER_TYPE.CASES_PER_MILLSION]: 'Cases per million',
+};
+
 export enum TRIGGER_CONDITION {
   EQUAL = '=',
   LESS_THAN = '<',
@@ -26,6 +36,18 @@ export enum TESTING_STRATEGIES {
   OPEN = 'open public testing',
 }
 
+export enum IMPORTED_INFECTIONS {
+  HIGHLY_EFFECTIVE = 'highly effective',
+  FAIRLY_EFFECTIVE = 'fairly effective',
+  NOT_EFFECTIVE = 'not effective',
+}
+
+export const ImportedInfectionLabels = {
+  [IMPORTED_INFECTIONS.HIGHLY_EFFECTIVE]: 'Highly Effective',
+  [IMPORTED_INFECTIONS.FAIRLY_EFFECTIVE]: 'Fairly Effective',
+  [IMPORTED_INFECTIONS.NOT_EFFECTIVE]: 'Not Effective',
+};
+
 export type CountryData = {
   countryCode: string;
   population: number;
@@ -42,7 +64,7 @@ export type CountryData = {
 export type Phase = {
   testingStrategy: TESTING_STRATEGIES;
   importedInfectionsPerDay: number;
-  trigger: string;
+  trigger: string | number;
   triggerType: string;
   triggerCondition: string;
   severity: number;
@@ -83,6 +105,7 @@ export type SimulationRequest = CountryData & {
 
 export type SimulationResults = {
   scenarios: ScenarioResult[];
+  score: number;
 };
 
 export type TestingImpact = {
@@ -106,6 +129,7 @@ export type ScenarioResult = {
   totalTests: number;
   testsNeededForCare: number;
   testsNeededForMitigation: number;
+  totalPositiveTests: number;
   samplesRequiredForSerologicalStudies: {
     numSubgroups: number;
     testsRequired: number;

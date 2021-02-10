@@ -6,6 +6,7 @@ import {
   ClientSimulationRequest,
   SimulationResults,
 } from '../types/simulation';
+import { CovidData } from '../components/CovidResults';
 
 const Simulation: React.FC<{
   clientSimulationRequest?: ClientSimulationRequest;

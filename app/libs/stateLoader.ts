@@ -4,15 +4,18 @@ import { leftToRightCompose } from './func';
 import { compress, decompress } from 'compressed-json';
 
 export const save = (state: ClientSimulationRequest) => {
-  const fileName = 'FIND-Covid-Scenarios.json';
+  const fileName = `${state.countryCode.toUpperCase()}-Covid-Scenarios.json`;
   const mediaType = 'application/json';
   const data = JSON.stringify(state);
   download(fileName, mediaType, data);
 };
 
 export const load = async (e: Event) => {
-  const file = (await readSingleFile(e)) as string;
-  return JSON.parse(file) as ClientSimulationRequest;
+  const { contents, name } = await readSingleFile(e);
+  return {
+    name,
+    contents: JSON.parse(contents as string) as ClientSimulationRequest,
+  };
 };
 
 export const decodeClientState = (stateString: string) =>

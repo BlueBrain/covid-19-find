@@ -10,6 +10,7 @@ import LoadScenariosButton from './components/LoadScenariosButton';
 import useAPIContext from './hooks/useAPI';
 import useQueryString from './hooks/useQuerySring';
 import { decodeClientState, encodeClientState } from './libs/stateLoader';
+import { CovidData } from './components/CovidResults';
 
 const App: React.FC = () => {
   const api = useAPIContext();
@@ -96,7 +97,7 @@ const App: React.FC = () => {
             About the Dx Implementation Sim
           </button>
         </a>
-        <LoadScenariosButton onLoad={handleLoadState} />
+        <LoadScenariosButton onLoad={handleLoadState} state={state} />
       </section>
       {/* Panel 1 */}
       <Countries

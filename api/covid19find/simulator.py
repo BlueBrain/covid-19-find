@@ -12,8 +12,6 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/simulation")
 
-print ((os.path.dirname(os.path.realpath(__file__)) + "/simulation"))
-
 import cdata
 
 
@@ -135,6 +133,7 @@ class Simulator:
                 {
                     "totalTests": int(scenario_totals["total_tests_mit_by_scenario"][i]),
                     "totalDeaths": int(scenario_totals["total_deaths_by_scenario"][i]),
+                    "totalPositiveTests": int(scenario_totals["total_cases_by_scenario"][i]),
                     "maxInfected": int(scenario_totals["max_infected_by_scenario"][i]),
                     "totalInfected": int(scenario_totals["total_infected_by_scenario"][i]),
                     "maxIsolated": int(scenario_totals["max_isolated_by_scenario"][i]),
@@ -153,7 +152,7 @@ class Simulator:
                     "samplesRequiredForSerologicalStudies": self.__get_serological_data(i, scenario_totals)
                 }
             )
-        return {"scenarios": scenario_data}
+        return {"scenarios": scenario_data, "score": self.past_phases[country_code]["score"]}
 
     @staticmethod
     def __get_serological_data(scenario_index, scenario_totals):
@@ -180,9 +179,9 @@ class Simulator:
     def __total_dataframe_row_to_response(index_row):
         row = index_row[1]
         result = Simulator.__dataframe_row_to_response(index_row)
-        result["actualDeaths"] = None if math.isnan(row["actualdeaths"]) else int(row["actualdeaths"])
-        result["actualCases"] = None if math.isnan(row["actualcases"]) else int(row["actualcases"])
-        result["actualTests"] = None if math.isnan(row["actualtests_mit"]) else int(row["actualtests_mit"])
+        result["actualDeaths"] = None if math.isnan(row["actualnewdeaths"]) else int(row["actualnewdeaths"])
+        result["actualCases"] = None if math.isnan(row["actualnewcases"]) else int(row["actualnewcases"])
+        result["actualTests"] = None if math.isnan(row["actualnewtests_mit"]) else int(row["actualnewtests_mit"])
         return result
 
     @staticmethod
@@ -229,8 +228,8 @@ class Simulator:
     def __reverse_map_scenario(self, covid_libscenario):
         phases = []
         phase1 = {
-            "importedInfectionsPerDay": int(covid_libscenario["imported_infections_per_day"]),
-            "trigger": (date.today() - timedelta(days=54)).isoformat(),
+            "importedInfectionsPerDay": covid_libscenario["imported_infections_per_day"],
+            "trigger": (date.today() - timedelta(days=35)).isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
             "severity": float(covid_libscenario["severity"]),
@@ -264,7 +263,8 @@ class Simulator:
                 country_code = row[1]
                 past_phases[country_code] = {
                     "severities": json.loads(row[3]),
-                    "dates": json.loads(row[4])
+                    "dates": json.loads(row[4]),
+                    "score": float(row[5])
                 }
 
         return past_phases
