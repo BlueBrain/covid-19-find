@@ -26,7 +26,6 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
-import { CovidData } from '../CovidResults';
 import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
@@ -69,15 +68,7 @@ const SimulationResults: React.FC<{
   error: Error | null;
   simulationResults: SimulationResults;
   clientScenariosInput: ClientScenarioData[];
-  countryData: CovidData;
-}> = ({
-  loading,
-  ready,
-  error,
-  simulationResults,
-  clientScenariosInput,
-  countryData,
-}) => {
+}> = ({ loading, ready, error, simulationResults, clientScenariosInput }) => {
   const PDFRef = React.useRef();
 
   const { scenarios: scenariosResults } = simulationResults || {
@@ -98,13 +89,13 @@ const SimulationResults: React.FC<{
     {
       title: 'Deaths',
       key: 'newDeaths',
-      actualKey: 'newDeaths',
+      actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
       title: 'Positive Tests',
       key: 'newConfirmed',
-      actualKey: 'newConfirmed',
+      actualKey: 'actualCases',
       cohort: 'total',
     },
     {
@@ -143,13 +134,6 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const maxDeaths =
-    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
-      return scenario.data.total.reduce((memo, entry) => {
-        return memo + entry.newDeaths;
-      }, 0);
-    })?.totalDeaths || 0;
-
   const maxIsolated =
     maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
       return scenario.data.total.reduce((memo, entry) => {
@@ -158,16 +142,6 @@ const SimulationResults: React.FC<{
     })?.data.total.reduce((memo, entry) => {
       return memo + entry.newIsolated;
     }, 0) || 0;
-
-  const countryDataByDate = (countryData?.timeseries || []).reduce(
-    (memo, time) => {
-      memo[time.date] = {
-        ...time,
-      };
-      return memo;
-    },
-    {},
-  );
 
   const datasets = Array.from(scenariosResults).map(
     (scenarioResult, scenarioIndex) => {
@@ -183,13 +157,17 @@ const SimulationResults: React.FC<{
               day[`${graph.key}-${graph.cohort}`] =
                 scenarioResult.data[graph.cohort][timeseriesIndex][graph.key];
               if (graph.actualKey) {
-                const countryData = countryDataByDate[key];
-                if (countryData) {
-                  day[`actual-${graph.actualKey}`] =
-                    Math.floor(countryDataByDate[key][graph.actualKey]) > 0
-                      ? Math.floor(countryDataByDate[key][graph.actualKey])
-                      : 0;
-                }
+                const actualDataToday =
+                  scenarioResult.data[graph.cohort][timeseriesIndex][
+                    graph.actualKey
+                  ] || 0;
+
+                const dailyChangeClamped =
+                  actualDataToday > 0 ? actualDataToday : 0;
+
+                day[
+                  `actual-${graph.cohort}-${graph.actualKey}`
+                ] = dailyChangeClamped;
               }
             });
             memo[key] = day;
@@ -200,6 +178,8 @@ const SimulationResults: React.FC<{
       };
     },
   );
+
+  console.log({ datasets });
 
   const handlePDFDownloadClick = () => {
     if (PDFRef.current) {
@@ -698,7 +678,9 @@ const SimulationResults: React.FC<{
                                         datasets[selectedScenarioIndex].data,
                                       ).map(
                                         values =>
-                                          values[`actual-${graph.actualKey}`],
+                                          values[
+                                            `actual-${graph.cohort}-${graph.actualKey}`
+                                          ],
                                       ),
                                       borderColor: 'black',
                                     },

@@ -14,7 +14,6 @@ import { CovidData } from './components/CovidResults';
 
 const App: React.FC = () => {
   const api = useAPIContext();
-  const [countryData, setCountryData] = React.useState<CovidData | null>(null);
   const [defaultScenarios, setDefaultScenarios] = React.useState(
     DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
   );
@@ -102,7 +101,6 @@ const App: React.FC = () => {
       </section>
       {/* Panel 1 */}
       <Countries
-        onCountryDataLoaded={setCountryData}
         countrySelectFormReady={countrySelectFormReady}
         setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
           setFormsReady({
@@ -145,7 +143,6 @@ const App: React.FC = () => {
       />
       {/* Panel 3 */}
       <Simulation
-        countryData={countryData}
         clientSimulationRequest={state}
         ready={countrySelectFormReady && testsFormReady}
       />

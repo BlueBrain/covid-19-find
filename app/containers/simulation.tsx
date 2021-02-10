@@ -9,10 +9,9 @@ import {
 import { CovidData } from '../components/CovidResults';
 
 const Simulation: React.FC<{
-  countryData: CovidData;
   clientSimulationRequest?: ClientSimulationRequest;
   ready: boolean;
-}> = ({ clientSimulationRequest, countryData, ready }) => {
+}> = ({ clientSimulationRequest, ready }) => {
   const api = useAPI();
   const [{ loading, error, data }, setSimulationData] = React.useState<{
     loading: boolean;
@@ -57,7 +56,6 @@ const Simulation: React.FC<{
       loading={loading}
       error={error}
       simulationResults={data}
-      countryData={countryData}
       clientScenariosInput={clientSimulationRequest.scenarios || []}
     />
   );
