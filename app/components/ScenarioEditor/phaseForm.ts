@@ -57,20 +57,6 @@ export enum TEST_TYPES {
 
 export default [
   {
-    title: 'Epidemic',
-    input: [
-      {
-        label: 'Border controls',
-        type: INPUT_TYPES.select,
-        key: 'importedInfectionsPerDay',
-        options: Object.values(IMPORTED_INFECTIONS).map(str => ({
-          label: ImportedInfectionLabels[str],
-          value: str,
-        })),
-      },
-    ],
-  },
-  {
     title: 'Government Intervention',
     input: [
       {
@@ -103,6 +89,15 @@ export default [
         max: 1,
         step: 0.01,
         key: 'severity',
+      },
+      {
+        label: 'Border controls',
+        type: INPUT_TYPES.select,
+        key: 'importedInfectionsPerDay',
+        options: Object.values(IMPORTED_INFECTIONS).map(str => ({
+          label: ImportedInfectionLabels[str],
+          value: str,
+        })),
       },
     ],
   },
