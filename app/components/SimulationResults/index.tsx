@@ -27,7 +27,7 @@ import {
   UNSELECTED_COLOR_ALPHA,
 } from '../../config';
 import { CovidData } from '../CovidResults';
-import { isScoreValid } from '../../API';
+import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
 
@@ -257,7 +257,7 @@ const SimulationResults: React.FC<{
                     {clientScenariosInput[selectedScenarioIndex].name}
                   </h2>
 
-                  {!isScoreValid(simulationResults.score) && (
+                  {isScoreInvalid(simulationResults.score) && (
                     <h3 className="warning">
                       Current estimates of epidemic parameters for this country
                       are not reliable
