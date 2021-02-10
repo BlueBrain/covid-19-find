@@ -77,7 +77,7 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'prop_contacts_traced':[0.20,0.20],\
     'imported_infections_per_day':[1,1,1],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
@@ -98,7 +98,7 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'prop_contacts_traced':['highly effective',0.20],\
     'imported_infections_per_day':[1,1,1],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
@@ -140,7 +140,7 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.20,0.20,0.20],\
+    'prop_contacts_traced':[0.20,0.20],\
     'imported_infections_per_day':[1,1,1],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\

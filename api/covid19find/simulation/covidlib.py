@@ -346,24 +346,26 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
               scenarios[i]['trig_values'][j]=(date-day1).days
      #This does not seem to do anything useful. I have commented it.
  #         scenarios[i]['test strategy']='symptomatic first'
- # Converts qualitative labels for user parameters into numerical values read from the system parameters file
-          if scenarios[i]['imported_infections_per_day'][j]=='highly effective':
-              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_below_limit']
-          elif scenarios[i]['imported_infections_per_day'][j]=='fairly effective':
-              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_above_limit']
-          elif scenarios[i]['imported_infections_per_day'][j]=='not effective':
-              scenarios[i]['imported_infections_per_day'][j]=p['imported_infections_very_high']
-          if scenarios[i]['prop_contacts_traced'][j]=='none':
-              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_no_tracing']
-          elif scenarios[i]['prop_contacts_traced'][j]=='fairly effective':
-              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_fair_tracing']
-          elif scenarios[i]['prop_contacts_traced'][j]=='highly effective':
-              scenarios[i]['prop_contacts_traced'][j]=p['prop_for_good_tracing']
-              
+ 
+          
         
               
               
       scenario=create_scenario(past,scenarios[i])
+      # Converts qualitative labels for user parameters into numerical values read from the system parameters file
+      for j in range(0,len(scenario['trig_values'])):
+           if scenario['imported_infections_per_day'][j]=='highly effective':
+              scenario['imported_infections_per_day'][j]=p['imported_infections_below_limit']
+           elif scenario['imported_infections_per_day'][j]=='fairly effective':
+              scenario['imported_infections_per_day'][j]=p['imported_infections_above_limit']
+           elif scenario['imported_infections_per_day'][j]=='not effective':
+              scenario['imported_infections_per_day'][j]=p['imported_infections_very_high']
+           if scenario['prop_contacts_traced'][j]=='none':
+              scenario['prop_contacts_traced'][j]=p['prop_for_no_tracing']
+           elif scenario['prop_contacts_traced'][j]=='fairly effective':
+              scenario['prop_contacts_traced'][j]=p['prop_for_fair_tracing']
+           elif scenario['prop_contacts_traced'][j]=='highly effective':
+              scenario['prop_contacts_traced'][j]=p['prop_for_good_tracing']            
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
       par = Par(p)
