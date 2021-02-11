@@ -7,10 +7,10 @@ import { ClientSimulationRequest, Scenario } from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import SaveScenariosButton from './components/SaveScenariosButton';
 import LoadScenariosButton from './components/LoadScenariosButton';
+import LoadBaselineScenarioButton from './components/LoadBaselineScenario';
 import useAPIContext from './hooks/useAPI';
 import useQueryString from './hooks/useQuerySring';
 import { decodeClientState, encodeClientState } from './libs/stateLoader';
-import { CovidData } from './components/CovidResults';
 
 const App: React.FC = () => {
   const api = useAPIContext();
@@ -98,6 +98,7 @@ const App: React.FC = () => {
           </button>
         </a>
         <LoadScenariosButton onLoad={handleLoadState} state={state} />
+        <LoadBaselineScenarioButton onLoad={handleLoadState} />
       </section>
       {/* Panel 1 */}
       <Countries
