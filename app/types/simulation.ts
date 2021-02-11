@@ -37,15 +37,15 @@ export enum TESTING_STRATEGIES {
 }
 
 export enum IMPORTED_INFECTIONS {
-  HIGHLY_EFFECTIVE = 'highly effective',
-  FAIRLY_EFFECTIVE = 'fairly effective',
   NOT_EFFECTIVE = 'not effective',
+  FAIRLY_EFFECTIVE = 'fairly effective',
+  HIGHLY_EFFECTIVE = 'highly effective',
 }
 
 export enum CONTACT_TRACING {
   NONE = 'none',
-  HIGHLY_EFFECTIVE = 'highly effective',
   FAIRLY_EFFECTIVE = 'fairly effective',
+  HIGHLY_EFFECTIVE = 'highly effective',
 }
 
 export const ImportedInfectionLabels = {
