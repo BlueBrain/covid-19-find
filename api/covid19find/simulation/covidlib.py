@@ -422,7 +422,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             if j==0:
                 baseline_deaths=dfsum_tests['newdeaths'].sum()
             lives_saved=baseline_deaths-deaths
-            tests_administered=dfsum_tests['newtested_mit'][start_current_phase:par.num_days].sum()
+            tests_administered=dfsum_tests['newtested_mit'][int(start_current_phase):par.num_days].sum()
 #           print('tests administered from start of phase',tests_administered,'baseline=',baseline_deaths,'deaths=',deaths,'lives_saved=', lives_saved)
             a_dict={
             'scenario':i,\
@@ -572,7 +572,7 @@ class Par:
       self.p_positive_if_symptomatic = 0.0
       self.background_rate_symptomatic=float(params['background_rate_symptomatic'])
       self.severity=list(map(float,params['severity']))
-      self.trig_values=list(map(int,params['trig_values']))
+      self.trig_values=list(map(float,params['trig_values']))
       self.trig_def_type=params['trig_def_type']
       self.trig_op_type=params['trig_op_type']
       self.max_contacts_per_case=float(params['max_contacts_per_case'])
@@ -967,7 +967,7 @@ class Sim:
               raise CustomError('Unable to compute increase in deaths')
        elif params.trig_def_type[phase]=='positives':
            value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
-           print ('positives calculated at',value)
+ #          print ('positives calculated at',value)
        else:
            raise CustomError('trig_def_type for phase ',str(phase),' does not exist')
            
@@ -978,13 +978,15 @@ class Sim:
                 return(True)
        else:
            if params.trig_op_type[phase]=='<':
-                   if value<params.trig_values[phase]:
-                       return(True)
+               if params.trig_def_type[phase]=='positives':
+                   print ('t=',t,'positives=',value, 'new <',' phase:',phase,'sev=',params.severity[phase])
+               if value<params.trig_values[phase]:
+                   return(True)
            else:
                if params.trig_op_type[phase]=='>':
                    if value>params.trig_values[phase]:
                        if params.trig_def_type[phase]=='positives':
-                           print ('t=',t,'positives=',value, 'new phase triggered')
+                           print ('t=',t,'positives=',value, 'new > ','phase:',phase)
                        return(True)
        return(False)
    
