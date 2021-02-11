@@ -223,7 +223,7 @@ const CovidResults: React.FC<{
               backgroundColor: '#fff',
               datasets: [
                 {
-                  label: 'New Cases',
+                  label: 'New Positive Tests',
                   yAxisID: 'A',
                   data: chartData
                     .map(makeSlidingAverage(chartData, 'newConfirmed'))
