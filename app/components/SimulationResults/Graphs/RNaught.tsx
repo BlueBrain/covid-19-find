@@ -57,7 +57,7 @@ const RNaught: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'r0 over time (per day)',
+                  labelString: 'r0 over time',
                 },
                 gridLines: {
                   color: '#00000005',
