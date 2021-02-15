@@ -253,8 +253,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
+   today=(dt.datetime.now()-day1).days
    if end_day==None:
-       end_day=p['num_days']
+       end_day=today+180
    try:
        results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
    except:
@@ -320,19 +321,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
       max_betas = get_beta(no_intervention_betafile, num_compartments)
-      
- # runs an initial simulation to align dates with simulation days - this is no longer necessary. Simulation starts on first day of country_dfempty
-# =============================================================================
-#       date_par=Par(p)
-#       date_par.ty_reduction=0
-#       date_par.fatality_reduction_per_day=0
-#       date_sim = Sim(date_par.num_days,date_par.num_compartments)
-#       date_sim.set_initial_conditions(date_par)
-#       use_real_testdata=False #we can't yet use real testdata because we have no dates to align it with
-#       #throw,date_df=simulate(country_df,date_sim,date_par,max_betas,min_betas,1,75,0,use_real_testdata)
-#       dfsum_dates = date_df.groupby(['days']).sum().reset_index()
-#       # I have been playing with this- hope this is now right version for BBP
-# =============================================================================
       day1 = dt.datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d")
       shift=0
  
@@ -344,12 +332,20 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           if(scenarios[i]['trig_def_type'][j]=='date'):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
-     #This does not seem to do anything useful. I have commented it.
- #         scenarios[i]['test strategy']='symptomatic first'
- 
           
-        
-              
+          #capture severity of last phase in the past
+          current_sev=p['past_severities'][-1]
+          #transforms effectiveness labels into numerical values
+          if scenarios[i]['severity'][j]=='major tightening':
+               scenarios[i]['severity'][j]=current_sev+(1-current_sev)*0.75
+          elif scenarios[i]['severity'][j]=='mild tightening':
+               scenarios[i]['severity'][j]=current_sev+(1-current_sev)*0.2
+          elif scenarios[i]['severity'][j]=='no change':
+               scenarios[i]['severity'][j]=current_sev
+          elif scenarios[i]['severity'][j]=='mild loosening':
+               scenarios[i]['severity'][j]=current_sev*0.8
+          elif scenarios[i]['severity'][j]=='major loosening':
+               scenarios[i]['severity'][j]=current_sev*0.25                                    
               
       scenario=create_scenario(past,scenarios[i])
       # Converts qualitative labels for user parameters into numerical values read from the system parameters file
@@ -365,7 +361,17 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
            elif scenario['prop_contacts_traced'][j]=='fairly effective':
               scenario['prop_contacts_traced'][j]=p['prop_for_fair_tracing']
            elif scenario['prop_contacts_traced'][j]=='highly effective':
-              scenario['prop_contacts_traced'][j]=p['prop_for_good_tracing']            
+              scenario['prop_contacts_traced'][j]=p['prop_for_good_tracing']
+           #reverses previous change if user requests this - but only does this if there is a previous phase
+           if scenario['severity'][j]=='reverse last change':
+           #avoid indexing non-existent severity
+              if j>=2:
+                  scenario ['severity'][j]=scenario ['severity'][j-2]
+              else:
+                  scenario ['severity'][j]=scenario ['severity'][j-1]
+           
+      print( 'severities=', scenario['severity'] )          
+                                    
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
       par = Par(p)
@@ -978,8 +984,6 @@ class Sim:
                 return(True)
        else:
            if params.trig_op_type[phase]=='<':
-               if params.trig_def_type[phase]=='positives':
-                   print ('t=',t,'positives=',value, 'new <',' phase:',phase,'sev=',params.severity[phase])
                if value<params.trig_values[phase]:
                    return(True)
            else:
@@ -1136,6 +1140,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     betas = initial_betas.copy() #this is current value of beta matrix
     final_betas=initial_betas
     alpha=(final_betas-initial_betas)/par.beta_adaptation_days
+    #sim dates should go to end_day
     sim.dates=[par.day1 + dt.timedelta(days=x) for x in range(0,par.num_days)]
     tau=par.tau
     gamma=par.gamma
