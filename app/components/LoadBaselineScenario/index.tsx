@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment';
 import { ClientSimulationRequest } from '../../types/simulation';
-import baseLine from '../../baseline-scenario.json';
+import baseLine from '../../test-scenario.json';
 
 const LoadBaselineScenarioButton: React.FC<{
   onLoad: (state: ClientSimulationRequest) => void;
@@ -17,9 +17,11 @@ const LoadBaselineScenarioButton: React.FC<{
           trigger:
             index === 0
               ? moment()
-                  .subtract(34, 'days')
+                  .subtract(20, 'days')
                   .format('YYYY-MM-DD')
-              : moment().format('YYYY-MM-DD'),
+              : moment()
+                  .add(15, 'days')
+                  .format('YYYY-MM-DD'),
         })),
       })),
     });
@@ -27,7 +29,7 @@ const LoadBaselineScenarioButton: React.FC<{
 
   return (
     <div>
-      <button onClick={handleLoadClick}>Load Baseline Scenario</button>
+      <button onClick={handleLoadClick}>Load Test Scenario</button>
     </div>
   );
 };
