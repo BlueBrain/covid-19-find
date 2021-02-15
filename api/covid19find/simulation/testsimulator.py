@@ -60,7 +60,7 @@ fixed_params={
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario

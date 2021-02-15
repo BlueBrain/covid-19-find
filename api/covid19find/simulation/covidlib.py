@@ -242,6 +242,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
        raise FileNotFoundError('System parameters file not found')
        return()
   # write_json(p,sysfilejson) 
+
    update_system_params2(p, fixed_params) # note: p is updated
    # print('JPV-',p['num_days'])
    # print('JPV-',p['past_severities'])
@@ -256,6 +257,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    today=(dt.datetime.now()-day1).days
    if end_day==None:
        end_day=today+180
+       p['num_days']=end_day
    try:
        results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
    except:
@@ -369,8 +371,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
                   scenario ['severity'][j]=scenario ['severity'][j-2]
               else:
                   scenario ['severity'][j]=scenario ['severity'][j-1]
-           
-      print( 'severities=', scenario['severity'] )          
+                    
                                     
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
@@ -1133,6 +1134,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     #why is this -1
     num_phases=len(par.severity)-1
     pops_for_beta=par.init_infected  #temp instruction]
+    #fixes the length of the simulation for purposes of plotting and calculation of seroprevalence.
     
     #fix starting condition
     meanbeta=[par.max_beta_target,par.max_beta_target,par.max_beta_target]
