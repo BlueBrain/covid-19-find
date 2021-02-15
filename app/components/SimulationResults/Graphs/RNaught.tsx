@@ -63,7 +63,7 @@ const RNaught: React.FC<{
                   color: '#00000005',
                 },
                 ticks: {
-                  max: 4,
+                  // max: 4,
                   beginAtZero: true,
                   callback: function(value, index, values) {
                     return value?.toLocaleString(undefined, {
