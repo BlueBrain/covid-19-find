@@ -18,7 +18,7 @@ const RNaught: React.FC<{
   selectedScenarioIndex: number;
   clientScenariosInput: ClientScenarioData[];
 }> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
-  const title = 'r0';
+  const title = `R${'eff'.sub()}`;
   const color = colors.aubergine;
 
   const screenWidth = useWindowWidth();
@@ -34,7 +34,7 @@ const RNaught: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <h3 className="title">{title}</h3>
+      <h3 className="title" dangerouslySetInnerHTML={{ __html: title }} />
       <Line
         width={null}
         height={null}
@@ -57,7 +57,7 @@ const RNaught: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'r0 over time',
+                  labelString: 'Reff over time',
                 },
                 gridLines: {
                   color: '#00000005',
