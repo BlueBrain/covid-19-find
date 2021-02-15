@@ -109,18 +109,18 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[0.75,0.75],\
-    'trig_values':['2021-01-04','2021-01-25'],\
+    'severity':['major tightening','mild tightening','reverse last change'],\
+    'trig_values':['2021-01-25','2021-02-25','2021-03-30'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[250000,250000,250000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95],\
-    'specificity':[0.998,0.998],\
+    'sensitivity':[0.95,0.95,0.95],\
+    'specificity':[0.998,0.998,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['none','none'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['fairly effective','fairly effective','fairly effective'],\
+    'imported_infections_per_day':['not effective','not effective','not effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['symptomatic first','symptomatic first','symptomatic first'],\
