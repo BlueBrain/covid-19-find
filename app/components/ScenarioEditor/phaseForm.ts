@@ -8,6 +8,8 @@ import {
   ImportedInfectionLabels,
   CONTACT_TRACING,
   ContractTracingLabels,
+  EFFECTIVENESS,
+  EffectivenessLabels,
 } from '../../types/simulation';
 
 export enum INPUT_TYPES {
@@ -86,10 +88,11 @@ export default [
       },
       {
         label: 'Effectiveness',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 1,
-        step: 0.01,
+        type: INPUT_TYPES.select,
+        options: Object.values(EFFECTIVENESS).map(str => ({
+          label: EffectivenessLabels[str],
+          value: str,
+        })),
         key: 'severity',
       },
       {
