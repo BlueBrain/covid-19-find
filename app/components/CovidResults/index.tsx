@@ -34,6 +34,7 @@ export const makeSlidingAverage = (
 
 export type CovidData = {
   currentActive: number;
+  currentEffectiveness: number;
   timeseries: {
     currentActive: number;
     date: string;
@@ -128,6 +129,12 @@ const CovidResults: React.FC<{
               <span className="subtitle"> People Recovered from COVID-19</span>
             </>
           )}
+        </h3>
+        <h3>
+          <span>{(data.currentEffectiveness * 100).toLocaleString()} %</span>{' '}
+          <span className="subtitle">
+            Current Effectiveness of Government Intervention
+          </span>
         </h3>
       </div>
       <div className="charts">
