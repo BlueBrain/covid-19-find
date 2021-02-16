@@ -131,7 +131,7 @@ const CovidResults: React.FC<{
           )}
         </h3>
         <h3>
-          <span>{(data.currentEffectiveness * 100).toLocaleString()} %</span>{' '}
+          <span>{data.currentEffectiveness}</span>{' '}
           <span className="subtitle">
             Current Effectiveness of Government Intervention
           </span>
