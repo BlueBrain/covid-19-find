@@ -60,10 +60,11 @@ fixed_params={
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
+
 
 
 scenario_params.append({
@@ -109,7 +110,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','mild tightening','reverse last change'],\
+    'severity':['major tightening','major tightening','reverse last change'],\
     'trig_values':['2021-01-25','2021-02-25','2021-03-30'],\
     'trig_def_type':['date','date','date'],\
     'trig_op_type':['=','=','='],\
