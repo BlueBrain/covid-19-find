@@ -11,6 +11,7 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../../config';
+import TooltipLabel from '../../TooltipLabel';
 
 const patterns = GRAPH_PATTERNS_LIST;
 
@@ -20,7 +21,6 @@ const LivesSaved: React.FC<{
   clientScenariosInput: ClientScenarioData[];
 }> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
   const title = 'Lives Saved';
-
   const screenWidth = useWindowWidth();
   const isMobile = screenWidth.width < 400;
 
@@ -32,7 +32,11 @@ const LivesSaved: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <h3 className="title">{title}</h3>
+      <TooltipLabel
+        label={title}
+        tooltipKey={'livesSavedGraph'}
+        wrapper={({ children }) => <h3 className="title">{children}</h3>}
+      />
       <Line
         width={null}
         height={null}

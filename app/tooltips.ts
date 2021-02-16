@@ -75,4 +75,12 @@ export default {
     'This section describes tests used to detect and isolate infected individuals, preventing them from infecting other people',
   'Testing for Care':
     'This section describes tests used for the care of patients who have already been diagnosed with COVID. These include tests used to confirm the initial diagnosis, and tests used to verify whether a patient is still infectious, before discharge from hospital',
+  'Samples Required for Serological Studies':
+    'The number of samples required to accurately estimate the number of people carrying antibodies to the virus in a given population comprising a certain number of subgroups (e.g. people belonging to a specific age group, people living in a specific city or region, people with a specific socio-economic status).',
+  reffGraph:
+    ' The estimated value of the Effective Reproductive Number (Reff) for the epidemic on a given day. This is the mean number of new infections, caused by a single primary case of COVID, over the duration of the infection. The value of Reff depends on the effectiveness of government intervention and on the biology of the disease. New strains of COVID may have higher values of Reff.',
+  prevalanceGraph:
+    ' The estimated percentage of the population that is currently infected by COVID or that has been infected in the past.',
+  livesSavedGraph:
+    ' This graph shows the estimated number of lives that could be saved with different levels of testing. 1x on the horizontal axis corresponds to the current level of testing. 2x corresponds to twice the current level of testing. 3x corresponds to three times the current level of testing.',
 };
