@@ -18,7 +18,7 @@ export default {
     conditions that make it difficult or impossible to comply with
     social distancing or quarantine regulations.`,
   fatalityReduction:
-    'the percentage reduction in the average fatality rate from the start of the epidemic to the current date',
+    'The percentage reduction in the average fatality rate from the start of the epidemic to the current date',
   addPhase:
     ' This allows you to define a new phase of government intervention e.g. a phase in which intervention is more or less stringent than in the previous phase',
   numTestsMitigation:
@@ -33,7 +33,7 @@ export default {
     
     * “open public testing”: anyone requesting a test is tested, on a first come, first served basis. `,
   importedInfectionsPerDay:
-    'The estimated number of infections brought into the country from outside (e.g. by tourists, returning tourists, business travellers, immigrants etc.). Imported infections can restart the epidemic even when it has been completely eliminated ',
+    'The effectiveness of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
   trigger:
     'defines the value at which the new phase is triggered (e.g. the new phase begins when cases per million is greater than or equal to this value',
   triggerType:
@@ -41,9 +41,9 @@ export default {
   triggerCondition:
     'defines the way data is compared against the trigger condition e.g. a new phase is triggered when cases per million are greater or equal to (>=) a given value ',
   severity:
-    'This defines the severity of government intervention in a given phase. The value is given on a scale of 0 to 1 where 0 means absolutely no restrictive measures, and 1 means total lockdown.',
+    'The effectiveness of government intervention in a certain stage of the epidemic compared to its effectiveness in the previous stage. The system offers five options: ‘major tightening’ (of restrictions), ‘minor tightening’, ‘no change’, ‘minor loosening’ and ‘major loosening’',
   proportionOfContactsTraced:
-    'This defines the % of an infected person’s close social contacts who are traced, tested and placed in isolation (if positive). If no test and trace system is in place the correct value for this variable is 0.',
+    'The effectiveness of efforts to trace and isolate the contacts of people who test positive for COVID.',
   typeTestsMitigation: `this is the type of test used. Options are:
 
     * PCR: Polymerase Chain Reaction - the current gold standard. A molecular test providing high sensitivity and specificity. Requires qualified personnel to take swabs. Swabs are analyzed in a lab remote from the site of the test and are subject to delay
@@ -70,4 +70,9 @@ export default {
     ' the percentage reduction in the average fatality rate from the start of the epidemic to the start of the phase',
   livesSaved:
     'This panel shows the impact of increasing or decreasing the current number of tests per day, from the start of the current period until the end of the simulation. ',
+
+  'Testing for Mitigation':
+    'This section describes tests used to detect and isolate infected individuals, preventing them from infecting other people',
+  'Testing for Care':
+    'This section describes tests used for the care of patients who have already been diagnosed with COVID. These include tests used to confirm the initial diagnosis, and tests used to verify whether a patient is still infectious, before discharge from hospital',
 };
