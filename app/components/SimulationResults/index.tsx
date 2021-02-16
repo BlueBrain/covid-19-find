@@ -570,6 +570,7 @@ const SimulationResults: React.FC<{
                                     enabled: true,
                                     content: 'Today',
                                     backgroundColor: colors.blueGray,
+                                    yAdjust: 50,
                                   },
                                 },
                               ],

@@ -55,7 +55,7 @@ const Prevalence: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'Prevalence (per day)',
+                  labelString: 'Prevalence',
                 },
                 gridLines: {
                   color: '#00000005',
