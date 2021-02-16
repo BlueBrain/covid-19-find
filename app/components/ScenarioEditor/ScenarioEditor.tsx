@@ -23,6 +23,7 @@ import TooltipLabel from '../TooltipLabel';
 
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import './scenario-editor.less';
+import tooltips from '../../tooltips';
 
 const ScenarioEditor: React.FC<{
   scenario: ClientScenarioData;
@@ -146,7 +147,15 @@ const ScenarioEditor: React.FC<{
           return (
             <div key={`${formSection.title}-${formSectionIndex}`}>
               <hr />
-              <h3>{formSection.title}</h3>
+              {tooltips[formSection.title] ? (
+                <TooltipLabel
+                  label={formSection.title}
+                  tooltipKey={formSection.title}
+                  wrapper={({ children }) => <h3>{children}</h3>}
+                />
+              ) : (
+                <h3>{formSection.title}</h3>
+              )}
               <div className="phase-section">
                 {formSection.input.map((input, formSectionInputIndex) => {
                   return (
