@@ -1159,6 +1159,9 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
             if np.isnan(sim.actualdeaths[i]):
                 sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+        else:
+            if np.isnan(sim.actualcases[i]):
+                sim.actualcases[i]=0
         sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
         sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
@@ -1287,7 +1290,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
               sim.susceptibleprop[t,i]=0 #avoids a divide by zero error with zero pop in one compartment
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
-   
            if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
                #false positives do not reduce the number of infected not isolated
               sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
