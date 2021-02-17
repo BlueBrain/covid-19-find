@@ -18,11 +18,11 @@ export default {
     conditions that make it difficult or impossible to comply with
     social distancing or quarantine regulations.`,
   fatalityReduction:
-    'The percentage reduction in the average fatality rate from the start of the epidemic to the current date',
+    'Current effectiveness of government intervention: This represents the effectiveness of recent government action (over the last 2 months) in reducing deaths today. This depends on the stringency and rationality of the intervention and compliance in the population. A score of 1 implies the most effective intervention possible. A score of 0 implies a complete lack of restrictions. ',
   addPhase:
-    ' This allows you to define a new phase of government intervention e.g. a phase in which intervention is more or less stringent than in the previous phase',
+    'This allows you to define a new phase of government intervention e.g. a phase in which intervention is more or less stringent than in the previous phase',
   numTestsMitigation:
-    'tests performed with the goal of detecting and isolating infected individuals, thereby mitigating the impact of the epidemic',
+    'The number of tests performed with the goal of detecting and isolating infected individuals, thereby mitigating the impact of the epidemic',
   testingStrategy: ` This defines the government’s testing strategy. There are currently four options:
 
     * “no testing” (this is used as a counterfactual to show the impact of testing),
@@ -35,39 +35,39 @@ export default {
   importedInfectionsPerDay:
     'The effectiveness of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
   trigger:
-    'defines the value at which the new phase is triggered (e.g. the new phase begins when cases per million is greater than or equal to this value',
+    'The value at which the new phase is triggered (e.g. the new phase begins when cases per million is greater than or equal to this value',
   triggerType:
-    'describes the way the government defines the trigger for a change in its current measures (e.g. number of cases per million inhabitants, a rise in the number of cases). “Date” defines the date of an intervention that has already taken place or that is planned for a certain date. The date for “current phase” defines the date on which the current phase of intervention began. ',
+    'The way the government defines the trigger for a change in its current measures (e.g. number of cases per million inhabitants, a rise in the number of cases). “Date” defines the date of an intervention that has already taken place or that is planned for a certain date. The date for “current phase” defines the date on which the current phase of intervention began. ',
   triggerCondition:
-    'defines the way data is compared against the trigger condition e.g. a new phase is triggered when cases per million are greater or equal to (>=) a given value ',
+    'The way data is compared against the trigger condition e.g. a new phase is triggered when cases per million are greater or equal to (>=) a given value ',
   severity:
     'The effectiveness of government intervention in a certain stage of the epidemic compared to its effectiveness in the previous stage. The system offers five options: ‘major tightening’ (of restrictions), ‘minor tightening’, ‘no change’, ‘minor loosening’ and ‘major loosening’',
   proportionOfContactsTraced:
     'The effectiveness of efforts to trace and isolate the contacts of people who test positive for COVID.',
-  typeTestsMitigation: `this is the type of test used. Options are:
+  typeTestsMitigation: `The type of test used. Options are:
 
     * PCR: Polymerase Chain Reaction - the current gold standard. A molecular test providing high sensitivity and specificity. Requires qualified personnel to take swabs. Swabs are analyzed in a lab remote from the site of the test and are subject to delay
     
     * RDT: Rapid diagnostic test - an antibody or antigen based test. Cheaper and faster than PCR but may be less accurate, particularly during the early days of infection`,
   confirmationTests:
-    'the number of tests performed per day for purposes of patient care. This includes confirmatory testing and tests before patient discharge. ',
+    'The number of tests performed per day for purposes of patient care. This includes confirmatory testing and tests before patient discharge. ',
   specificity:
-    'the probability that an individual with a positive test result is actually infected',
+    'The probability that an individual with a positive test result is actually infected',
   sensitivity:
-    'the proportion of infected individuals the test is able to correctly detect',
+    'The proportion of infected individuals the test is able to correctly detect',
   numTestsCare:
-    'tests performed with the goal of managing patients with a positive initial test result. Includes confirmatory testing and tests before patient discharge.',
-  typeTestsCare: `this is the type of test used. Options are:
+    'Tests performed with the goal of managing patients with a positive initial test result. Includes confirmatory testing and tests before patient discharge.',
+  typeTestsCare: `The type of test used. Options are:
 
     * PCR: Polymerase Chain Reaction - the current gold standard. A molecular test providing high sensitivity and specificity. Requires qualified personnel to take swabs. Swabs are analyzed in a lab remote from the site of the test and are subject to delay
     
     * RDT: Rapid diagnostic test - an antibody or antigen based test. Cheaper and faster than PCR but may be less accurate, particularly during the early days of infection `,
   requiredDxTests:
-    'the average number of tests performed on a patient from diagnosis to discharge, excluding the initial test used to diagnose the patient.',
+    'The average number of tests performed on a patient from diagnosis to discharge, excluding the initial test used to diagnose the patient.',
   resultsPeriod:
-    'the average number of days between the first appearance of symptoms and the return of results from testing. ',
+    'The average number of days between the first appearance of symptoms and the return of results from testing. ',
   fatalityReductionRecent:
-    ' the percentage reduction in the average fatality rate from the start of the epidemic to the start of the phase',
+    'The percentage reduction in the average fatality rate from the start of the epidemic to the start of the phase',
   livesSaved:
     'This panel shows the impact of increasing or decreasing the current number of tests per day, from the start of the current period until the end of the simulation. ',
 
