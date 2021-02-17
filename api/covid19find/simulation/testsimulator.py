@@ -60,11 +60,10 @@ fixed_params={
     'num_days':450}
 fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
-fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':False})
+fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
 
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
-
 
 
 scenario_params.append({
@@ -110,24 +109,24 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','major tightening','reverse last change'],\
-    'trig_values':['2021-01-25','2021-02-25','2021-03-30'],\
-    'trig_def_type':['date','date','date'],\
+    'severity':['major tightening','mild loosening',],\
+    'trig_values':['2021-01-25','2021-06-30'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[250000,250000,250000],\
-    'type_test_mitigation':['PCR','PCR','PCR'],\
-    'sensitivity':[0.95,0.95,0.95],\
-    'specificity':[0.998,0.998,0.998],\
-    'num_tests_care':[10000,10000,10000],\
-    'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective','fairly effective'],\
-    'imported_infections_per_day':['not effective','not effective','not effective'],\
-    'requireddxtests':[0,0,0],\
-    'is_counterfactual':['False','False','False'],\
-    'test_strategy':['symptomatic first','symptomatic first','symptomatic first'],\
-    'results_period':[3,3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4,0.4],
-    'fatality_reduction_recent':[0.35,0.35,0.35]
+    'num_tests_mitigation':[250000,250000],\
+    'type_test_mitigation':['PCR','PCR'],\
+    'sensitivity':[0.95,0.95],\
+    'specificity':[0.998,0.998],\
+    'num_tests_care':[10000,1000],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['not effective','not effective'],\
+    'requireddxtests':[0,0],\
+    'is_counterfactual':['False','False'],\
+    'test_strategy':['symptomatic first','symptomatic first'],\
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({

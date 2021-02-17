@@ -1158,7 +1158,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
             if np.isnan(sim.actualcases[i]):
                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
             if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean() 
         else:
             if np.isnan(sim.actualcases[i]):
                 sim.actualcases[i]=0
