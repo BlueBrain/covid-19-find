@@ -1147,21 +1147,20 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     tau=par.tau
     gamma=par.gamma
     for i in range(0,len(country_df)):
-        if i+par.shift<len(country_df): 
-            sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
-            sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
-            sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
-            #Because of rolling av. last 15 days of  values from country_df are nans. Here we fill the missing values with rolling av. for previous 28 days. We only do it for high value of ts. 
-            # If we did it for low values we would overwrite the initial nans which are actually correct
-            if i>350:
-                if np.isnan(sim.actualnewtests_mit[i]):
-                    sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
-                if np.isnan(sim.actualcases[i]):
-                    sim.actualcases[i]=sim.actualcases[i-29:i-1].mean()
-                if np.isnan(sim.actualdeaths[i]):
-                    sim.actualdeaths[i]=sim.actualdeaths[i-29:i-1].mean()
-            sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
-            sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
+        sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
+        sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
+        sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
+        #Because of rolling av. last 15 days of  values from country_df are nans. Here we fill the missing values with rolling av. for previous 28 days. We only do it for high value of ts. 
+        # If we did it for low values we would overwrite the initial nans which are actually correct
+        if i>350:
+            if np.isnan(sim.actualnewtests_mit[i]):
+                sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
+            if np.isnan(sim.actualcases[i]):
+                sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
+            if np.isnan(sim.actualdeaths[i]):
+                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+        sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
+        sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
     for t in range(start_day,end_day):
        if phase+1<=num_phases:
@@ -1221,11 +1220,8 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                    if not ispast(par.day1, t):
                        sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
                    else:
-                       new_cases=sim.actualcases[t]-sim.actualcases[t-1]
-                       if not np.isnan(new_cases):
-                           sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
-                       else:
-                           sim.newconfirmed[t,i]=0
+                       new_cases=sim.actualnewcases[t]
+                       sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
         
           #  else:
           #       sim.
