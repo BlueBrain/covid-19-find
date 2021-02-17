@@ -1158,7 +1158,10 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
             if np.isnan(sim.actualcases[i]):
                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
             if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean() 
+        else:
+            if np.isnan(sim.actualcases[i]):
+                sim.actualcases[i]=0
         sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
         sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
@@ -1220,11 +1223,8 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                    if not ispast(par.day1, t):
                        sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
                    else:
-                       new_cases=sim.actualcases[t]-sim.actualcases[t-1]
-                       if not np.isnan(new_cases):
-                           sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
-                       else:
-                           sim.newconfirmed[t,i]=0
+                       new_cases=sim.actualnewcases[t]
+                       sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
         
           #  else:
           #       sim.
@@ -1290,7 +1290,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
               sim.susceptibleprop[t,i]=0 #avoids a divide by zero error with zero pop in one compartment
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
-   
            if sim.infected[t,i] - sim.isolatedinfected[t,i] > 0.0:
                #false positives do not reduce the number of infected not isolated
               sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
