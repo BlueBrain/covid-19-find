@@ -12,13 +12,15 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../../config';
+import TooltipLabel from '../../TooltipLabel';
+import { IoIosInformationCircle } from 'react-icons/io';
 
 const RNaught: React.FC<{
   scenariosResults: ScenarioResult[];
   selectedScenarioIndex: number;
   clientScenariosInput: ClientScenarioData[];
 }> = ({ scenariosResults, selectedScenarioIndex, clientScenariosInput }) => {
-  const title = 'r0';
+  const title = `R${'eff'.sub()}`;
   const color = colors.aubergine;
 
   const screenWidth = useWindowWidth();
@@ -34,7 +36,18 @@ const RNaught: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <h3 className="title">{title}</h3>
+      <TooltipLabel
+        label={title}
+        tooltipKey={'reffGraph'}
+        wrapper={({ children }) => (
+          <h3 className="title">
+            <span
+              dangerouslySetInnerHTML={{ __html: `R${'eff'.sub()}` }}
+            ></span>{' '}
+            <IoIosInformationCircle />
+          </h3>
+        )}
+      />
       <Line
         width={null}
         height={null}
@@ -57,13 +70,12 @@ const RNaught: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'r0 over time (per day)',
+                  labelString: 'Reff over time',
                 },
                 gridLines: {
                   color: '#00000005',
                 },
                 ticks: {
-                  max: 4,
                   beginAtZero: true,
                   callback: function(value, index, values) {
                     return value?.toLocaleString(undefined, {

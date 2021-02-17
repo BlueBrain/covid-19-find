@@ -11,6 +11,7 @@ import {
   SELECTED_COLOR_ALPHA,
   UNSELECTED_COLOR_ALPHA,
 } from '../../../config';
+import TooltipLabel from '../../TooltipLabel';
 
 const patterns = GRAPH_PATTERNS_LIST;
 
@@ -32,7 +33,11 @@ const Prevalence: React.FC<{
         .split(' ')
         .join('-')}`}
     >
-      <h3 className="title">{title}</h3>
+      <TooltipLabel
+        label={title}
+        tooltipKey={'prevalanceGraph'}
+        wrapper={({ children }) => <h3 className="title">{children}</h3>}
+      />
       <Line
         width={null}
         height={null}
@@ -55,7 +60,7 @@ const Prevalence: React.FC<{
               {
                 scaleLabel: {
                   display: true,
-                  labelString: 'Prevalence (per day)',
+                  labelString: 'Prevalence',
                 },
                 gridLines: {
                   color: '#00000005',

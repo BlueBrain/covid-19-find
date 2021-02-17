@@ -34,6 +34,7 @@ export const makeSlidingAverage = (
 
 export type CovidData = {
   currentActive: number;
+  currentEffectiveness: number;
   timeseries: {
     currentActive: number;
     date: string;
@@ -129,6 +130,12 @@ const CovidResults: React.FC<{
             </>
           )}
         </h3>
+        <h3>
+          <span>{data.currentEffectiveness}</span>{' '}
+          <span className="subtitle">
+            Current Effectiveness of Government Intervention
+          </span>
+        </h3>
       </div>
       <div className="charts">
         <div className="chart">
@@ -223,7 +230,7 @@ const CovidResults: React.FC<{
               backgroundColor: '#fff',
               datasets: [
                 {
-                  label: 'New Cases',
+                  label: 'New Positive Tests',
                   yAxisID: 'A',
                   data: chartData
                     .map(makeSlidingAverage(chartData, 'newConfirmed'))

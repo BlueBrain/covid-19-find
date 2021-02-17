@@ -37,15 +37,24 @@ export enum TESTING_STRATEGIES {
 }
 
 export enum IMPORTED_INFECTIONS {
-  HIGHLY_EFFECTIVE = 'highly effective',
-  FAIRLY_EFFECTIVE = 'fairly effective',
   NOT_EFFECTIVE = 'not effective',
+  FAIRLY_EFFECTIVE = 'fairly effective',
+  HIGHLY_EFFECTIVE = 'highly effective',
 }
 
 export enum CONTACT_TRACING {
   NONE = 'none',
-  HIGHLY_EFFECTIVE = 'highly effective',
   FAIRLY_EFFECTIVE = 'fairly effective',
+  HIGHLY_EFFECTIVE = 'highly effective',
+}
+
+export enum EFFECTIVENESS {
+  MAJOR = 'major tightening',
+  MILD = 'mild tightening',
+  NONE = 'no change',
+  MILD_LOOSE = 'mild loosening',
+  MAJOR_LOOSE = 'major loosening',
+  REVERSE = 'reverse last change',
 }
 
 export const ImportedInfectionLabels = {
@@ -58,6 +67,15 @@ export const ContractTracingLabels = {
   [CONTACT_TRACING.NONE]: 'None',
   [CONTACT_TRACING.FAIRLY_EFFECTIVE]: 'Fairly Effective',
   [CONTACT_TRACING.HIGHLY_EFFECTIVE]: 'Highly Effective',
+};
+
+export const EffectivenessLabels = {
+  [EFFECTIVENESS.MAJOR]: 'Major Tightening',
+  [EFFECTIVENESS.MILD]: 'Mild Tightening',
+  [EFFECTIVENESS.NONE]: 'No Change',
+  [EFFECTIVENESS.MILD_LOOSE]: 'Mild Loosening',
+  [EFFECTIVENESS.MAJOR_LOOSE]: 'Major Loosening',
+  [EFFECTIVENESS.REVERSE]: 'Reverse Last Change',
 };
 
 export type CountryData = {

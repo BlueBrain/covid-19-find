@@ -122,9 +122,15 @@
                   "enum": ["<", "=", ">="]
                 },
                 "severity": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 1
+                  "type": "string",
+                  "enum": [
+                    "major tightening",
+                    "mild tightening",
+                    "no change",
+                    "mild loosening",
+                    "major loosening",
+                    "reverse last change"
+                  ]
                 },
                 "proportionOfContactsTraced": {
                   "type": "string",

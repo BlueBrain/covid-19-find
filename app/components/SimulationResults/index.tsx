@@ -29,6 +29,7 @@ import {
 import { isScoreInvalid } from '../../API';
 
 import './simulation-results.less';
+import TooltipLabel from '../TooltipLabel';
 
 function scaleValueFromLargestValueAgainstViewportWidth(
   value: number,
@@ -570,6 +571,7 @@ const SimulationResults: React.FC<{
                                     enabled: true,
                                     content: 'Today',
                                     backgroundColor: colors.blueGray,
+                                    yAdjust: 50,
                                   },
                                 },
                               ],
@@ -719,9 +721,15 @@ const SimulationResults: React.FC<{
                   </h3>
                 </div>
                 <div style={{ margin: '0 auto', width: '50%' }}>
-                  <h3 style={{ color: '#697881', textAlign: 'center' }}>
-                    Samples Required for Serological Studies
-                  </h3>
+                  <TooltipLabel
+                    label="Samples Required for Serological Studies"
+                    tooltipKey={'Samples Required for Serological Studies'}
+                    wrapper={({ children }) => (
+                      <h3 style={{ color: '#697881', textAlign: 'center' }}>
+                        {children}
+                      </h3>
+                    )}
+                  />
                   <table>
                     <tr>
                       <th>Number of Subgroups</th>

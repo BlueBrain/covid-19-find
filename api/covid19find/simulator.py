@@ -232,7 +232,7 @@ class Simulator:
             "trigger": (date.today() - timedelta(days=35)).isoformat(),
             "triggerType": covid_libscenario["trig_def_type"],
             "triggerCondition": covid_libscenario["trig_op_type"],
-            "severity": float(covid_libscenario["severity"]),
+            "severity": covid_libscenario["severity"],
             "proportionOfContactsTraced": covid_libscenario["prop_contacts_traced"],
             "numTestsMitigation": int(covid_libscenario["num_tests_mitigation"]),
             "typeTestsMitigation": "PCR",
