@@ -100,7 +100,67 @@ take a few minutes, during which the API will not function.
 
 ### User Interface
 
-to be filled by Kenny
+The UI is a React.js application. It uses a container (data) and component (presentation) model. We use typescript throughout the app and maintain typings for props and interfaces.
+
+The app is split into 3 sections, two of which request user input, and a third results panel.
+
+#### State Management
+
+The application maintains state in a React hook at the root app level `app/App.tsx`. The user manipulates this central state through the two forms. This state is used to create save files as downloadable JSON.
+
+#### Validation
+
+Validation is done through the native HTML5 api, and at certain points through the app validation is manually triggered. Manual validations for date inputs are done on the 2nd form.
+
+#### Phase form inputs
+
+in `app/components/ScenarioEditor/phaseForm.ts` there is an object that configures the phase editor in panel 2. By changing this object you can change add new inputs or change labels without touching any React component.
+
+example:
+
+```
+{
+    title: 'Testing for Care',
+    input: [
+      {
+        label: 'Test Type',
+        type: INPUT_TYPES.select,
+        min: 0,
+        key: 'typeTestsCare',
+        options: [
+          {
+            label: TEST_TYPES.PCR,
+            value: TEST_TYPES.PCR,
+          },
+          {
+            label: TEST_TYPES.RDT,
+            value: TEST_TYPES.RDT,
+          },
+        ],
+      },
+      {
+        label: 'Total tests per day',
+        type: INPUT_TYPES.number,
+        min: 0,
+        key: 'numTestsCare',
+      },
+      {
+        label: 'Recommended number of tests for care of one patient',
+        type: INPUT_TYPES.number,
+        min: 0,
+        key: 'requiredDxTests',
+      },
+    ],
+}
+```
+
+#### Tooltips
+
+We maintain tooltips outside of the components in `tooltips.ts`. Be are: some of the keys might not match the labels presented in the interface as the properties have evolved.
+
+#### API
+
+There is a single API class that is the interface for all calls to the backend in `app/API.ts`, and is called in React components using `hooks/useAPI.ts`.
 
 ## Development
 
