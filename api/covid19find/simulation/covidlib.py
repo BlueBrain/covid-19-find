@@ -390,7 +390,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           df.to_csv(filename,index=False,date_format='%Y-%m-%d')
       dataframes.append(df) 
       dfsum = df.groupby(['dates']).sum().reset_index()
-      dfsum['reff']=dfsum['newinfected']/dfsum['infected']*p['recovery_period']
+      #eliminate spurious computation of Reff where number of infected very low
+      dfsum['reff']=(dfsum['newinfected']/dfsum['infected']*p['recovery_period']).where(dfsum['newinfected']>200,other=0)
       dfsum['positive rate']=dfsum['newisolated']/dfsum['newtested_mit']
       dfsum['detection rate']=dfsum['newisolated']/dfsum['newinfected']
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
@@ -1158,7 +1159,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
             if np.isnan(sim.actualcases[i]):
                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
             if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean() 
+                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
         else:
             if np.isnan(sim.actualcases[i]):
                 sim.actualcases[i]=0
