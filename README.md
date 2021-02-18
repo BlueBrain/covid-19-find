@@ -2,6 +2,106 @@
 
 BBP/FIND COVID-19 project
 
+## Architecture
+
+The application consists of three main parts:
+
+- the simulation code
+- the HTTP API
+- the web frontend
+
+The HTTP API is a wrapper around the simulation code which translates HTTP requests made by the frontend into the
+parameters required by simulation code. The API also exposes data about the current state of the pandemic.
+
+### Simulator
+
+to be filled in by Richard
+
+### API
+
+The purpose of the API is to translate HTTP requests made by the frontend into the parameters required by simulation
+code. The API also exposes data about the current state of the pandemic as well as list of available countries. The code
+is situated in `api` directory. The API is written in Python using [flask](https://flask.palletsprojects.com/en/1.1.x/).
+
+#### Available endpoints
+
+- `GET /countries` - lists the available countries
+- `GET /countries/<country_code>` - fetch statistical data for a given country, Example response:
+
+```json
+{
+  "activePopulationProportion": 0.66,
+  "countryCode": "CH",
+  "highContactPopulation": null,
+  "hospitalBeds": 34620,
+  "over64Proportion": 0.20232131715771232,
+  "population": 8655000,
+  "remoteAreasPopulationProportion": null,
+  "urbanPopulationInDegradedHousingProportion": null,
+  "urbanPopulationProportion": 0.73
+}
+```
+
+- `GET /api/covid19data/<country_code>` - fetch COVID-19 statistics for a given country. Example response:
+
+```json
+{
+  "currentActive": 218086,
+  "currentEffectiveness": 0.9,
+  "timeseries": [
+    {
+      "currentActive": 0,
+      "date": "2020-01-22",
+      "newConfirmed": 0,
+      "newDeaths": 0,
+      "newRecovered": 0,
+      "newTests": null,
+      "newTestsPositiveProportion": null,
+      "totalConfirmed": 0,
+      "totalDeaths": 0,
+      "totalRecovered": 0,
+      "totalTests": 0
+    }
+  ],
+  "totalConfirmed": 545535,
+  "totalDeaths": 9849,
+  "totalRecovered": 317600,
+  "totalTests": 4797666
+}
+```
+
+- `GET /api/scenarios` - fetch the default scenarios for the simulator
+
+- `POST /api/simulation` - this endpoint runs the actual simulation. The request payload is defined
+  in [simulation-request.schema.json](api/covid19find/simulation-request.schema.json). The response payload is defined
+  in [simulation-response.schema.json](api/test/simulation-response.schema.json)
+
+#### Configuration
+
+The API can be configured using the following environment variables:
+
+- `DATA_DIR` - the directory where the application will download and process data. Needs to be writable by the user
+  running the app.
+- `PUBLIC_URL` - the prefix used by all the api endpoints
+- `FLASK_ENV` - flask environment setting, should be set to `production` in production deployments.
+
+#### Tests
+
+Some basic tests are implemented in [test](api/test) directory. They verify that the simulation code runs successfully
+with the default parameters and that the response is in the correct format. It does not verify correctness of the
+output. The tests can be run by running `pytest` in `api` directory.
+
+#### Running the app for the first time
+
+When running the app for the first time, the app will download and process COVID-19 data
+from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series)
+and [FIND](https://raw.githubusercontent.com/dsbbfinddx/FINDCov19TrackerData/master/processed/data_all.csv). This might
+take a few minutes, during which the API will not function.
+
+### User Interface
+
+to be filled by Kenny
+
 ## Development
 
 ### Webapp
@@ -30,8 +130,8 @@ Check style:
 yarn style
 ```
 
-If you have errors when running the app, it might be related to cache.
-You can remove the cache folder and try to run the app again:
+If you have errors when running the app, it might be related to cache. You can remove the cache folder and try to run
+the app again:
 
 ```
 rm -fr dist/ .cache/
@@ -54,7 +154,7 @@ python3 -m venv venv
 pip install -r requirements.txt
 ```
 
-## Run API
+## Run for API for development
 
 ```sh
 cd api
@@ -64,7 +164,8 @@ flask run
 
 List of country codes from https://datahub.io/core/country-list#data-cli with modifications to match COVID19 data.
 
-COVID19 data for countries from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
+COVID19 data for countries
+from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
 
 ## Running from packaged release:
 
@@ -76,15 +177,19 @@ pip install -r requirements.txt
 ./run-api.sh
 ```
 
-The server downloads data from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series and periodically updates it.
-The data is saved by default to `/tmp`, but the directory can be configured using `DATA_DIR` environment variable.
+The server downloads data
+from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series and
+periodically updates it. The data is saved by default to `/tmp`, but the directory can be configured using `DATA_DIR`
+environment variable.
 
-Per instructions from [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/#run-with-a-production-server), it is running `waitress` as the WSGI server, but any other WSGI server can be used instead if preferred.
+Per instructions
+from [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/#run-with-a-production-server), it
+is running `waitress` as the WSGI server, but any other WSGI server can be used instead if preferred.
 
 ## Configuring the client for deployment
 
-There are two ENV vars to configure URLS for the client during build time.
-They both have defaults. They can be relative or absolute paths.
+There are two ENV vars to configure URLS for the client during build time. They both have defaults. They can be relative
+or absolute paths.
 
 - `API_URL` (default `/api`) - the base url where the client calls the API (eg `/api/simulation`)
 - `PUBLIC_URL` (default `/`) - the path where the compiled static assets are hosted and publicly available.
