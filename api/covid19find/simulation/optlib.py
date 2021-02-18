@@ -63,6 +63,7 @@ def getsimdeaths(dfx,sev,trig):
    local_df=dfx
 #   fixed_params['fatality_reduction'] = 0.35
    fixed_params['num_days'] = len(country_df)+60
+   end_day=len(country_df)+60
 #   print(len(country_df))
    
    scenario_params=[]
@@ -81,7 +82,7 @@ def getsimdeaths(dfx,sev,trig):
 #        endsim=fixed_params['num_days']-1
 # =============================================================================
    dataframes, test_df,results_dict=\
-                   cl.run_simulation(country_df,fixed_params,scenarios=scenario_params)
+                   cl.run_simulation(country_df,fixed_params,scenarios=scenario_params,end_day=end_day)
    firstdf = dataframes[1].rename(columns = {'deaths': 'total_deaths', 'newdeaths': 'new_deaths'}, inplace = False)
    dfsum = firstdf.groupby(['days']).sum().reset_index()
    
