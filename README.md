@@ -118,39 +118,39 @@ in `app/components/ScenarioEditor/phaseForm.ts` there is an object that configur
 
 example:
 
-```
+```json
 {
-    title: 'Testing for Care',
-    input: [
-      {
-        label: 'Test Type',
-        type: INPUT_TYPES.select,
-        min: 0,
-        key: 'typeTestsCare',
-        options: [
-          {
-            label: TEST_TYPES.PCR,
-            value: TEST_TYPES.PCR,
-          },
-          {
-            label: TEST_TYPES.RDT,
-            value: TEST_TYPES.RDT,
-          },
-        ],
-      },
-      {
-        label: 'Total tests per day',
-        type: INPUT_TYPES.number,
-        min: 0,
-        key: 'numTestsCare',
-      },
-      {
-        label: 'Recommended number of tests for care of one patient',
-        type: INPUT_TYPES.number,
-        min: 0,
-        key: 'requiredDxTests',
-      },
-    ],
+  "title": "Testing for Care",
+  "input": [
+    {
+      "label": "Test Type",
+      "type": INPUT_TYPES.select,
+      "min": 0,
+      "key": "typeTestsCare",
+      "options": [
+        {
+          "label": TEST_TYPES.PCR,
+          "value": TEST_TYPES.PCR
+        },
+        {
+          "label": TEST_TYPES.RDT,
+          "value": TEST_TYPES.RDT
+        }
+      ]
+    },
+    {
+      "label": "Total tests per day",
+      "type": INPUT_TYPES.number,
+      "min": 0,
+      "key": "numTestsCare"
+    },
+    {
+      "label": "Recommended number of tests for care of one patient",
+      "type": INPUT_TYPES.number,
+      "min": 0,
+      "key": "requiredDxTests"
+    }
+  ]
 }
 ```
 
