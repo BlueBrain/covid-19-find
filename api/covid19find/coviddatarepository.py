@@ -5,8 +5,11 @@ from collections import OrderedDict
 import datetime
 import csv
 import json
+import logging
+from shutil import copyfile
 
 from .simulation.covidlib import cl_path_prefix
+from .simulation.extendbatchparallel import extendbatchparallel
 
 
 class CovidDataRepository:
@@ -22,12 +25,27 @@ class CovidDataRepository:
         self.data_dir = data_dir
         self.raw_data_dir = os.path.join(data_dir, "raw")
         self.country_data_dir = os.path.join(data_dir, "country_data")
+        self.past_phases_data_dir = os.path.join(data_dir, "past_phases_data")
         self.country_codes = self.__load_country_codes()
-        self.past_phases = self.__load_past_phases()
+
+    def initialize_past_phases_data(self):
+        if os.path.isdir(self.past_phases_data_dir):
+            logging.info("{} already exists, skipping initialization.".format(self.past_phases_data_dir))
+            self.__load_past_phases()
+            return
+        logging.info("Initializing past phases data.")
+        os.makedirs(self.past_phases_data_dir, exist_ok=True)
+        copyfile(os.path.join(cl_path_prefix, "db1.csv"), os.path.join(self.past_phases_data_dir, "db1.csv"))
+        copyfile(os.path.join(cl_path_prefix, "db1_long.csv"), os.path.join(self.past_phases_data_dir, "db1_long.csv"))
+        self.__load_past_phases()
+
+    def update_past_phases_data(self):
+        extendbatchparallel(self.past_phases_data_dir, self.past_phases_data_dir, 2)
+        self.__load_past_phases()
 
     def __load_past_phases(self):
         past_phases = {}
-        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
+        with open(os.path.join(self.past_phases_data_dir, "db1.csv")) as past_phases_file:
             csv_reader = csv.reader(past_phases_file, delimiter=',')
             # skip header
             next(csv_reader)
@@ -38,7 +56,7 @@ class CovidDataRepository:
                     "dates": json.loads(row[4]),
                     "score": float(row[5])
                 }
-        return past_phases
+        self.past_phases = past_phases
 
     def __int_or_none(self, string_int):
         try:
@@ -193,6 +211,9 @@ class CovidDataRepository:
                 return covid_data
         except FileNotFoundError:
             return None
+
+    def past_phases_data_for(self, country_code):
+        return self.past_phases[country_code]
 
     def __load_country_codes(self):
         country_codes_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "country_codes.json")
