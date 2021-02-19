@@ -8,7 +8,9 @@ path_prefix = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.join(path_prefix, "data")
 simulation_test_data_dir = os.path.join(path_prefix, "../covid19find/simulation")
 
-simulator = Simulator(CovidDataRepository(data_dir),
+data_repo = CovidDataRepository(data_dir)
+data_repo.initialize_past_phases_data()
+simulator = Simulator(data_repo,
                       parameters_directory=os.path.join(simulation_test_data_dir, "BBP_testing"))
 
 
