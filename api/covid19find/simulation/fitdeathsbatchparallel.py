@@ -1,4 +1,6 @@
 
+
+
 import pandas as pd
 import optlib as opt
 import cdata as cd
@@ -21,8 +23,8 @@ def merge_files(in_name, out_name,out_name_long,n):
         dbname_long=in_name+str(i)+'long.csv'
         dbfile=os.path.join(cl_path_prefix, 'results', dbname)
         dbfile_long=os.path.join(cl_path_prefix, 'results', dbname_long)
-        in_df=pd.read_csv(dbfile,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
-        in_df_long=pd.read_csv(dbfile_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'])
+        in_df=pd.read_csv(dbfile,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'],keep_default_na=False)
+        in_df_long=pd.read_csv(dbfile_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method', 'Long Sev', 'Long Trig'],keep_default_na=False)
         df=df.append(in_df)
         dflong=dflong.append(in_df_long)
         #alist_long.append(origin_df_long)
