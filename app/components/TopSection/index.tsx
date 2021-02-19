@@ -43,6 +43,7 @@ const TopSection: React.FC = () => {
             <a
               href={gettingStartedGuide}
               download="Getting started with the FIND Diagnostic Simulator"
+              target="_blank"
             >
               Getting Started Guide
             </a>
