@@ -19,24 +19,17 @@ def create_app():
     CORS(app)
 
     data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
-    data_repo.initialize_past_phases_data()
 
     def update_covid_data():
         app.logger.info("Updating COVID-19 data.")
         data_repo.update_data()
         app.logger.info("Finished updating COVID-19 data.")
 
-    def update_past_phases_data():
-        app.logger.info("Updating past phases data.")
-        data_repo.update_past_phases_data()
-        app.logger.info("Finished updating past phases dataa")
-
     country_repo = CountryRepository()
 
     scheduler = BackgroundScheduler(timezone=utc)
-    scheduler.add_job(func=update_covid_data, trigger='interval', hours=24)
+    scheduler.add_job(func=update_covid_data, trigger='interval', hours=2)
     scheduler.add_job(func=update_covid_data)
-    scheduler.add_job(func=update_past_phases_data, trigger='cron', hour=1, day_of_week="sat")
     scheduler.start()
 
     def not_found_if_none(data, country_code):

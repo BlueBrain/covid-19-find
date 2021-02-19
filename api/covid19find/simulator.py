@@ -20,6 +20,7 @@ class Simulator:
     def __init__(self, covid_repository, parameters_directory="production"):
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
+        self.past_phases = self.__load_past_phases()
 
     @staticmethod
     def __map_datapoint(dp):
@@ -98,8 +99,8 @@ class Simulator:
 
         fixed_parameters = self.get_fixed_parameters(parameters)
         fixed_parameters["expert_mode"] = False
-        fixed_parameters["past_severities"] = self.covid_repository.past_phases_data_for(country_code)["severities"]
-        fixed_parameters["past_dates"] = self.covid_repository.past_phases_data_for(country_code)["dates"]
+        fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
+        fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
 
         ## 
@@ -107,15 +108,15 @@ class Simulator:
         # hack to load data like in testsimulation.py to get similar results
         # There are necessary params that can change the results but we don't know them
         ## 
-        n_records = 0
-        day1 = datetime.strptime(country_df.iloc[0]['Date'], "%Y-%m-%d") - timedelta(days=n_records)
-        past_dates = self.covid_repository.past_phases_data_for(country_code)["dates"]
-        # This loads the default system parameters
-        overrideableFixedParams = get_system_params(self.parameters_directory)
+        datesandseverities=pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/simulation/db1.csv",index_col='Code')
+        n_records=0
+        day1 = datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d") - timedelta(days=n_records)
+        past_dates=json.loads(datesandseverities.loc[country_code]['Trigger Dates'])
+        #This loads the default system parameters
+        overrideableFixedParams=get_system_params(self.parameters_directory)
         overrideableFixedParams.update(cdata.getcountryparams(country_code))
-        past_severities = self.covid_repository.past_phases_data_for(country_code)["severities"]
-        overrideableFixedParams.update(
-            {'past_dates': past_dates, 'past_severities': past_severities, 'expert_mode': True})
+        past_severities=json.loads(datesandseverities.loc[country_code]['Severities'])
+        overrideableFixedParams.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
         ### end code from testSimulator2.py
 
         overrideableFixedParams.update(fixed_parameters)
@@ -151,7 +152,7 @@ class Simulator:
                     "samplesRequiredForSerologicalStudies": self.__get_serological_data(i, scenario_totals)
                 }
             )
-        return {"scenarios": scenario_data, "score": self.covid_repository.past_phases_data_for(country_code)["score"]}
+        return {"scenarios": scenario_data, "score": self.past_phases[country_code]["score"]}
 
     @staticmethod
     def __get_serological_data(scenario_index, scenario_totals):
@@ -251,6 +252,22 @@ class Simulator:
         phases.append(phase2)
 
         return {"phases": phases}
+
+    def __load_past_phases(self):
+        past_phases = {}
+        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
+            csv_reader = csv.reader(past_phases_file, delimiter=',')
+            # skip header
+            next(csv_reader)
+            for row in csv_reader:
+                country_code = row[1]
+                past_phases[country_code] = {
+                    "severities": json.loads(row[3]),
+                    "dates": json.loads(row[4]),
+                    "score": float(row[5])
+                }
+
+        return past_phases
 
     def default_scenarios(self):
         with open(os.path.join(cl_path_prefix, self.parameters_directory, "default_parameters.json")) as params_file:

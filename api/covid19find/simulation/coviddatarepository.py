@@ -5,8 +5,7 @@ from collections import OrderedDict
 import datetime
 import csv
 import json
-
-from .simulation.covidlib import cl_path_prefix
+import pycountry
 
 
 class CovidDataRepository:
@@ -23,34 +22,12 @@ class CovidDataRepository:
         self.raw_data_dir = os.path.join(data_dir, "raw")
         self.country_data_dir = os.path.join(data_dir, "country_data")
         self.country_codes = self.__load_country_codes()
-        self.past_phases = self.__load_past_phases()
-
-    def __load_past_phases(self):
-        past_phases = {}
-        with open(os.path.join(cl_path_prefix, "db1.csv")) as past_phases_file:
-            csv_reader = csv.reader(past_phases_file, delimiter=',')
-            # skip header
-            next(csv_reader)
-            for row in csv_reader:
-                country_code = row[1]
-                past_phases[country_code] = {
-                    "severities": json.loads(row[3]),
-                    "dates": json.loads(row[4]),
-                    "score": float(row[5])
-                }
-        return past_phases
 
     def __int_or_none(self, string_int):
         try:
             return int(string_int)
         except ValueError:
             return None
-
-    def __int_or_zero(self, string_int):
-        try:
-            return int(float(string_int))
-        except ValueError:
-            return 0
 
     def __read_find(self, filename):
         grouped_country_data = dict()
@@ -107,7 +84,7 @@ class CovidDataRepository:
             for date, value in data.items():
                 iso_date = datetime.datetime.strptime(date, "%m/%d/%y").date().isoformat()
                 current_count = country_data.get(iso_date, 0)
-                country_data[iso_date] = current_count + self.__int_or_zero(value)
+                country_data[iso_date] = current_count + int(value)
             summed_country_data[country] = country_data
         return summed_country_data
 
@@ -188,9 +165,7 @@ class CovidDataRepository:
     def data_for(self, country_code):
         try:
             with open(os.path.join(self.country_data_dir, country_code + ".json")) as country_file:
-                covid_data = json.load(country_file)
-                covid_data["currentEffectiveness"] = self.past_phases[country_code]["severities"][-1]
-                return covid_data
+                return json.load(country_file)
         except FileNotFoundError:
             return None
 
