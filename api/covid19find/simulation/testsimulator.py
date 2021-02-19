@@ -67,9 +67,9 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':[1.0, 1.0],\
-    'trig_values':['2020-12-15','2021-01-25'],\
-    'trig_def_type':['date','date','date'],\
+    'severity':['major tightening','reverse last change'],\
+    'trig_values':['2021-01-25','2021-03-01'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
@@ -77,8 +77,8 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.20,0.20],\
-    'imported_infections_per_day':[1,1,1],\
+    'prop_contacts_traced':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['not effective','not effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
@@ -88,9 +88,9 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[1.0, 1.0],\
-    'trig_values':['2020-12-15','2021-01-25'],\
-    'trig_def_type':['date','date','date'],\
+    'severity':['major tightening','reverse last change'],\
+    'trig_values':['2021-01-25','2021-03-01'],\
+    'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[32000,32000,32000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
@@ -98,19 +98,19 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['highly effective',0.20],\
-    'imported_infections_per_day':[1,1,1],\
+    'prop_contacts_traced':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['not effective','not effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
-    'test_strategy':['high contact groups first','high contact groups first','high contact groups first'],\
-    'results_period':[3,3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4,0.4],
-    'fatality_reduction_recent':[0.35,0.35,0.35]
+    'test_strategy':['high contact groups first','high contact groups first'],\
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':['major tightening','mild loosening',],\
-    'trig_values':['2021-01-25','2021-06-30'],\
+    'severity':['major tightening','reverse last change'],\
+    'trig_values':['2021-01-25','2021-03-01'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[250000,250000],\
@@ -130,24 +130,24 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':[1.0, 1.0],\
-    'trig_values':['2020-12-15','2021-01-25'],\
-    'trig_def_type':['date','date','date'],\
-    'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[32000,32000,32000],\
-    'type_test_mitigation':['PCR','PCR','PCR'],\
+    'severity':['major tightening','reverse last change'],\
+    'trig_values':['2021-01-25','2021-03-01'],\
+    'trig_def_type':['date','date'],\
+    'trig_op_type':['=','='],\
+    'num_tests_mitigation':[250000,250000],\
+    'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
-    'num_tests_care':[10000,10000,10000],\
-    'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':[0.20,0.20],\
-    'imported_infections_per_day':[1,1,1],\
+    'num_tests_care':[10000,10000],\
+    'type_tests_care':['PCR','PCR'],\
+    'prop_contacts_traced':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['not effective','not effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
-    'test_strategy':['open public testing','open public testing','open public testing'],\
-    'results_period':[3,3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4,0.4],
-    'fatality_reduction_recent':[0.35,0.35,0.35]
+    'test_strategy':['open public testing','open public testing'],\
+    'results_period':[3,3],\
+    'prop_asymptomatic_tested':[0.4,0.4],
+    'fatality_reduction_recent':[0.35,0.35]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')

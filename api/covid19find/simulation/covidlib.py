@@ -328,27 +328,13 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
  
       
       #reads the trig values in scenarios i and converts to simulation days - does not yet check for type of trigger
-      # this code is very dicy and needs checking
+      
       
       for j in range(0,len(scenarios[i]['trig_values'])):
           if(scenarios[i]['trig_def_type'][j]=='date'):
               date=dt.datetime.strptime(scenarios[i]['trig_values'][j], '%Y-%m-%d')
               scenarios[i]['trig_values'][j]=(date-day1).days
-          
-          #capture severity of last phase in the past
-          current_sev=p['past_severities'][-1]
-          #transforms effectiveness labels into numerical values
-          if scenarios[i]['severity'][j]=='major tightening':
-               scenarios[i]['severity'][j]=current_sev+(1-current_sev)*0.75
-          elif scenarios[i]['severity'][j]=='mild tightening':
-               scenarios[i]['severity'][j]=current_sev+(1-current_sev)*0.2
-          elif scenarios[i]['severity'][j]=='no change':
-               scenarios[i]['severity'][j]=current_sev
-          elif scenarios[i]['severity'][j]=='mild loosening':
-               scenarios[i]['severity'][j]=current_sev*0.8
-          elif scenarios[i]['severity'][j]=='major loosening':
-               scenarios[i]['severity'][j]=current_sev*0.25                                    
-              
+                     
       scenario=create_scenario(past,scenarios[i])
       # Converts qualitative labels for user parameters into numerical values read from the system parameters file
       for j in range(0,len(scenario['trig_values'])):
@@ -364,6 +350,22 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
               scenario['prop_contacts_traced'][j]=p['prop_for_fair_tracing']
            elif scenario['prop_contacts_traced'][j]=='highly effective':
               scenario['prop_contacts_traced'][j]=p['prop_for_good_tracing']
+           #capture severity of last phase in the past
+           if j>=1:
+               current_sev=scenario['severity'][j-1]
+           else:
+               current_sev=0
+          #transforms effectiveness labels into numerical values
+           if scenario['severity'][j]=='major tightening':
+               scenario['severity'][j]=current_sev+(1-current_sev)*0.75
+           elif scenario['severity'][j]=='mild tightening':
+               scenario['severity'][j]=current_sev+(1-current_sev)*0.2
+           elif scenario['severity'][j]=='no change':
+               scenario['severity'][j]=current_sev
+           elif scenario['severity'][j]=='mild loosening':
+               scenario['severity'][j]=current_sev*0.8
+           elif scenario['severity'][j]=='major loosening':
+               scenario['severity'][j]=current_sev*0.25    
            #reverses previous change if user requests this - but only does this if there is a previous phase
            if scenario['severity'][j]=='reverse last change':
            #avoid indexing non-existent severity
@@ -371,8 +373,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
                   scenario ['severity'][j]=scenario ['severity'][j-2]
               else:
                   scenario ['severity'][j]=scenario ['severity'][j-1]
-                    
-                                    
+                                        
       p.update(scenario)
       nmultipliers=len(p['test_multipliers'])
       par = Par(p)
