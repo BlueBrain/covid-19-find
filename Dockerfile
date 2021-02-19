@@ -11,8 +11,6 @@ WORKDIR /app
 
 ADD api .
 
-RUN chgrp -R 0 . && \
-    chmod -R g=u .
 
 WORKDIR /app
 
@@ -22,6 +20,8 @@ ENV DATA_DIR /tmp
 ENV FLASK_ENV production
 COPY --from=builder /opt/build/dist ./static
 ENV STATIC_DATA_DIR /app/static
+RUN chgrp -R 0 . && \
+    chmod -R g+rwx .
 
 EXPOSE 8080
 CMD ["waitress-serve", "--call", "covid19find:create_app"]
