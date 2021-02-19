@@ -80,7 +80,7 @@ def process_countries(a_tuple):
     if testmode:
        CDB = cd.gettestcountries()
     else:
-       CDB = list(cd.getallcountrycodes())
+       CDB = list(cd.getallcountrycodes())   
     #for index, row in dbdf.iterrows():
     #for ccode in CDB[start-1:finish]:
     today=datetime.now()
@@ -95,17 +95,17 @@ def process_countries(a_tuple):
              cname = a_row['Country']
              ccode=a_row['Code']
     #         sev = json.loads(a_row['Long Sev'].tolist()[0])
-             sev=pd.eval(a_row['Long Sev'])
+             sev=pd.eval(a_row['Long Sev']).tolist()
    #          trig = json.loads(a_row['Long Trig'].tolist()[0])
    #currently there is no long trig for this to read
-             trig=pd.eval(a_row['Long Trig'])
+             trig=pd.eval(a_row['Long Trig']).tolist()
              score = a_row['Score']
              if len(sev) > 1:
                while (trig[-1] > start_extend):
                   sev.pop()
                   trig.pop()
                score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,sev,trig)
-
+            
               # opt.showthiscase(dfx,sev,trig,'EXT')
                #problem in line below - 'cannot set a row with misplaced columns
                df.loc[len(df.index)] = [ccode, cname, sev, trig, score]
@@ -123,3 +123,4 @@ def process_countries(a_tuple):
 # 
 #    
 # =============================================================================
+ 

@@ -1,13 +1,8 @@
+from countryrepository import CountryRepository
+from coviddatarepository import CovidDataRepository
+from simulator import Simulator
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../")
-
-from covid19find.countryrepository import CountryRepository
-from covid19find.coviddatarepository import CovidDataRepository
-from covid19find.simulator import Simulator
-
-data_repo = CovidDataRepository(os.environ.get("DATA_DIR", "/tmp"))
+data_repo = CovidDataRepository( "/tmp")
 parameters_dir = ""
 simulator = Simulator(data_repo, parameters_dir)
 country_repo = CountryRepository()
