@@ -5,6 +5,7 @@ import './top-section.less';
 import bbpLogo from '../../assets/images/EPFL-BBP-logo.jpg';
 import ataneoLogo from '../../assets/images/ateneo-logo.jpg';
 import unitaidLogo from '../../assets/images/unitaid-logo.png';
+import gettingStartedGuide from '../../assets/pdf/Getting started with the FIND Diagnostic Simulator.pdf';
 
 const TopSection: React.FC = () => {
   return (
@@ -36,6 +37,16 @@ const TopSection: React.FC = () => {
           <a href="https://unitaid.org" target="_blank">
             Unitaid
           </a>
+          <br />
+          <p>
+            Learn how to use this simulator with our{' '}
+            <a
+              href={gettingStartedGuide}
+              download="Getting started with the FIND Diagnostic Simulator"
+            >
+              Getting Started Guide
+            </a>
+          </p>
         </div>
         <div style={{ marginTop: '1rem' }}>
           <a
