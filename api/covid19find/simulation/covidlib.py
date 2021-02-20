@@ -359,11 +359,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
            if scenario['severity'][j]=='major tightening':
                scenario['severity'][j]=current_sev+(1-current_sev)*0.75
            elif scenario['severity'][j]=='mild tightening':
-               scenario['severity'][j]=current_sev+(1-current_sev)*0.2
+               scenario['severity'][j]=current_sev+(1-current_sev)*0.1
            elif scenario['severity'][j]=='no change':
                scenario['severity'][j]=current_sev
            elif scenario['severity'][j]=='mild loosening':
-               scenario['severity'][j]=current_sev*0.8
+               scenario['severity'][j]=current_sev*0.9
            elif scenario['severity'][j]=='major loosening':
                scenario['severity'][j]=current_sev*0.25    
            #reverses previous change if user requests this - but only does this if there is a previous phase

@@ -120,7 +120,7 @@ def process_countries(a_tuple):
 #     temp_path=os.path.join(cl_path_prefix,'results')
 #     n_processors=10
 #     extendbatchparallel(db1_path, temp_path, n_processors)
-# 
-#    
 # =============================================================================
+
+   
  
