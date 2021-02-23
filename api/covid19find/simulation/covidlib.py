@@ -1169,6 +1169,11 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
             else:
                 if np.isnan(sim.actualcases[i]):
                     sim.actualcases[i]=0
+                if np.isnan(sim.actualnewtests_mit[i]):
+                    sim.actualnewtests_mit[i]=0
+                if np.isnan(sim.actualdeaths[i]):
+                    sim.actualdeaths[i]=0
+                    
             sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
             sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
@@ -1214,6 +1219,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            sim.newtested_mit[t]=accum_tests_performed
        else:
            sim.newtested_mit[t]=sim.actualnewtests_mit[t]
+               
        # The simulation now proceeds one compartment at a time
        for i in range(0,par.num_compartments):
 
@@ -1253,7 +1259,10 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            if t- par.death_period>=0 and not ispast(par.day1, t):
                sim.newdeaths[t,i] = sim.newinfected[t-(par.death_period+par.incubation_period),i]*tau 
            else:
-               new_deaths=sim.actualnewdeaths[t]*sim.infected[t-1,i]/sim.infected[t-1].sum()
+               if sim.infected[t-1].sum()>0:
+                   new_deaths=sim.actualnewdeaths[t]*sim.infected[t-1,i]/sim.infected[t-1].sum()
+               else:
+                   new_deaths=0
                if np.isnan(new_deaths):
                    new_deaths=0
                sim.newdeaths[t,i]=new_deaths
