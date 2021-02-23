@@ -114,13 +114,11 @@ def process_countries(a_tuple):
                dflong.to_csv(fname2,index=False,header=False)
 
 
-# =============================================================================
-# if __name__=='__main__':
-#     db1_path=cl_path_prefix
-#     temp_path=os.path.join(cl_path_prefix,'results')
-#     n_processors=10
-#     extendbatchparallel(db1_path, temp_path, n_processors)
-# =============================================================================
+if __name__=='__main__':
+    db1_path=cl_path_prefix
+    temp_path=os.path.join(cl_path_prefix,'results')
+    n_processors=10
+    extendbatchparallel(db1_path, temp_path, n_processors)
 
    
  

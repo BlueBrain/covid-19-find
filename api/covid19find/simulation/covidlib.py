@@ -319,6 +319,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
           default_scenarios[i]['imported_infections_per_day']=p['imported_infections_below_limit']
       else:
           default_scenarios[i]['imported_infections_per_day']=p['imported_infections_above_limit']
+      #fix the default strategy for the past to 'symptomatic only' - scenarios only differentiate in the future.
+      default_scenarios[i]['test_strategy']='symptomatic first'
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
       p.update(past)
       min_betas = get_beta(max_intervention_betafile, num_compartments)
@@ -472,9 +474,10 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       total_serotests_by_scenario_1000[i]=sim.compute_sample_size(par,1000,prevalence,1.96,0.01)
       total_cases_by_scenario[i]=dfsum['newconfirmed'].sum()
       total_deaths_by_scenario[i]=dfsum['newdeaths'].sum()
-      max_infected_by_scenario[i]=dfsum['infected'].max()
+      df_from_today=dfsum.iloc[today:par.num_days-1]
+      max_infected_by_scenario[i]=df_from_today['infected'].max()
       total_infected_by_scenario[i]=dfsum['newinfected'].sum()
-      max_isolated_by_scenario[i]=dfsum['isolated'].max()
+      max_isolated_by_scenario[i]=df_from_today['isolated'].max()
 
       if expert_mode:
          print('Total tested for mitigation =',total_tests_mit_by_scenario[i])
@@ -1149,25 +1152,29 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     tau=par.tau
     gamma=par.gamma
     for i in range(0,len(country_df)):
-        sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
-        sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
-        sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
-        #Because of rolling av. last 15 days of  values from country_df are nans. Here we fill the missing values with rolling av. for previous 28 days. We only do it for high value of ts. 
-        # If we did it for low values we would overwrite the initial nans which are actually correct
-        if i>350:
-            if np.isnan(sim.actualnewtests_mit[i]):
-                sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
-            if np.isnan(sim.actualcases[i]):
-                sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
-            if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
-        else:
-            if np.isnan(sim.actualcases[i]):
-                sim.actualcases[i]=0
-        sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
-        sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
+    #this allows simulations that are shorter than country_df
+        if i<end_day:
+            sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
+            sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
+            sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
+            #Because of rolling av. last 15 days of  values from country_df are nans. Here we fill the missing values with rolling av. for previous 28 days. We only do it for high value of ts. 
+            # If we did it for low values we would overwrite the initial nans which are actually correct
+            if i>350:
+                if np.isnan(sim.actualnewtests_mit[i]):
+                    sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
+                if np.isnan(sim.actualcases[i]):
+                    sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
+                if np.isnan(sim.actualdeaths[i]):
+                    sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+            else:
+                if np.isnan(sim.actualcases[i]):
+                    sim.actualcases[i]=0
+            sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
+            sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
     last_phase=0
+    #The simulation proper starts here
     for t in range(start_day,end_day):
+    # Here we determine if there is a need to change phase before continuing
        if phase+1<=num_phases:
            if sim.trigger_next_phase(par,t,phase+1): 
                phase=phase+1
@@ -1202,7 +1209,12 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        #perform mitigation testing 
 
        accum_tests_performed = sim.perform_tests(par,t,phase,use_real_testdata)  
-       sim.newtested_mit[t]=accum_tests_performed
+       #if we are in the past we use actual test data. If not we simulate number of tests performed
+       if not ispast(par.day1, t):
+           sim.newtested_mit[t]=accum_tests_performed
+       else:
+           sim.newtested_mit[t]=sim.actualnewtests_mit[t]
+       # The simulation now proceeds one compartment at a time
        for i in range(0,par.num_compartments):
 
 # =============================================================================
@@ -1226,7 +1238,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                        sim.newconfirmed[t,i] = sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]
                    else:
                        new_cases=sim.actualnewcases[t]
-                       sim.newconfirmed[t,i]=new_cases*sim.population[t-1,i]/sim.population[t-1].sum()
+                       sim.newconfirmed[t,i]=new_cases*sim.infected[t-1,i]/sim.infected[t-1].sum()
         
           #  else:
           #       sim.
@@ -1238,10 +1250,13 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
                sim.newrecovered[t,i]=0
          
-           if t- par.death_period>=0:
+           if t- par.death_period>=0 and not ispast(par.day1, t):
                sim.newdeaths[t,i] = sim.newinfected[t-(par.death_period+par.incubation_period),i]*tau 
            else:
-               sim.newdeaths[t,i]=0
+               new_deaths=sim.actualnewdeaths[t]*sim.infected[t-1,i]/sim.infected[t-1].sum()
+               if np.isnan(new_deaths):
+                   new_deaths=0
+               sim.newdeaths[t,i]=new_deaths
            sim.requireddxtests[t,i]=sim.newrecovered[t,i]*par.requireddxtests[phase] 
            if sim.requireddxtests[t,i]>par.num_tests_care[phase]:
                sim.actualdxtests[t,i]=par.num_tests_care[phase]
