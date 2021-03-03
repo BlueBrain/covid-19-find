@@ -44,6 +44,7 @@ export type CovidData = {
     newConfirmed: number;
     newDeaths: number;
     newRecovered: number;
+    meanTestsLast7Days: number;
     [key: string]: number | string;
   }[];
   totalConfirmed: number;
@@ -130,13 +131,10 @@ const CovidResults: React.FC<{
             </>
           )}
         </h3>
-        {/* <h3>
-          commenting this out instead of removing, as we may rename and bring it back later
-          <span>{data.currentEffectiveness}</span>{' '}
-          <span className="subtitle">
-            Current Effectiveness of Government Intervention
-          </span>
-        </h3> */}
+        <h3>
+          <span>{data.meanTestsLast7Days}</span>{' '}
+          <span className="subtitle">Mean tests in Last 7 days</span>
+        </h3>
       </div>
       <div className="charts">
         <div className="chart">
