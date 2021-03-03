@@ -130,12 +130,13 @@ const CovidResults: React.FC<{
             </>
           )}
         </h3>
-        <h3>
+        {/* <h3>
+          commenting this out instead of removing, as we may rename and bring it back later
           <span>{data.currentEffectiveness}</span>{' '}
           <span className="subtitle">
             Current Effectiveness of Government Intervention
           </span>
-        </h3>
+        </h3> */}
       </div>
       <div className="charts">
         <div className="chart">

@@ -127,11 +127,11 @@ const SimulationResults: React.FC<{
     },
     {
       key: 'maxInfected',
-      title: 'Peak Infected',
+      title: 'Peak Infected (from today)',
     },
     {
       key: 'maxIsolated',
-      title: 'Peak Isolated',
+      title: 'Peak Isolated (from today)',
     },
   ];
 
