@@ -67,7 +67,7 @@ export default [
         label: 'Trigger Type',
         type: INPUT_TYPES.select,
         key: 'triggerType',
-        options: Object.values(TRIGGER_TYPE).map((str) => ({
+        options: Object.values(TRIGGER_TYPE).map(str => ({
           label: triggerTypeLabels[str],
           value: str,
         })),
@@ -76,7 +76,7 @@ export default [
         label: 'Trigger Condition',
         type: INPUT_TYPES.select,
         key: 'triggerCondition',
-        options: Object.values(TRIGGER_CONDITION).map((str) => ({
+        options: Object.values(TRIGGER_CONDITION).map(str => ({
           label: str,
           value: str,
         })),
@@ -87,9 +87,9 @@ export default [
         key: 'trigger',
       },
       {
-        label: 'Effectiveness',
+        label: 'Stringency',
         type: INPUT_TYPES.select,
-        options: Object.values(EFFECTIVENESS).map((str) => ({
+        options: Object.values(EFFECTIVENESS).map(str => ({
           label: EffectivenessLabels[str],
           value: str,
         })),
@@ -99,7 +99,7 @@ export default [
         label: 'Border controls',
         type: INPUT_TYPES.select,
         key: 'importedInfectionsPerDay',
-        options: Object.values(IMPORTED_INFECTIONS).map((str) => ({
+        options: Object.values(IMPORTED_INFECTIONS).map(str => ({
           label: ImportedInfectionLabels[str],
           value: str,
         })),
@@ -113,7 +113,7 @@ export default [
         label: 'Trace and isolate contacts',
         type: INPUT_TYPES.select,
         key: 'proportionOfContactsTraced',
-        options: Object.values(CONTACT_TRACING).map((str) => ({
+        options: Object.values(CONTACT_TRACING).map(str => ({
           label: ContractTracingLabels[str],
           value: str,
         })),

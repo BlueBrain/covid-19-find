@@ -33,7 +33,7 @@ export default {
     
     * “open public testing”: anyone requesting a test is tested, on a first come, first served basis. `,
   importedInfectionsPerDay:
-    'The effectiveness of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
+    'The stringency of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
   trigger:
     'The value at which the new phase is triggered (e.g. the new phase begins when cases per million is greater than or equal to this value',
   triggerType:
@@ -41,7 +41,7 @@ export default {
   triggerCondition:
     'The way data is compared against the trigger condition e.g. a new phase is triggered when cases per million are greater or equal to (>=) a given value ',
   severity:
-    'The effectiveness of government intervention in a certain stage of the epidemic compared to its effectiveness in the previous stage. The system offers five options: ‘major tightening’ (of restrictions), ‘minor tightening’, ‘no change’, ‘minor loosening’ and ‘major loosening’',
+    'The stringency of government intervention in a certain stage of the epidemic compared to its stringency in the previous stage. The system offers five options: ‘major tightening’ (of restrictions), ‘minor tightening’, ‘no change’, ‘minor loosening’ and ‘major loosening’',
   proportionOfContactsTraced:
     'The effectiveness of efforts to trace and isolate the contacts of people who test positive for COVID.',
   typeTestsMitigation: `The type of test used. Options are:
