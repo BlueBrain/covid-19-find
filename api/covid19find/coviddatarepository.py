@@ -178,12 +178,13 @@ class CovidDataRepository:
                     "totalRecovered": last_data["totalRecovered"],
                     "totalTests": last_data["totalTests"],
                     "currentActive": last_data["currentActive"],
+                    "meanTestsLast7Days": sum(map(self.__new_tests_or_zero, country_timeseries_data[-7:])),
                     "timeseries": country_timeseries_data
                 }
 
-            for country, data in merged_data.items():
-                with open(os.path.join(self.country_data_dir, country + ".json"), "w") as country_file:
-                    json.dump(data, country_file)
+        for country, data in merged_data.items():
+            with open(os.path.join(self.country_data_dir, country + ".json"), "w") as country_file:
+                json.dump(data, country_file)
 
     def data_for(self, country_code):
         try:
@@ -193,6 +194,12 @@ class CovidDataRepository:
                 return covid_data
         except FileNotFoundError:
             return None
+
+    def __new_tests_or_zero(self, entry):
+        if entry["newTests"] is not None:
+            return entry["newTests"]
+        else:
+            return 0
 
     def __load_country_codes(self):
         country_codes_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "country_codes.json")
