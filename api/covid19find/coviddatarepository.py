@@ -178,7 +178,7 @@ class CovidDataRepository:
                     "totalRecovered": last_data["totalRecovered"],
                     "totalTests": last_data["totalTests"],
                     "currentActive": last_data["currentActive"],
-                    "meanTestsLast7Days": sum(map(self.__new_tests_or_zero, country_timeseries_data[-7:])),
+                    "meanTestsLast7Days": sum(map(self.__new_tests_or_zero, country_timeseries_data[-7:])) / 7,
                     "timeseries": country_timeseries_data
                 }
 
