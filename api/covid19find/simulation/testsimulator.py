@@ -18,6 +18,7 @@ import datetime as dt
 
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
+#ccode="FR"
 ccode="FR"
 test_directory="bbp_testing"
 n_records=60
@@ -33,21 +34,52 @@ day1 = dt.datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d")
 datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
+#The following are optimized data for france with centered rolling averages
+past_dates= [1, 15, 72, 99, 123, 177, 191, 218, 258, 299, 324, 347, 367, 402, 417]
+past_severities=[0.0, 1.0, 0.0, 0.75, 0.95, 0.9, 0.95, 0.8, 0.55, 0.5, 0.75, 0.8, 0.75, 0.8, 0.75]
+# This is data with default rolling averages
 # =============================================================================
-#past_dates= [1, 15, 70, 117, 144, 168, 195, 222, 249, 276, 296, 322, 341, 363, 383] 
-#past_severities= [0.0, 1.0, 0.0, 0.95, 0.9, 0.85, 0.7, 0.75, 0.65, 0.85, 0.9, 0.8, 0.85]
 # =============================================================================
+# past_dates= [1, 15, 84, 111, 132, 186, 240, 267, 294, 310, 332, 353, 369, 410]
+# past_severities= [0.0, 1.0, 0.0, 0.6, 0.95, 0.9, 0.75, 0.55, 0.65, 0.45, 0.75, 0.8, 0.75, 0.8]
+# =============================================================================
+# This is data for Germany with centered rolling averages and increased imported cases
+# =============================================================================
+#past_dates=[1, 15, 70, 85, 107, 125, 144, 168, 189, 212, 268, 292, 318, 342, 360, 381, 401, 417]
+#past_severities=[0.0, 1.0, 0.8, 0.3, 0.8, 0.9, 0.95, 0.9, 0.95, 0.85, 0.4, 0.45, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
+
+
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
 
- #temporary. Front_end will provide real data
+ #temporary. Front_end will provide real data -
+ # Data for 
+ 
+#============================================================================
+# These are fixed parameters for France
+#=============================================================================
+# fixed_params={
+#     'test_directory':'bbp_testing',\
+#     'total_pop':8200000, \
+#     'hospital_beds':33000, \
+#     'prop_15_64': 0.66, \
+#     'age_gt_64':0.20 ,\
+#     'prop_urban': 0.72, \
+#     'prop_below_pl':0.05, \
+#     'prop_woh':0.4, \
+#     'staff_per_bed':2.5,\
+#     'past_dates':past_dates,\
+#     'past_severities':past_severities,\
+#     'expert_mode':False,\
+#     'run_multiple_test_scenarios':True,\
+#     'save_results':False,\
+#     'fatality_reduction':0.35,\
+#     'num_days':450}
+# =============================================================================
+#  These are fixed parameters for germany
+#==============================================================================
 fixed_params={
     'test_directory':'bbp_testing',\
-    'total_pop':8200000, \
-    'hospital_beds':33000, \
-    'prop_15_64': 0.66, \
-    'age_gt_64':0.20 ,\
-    'prop_urban': 0.72, \
     'prop_below_pl':0.05, \
     'prop_woh':0.4, \
     'staff_per_bed':2.5,\
@@ -67,8 +99,8 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':['mild tightening','reverse last change'],\
-    'trig_values':['2021-01-25','2021-03-01'],\
+    'severity':['no change','no change'],\
+    'trig_values':['2021-03-01','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0,0],\
@@ -83,16 +115,15 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4,0.4],
     'fatality_reduction_recent':[0.35,0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':['mild tightening','reverse last change'],\
-    'trig_values':['2021-01-25','2021-03-01'],\
+    'severity':['no change','no change'],\
+    'trig_values':['2021-03-01','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[32000,32000,32000],\
+    'num_tests_mitigation':[302000,302000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
@@ -104,16 +135,15 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
     'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':['mild tightening','reverse last change'],\
-    'trig_values':['2021-01-25','2021-03-01'],\
+    'severity':['no change','no change'],\
+    'trig_values':['2021-03-01','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[250000,250000],\
+    'num_tests_mitigation':[302000,302000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -125,16 +155,15 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
     'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':['mild tightening','reverse last change'],\
-    'trig_values':['2021-01-25','2021-03-01'],\
+    'severity':['no change','no change'],\
+    'trig_values':['2021-03-01','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[250000,250000],\
+    'num_tests_mitigation':[302000,302000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
@@ -146,7 +175,6 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[3,3],\
-    'prop_asymptomatic_tested':[0.4,0.4],
     'fatality_reduction_recent':[0.35,0.35]
     })
 try:
