@@ -44,9 +44,9 @@ export type CovidData = {
     newConfirmed: number;
     newDeaths: number;
     newRecovered: number;
-    meanTestsLast7Days: number;
     [key: string]: number | string;
   }[];
+  meanTestsLast7Days: number;
   totalConfirmed: number;
   totalRecovered: number;
   totalDeaths: number;
