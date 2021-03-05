@@ -220,8 +220,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
        return()
    win_length=28
  
-   country_df=country_df_raw.rolling(win_length,center=True).mean()
-#   country_df=country_df_raw.rolling(win_length).mean()
+#   country_df=country_df_raw.rolling(win_length,center=True).mean()
+   country_df=country_df_raw.rolling(win_length).mean()
    country_df['Date']=country_df_raw['Date']
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
@@ -809,10 +809,7 @@ class Sim:
         total_infected=sim.newinfected[t-par.incubation_period]
         uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
         total_symptomatic=infected_symptomatic+uninfected_symptomatic
-        if infected_symptomatic.sum()>0:
-            prop_tests=infected_symptomatic/infected_symptomatic.sum()
-        else:
-            prop_tests=np.zeros(par.num_compartments)
+        prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
@@ -953,10 +950,7 @@ class Sim:
         uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
         total_symptomatic=infected_symptomatic+uninfected_symptomatic
         #Tests are distributed according to proportion of infected - makes no practical difference
-        if infected_symptomatic.sum()>0:
-            prop_tests=infected_symptomatic/infected_symptomatic.sum()
-        else:
-            prop_tests=np.zeros(par.num_compartments)
+        prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
