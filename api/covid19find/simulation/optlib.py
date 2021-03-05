@@ -15,6 +15,7 @@ minphaselength = 14
 maxphaselength = 28
 lag = 26
 sample =30
+#shiftlag=56
 shiftlag = lag+sample
 horizon = 50
 
@@ -141,8 +142,8 @@ def scorealignment(result,span):
 def runandalignsim(dfx,sev,trig):
    simdeaths = getsimdeaths(dfx,sev,trig)
    result = aligntotest(dfx,simdeaths)
-   result['sim_new_deaths'] = result['sim_total_deaths'].diff().fillna(result['sim_total_deaths'].iloc[0]).rolling(7,center=True).mean()
-#   result['sim_new_deaths'] = result['sim_total_deaths'].diff().fillna(result['sim_total_deaths'].iloc[0]).rolling(7).mean()
+#   result['sim_new_deaths'] = result['sim_total_deaths'].diff().fillna(result['sim_total_deaths'].iloc[0]).rolling(7,center=True).mean()
+   result['sim_new_deaths'] = result['sim_total_deaths'].diff().fillna(result['sim_total_deaths'].iloc[0]).rolling(7).mean()
    result['sim_growth'] = getgrowthrate(result['sim_total_deaths'],7)
    # result['absdiff'] = abs(result.growth - result.sim_growth)
    result['absdiff'] = abs(result.total_deaths - result.sim_total_deaths)
@@ -179,8 +180,8 @@ def getactualdeaths(countryname):
   dfx = pd.DataFrame()
   dfx['Date'] = dfactual['Date']
   dfx['orig_new_deaths'] = dfactual['New deaths']
-  dfx['new_deaths'] = dfactual['New deaths'].rolling(28,center=True).mean()
-#  dfx['new_deaths'] = dfactual['New deaths'].rolling(28).mean()
+#  dfx['new_deaths'] = dfactual['New deaths'].rolling(28,center=True).mean()
+  dfx['new_deaths'] = dfactual['New deaths'].rolling(28).mean()
   dfx['total_deaths'] = dfx['new_deaths'].cumsum()
   dfx['growth'] = getgrowthrate(dfx['total_deaths'],7)
   # dfx.to_csv('actualdeaths.csv',index=False)
@@ -196,6 +197,7 @@ def lookahead(base,inc,bound):
 def findnexttrig(dfx, sev, trig, trignum):
    print('.')
 #   lastday = len(dfx)+60
+# No reason for this - correct last day is really +69
    lastday = len(dfx)+56
    sev.append(0.00)
    trig.append(lastday)

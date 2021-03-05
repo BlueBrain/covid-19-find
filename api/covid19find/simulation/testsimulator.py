@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="FR"
+ccode="PH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -35,8 +35,8 @@ datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 #The following are optimized data for france with centered rolling averages
-past_dates= [1, 15, 72, 99, 123, 177, 191, 218, 258, 299, 324, 347, 367, 402, 417]
-past_severities=[0.0, 1.0, 0.0, 0.75, 0.95, 0.9, 0.95, 0.8, 0.55, 0.5, 0.75, 0.8, 0.75, 0.8, 0.75]
+#past_dates= [1, 15, 124, 140, 212, 239, 266, 422] 
+#past_severities=[0.0, 1.0, 0.95, 1.0, 0.8, 0.9, 1.0, 0.0]
 # This is data with default rolling averages
 # =============================================================================
 # =============================================================================
@@ -45,8 +45,8 @@ past_severities=[0.0, 1.0, 0.0, 0.75, 0.95, 0.9, 0.95, 0.8, 0.55, 0.5, 0.75, 0.8
 # =============================================================================
 # This is data for Germany with centered rolling averages and increased imported cases
 # =============================================================================
-#past_dates=[1, 15, 70, 85, 107, 125, 144, 168, 189, 212, 268, 292, 318, 342, 360, 381, 401, 417]
-#past_severities=[0.0, 1.0, 0.8, 0.3, 0.8, 0.9, 0.95, 0.9, 0.95, 0.85, 0.4, 0.45, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
+#past_dates=[1, 15, 102, 123, 144, 198, 221, 244, 258, 279, 315, 330, 355, 371, 394, 415]
+#past_severities=[0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.85, 0.75, 0.85]
 
 
 print('past_dates=',past_dates)
@@ -80,7 +80,7 @@ print('past_severities=', past_severities)
 #==============================================================================
 fixed_params={
     'test_directory':'bbp_testing',\
-    'prop_below_pl':0.05, \
+    'prop_below_pl':0.20, \
     'prop_woh':0.4, \
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
@@ -99,8 +99,8 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-03-01','2021-03-31'],\
+    'severity':['major tightening','no change'],\
+    'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0,0],\
@@ -119,11 +119,11 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-03-01','2021-03-31'],\
+    'severity':['major tightening','no change'],\
+    'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[302000,302000],\
+    'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
@@ -139,11 +139,11 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-03-01','2021-03-31'],\
+    'severity':['major tightening','no change'],\
+    'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[302000,302000],\
+    'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -159,11 +159,11 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-03-01','2021-03-31'],\
+    'severity':['major tightening','no change'],\
+    'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[302000,302000],\
+    'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
