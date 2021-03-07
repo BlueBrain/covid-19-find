@@ -99,7 +99,7 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':['major tightening','no change'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
@@ -119,7 +119,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','no change'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
@@ -139,7 +139,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','no change'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
@@ -159,7 +159,7 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','no change'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-03-05','2021-03-31'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\

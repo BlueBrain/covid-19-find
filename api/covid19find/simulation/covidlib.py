@@ -314,12 +314,23 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       results_dir='results'
       filename =os.path.join(cl_path_prefix, results_dir, scenario_name+'_out.csv')
       total_actual_deaths=country_df['accumulated_deaths'].max()
-      if total_actual_deaths==0:
+ #     deaths_per_thousand=total_actual_deaths/(p['total_pop']/1000)
+# =============================================================================
+#       if total_actual_deaths==0:
+#           default_scenarios[i]['imported_infections_per_day']=0
+#       elif total_actual_deaths<=p['imported_infections_limit']:
+#           default_scenarios[i]['imported_infections_per_day']=p['imported_infections_below_limit']
+#       else:
+#           default_scenarios[i]['imported_infections_per_day']=p['imported_infections_above_limit']
+# =============================================================================
+      if total_actual_deaths<=5:
           default_scenarios[i]['imported_infections_per_day']=0
-      elif total_actual_deaths<=p['imported_infections_limit']:
-          default_scenarios[i]['imported_infections_per_day']=p['imported_infections_below_limit']
+      elif total_actual_deaths<=300:
+          default_scenarios[i]['imported_infections_per_day']=0.015
+      elif total_actual_deaths<=2000:
+          default_scenarios[i]['imported_infections_per_day']=0.4
       else:
-          default_scenarios[i]['imported_infections_per_day']=p['imported_infections_above_limit']
+          default_scenarios[i]['imported_infections_per_day']=30
       #fix the default strategy for the past to 'symptomatic only' - scenarios only differentiate in the future.
       default_scenarios[i]['test_strategy']='symptomatic first'
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])

@@ -197,8 +197,8 @@ def lookahead(base,inc,bound):
 def findnexttrig(dfx, sev, trig, trignum):
    print('.')
 #   lastday = len(dfx)+60
-# No reason for this - correct last day is really +69
-   lastday = len(dfx)+56
+# No reason for this - correct last day is really +60
+   lastday = len(dfx)+60
    sev.append(0.00)
    trig.append(lastday)
    sevsteps = 20
@@ -223,7 +223,9 @@ def findnexttrig(dfx, sev, trig, trignum):
          sev[trignum] = currsev
          trig[trignum] = t
          #have taken 14 off this on John's suggestion
-         span = lookahead(t,horizon,lastday-14)
+    #     span = lookahead(t,horizon,lastday-14)
+         # as an experiment put it back to see if we now get better result for Peru
+         span = lookahead(t,horizon,lastday)
          result = runandalignsim(dfx,sev,trig)
          score = scorealignment(result,span) # span vs lastday
          if abs(score - lastscore)<epsilon:
