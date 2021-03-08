@@ -133,7 +133,7 @@ const CovidResults: React.FC<{
         </h3>
         <h3>
           <span>{data.meanTestsLast7Days}</span>{' '}
-          <span className="subtitle">Mean tests in Last 7 days</span>
+          <span className="subtitle">Mean tests per day</span>
         </h3>
       </div>
       <div className="charts">
@@ -165,7 +165,7 @@ const CovidResults: React.FC<{
                     position: 'left',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Number of People',
+                      labelString: 'Number of positive tests',
                     },
                     gridLines: {
                       color: '#00000005',
