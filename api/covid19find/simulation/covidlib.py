@@ -323,12 +323,12 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 #       else:
 #           default_scenarios[i]['imported_infections_per_day']=p['imported_infections_above_limit']
 # =============================================================================
-      if total_actual_deaths<=5:
+      if total_actual_deaths<=1:
           default_scenarios[i]['imported_infections_per_day']=0
-      elif total_actual_deaths<=300:
+      elif total_actual_deaths<=250:
           default_scenarios[i]['imported_infections_per_day']=0.015
       elif total_actual_deaths<=2000:
-          default_scenarios[i]['imported_infections_per_day']=0.4
+          default_scenarios[i]['imported_infections_per_day']=0.5
       else:
           default_scenarios[i]['imported_infections_per_day']=30
       #fix the default strategy for the past to 'symptomatic only' - scenarios only differentiate in the future.
