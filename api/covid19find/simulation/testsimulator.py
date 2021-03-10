@@ -40,8 +40,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # This is data with default rolling averages
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 103, 124, 138, 201, 222, 245, 259, 274, 309, 330, 353, 379, 419]
-past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85]
+#past_dates= [1, 15, 103, 124, 138, 201, 222, 245, 259, 274, 309, 330, 353, 379, 419]
+#past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85]
 # =============================================================================
 # This is data for Germany with centered rolling averages and increased imported cases
 # =============================================================================
@@ -78,10 +78,11 @@ print('past_severities=', past_severities)
 # =============================================================================
 #  These are fixed parameters for germany
 #==============================================================================
+fixed_params=cl.get_system_params(test_directory)
 fixed_params={
     'test_directory':'bbp_testing',\
     'prop_below_pl':0.2, \
-    'prop_woh':0.0, \
+    'prop_woh':0.4, \
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
@@ -90,11 +91,8 @@ fixed_params={
     'save_results':False,\
     'fatality_reduction':0.35,\
     'num_days':450}
-fixed_params=cl.get_system_params(test_directory)
-country_params=cd.getcountryparams(ccode)
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
-
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 
