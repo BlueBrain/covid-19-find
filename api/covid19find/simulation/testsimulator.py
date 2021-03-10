@@ -40,13 +40,13 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # This is data with default rolling averages
 # =============================================================================
 # =============================================================================
-# past_dates= [1, 15, 84, 111, 132, 186, 240, 267, 294, 310, 332, 353, 369, 410]
-# past_severities= [0.0, 1.0, 0.0, 0.6, 0.95, 0.9, 0.75, 0.55, 0.65, 0.45, 0.75, 0.8, 0.75, 0.8]
+#past_dates= [1, 15, 103, 124, 138, 201, 222, 245, 259, 274, 309, 330, 353, 379, 419]
+#past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85]
 # =============================================================================
 # This is data for Germany with centered rolling averages and increased imported cases
 # =============================================================================
-#past_dates=[1, 15, 102, 123, 144, 198, 221, 244, 258, 279, 315, 330, 355, 371, 394, 415]
-#past_severities=[0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.85, 0.75, 0.85]
+#past_dates=[1, 15, 102, 123, 144, 198, 220, 243, 258, 279, 315, 330, 354, 370, 394, 414, 435]
+#past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.85, 0.75, 0.85, 0.9] 
 
 
 print('past_dates=',past_dates)
@@ -78,9 +78,10 @@ print('past_severities=', past_severities)
 # =============================================================================
 #  These are fixed parameters for germany
 #==============================================================================
+fixed_params=cl.get_system_params(test_directory)
 fixed_params={
     'test_directory':'bbp_testing',\
-    'prop_below_pl':0.20, \
+    'prop_below_pl':0.2, \
     'prop_woh':0.4, \
     'staff_per_bed':2.5,\
     'past_dates':past_dates,\
@@ -90,28 +91,26 @@ fixed_params={
     'save_results':False,\
     'fatality_reduction':0.35,\
     'num_days':450}
-fixed_params=cl.get_system_params(test_directory)
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
-
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-05','2021-03-31'],\
+    'trig_values':['2021-03-09','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
-    'num_tests_care':[10000,10000,10000],\
+    'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['not effective','not effective'],\
-    'requireddxtests':[0,0,0],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
@@ -120,18 +119,18 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-05','2021-03-31'],\
+    'trig_values':['2021-03-09','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
-    'num_tests_care':[10000,10000,10000],\
+    'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['not effective','not effective'],\
-    'requireddxtests':[0,0,0],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
@@ -140,18 +139,18 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-05','2021-03-31'],\
+    'trig_values':['2021-03-09','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
-    'num_tests_care':[10000,1000],\
+    'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['not effective','not effective'],\
-    'requireddxtests':[0,0],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
@@ -160,17 +159,17 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-05','2021-03-31'],\
+    'trig_values':['2021-03-09','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[60000,60000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
-    'num_tests_care':[10000,10000],\
+    'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['not effective','not effective'],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
@@ -203,6 +202,8 @@ except FileNotFoundError as inst:
 #     print('Exception raised by simulation:',inst)
 #     sys.exit()
 # =============================================================================
+for i in range(0,3):
+    dataframes[i*2+1].to_csv('richard_dump2' + str(i) +'.csv')
 print ('total deaths by scenario')
 for i in range (0,len(results_dict['total_deaths_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['total_deaths_by_scenario'][i])

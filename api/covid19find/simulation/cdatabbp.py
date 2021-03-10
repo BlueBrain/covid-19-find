@@ -37,8 +37,8 @@ def get_fixed_parameters(paramdata):
     'prop_15_64':propactive,
     'age_gt_64':propoverage,
     'prop_urban':propurb,
-    'prop_below_pl':0.05,
-    'prop_woh':0.4,
+    # 'prop_below_pl':0.2,
+    # 'prop_woh':0.6,
     'staff_per_bed':2.5
    }
    return params

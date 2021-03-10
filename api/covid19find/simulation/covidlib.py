@@ -200,8 +200,8 @@ def update_system_params2(p, fixed_params):
 ######################################################################
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
-#optimization is performed using 'no testing' - so simulations of past
-#also use 'no testing'. This is also a temp fix for open problem with result_period
+#optimization is performed using 'symptomatic first' - so simulations of past
+#also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -237,6 +237,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 # set up system parameters
 
  #  p = get_system_params(sysfile)
+ # not sure why I need this twice.
    try:
        p=get_system_params(params_dir) 
    except FileNotFoundError:
@@ -1753,7 +1754,7 @@ def write_parameters(afilename,fixed_params,scenario_params):
     param_dict={'fixed_params':fixed_params,\
            'scenario_params':scenario_params}
     with open(afilename,'w') as outfile:      
-        json.dump(param_dict,outfile)
+        json.dump(param_dict,outfile,indent=6)
         
 def read_parameters(afilename):
     with open(afilename) as infile:      
