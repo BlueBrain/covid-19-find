@@ -139,9 +139,10 @@ def get_scenarios(scenariosfile):
 ######################################################################
 
 #checks the population values in the fixed params. Returns 0 if this is no error - else -1
+# now we no longer allow users to fix values for prop_Woh and prop_below_pl this is no longer required. I have commented the call in the main code
 def validate_fixed_params(fixed_params):
     hosp_staff=fixed_params['hospital_beds']*fixed_params['staff_per_bed']
-    poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
+ #   poor_urban=fixed_params['total_pop']*fixed_params['prop_urban']*fixed_params['prop_below_pl']
     remaining_pop=fixed_params['total_pop']-poor_urban
     if remaining_pop<0:
         return(-1)
@@ -157,10 +158,22 @@ def update_system_params2(p, fixed_params):
     #update defaults values if overridden by fixed_params
     
     p.update(fixed_params)
+    if p['income_category']=='H':
+        prop_below_pl=0.08
+        prop_woh=0.4
+    elif p['income_category']=='UM':
+        prop_below_pl=0.16
+        prop_woh=0.5
+    elif p['income_category']=='LM':
+        prop_below_pl=0.30
+        prop_woh=0.6
+    else:
+        prop_below_pl=0.5
+        prop_woh=0.9
     hosp_staff=int(p['hospital_beds'])*float(p['staff_per_bed'])
-    poor_urban=int(p['total_pop'])*float(p['prop_urban'])*float(p['prop_below_pl'])
+    poor_urban=int(p['total_pop'])*float(p['prop_urban'])*prop_below_pl
     remaining_pop=int(p['total_pop'])-poor_urban
-    woh=remaining_pop*float(p['prop_15_64'])*float(p['prop_woh']) #working outside home
+    woh=remaining_pop*float(p['prop_15_64'])*prop_woh #working outside home
     other_hc=poor_urban+woh
     rop=int(p['total_pop'])-hosp_staff-other_hc
     p['init_pop'][0]=hosp_staff
@@ -206,10 +219,12 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
    country_df_raw=pd.concat(frames,ignore_index=True)
-   validation_result=validate_fixed_params(fixed_params)
-   if validation_result==-1:
-       raise CustomError('Invalid population numbers')
-       return()
+# =============================================================================
+#    validation_result=validate_fixed_params(fixed_params)
+#    if validation_result==-1:
+#        raise CustomError('Invalid population numbers')
+#        return()
+# =============================================================================
    params_dir = ""
    if 'test_directory' in fixed_params:
        params_dir = fixed_params['test_directory']

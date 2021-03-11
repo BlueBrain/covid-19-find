@@ -20,6 +20,7 @@ def get_fixed_parameters(paramdata):
    # couldn't get below to work because it's missing fields like belowPovertyLineProportion
    # return simulator.get_fixed_parameters(paramdata)
    # so I'm using this for now:
+   income_category=paramdata['incomecategory']
    hospbeds = paramdata['hospitalBeds']
    if hospbeds is None:
       hospbeds = paramdata['population']/1000
@@ -39,7 +40,8 @@ def get_fixed_parameters(paramdata):
     'prop_urban':propurb,
     # 'prop_below_pl':0.2,
     # 'prop_woh':0.6,
-    'staff_per_bed':2.5
+    'staff_per_bed':2.5,
+    'income_category':income_category   
    }
    return params
 

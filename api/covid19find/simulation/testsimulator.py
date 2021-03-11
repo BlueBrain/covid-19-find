@@ -43,10 +43,10 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 #past_dates= [1, 15, 103, 124, 138, 201, 222, 245, 259, 274, 309, 330, 353, 379, 419]
 #past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85]
 # =============================================================================
-# This is data for Germany with centered rolling averages and increased imported cases
+# This is latest data for PH - now incorporated into DB1
 # =============================================================================
-#past_dates=[1, 15, 102, 123, 144, 198, 220, 243, 258, 279, 315, 330, 354, 370, 394, 414, 435]
-#past_severities= [0.0, 1.0, 0.5, 0.85, 0.9, 0.75, 0.85, 0.75, 0.8, 0.85, 0.9, 0.85, 0.9, 0.85, 0.75, 0.85, 0.9] 
+#past_dates=[1, 15, 105, 126, 153, 168, 200, 225, 247, 270, 296, 338, 352, 388, 412, 430]
+#past_severities= [0.0, 1.0, 0.5, 0.9, 0.95, 0.9, 0.8, 0.85, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85, 0.9]
 
 
 print('past_dates=',past_dates)
@@ -81,9 +81,10 @@ print('past_severities=', past_severities)
 fixed_params=cl.get_system_params(test_directory)
 fixed_params={
     'test_directory':'bbp_testing',\
-    'prop_below_pl':0.2, \
-    'prop_woh':0.4, \
-    'staff_per_bed':2.5,\
+# =============================================================================
+#     'income category':'LM',\
+#     'staff_per_bed':2.5,\
+# =============================================================================
     'past_dates':past_dates,\
     'past_severities':past_severities,\
     'expert_mode':False,\
