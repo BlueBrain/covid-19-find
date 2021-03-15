@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=4
+a=5
 minphaselength = 14
 maxphaselength = 28
 lag = 26
