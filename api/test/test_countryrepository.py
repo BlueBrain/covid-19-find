@@ -15,7 +15,8 @@ class TestCountryRepository:
                                                       'population': 8655000,
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
-                                                      'urbanPopulationProportion': 0.73}
+                                                      'urbanPopulationProportion': 0.73,
+                                                      'incomeCategory': "High income"}
 
     def test_country_details_AR(self):
         assert country_repo.country_details("AR") == {'activePopulationProportion': 0.64,
@@ -26,7 +27,8 @@ class TestCountryRepository:
                                                       'population': 45196000,
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
-                                                      'urbanPopulationProportion': 0.91}
+                                                      'urbanPopulationProportion': 0.91,
+                                                      'incomeCategory': 'Upper Middle Income'}
 
     def test_country_details_EG(self):
         assert country_repo.country_details("EG") == {'activePopulationProportion': 0.6,
@@ -37,7 +39,8 @@ class TestCountryRepository:
                                                       'population': 102334000,
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
-                                                      'urbanPopulationProportion': 0.42}
+                                                      'urbanPopulationProportion': 0.42,
+                                                      'incomeCategory': 'Lower middle income'}
 
     def test_country_details_AD(self):
         assert country_repo.country_details("AD") == None
@@ -51,7 +54,8 @@ class TestCountryRepository:
                                                       'population': 26000,
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
-                                                      'urbanPopulationProportion': None}
+                                                      'urbanPopulationProportion': None,
+                                                      'incomeCategory': None}
 
     def test_country_details_IN(self):
         assert country_repo.country_details("IN") == {'activePopulationProportion': 0.66,
@@ -62,4 +66,5 @@ class TestCountryRepository:
                                                       'population': 1380004000,
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
-                                                      'urbanPopulationProportion': 0.34}
+                                                      'urbanPopulationProportion': 0.34,
+                                                      'incomeCategory': 'Lower middle income'}
