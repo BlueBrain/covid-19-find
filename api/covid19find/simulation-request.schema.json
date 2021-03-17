@@ -4,13 +4,11 @@
   "required": [
     "countryCode",
     "population",
+    "incomeCategory",
     "activePopulationProportion",
-    "hospitalBeds",
     "hospitalStaffPerBed",
-    "workingOutsideHomeProportion",
     "urbanPopulationProportion",
     "over64Proportion",
-    "belowPovertyLineProportion",
     "fatalityReduction",
     "scenarios"
   ],
@@ -30,18 +28,18 @@
       "minimum": 0,
       "maximum": 1
     },
-    "hospitalBeds": {
-      "type": "integer",
-      "minimum": 0
+    "incomeCategory": {
+      "type": "string",
+      "enum": [
+        "Low income",
+        "Lower middle income",
+        "Upper middle income",
+        "High income"
+      ]
     },
     "hospitalStaffPerBed": {
       "type": "number",
       "minimum": 0
-    },
-    "workingOutsideHomeProportion": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
     },
     "urbanPopulationProportion": {
       "type": "number",
@@ -49,11 +47,6 @@
       "maximum": 1
     },
     "over64Proportion": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "belowPovertyLineProportion": {
       "type": "number",
       "minimum": 0,
       "maximum": 1
@@ -68,7 +61,9 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["phases"],
+        "required": [
+          "phases"
+        ],
         "properties": {
           "phases": {
             "type": "array",
@@ -103,7 +98,10 @@
                   ]
                 },
                 "trigger": {
-                  "type": ["string", "number"]
+                  "type": [
+                    "string",
+                    "number"
+                  ]
                 },
                 "triggerType": {
                   "type": "string",
@@ -119,7 +117,11 @@
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": ["<", "=", ">="]
+                  "enum": [
+                    "<",
+                    "=",
+                    ">="
+                  ]
                 },
                 "severity": {
                   "type": "string",
@@ -134,7 +136,11 @@
                 },
                 "proportionOfContactsTraced": {
                   "type": "string",
-                  "enum": ["highly effective", "fairly effective", "none"]
+                  "enum": [
+                    "highly effective",
+                    "fairly effective",
+                    "none"
+                  ]
                 },
                 "numTestsMitigation": {
                   "type": "number",
@@ -142,7 +148,10 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": ["PCR", "RDT"]
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
                 },
                 "specificity": {
                   "type": "number",
@@ -169,7 +178,10 @@
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": ["PCR", "RDT"]
+                  "enum": [
+                    "PCR",
+                    "RDT"
+                  ]
                 },
                 "requiredDxTests": {
                   "type": "number",

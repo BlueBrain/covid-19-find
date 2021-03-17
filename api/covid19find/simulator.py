@@ -14,6 +14,15 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/simulation")
 
 import cdata
 
+INCOME_CATEGORY_LABEL_TO_CODE = {
+    "Low income": "L",
+    "Lower middle income": "LM",
+    "Upper Middle income": "UM",
+    "High income": "H",
+    None: None
+}
+INCOME_CATEGORY_CODE_TO_LABEL = dict([(v, k) for (k, v) in INCOME_CATEGORY_LABEL_TO_CODE.items()])
+
 
 class Simulator:
 
@@ -38,14 +47,12 @@ class Simulator:
     def get_fixed_parameters(self, parameters):
         return {
             "total_pop": parameters["population"],
-            "hospital_beds": parameters["hospitalBeds"],
             "prop_15_64": parameters["activePopulationProportion"],
             "age_gt_64": parameters["over64Proportion"],
             "prop_urban": parameters["urbanPopulationProportion"],
-            "prop_below_pl": parameters["belowPovertyLineProportion"],
-            "prop_woh": parameters["workingOutsideHomeProportion"],
             "staff_per_bed": parameters["hospitalStaffPerBed"],
             "fatality_reduction": parameters["fatalityReduction"],
+            "income_category": INCOME_CATEGORY_LABEL_TO_CODE[parameters["incomeCategory"]],
             "test_directory": self.parameters_directory
         }
 
@@ -103,21 +110,8 @@ class Simulator:
         fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
 
-        ## 
-        # TODO: please remove this and make it a nice function or so
-        # hack to load data like in testsimulation.py to get similar results
-        # There are necessary params that can change the results but we don't know them
-        ## 
-        datesandseverities=pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/simulation/db1.csv",index_col='Code')
-        n_records=0
-        day1 = datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d") - timedelta(days=n_records)
-        past_dates=json.loads(datesandseverities.loc[country_code]['Trigger Dates'])
-        #This loads the default system parameters
-        overrideableFixedParams=get_system_params(self.parameters_directory)
+        overrideableFixedParams = get_system_params(self.parameters_directory)
         overrideableFixedParams.update(cdata.getcountryparams(country_code))
-        past_severities=json.loads(datesandseverities.loc[country_code]['Severities'])
-        overrideableFixedParams.update({'past_dates':past_dates,'past_severities':past_severities,'expert_mode':True})
-        ### end code from testSimulator2.py
 
         overrideableFixedParams.update(fixed_parameters)
 

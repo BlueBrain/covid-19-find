@@ -8,7 +8,8 @@ export const useFormInput = (
   const [value, setValue] = React.useState(initialValue);
 
   const onHandleChange = e => {
-    setValue(e ? e.target.value : value);
+    const currentValue = e && e.target ? e.target.value: e.value;
+    setValue(e ? currentValue : value);
   };
 
   React.useEffect(() => {

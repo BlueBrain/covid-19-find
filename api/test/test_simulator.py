@@ -25,6 +25,7 @@ class TestSimulator:
         request["urbanPopulationProportion"] = 0.73
         request["over64Proportion"] = 0.20
         request["belowPovertyLineProportion"] = 0.10
+        request["incomeCategory"] = "High income"
 
         response = simulator.run(request)
         with open(os.path.join(path_prefix, "simulation-response.schema.json")) as schema_file:
@@ -46,5 +47,6 @@ class TestSimulator:
         request["urbanPopulationProportion"] = 0.73
         request["over64Proportion"] = 0.20
         request["belowPovertyLineProportion"] = 0.10
+        request["incomeCategory"] = "High income"
 
         validate(instance=request, schema=schema)

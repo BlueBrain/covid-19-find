@@ -80,6 +80,7 @@ export const EffectivenessLabels = {
 
 export type CountryData = {
   countryCode: string;
+  incomeCategory: string;
   population: number;
   activePopulationProportion: number;
   hospitalBeds: number;

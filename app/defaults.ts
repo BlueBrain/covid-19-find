@@ -9,6 +9,7 @@ export const DEFAULT_SCENARIO_LIST: ClientScenarioData[] = [
 
 export const DEFAULT_SIMULATION_REQUEST_PARAMS = {
   countryCode: null,
+  incomeCategory: null,
   population: null,
   hospitalBeds: null,
   workingOutsideHomeProportion: null,

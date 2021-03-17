@@ -11,8 +11,29 @@ import TooltipLabel from '../TooltipLabel';
 
 import './country-selector.less';
 
+
+const IncomeCategory = [{
+  value: "High income",
+  label: "High income",
+},
+{
+  value: "Lower middle income",
+  label: "Lower middle income",
+},
+{
+  value: "Upper middle income",
+  label: "Upper middle income",
+},
+{
+  value:  "Low income",
+  label:  "Low income",
+}
+];
+
+
 export type CountrySelectorResponse = {
   countryCode: string;
+  incomeCategory: string;
   population: number | null;
   hospitalBeds: number | null;
   workingOutsideHomeProportion: number | null;
@@ -40,6 +61,9 @@ const CountrySelector: React.FC<{
   onClickSelectCountry,
   loading,
 }) => {
+
+  
+
   const population = useFormInput(countryInfo.population, null, true);
   const urbanPopulationProportion = useFormInput(
     countryInfo.urbanPopulationProportion,
@@ -82,6 +106,8 @@ const CountrySelector: React.FC<{
     null,
     true,
   );
+  const incomeCategory = useFormInput(countryInfo.incomeCategory, 'High income', true);
+
 
   const selectCountry = ({ value, label }) => {
     onClickSelectCountry(value);
@@ -93,6 +119,7 @@ const CountrySelector: React.FC<{
       onSubmit(
         {
           countryCode: countryInfo.countryCode,
+          incomeCategory: incomeCategory.value,
           population: population.value,
           hospitalEmployment: hospitalEmployment.value,
           hospitalBeds: hospitalBeds.value,
@@ -112,6 +139,8 @@ const CountrySelector: React.FC<{
     value: country.countryCode,
     label: country.name,
   }));
+
+  
 
   return (
     <form id="country-select-form" onSubmit={handleSubmit} onChange={onChange}>
@@ -175,23 +204,6 @@ const CountrySelector: React.FC<{
               <TooltipLabel
                 label={
                   <>
-                    Estimated Staff
-                    <br />
-                    per hospital bed
-                  </>
-                }
-                tooltipKey="hospitalBeds"
-              />
-              <input
-                {...hospitalStaffPerBed}
-                required
-                min="0"
-                step="0.01"
-                type="number"
-              />
-              <TooltipLabel
-                label={
-                  <>
                     Est. Reduction
                     <br />
                     in fatality rate (%)
@@ -209,38 +221,40 @@ const CountrySelector: React.FC<{
               />
             </div>
             <div className="form-column">
+              <label>IncomeCategory</label>
+              <Select
+                // @ts-ignore
+                theme={theme => ({
+                  ...theme,
+                  borderRadius: '10px',
+                  colors: {
+                    ...theme.colors,
+                    primary25: Color(colors.turqouise)
+                      .alpha(0.25)
+                      .toString(),
+                    primary: colors.turqouise,
+                  },
+                })}
+                styles={{
+                  valueContainer: defaults => ({
+                    ...defaults,
+                    height: '39px',
+                  }),
+                  container: defaults => ({
+                    ...defaults,
+                    margin: '5px 0 10px 0',
+                  }),
+                }}
+                value={IncomeCategory.filter(
+                  ({ value }) => value === incomeCategory.value,
+                )}
+                options={IncomeCategory}
+                onChange={(e) => {
+                  incomeCategory.onChange(e);
+                }}
+              />
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
-              <TooltipLabel
-                label={
-                  <>
-                    Urban population below
-                    <br />
-                    the poverty line (%)
-                  </>
-                }
-                tooltipKey="belowPovertyLineProportion"
-              />
-              <input
-                {...belowPovertyLineProportion}
-                required
-                min="0"
-                max="100"
-                step="0.01"
-                type="number"
-              />
-              <TooltipLabel
-                label="People working outside the home (%)"
-                tooltipKey="workingOutsideHomeProportion"
-              />
-              <input
-                {...workingOutsideHomeProportion}
-                required
-                min="0"
-                max="100"
-                step="0.01"
-                type="number"
-              />
               <TooltipLabel
                 label="Active population (%)"
                 tooltipKey="activePopulationProportion"
