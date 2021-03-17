@@ -106,8 +106,8 @@ class Simulator:
 
         fixed_parameters = self.get_fixed_parameters(parameters)
         fixed_parameters["expert_mode"] = False
-        fixed_parameters["past_severities"] = self.past_phases[country_code]["severities"]
-        fixed_parameters["past_dates"] = self.past_phases[country_code]["dates"]
+        fixed_parameters["past_severities"] = self.__past_phases_for(country_code)["severities"]
+        fixed_parameters["past_dates"] = self.__past_phases_for(country_code)["dates"]
         fixed_parameters["run_multiple_test_scenarios"] = True
 
         overrideableFixedParams = get_system_params(self.parameters_directory)
@@ -146,7 +146,7 @@ class Simulator:
                     "samplesRequiredForSerologicalStudies": self.__get_serological_data(i, scenario_totals)
                 }
             )
-        return {"scenarios": scenario_data, "score": self.past_phases[country_code]["score"]}
+        return {"scenarios": scenario_data, "score": self.__past_phases_for(country_code)["score"]}
 
     @staticmethod
     def __get_serological_data(scenario_index, scenario_totals):
@@ -273,3 +273,10 @@ class Simulator:
             "scenarios": scenarios,
             "fatalityReduction": fixed_parameters_from_file["fatality_reduction"]
         }
+
+    def __past_phases_for(self, country_code):
+        return self.past_phases.get(country_code, {
+            "severities": [],
+            "dates": [],
+            "score": None
+        })

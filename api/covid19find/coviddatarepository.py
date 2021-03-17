@@ -190,7 +190,6 @@ class CovidDataRepository:
         try:
             with open(os.path.join(self.country_data_dir, country_code + ".json")) as country_file:
                 covid_data = json.load(country_file)
-                covid_data["currentEffectiveness"] = self.past_phases[country_code]["severities"][-1]
                 return covid_data
         except FileNotFoundError:
             return None
