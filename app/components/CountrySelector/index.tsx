@@ -11,25 +11,24 @@ import TooltipLabel from '../TooltipLabel';
 
 import './country-selector.less';
 
-
-const IncomeCategory = [{
-  value: "High income",
-  label: "High income",
-},
-{
-  value: "Lower middle income",
-  label: "Lower middle income",
-},
-{
-  value: "Upper middle income",
-  label: "Upper middle income",
-},
-{
-  value:  "Low income",
-  label:  "Low income",
-}
+const IncomeCategory = [
+  {
+    value: 'High income',
+    label: 'High income',
+  },
+  {
+    value: 'Lower middle income',
+    label: 'Lower middle income',
+  },
+  {
+    value: 'Upper middle income',
+    label: 'Upper middle income',
+  },
+  {
+    value: 'Low income',
+    label: 'Low income',
+  },
 ];
-
 
 export type CountrySelectorResponse = {
   countryCode: string;
@@ -61,9 +60,6 @@ const CountrySelector: React.FC<{
   onClickSelectCountry,
   loading,
 }) => {
-
-  
-
   const population = useFormInput(countryInfo.population, null, true);
   const urbanPopulationProportion = useFormInput(
     countryInfo.urbanPopulationProportion,
@@ -106,8 +102,11 @@ const CountrySelector: React.FC<{
     null,
     true,
   );
-  const incomeCategory = useFormInput(countryInfo.incomeCategory, 'High income', true);
-
+  const incomeCategory = useFormInput(
+    countryInfo.incomeCategory,
+    'High income',
+    true,
+  );
 
   const selectCountry = ({ value, label }) => {
     onClickSelectCountry(value);
@@ -139,8 +138,6 @@ const CountrySelector: React.FC<{
     value: country.countryCode,
     label: country.name,
   }));
-
-  
 
   return (
     <form id="country-select-form" onSubmit={handleSubmit} onChange={onChange}>
@@ -221,7 +218,7 @@ const CountrySelector: React.FC<{
               />
             </div>
             <div className="form-column">
-              <label>IncomeCategory</label>
+              <label>Income Category</label>
               <Select
                 // @ts-ignore
                 theme={theme => ({
@@ -249,7 +246,7 @@ const CountrySelector: React.FC<{
                   ({ value }) => value === incomeCategory.value,
                 )}
                 options={IncomeCategory}
-                onChange={(e) => {
+                onChange={e => {
                   incomeCategory.onChange(e);
                 }}
               />
