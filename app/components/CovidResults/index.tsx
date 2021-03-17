@@ -34,7 +34,6 @@ export const makeSlidingAverage = (
 
 export type CovidData = {
   currentActive: number;
-  currentEffectiveness: number;
   timeseries: {
     currentActive: number;
     date: string;
