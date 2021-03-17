@@ -28,7 +28,7 @@ class TestCountryRepository:
                                                       'remoteAreasPopulationProportion': None,
                                                       'urbanPopulationInDegradedHousingProportion': None,
                                                       'urbanPopulationProportion': 0.91,
-                                                      'incomeCategory': 'Upper Middle income'}
+                                                      'incomeCategory': 'Upper middle income'}
 
     def test_country_details_EG(self):
         assert country_repo.country_details("EG") == {'activePopulationProportion': 0.6,

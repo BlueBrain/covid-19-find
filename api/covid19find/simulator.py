@@ -17,7 +17,7 @@ import cdata
 INCOME_CATEGORY_LABEL_TO_CODE = {
     "Low income": "L",
     "Lower middle income": "LM",
-    "Upper Middle income": "UM",
+    "Upper middle income": "UM",
     "High income": "H",
     None: None
 }
