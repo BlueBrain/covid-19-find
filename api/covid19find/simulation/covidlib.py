@@ -13,6 +13,8 @@ import os
 import json
 import ast
 
+a=1
+
 class CustomError(Exception):
      pass
 
@@ -443,14 +445,14 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 #          print('beginning simulations with different number of tests')
           for j in range(0,len(par.test_multipliers)):
             test_par=Par(p)
-            test_par.day1=day1  #here this means today???
+            test_par.day1=day1
             test_par.shift=shift
             test_par.fatality_reduction_per_day=math.exp(np.log(1-(test_par.fatality_reduction))/(simday-test_par.no_improvement_period))
             simphase,simday=computetoday(day1,par.trig_values)
             sim = Sim(par.num_days,par.num_compartments)
             current_phase,today=computetoday(par.day1,par.trig_values)
-            start_current_phase=par.trig_values[current_phase]
-            for k in range(current_phase,len(par.trig_values)):
+            start_current_phase=par.trig_values[current_phase+1]
+            for k in range(current_phase+1,len(par.trig_values)):
                 test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
             sim = Sim(par.num_days,par.num_compartments)
             sim.set_initial_conditions(test_par)
@@ -841,12 +843,11 @@ class Sim:
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        #this positive_rate is only used in past. In the future it is wrong but this has no effect.
         if sim.actualnewtests_mit[t]>0:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
-            positive_rate=0
-  
-       
+            positive_rate=0    
         p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
 
@@ -867,6 +868,8 @@ class Sim:
                 sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
        # this is not so simple - gets set once but needs to be reset...gives lousy result
                 if t==(today-4):
+                    #temp as a breakpoint
+                    a=5
         # calculate required increase in p_infected_basic to reach observed rate     
                     if sim.p_infected_all_simulated[t,i]>0:
                         par.alpha[i]=sim.p_infected_all[t,i]/sim.p_infected_all_simulated[t,i]  
@@ -879,6 +882,7 @@ class Sim:
             p_infected=sim.p_infected_all[t]
         else:
             p_infected=sim.p_infected_all_simulated[t]*par.alpha
+        #in some cases alpha becomes enormous - but p_infected can NEVER be more than 1
         # calculate required increase in p_infected_basic to reach observed rate
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
@@ -1463,6 +1467,8 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            
            sim.isolated[t,i]=sim.isolated[t-1,i]+sim.newisolated[t,i]-newisolatedrecovered
            sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - newisolatedinfectedrecovered
+           if sim.isolatedinfected[t,i]<0:
+               sim.isolatedinfected[t,i]=0
            sim.deaths[t,i] = sim.deaths[t-1,i]+sim.newdeaths[t,i]
            sim.recovered[t,i] = sim.recovered[t-1,i]+sim.newrecovered[t,i]
            sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
@@ -1786,6 +1792,10 @@ def read_parameters(afilename):
         
 def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected):
     for i in range(0,par.num_compartments):  
+#in some cases alpha takes on an enormous value and p_infcted. This defends against this problem
+# root cause analysis still needed.
+       if p_infected[i]>1:
+           p_infected[i]=1
        sim.truepositives[t,i] = testsperformed[i] * p_infected[i] * par.sensitivity[phase]
 #false positives does not seem to be instantiated when false_positives=0
        sim.falsepositives[t,i] = testsperformed[i] * (1-p_infected[i]) * (1-par.specificity[phase])

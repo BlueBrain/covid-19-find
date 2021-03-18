@@ -34,9 +34,9 @@ day1 = dt.datetime.strptime(country_df.iloc[0]['Date'],"%Y-%m-%d")
 datesandseverities=pd.read_csv('db1.csv',index_col='Code')
 past_severities=json.loads(datesandseverities.loc[ccode]['Severities'])
 past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
-#The following are optimized data for france with centered rolling averages
-#past_dates= [1, 15, 124, 140, 212, 239, 266, 422] 
-#past_severities=[0.0, 1.0, 0.95, 1.0, 0.8, 0.9, 1.0, 0.0]
+#This space allows you to calibrated data for a given country provided by fitdeaths without recalibrating the whole system
+#past_dates= [1, 16, 212, 253, 405, 423]
+#past_severities=[0.0, 1.0, 0.0, 1.0, 0.3, 1.0]
 # This is data with default rolling averages
 # =============================================================================
 # =============================================================================
@@ -100,17 +100,17 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-09','2021-03-18'],\
+    'trig_values':['2021-03-18','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[0,0,0],\
+    'num_tests_mitigation':[0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
     'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
@@ -120,17 +120,17 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-09','2021-03-18'],\
+    'trig_values':['2021-03-18','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[60000,60000],\
+    'num_tests_mitigation':[20000,20000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
     'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
@@ -140,7 +140,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-09','2021-03-18'],\
+    'trig_values':['2021-03-18','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[60000,60000],\
@@ -150,7 +150,7 @@ scenario_params.append({
     'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
@@ -160,7 +160,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-09','2021-03-18'],\
+    'trig_values':['2021-03-18','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[60000,60000],\
@@ -170,7 +170,7 @@ scenario_params.append({
     'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
