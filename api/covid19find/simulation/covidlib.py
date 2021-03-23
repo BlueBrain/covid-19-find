@@ -329,6 +329,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
            return()
    for i in range(0,num_scenarios):
       scenario_name='scenario' + ' '+ str(i) #it should have a proper name
+ #     print('scenario=',scenario_name)
       results_dir='results'
       filename =os.path.join(cl_path_prefix, results_dir, scenario_name+'_out.csv')
       total_actual_deaths=country_df['accumulated_deaths'].max()
@@ -348,7 +349,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       elif total_actual_deaths<=2000:
           default_scenarios[i]['imported_infections_per_day']=2.0
       else:
-          default_scenarios[i]['imported_infections_per_day']=20
+          default_scenarios[i]['imported_infections_per_day']=30
       #fix the default strategy for the past to 'symptomatic only' - scenarios only differentiate in the future.
       default_scenarios[i]['test_strategy']='symptomatic first'
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
@@ -431,11 +432,11 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['npv']=dfsum['truenegatives']/(dfsum['truenegatives']+dfsum['falsenegatives'])
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
       dfsum['prevalence']=(dfsum['accumulatedinfected']-dfsum['deaths'])/dfsum['population']
-      dfsum['actualdeaths']=sim.actualdeaths
-      dfsum['actualcases']=sim.actualcases
-      dfsum['actualnewtests_mit']=sim.actualnewtests_mit
-      dfsum['actualnewdeaths']=sim.actualnewdeaths
-      dfsum['actualnewcases']=sim.actualnewcases
+      dfsum['actualdeaths']=np.round(sim.actualdeaths,decimals=3)
+      dfsum['actualcases']=np.round(sim.actualcases,decimals=3)
+      dfsum['actualnewtests_mit']=np.round(sim.actualnewtests_mit,decimals=3)
+      dfsum['actualnewdeaths']=np.round(sim.actualnewdeaths,decimals=3)
+      dfsum['actualnewcases']=np.round(sim.actualnewcases,decimals=3)
   
       dataframes.append(dfsum)
       # do extra simulations to test different test strategies
@@ -451,8 +452,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             simphase,simday=computetoday(day1,par.trig_values)
             sim = Sim(par.num_days,par.num_compartments)
             current_phase,today=computetoday(par.day1,par.trig_values)
-            start_current_phase=par.trig_values[current_phase+1]
-            for k in range(current_phase+1,len(par.trig_values)):
+            start_current_phase=par.trig_values[current_phase]
+            for k in range(current_phase,len(par.trig_values)):
                 test_par.num_tests_mitigation[k]=par.num_tests_mitigation[k]*test_par.test_multipliers[j]
             sim = Sim(par.num_days,par.num_compartments)
             sim.set_initial_conditions(test_par)
@@ -866,13 +867,23 @@ class Sim:
                 p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
                 p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
                 sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
-       # this is not so simple - gets set once but needs to be reset...gives lousy result
+# =============================================================================
+#                 if t==483 or t==484:
+#                     print('DEBUG')
+#                     print('t=',t)
+#                     print('sim.p_infected_all_simulated[t,i=',sim.p_infected_all_simulated[t,i])
+#                     print('symptomatic_tested[i]=',symptomatic_tested[i])
+#                     print('p_infected_asymptomatic[i]=',p_infected_asymptomatic[i])
+#                     print('asymptomatic_tested[i]=',asymptomatic_tested[i])
+#                     print('tests_performed=',tests_available[i])
+# =============================================================================
+       # I
                 if t==(today-4):
                     #temp as a breakpoint
                     a=5
-        # calculate required increase in p_infected_basic to reach observed rate     
+        # calculate required increase in p_infected_basic to reach observed rate. We use 14 day average to avoid dependency on single value 
                     if sim.p_infected_all_simulated[t,i]>0:
-                        par.alpha[i]=sim.p_infected_all[t,i]/sim.p_infected_all_simulated[t,i]  
+                        par.alpha[i]=sim.p_infected_all[t-14:t,i].sum()/sim.p_infected_all_simulated[t-14:t,i].sum()  
                     else:
                         par.alpha[i]=0
   #                  print ('t=',t,'i=',i,'alpha set to ',par.alpha[i])   
@@ -921,10 +932,15 @@ class Sim:
         else:
             positive_rate=0
         p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
-        sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
+        sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate] #this represent the past
         asymptomatic=sim.population[t-1]-total_symptomatic
         for k in range(0, par.num_compartments):
             i=priorities[k]
+# =============================================================================
+#             if t>481:
+#                 print('DEBUG')
+#                 print('t=',t,'total_tests_available=',total_tests_available)
+# =============================================================================
             if total_tests_available>0:
     #asymptomatics are tested periodically (period in retest_period_asymptomatics)
                 asymptomatic_patients=asymptomatic[i]/par.retest_period_asymptomatics
@@ -940,19 +956,34 @@ class Sim:
                     total_tests_available=total_tests_available-tests_performed[i]
                 else:
                     total_tests_available=0
+#this uses p_infected_all which is only valid for the past
                 p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_performed[i]))*(tests_performed[i])/symptomatic_tested[i]
                 p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
                 sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_performed[i]
+                #for some reason we are not arriving at this
+# =============================================================================
+#                 if t>481:
+#                     print('t=',t)
+#                     print('sim.p_infected_all_simulated[t,i=',sim.p_infected_all_simulated[t,i])
+#                     print('symptomatic_tested[i]=',symptomatic_tested[i])
+#                     print('p_infected_asymptomatic[i]=',p_infected_asymptomatic[i])
+#                     print('asymptomatic_tested[i]=',asymptomatic_tested[i])
+#                     print('tests_performed=',tests_performed)
+# =============================================================================
+                          
                 if t==(today-4):
-        # calculate required increase in p_infected_basic to reach observed rate     
+                    #temp is only there to provide a breakpoint
+                    a=5
+        # calculate required increase in p_infected_basic to reach observed rate. We use 14 day average to avoid dependency on single value 
+        # in principle we should never get here because this is set by symptomatic only      - this seems to be correct       
                     if sim.p_infected_all_simulated[t,i]>0:
-                        par.alpha[i]=sim.p_infected_all[t,i]/sim.p_infected_all_simulated[t,i]  
+                        par.alpha[i]=sim.p_infected_all[t-14:t,i].sum()/sim.p_infected_all_simulated[t-14:t,i].sum()  
                     else:
                         par.alpha[i]=0
         if t<(today-4):
             p_infected=sim.p_infected_all[t]
         else:
-            p_infected=sim.p_infected_all_simulated[t]*par.alpha   
+            p_infected=sim.p_infected_all_simulated[t] *par.alpha   
         adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected)
         return tests_performed
    
@@ -1011,8 +1042,11 @@ class Sim:
                 sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
                 if t==(today-4):
         # calculate required increase in p_infected_basic to reach observed rate     
+                    #temp as a breakpoint
+                    a=5
+        # calculate required increase in p_infected_basic to reach observed rate. We use 14 day average to avoid dependency on single value 
                     if sim.p_infected_all_simulated[t,i]>0:
-                        par.alpha[i]=sim.p_infected_all[t,i]/sim.p_infected_all_simulated[t,i]  
+                        par.alpha[i]=sim.p_infected_all[t-14:t,i].sum()/sim.p_infected_all_simulated[t-14:t,i].sum()  
                     else:
                         par.alpha[i]=0
         if t<(today-4):
@@ -1174,7 +1208,7 @@ class Sim:
             'population' : np.round(self.population[:,i],3),
             'susceptibles' : np.round(self.susceptibles[:,i],3),
             'isolated': np.round(self.isolated[:,i],3),
-            'isolatedinfected': np.round(self.isolatedinfected[:,0],3),
+            'isolatedinfected': np.round(self.isolatedinfected[:,i],3),
             'infectednotisolated': np.round(self.infectednotisolated[:,i],3),
             'infected': np.round(self.infected[:,i],3),
             'importedinfections':np.round(self.importedinfections[:,i],3),
@@ -1293,6 +1327,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
     else:
         end_loop=par.num_days
     for i in range(0,end_loop):
+   #this was to fill in missing values when we were using centered averages. Should no longer be necessary
         if i>350:
             if np.isnan(sim.actualnewtests_mit[i]) or sim.actualnewtests_mit[i]==0:
                 sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
@@ -1314,35 +1349,6 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
         sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
         if sim.actualnewcases[i]<0:
             sim.actualnewcases[i]=0
-# =============================================================================
-#Old code for missing values
-# =============================================================================
-#     for i in range(0,len(country_df)):
-#         if i<end_day:
-#             sim.actualnewtests_mit[i]=country_df.iloc[i+par.shift]['tests']
-#             sim.actualdeaths[i]=country_df.iloc[i+par.shift]['accumulated_deaths']
-#             sim.actualcases[i]=country_df.iloc[i+par.shift]['accumulated_cases']
-#             #Because of rolling av. last 15 days of  values from country_df are nans. Here we fill the missing values with rolling av. for previous 28 days. We only do it for high value of ts. 
-#             # If we did it for low values we would overwrite the initial nans which are actually correct
-#             # should be possible to abolish this code - though it is harmless
-#             if i>350:
-#                 if np.isnan(sim.actualnewtests_mit[i]):
-#                     sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
-#                 if np.isnan(sim.actualcases[i]):
-#                     sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
-#                 if np.isnan(sim.actualdeaths[i]):
-#                     sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
-#             else:
-#                 if np.isnan(sim.actualcases[i]):
-#                     sim.actualcases[i]=0
-#                 if np.isnan(sim.actualnewtests_mit[i]):
-#                     sim.actualnewtests_mit[i]=0
-#                 if np.isnan(sim.actualdeaths[i]):
-#                     sim.actualdeaths[i]=0
-#                     
-#             sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
-#             sim.actualnewcases[i]=sim.actualcases[i]-sim.actualcases[i-1]
-# =============================================================================
     last_phase=0
     #The simulation proper starts here
     for t in range(start_day,end_day):
@@ -1469,12 +1475,23 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            sim.isolatedinfected[t,i] = sim.isolatedinfected[t-1,i] + sim.newisolatedinfected[t,i] - newisolatedinfectedrecovered
            if sim.isolatedinfected[t,i]<0:
                sim.isolatedinfected[t,i]=0
+# =============================================================================
+#                print('t=',t)
+#                print('isolated infected[t]=',sim.isolatedinfected[t,i])
+#                print('isolatedinfected [t-1]',sim.isolatedinfected[t-1,i])
+#                print('newisolatedinfected[t,i]',sim.newisolatedinfected[t,i])
+#                print('newisolatedinfectedrecovered',newisolatedinfectedrecovered)
+#                print('infected',sim.infected[t,i])
+#                print('isolated',sim.isolated[t,i])
+# =============================================================================
            sim.deaths[t,i] = sim.deaths[t-1,i]+sim.newdeaths[t,i]
            sim.recovered[t,i] = sim.recovered[t-1,i]+sim.newrecovered[t,i]
            sim.population[t,i] = sim.population[t-1,i]-sim.newdeaths[t,i]
            sim.infected[t,i] = sim.infected[t-1,i]+sim.newinfected[t,i]-sim.newrecovered[t,i]-sim.newdeaths[t,i]
            if sim.infected[t,i]>sim.population[t,i]:
                sim.infected[t,i]=sim.population[t,i]
+           if sim.infected[t,i]<0:
+               sim.infected[t,i]=0
            if sim.infected[t,i]>0:
                sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*(par.recovery_period+par.incubation_period)
            else:
@@ -1489,20 +1506,11 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            else:
               sim.susceptibleprop[t,i]=0 #avoids a divide by zero error with zero pop in one compartment
            sim.confirmed[t,i]=sim.confirmed[t-1,i] + sim.newconfirmed[t,i]
-           infectednotisolated=sim.infected[t-1,i]-sim.isolatedinfected[t,i]
-# =====================================================================================================================
- #given delay in testing, so long as there are some infected there will always be a reservoir of infected not isolated
- # this does not yet update sim.confirmed, sim.newconfirmed. sim.isolated
- #=====================================================================================================================
-           if infectednotisolated > sim.infected[t,i]*0.1:
-              sim.infectednotisolated[t,i] = sim.infected[t,i] - (sim.isolatedinfected[t,i]) #accounting identity 
-           else:
-              sim.infectednotisolated[t,i]=sim.infected[t,i]*0.1
-              sim.isolatedinfected[t,i]=sim.infected[t,1]-sim.infectednotisolated[t,i]
-              
-                  
+           infectednotisolated=sim.infected[t,i]-sim.isolatedinfected[t,i]
+           if infectednotisolated<0:
+               infectednotisolated=0
+
            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
-           #   makes sure number of new infections not so great as to make accum infections greater than population - e.g. if there is an enormous number of imported infections
            sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]+sim.newimportedinfections[t,i]
            if sim.accumulatedinfected[t,i]<sim.population[t-1,i]:
                 sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
@@ -1513,6 +1521,40 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                 sim.newinfected[t,i]=0
                 sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]
                 sim.infectednotisolated[t,i]=sim.infectednotisolated[t-1,i]
+# =====================================================================================================================
+ #given delay in testing, so long as there are some infected there will always be a reservoir of infected not isolated
+ # this does not yet update sim.confirmed, sim.newconfirmed. sim.isolated
+ #=====================================================================================================================
+           if infectednotisolated >= sim.infected[t,i]*0.10 and infectednotisolated>10:
+              sim.infectednotisolated[t,i] = infectednotisolated 
+           else:
+              sim.infectednotisolated[t,i]=sim.infected[t,i]*0.10
+              if sim.infectednotisolated[t,i]<10:
+                 sim.infectednotisolated[t,i]=10
+              sim.isolatedinfected[t,i]=sim.infected[t,i]-sim.infectednotisolated[t,i]
+              newisolatedinfected=sim.isolatedinfected[t,i]-sim.isolatedinfected[t-1,i]
+              if newisolatedinfected>0:
+                  sim.newisolatedinfected[t,i]=sim.isolatedinfected[t,i]-sim.isolatedinfected[t-1,i]
+              else:
+                  sim.newisolatedinfected[t,i]=0
+# =============================================================================
+#             if t>480 and i==0: 
+ #               print ('In reserve t=',t,'i=',i,'infected not isolated= ',sim.infectednotisolated[t,i],'infected=',sim.infected[t,i],'isolated infected=',sim.isolatedinfected[t,i] )
+# =============================================================================
+# =============================================================================
+#            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
+#            #   makes sure number of new infections not so great as to make accum infections greater than population - e.g. if there is an enormous number of imported infections
+#            sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]+sim.newimportedinfections[t,i]
+#            if sim.accumulatedinfected[t,i]<sim.population[t-1,i]:
+#                 sim.infected[t,i]=sim.infected[t,i]+sim.newimportedinfections[t,i]
+#  #               sim.newinfected[t,i]=sim.newinfected[t,i]+sim.newimportedinfections[t,i]
+#                 sim.infectednotisolated[t,i]=sim.infectednotisolated[t,i]+sim.newimportedinfections[t,i]
+#            else:
+#                 sim.infected[t,i]=sim.population[t-1,i]
+#                 sim.newinfected[t,i]=0
+#                 sim.accumulatedinfected[t,i]=sim.accumulatedinfected[t-1,i]
+#                 sim.infectednotisolated[t,i]=sim.infectednotisolated[t-1,i]
+# =============================================================================
            if sim.population[t,i]>0:
                sim.incidence[t,i]=sim.newinfected[t,i]/sim.population[t,i]
                sim.prevalence[t,i]=sim.accumulatedinfected[t,i]/sim.population[t,i]
@@ -1794,6 +1836,10 @@ def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected):
     for i in range(0,par.num_compartments):  
 #in some cases alpha takes on an enormous value and p_infcted. This defends against this problem
 # root cause analysis still needed.
+# =============================================================================
+#        if 510<t<512:
+#            print('t=',t,'p_infected=',p_infected)
+# =============================================================================
        if p_infected[i]>1:
            p_infected[i]=1
        sim.truepositives[t,i] = testsperformed[i] * p_infected[i] * par.sensitivity[phase]
