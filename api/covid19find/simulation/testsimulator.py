@@ -100,7 +100,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-18','2021-03-18'],\
+    'trig_values':['2021-03-23','2021-03-18'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -109,8 +109,8 @@ scenario_params.append({
     'specificity':[0.99,0.998],\
     'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['none','none'],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
@@ -120,17 +120,17 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-18','2021-03-30'],\
+    'trig_values':['2021-03-23','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[20000,20000],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
     'num_tests_care':[13000,13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['none','none'],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
@@ -140,17 +140,17 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-18','2021-03-30'],\
+    'trig_values':['2021-03-23','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[60000,60000],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
     'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['none','none'],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
     'requireddxtests':[2,2],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
@@ -160,17 +160,17 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-03-18','2021-03-30'],\
+    'trig_values':['2021-03-23','2021-03-30'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[60000,60000],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.99,0.998],\
     'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['none','none'],\
+    'imported_infections_per_day':['fairly effective','fairly effective'],\
     'requireddxtests':[0,0,0],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
