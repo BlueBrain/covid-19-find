@@ -18,22 +18,22 @@ export default {
     conditions that make it difficult or impossible to comply with
     social distancing or quarantine regulations.`,
   fatalityReduction:
-    'Current effectiveness of government intervention: This represents the effectiveness of recent government action (over the last 2 months) in reducing deaths today. This depends on the stringency and rationality of the intervention and compliance in the population. A score of 1 implies the most effective intervention possible. A score of 0 implies a complete lack of restrictions. ',
+    'The percentage reduction in the average fatality rate from the start of the epidemic to the current date.',
   addPhase:
     'This allows you to define a new phase of government intervention e.g. a phase in which intervention is more or less stringent than in the previous phase',
   numTestsMitigation:
     'The number of tests performed with the goal of detecting and isolating infected individuals, thereby mitigating the impact of the epidemic',
   testingStrategy: ` This defines the government’s testing strategy. There are currently four options:
 
-    * “no testing” (this is used as a counterfactual to show the impact of testing),
+    * “no testing” (A scenario where there is no testing of any kind and no patients are isolated.),
     
-    * “high contact groups first*: in this strategy, members of social groups with high numbers of social contacts are tested first, whether or not individuals show symptoms. Any remaining tests are used to test members of other groups
+    * “high contact groups first*: A scenario where testing focuses on people with a high probability of contracting COVID and transmitting it to other people (e.g. essential workers, poor people living in degraded urban areas). Members of these groups are regularly tested, whether or not they have symptoms. 
     
-    * “symptomatic first”: in this strategy, individuals showing symptoms are tested first. Any remaining tests are used to test asymptomatic individuals
+    * “symptomatic first”: A scenario where testing focuses on people with COVID-like symptoms. Unused tests are used to test people with no symptoms.
     
-    * “open public testing”: anyone requesting a test is tested, on a first come, first served basis. `,
+    * “open public testing”: A scenario where tests are administered on a “first come first served” basis. So long as enough tests are available, anyone who requests a test receives it.`,
   importedInfectionsPerDay:
-    'The stringency of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
+    'The effectiveness of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries. ',
   trigger:
     'The value at which the new phase is triggered (e.g. the new phase begins when cases per million is greater than or equal to this value',
   triggerType:
@@ -41,14 +41,10 @@ export default {
   triggerCondition:
     'The way data is compared against the trigger condition e.g. a new phase is triggered when cases per million are greater or equal to (>=) a given value ',
   severity:
-    'The stringency of government intervention in a certain stage of the epidemic compared to its stringency in the previous stage. The system offers five options: ‘major tightening’ (of restrictions), ‘minor tightening’, ‘no change’, ‘minor loosening’ and ‘major loosening’',
+    'Stringency is measured on a scale of 0 (no restrictions) to 1 (complete lock down)',
   proportionOfContactsTraced:
-    'The effectiveness of efforts to trace and isolate the contacts of people who test positive for COVID.',
-  typeTestsMitigation: `The type of test used. Options are:
-
-    * PCR: Polymerase Chain Reaction - the current gold standard. A molecular test providing high sensitivity and specificity. Requires qualified personnel to take swabs. Swabs are analyzed in a lab remote from the site of the test and are subject to delay
-    
-    * RDT: Rapid diagnostic test - an antibody or antigen based test. Cheaper and faster than PCR but may be less accurate, particularly during the early days of infection`,
+    'The effectiveness of border controls preventing new infections from coming into a country. Border controls are especially important when a country has successfully suppressed community transmission within its own boundaries.',
+  typeTestsMitigation: `This section describes tests used to detect and isolate infected individuals, preventing them from infecting other people.`,
   confirmationTests:
     'The number of tests performed per day for purposes of patient care. This includes confirmatory testing and tests before patient discharge. ',
   specificity:
@@ -65,7 +61,7 @@ export default {
   requiredDxTests:
     'The average number of tests performed on a patient from diagnosis to discharge, excluding the initial test used to diagnose the patient.',
   resultsPeriod:
-    'The average number of days between the first appearance of symptoms and the return of results from testing. ',
+    'The average time (in days) between the first appearance of symptoms and the availability of the test result.',
   fatalityReductionRecent:
     'The percentage reduction in the average fatality rate from the start of the epidemic to the start of the phase',
   livesSaved:
@@ -74,7 +70,7 @@ export default {
   'Testing for Mitigation':
     'This section describes tests used to detect and isolate infected individuals, preventing them from infecting other people',
   'Testing for Care':
-    'This section describes tests used for the care of patients who have already been diagnosed with COVID. These include tests used to confirm the initial diagnosis, and tests used to verify whether a patient is still infectious, before discharge from hospital',
+    'This section describes tests used for the care of patients who have already been diagnosed with COVID. These include tests used to confirm the initial diagnosis, and tests used to verify whether a patient is still infectious, before discharge from hospital.',
   'Samples Required for Serological Studies':
     'The number of samples required to accurately estimate the number of people carrying antibodies to the virus in a given population comprising a certain number of subgroups (e.g. people belonging to a specific age group, people living in a specific city or region, people with a specific socio-economic status).',
   reffGraph:
