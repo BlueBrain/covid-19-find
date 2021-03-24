@@ -349,7 +349,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       elif total_actual_deaths<=2000:
           default_scenarios[i]['imported_infections_per_day']=2.0
       else:
-          default_scenarios[i]['imported_infections_per_day']=30
+          default_scenarios[i]['imported_infections_per_day']=20
       #fix the default strategy for the past to 'symptomatic only' - scenarios only differentiate in the future.
       default_scenarios[i]['test_strategy']='symptomatic first'
       past=create_past(p,default_scenarios[i],p['past_dates'],p['past_severities'])
@@ -1523,9 +1523,9 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                 sim.infectednotisolated[t,i]=sim.infectednotisolated[t-1,i]
 # =====================================================================================================================
  #given delay in testing, so long as there are some infected there will always be a reservoir of infected not isolated
- # this does not yet update sim.confirmed, sim.newconfirmed. sim.isolated
+ # once the epidemic is underway - therefore we avoid this in first 75 cycles
  #=====================================================================================================================
-           if infectednotisolated >= sim.infected[t,i]*0.10 and infectednotisolated>10:
+           if (infectednotisolated >= sim.infected[t,i]*0.10 and infectednotisolated>10) or t<75:
               sim.infectednotisolated[t,i] = infectednotisolated 
            else:
               sim.infectednotisolated[t,i]=sim.infected[t,i]*0.10
