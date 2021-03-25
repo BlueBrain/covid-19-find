@@ -1524,13 +1524,14 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
 # =====================================================================================================================
  #given delay in testing, so long as there are some infected there will always be a reservoir of infected not isolated
  # once the epidemic is underway - therefore we avoid this in first 75 cycles
+ # we also avoid it for countries with very good epidemic control (no imported infections)
  #=====================================================================================================================
-           if (infectednotisolated >= sim.infected[t,i]*0.10 and infectednotisolated>10) or t<75:
+           if (infectednotisolated >= sim.infected[t,i]*0.10 and infectednotisolated>10) or t<75 or par.imported_infections_per_day[phase]==0:
               sim.infectednotisolated[t,i] = infectednotisolated 
            else:
               sim.infectednotisolated[t,i]=sim.infected[t,i]*0.10
-              if sim.infectednotisolated[t,i]<10:
-                 sim.infectednotisolated[t,i]=10
+              if sim.infectednotisolated[t,i]<15:
+                 sim.infectednotisolated[t,i]=15
               sim.isolatedinfected[t,i]=sim.infected[t,i]-sim.infectednotisolated[t,i]
               newisolatedinfected=sim.isolatedinfected[t,i]-sim.isolatedinfected[t-1,i]
               if newisolatedinfected>0:
