@@ -848,8 +848,11 @@ class Sim:
         if sim.actualnewtests_mit[t]>0:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
-            positive_rate=0    
-        p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
+            positive_rate=0   
+        if sim.population[t-1].sum()>0:
+            p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
+        else:
+            p_infected_asymptomatic=0
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
 
         if tests_available.sum()>0:
@@ -863,7 +866,6 @@ class Sim:
                     symptomatic_tested[i]=total_symptomatic[i]
                     asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]  
         #In the past this is not used - at the moment is there for test purposes
-        
                 p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
                 p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
                 sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
@@ -882,7 +884,7 @@ class Sim:
                     #temp as a breakpoint
                     a=5
         # calculate required increase in p_infected_basic to reach observed rate. We use 14 day average to avoid dependency on single value 
-                    if sim.p_infected_all_simulated[t,i]>0:
+                    if sim.p_infected_all_simulated[t-14:t,i].sum()>0:
                         par.alpha[i]=sim.p_infected_all[t-14:t,i].sum()/sim.p_infected_all_simulated[t-14:t,i].sum()  
                     else:
                         par.alpha[i]=0
@@ -1021,7 +1023,10 @@ class Sim:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
             positive_rate=0
-        p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
+        if sim.population[t-1].sum()>0:
+            p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
+        else:
+            p_infected_asymptomatic=0
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
         if total_symptomatic.sum()>0:
            p_infected_symptomatic=infected_symptomatic/total_symptomatic       
