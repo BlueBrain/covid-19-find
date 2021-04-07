@@ -95,10 +95,16 @@ def process_countries(a_tuple):
              cname = a_row['Country']
              ccode=a_row['Code']
     #         sev = json.loads(a_row['Long Sev'].tolist()[0])
-             sev=pd.eval(a_row['Long Sev']).tolist()
+             if not type(pd.eval(a_row['Long Sev'])) is list:
+                 sev=pd.eval(a_row['Long Sev']).tolist()
+             else:
+                sev=pd.eval(a_row['Long Sev'])
+             if not type(pd.eval(a_row['Long Trig'])) is list:
+                 trig=pd.eval(a_row['Long Trig']).tolist()
+             else:
+                trig=pd.eval(a_row['Long Trig'])
    #          trig = json.loads(a_row['Long Trig'].tolist()[0])
    #currently there is no long trig for this to read
-             trig=pd.eval(a_row['Long Trig']).tolist()
              score = a_row['Score']
              if len(sev) > 1:
                while (trig[-1] > start_extend):
