@@ -4,47 +4,37 @@
             "past_dates": [
                   1,
                   15,
-                  103,
-                  124,
-                  138,
-                  201,
-                  222,
-                  245,
-                  259,
-                  274,
-                  309,
-                  330,
-                  353,
-                  379,
-                  419
+                  43,
+                  70,
+                  95,
+                  120,
+                  147,
+                  171,
+                  425,
+                  444
             ],
             "past_severities": [
                   0.0,
                   1.0,
-                  0.5,
-                  0.85,
+                  0.0,
                   0.9,
+                  0.7,
+                  0.95,
                   0.75,
-                  0.85,
-                  0.75,
-                  0.8,
-                  0.85,
-                  0.9,
-                  0.85,
-                  0.9,
-                  0.8,
-                  0.85
+                  1.0,
+                  0.6,
+                  0.9
             ],
             "expert_mode": true,
             "run_multiple_test_scenarios": true,
             "save_results": false,
             "fatality_reduction": 0.35,
             "num_days": 450,
-            "total_pop": 8655000,
-            "hospital_beds": 34620,
-            "prop_15_64": 0.66,
-            "age_gt_64": 0.20232131715771232,
-            "prop_urban": 0.73,
+            "total_pop": 23817000,
+            "hospital_beds": 23817.0,
+            "prop_15_64": 0,
+            "age_gt_64": 0.17193731368350337,
+            "prop_urban": 0,
             "staff_per_bed": 2.5,
             "income_category": "H"
       },
@@ -147,8 +137,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        10000,
+                        10000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -223,8 +213,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        10000,
+                        10000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -293,8 +283,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        10000,
+                        10000
                   ],
                   "type_test_mitigation": [
                         "PCR",

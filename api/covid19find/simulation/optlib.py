@@ -54,8 +54,13 @@ def getsimdeaths(dfx,sev,trig):
 
    test_directory = 'scratch2'
    fixed_params=cl.get_system_params(test_directory)
-   fixed_params.update(cd.getcountryparams(countrycode))
-
+   country_params=cd.getcountryparams(countrycode)
+   if not(country_params==None):
+       fixed_params.update(cd.getcountryparams(countrycode))
+   else:
+       print('Country files need to be updated')
+       print('Please run bbpsetup.py')
+       sys.exit()
    fixed_params['test_directory'] = test_directory
    fixed_params['past_severities'] = sev
    fixed_params['past_dates'] = trig
