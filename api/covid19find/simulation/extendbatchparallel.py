@@ -70,7 +70,7 @@ def process_countries(a_tuple):
     processor=a_tuple[2]
     db1_long_name=a_tuple[3]
     dbx_name=a_tuple[4]
-    testmode = False
+    testmode = True
     dbname = dbx_name+ str(processor)
     fname1 =dbname+'.csv'
     fname2 =dbname+'long.csv'
@@ -80,7 +80,7 @@ def process_countries(a_tuple):
     if testmode:
        CDB = cd.gettestcountries()
     else:
-       CDB = list(cd.getallcountrycodes())   
+       CDB = list(cd.getallcountrycodes()) 
     #for index, row in dbdf.iterrows():
     #for ccode in CDB[start-1:finish]:
     today=datetime.now()
@@ -123,7 +123,7 @@ def process_countries(a_tuple):
 if __name__=='__main__':
     db1_path=cl_path_prefix
     temp_path=os.path.join(cl_path_prefix,'results')
-    n_processors=10
+    n_processors=cpu_count()-2
     extendbatchparallel(db1_path, temp_path, n_processors)
 
    

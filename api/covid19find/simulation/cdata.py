@@ -8,7 +8,7 @@ import os
 useBBPdata = True
 a=2
 
-testcountries = ['IN','CH','US','FR']
+testcountries = ['ZZ']
 # testcountries = ['CH','SV','LA']
 # testcountries = ['CH','US','IT','FR','ES','IN','PH','GB','CA','EG','BR','PE']
 # testcountries = ['GT','ZA','BO','CO','CL','BD','PL','CN','UA','MD','KG','NG']

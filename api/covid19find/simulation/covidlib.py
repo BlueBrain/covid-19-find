@@ -849,10 +849,11 @@ class Sim:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
             positive_rate=0   
-        if sim.population[t-1].sum()>0:
-            p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
-        else:
-            p_infected_asymptomatic=0
+        for i in range(0,par.num_compartments):
+            if sim.population[t-1,i]>0:
+                p_infected_asymptomatic[i]=infected_asymptomatic[i]/sim.population[t-1,i]
+            else:
+                p_infected_asymptomatic[i]=0
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
 
         if tests_available.sum()>0:
@@ -866,9 +867,18 @@ class Sim:
                     symptomatic_tested[i]=total_symptomatic[i]
                     asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]  
         #In the past this is not used - at the moment is there for test purposes
-                p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
-                p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
-                sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
+                if tests_available[i]>0 and symptomatic_tested[i]>0:
+                    p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
+                else:
+                    p_infected_symptomatic[i]=0
+                if total_symptomatic[i]>0:
+                    p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
+                else:
+                    p_infected_symptomatic_simulated[i]=0
+                if tests_available[i]>0:
+                    sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
+                else:
+                    sim.p_infected_all_simulated[t,i]=0
 # =============================================================================
 #                 if t==483 or t==484:
 #                     print('DEBUG')
@@ -933,7 +943,12 @@ class Sim:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
             positive_rate=0
-        p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
+       
+        for i in range(0,par.num_compartments):
+            if sim.population[t-1,i]>0:
+                p_infected_asymptomatic[i]=infected_asymptomatic[i]/sim.population[t-1,i]
+            else:
+                p_infected_asymptomatic[i]=0
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate] #this represent the past
         asymptomatic=sim.population[t-1]-total_symptomatic
         for k in range(0, par.num_compartments):
@@ -959,9 +974,18 @@ class Sim:
                 else:
                     total_tests_available=0
 #this uses p_infected_all which is only valid for the past
-                p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_performed[i]))*(tests_performed[i])/symptomatic_tested[i]
-                p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
-                sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_performed[i]
+                if tests_performed[i]>0 and symptomatic_tested[i]>0:
+                    p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_performed[i]))*(tests_performed[i])/symptomatic_tested[i]
+                else:
+                    p_infected_symptomatic[i]=0
+                if total_symptomatic[i]>0:
+                    p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
+                else:
+                    p_infected_symptomatic_simulated[i]=0
+                if tests_performed[i]>0:
+                    sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_performed[i]
+                else:
+                    sim.p_infected_all_simulated[t,i]=0
                 #for some reason we are not arriving at this
 # =============================================================================
 #                 if t>481:
@@ -1023,15 +1047,17 @@ class Sim:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
             positive_rate=0
-        if sim.population[t-1].sum()>0:
-            p_infected_asymptomatic=infected_asymptomatic/sim.population[t-1]
-        else:
-            p_infected_asymptomatic=0
+        for i in range(0,par.num_compartments):
+            if sim.population[t-1,i]>0:
+                p_infected_asymptomatic[i]=infected_asymptomatic[i]/sim.population[t-1,i]
+            else:
+                p_infected_asymptomatic[i]=0
         sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
-        if total_symptomatic.sum()>0:
-           p_infected_symptomatic=infected_symptomatic/total_symptomatic       
+        for i in range (0,par.num_compartments):
+            if total_symptomatic[i]>0:
+                p_infected_symptomatic[i]=infected_symptomatic[i]/total_symptomatic[i]       
         else:
-           p_infected_symptomatic=0
+                p_infected_symptomatic[i]=0
         asymptomatic=sim.population[t-1]-total_symptomatic
     #    prop_tests=newsymptomatic/total_symptomatic
         tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
@@ -1042,9 +1068,16 @@ class Sim:
                 else:
                     symptomatic_tested[i]=total_symptomatic[i]
                 asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i]
-                p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
-                p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
-                sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
+                if tests_available[i]>0 and symptomatic_tested[i]>0:
+                    p_infected_symptomatic[i]=((sim.p_infected_all[t,i]-p_infected_asymptomatic[i]*asymptomatic_tested[i]/tests_available[i]))*(tests_available[i])/symptomatic_tested[i]
+                    p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
+                else:
+                    p_infected_symptomatic[i]=0
+                    p_infected_symptomatic_simulated[i]=0
+                if tests_available[i]>0:
+                    sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic[i]*asymptomatic_tested[i])/tests_available[i]
+                else: 
+                    sim.p_infected_all_simulated[t,i]=0
                 if t==(today-4):
         # calculate required increase in p_infected_basic to reach observed rate     
                     #temp as a breakpoint
