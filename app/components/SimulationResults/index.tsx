@@ -88,29 +88,29 @@ const SimulationResults: React.FC<{
 
   const graphs = [
     {
-      title: 'Deaths',
+      title: 'Deaths per day',
       key: 'newDeaths',
       actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
-      title: 'Positive Tests',
+      title: 'Positive Tests per day',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
     {
-      title: 'Recovered',
+      title: 'Recovered per day',
       key: 'newRecovered',
       cohort: 'total',
     },
     {
-      title: 'Infected hospital staff ',
+      title: 'Infected hospital staff per day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
     {
-      title: 'Total Infections',
+      title: 'Total Infections per day',
       key: 'newInfected',
       cohort: 'total',
     },
@@ -127,11 +127,11 @@ const SimulationResults: React.FC<{
     },
     {
       key: 'maxInfected',
-      title: 'Peak Infected (from today)',
+      title: 'Peak Infected per day (from today)',
     },
     {
       key: 'maxIsolated',
-      title: 'Peak Isolated (from today)',
+      title: 'Peak Isolated per day (from today)',
     },
   ];
 
@@ -565,14 +565,7 @@ const SimulationResults: React.FC<{
                                       moment(Date.now()).format('YYYY-MM-DD'),
                                   ),
                                   borderColor: colors.aubergine,
-
                                   borderWidth: 2,
-                                  label: {
-                                    enabled: true,
-                                    content: 'Today',
-                                    backgroundColor: colors.blueGray,
-                                    yAdjust: 50,
-                                  },
                                 },
                               ],
                             },
