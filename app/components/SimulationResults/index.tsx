@@ -88,29 +88,29 @@ const SimulationResults: React.FC<{
 
   const graphs = [
     {
-      title: 'Deaths per day',
+      title: 'Deaths/day',
       key: 'newDeaths',
       actualKey: 'actualDeaths',
       cohort: 'total',
     },
     {
-      title: 'Positive Tests per day',
+      title: 'Positive Tests/day',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
     {
-      title: 'Recovered per day',
+      title: 'Recovered/day',
       key: 'newRecovered',
       cohort: 'total',
     },
     {
-      title: 'Infected hospital staff per day',
+      title: 'Infected hospital staff/day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
     {
-      title: 'Total Infections per day',
+      title: 'Total Infections/day',
       key: 'newInfected',
       cohort: 'total',
     },
@@ -127,11 +127,11 @@ const SimulationResults: React.FC<{
     },
     {
       key: 'maxInfected',
-      title: 'Peak Infected per day (from today)',
+      title: 'Peak Infected/day (from today)',
     },
     {
       key: 'maxIsolated',
-      title: 'Peak Isolated per day (from today)',
+      title: 'Peak in Isolation (from today)',
     },
   ];
 
