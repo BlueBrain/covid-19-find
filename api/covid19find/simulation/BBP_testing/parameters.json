@@ -4,59 +4,59 @@
             "past_dates": [
                   1,
                   15,
-                  98,
-                  125,
-                  152,
-                  166,
-                  188,
-                  212,
-                  239,
-                  266,
-                  288,
-                  304,
+                  84,
+                  111,
+                  132,
+                  150,
+                  177,
+                  204,
+                  231,
+                  258,
+                  283,
+                  308,
                   329,
-                  346,
-                  373,
-                  415,
-                  455
+                  356,
+                  409,
+                  452,
+                  476
             ],
             "past_severities": [
                   0.0,
                   1.0,
-                  0.5,
-                  0.8,
-                  0.15,
-                  0.0,
-                  0.85,
-                  0.9,
+                  0.3,
+                  0.65,
                   0.95,
-                  0.85,
-                  0.9,
+                  1.0,
                   0.85,
                   1.0,
-                  0.8,
-                  0.9,
+                  0.6,
+                  0.65,
+                  0.55,
+                  0.05,
                   0.7,
-                  0.15
+                  0.8,
+                  0.85,
+                  0.65,
+                  0.75
             ],
             "expert_mode": true,
             "run_multiple_test_scenarios": true,
             "save_results": false,
             "fatality_reduction": 0.35,
             "num_days": 450,
-            "total_pop": 2881000,
-            "hospital_beds": 2881,
-            "prop_15_64": 0.85,
-            "age_gt_64": 0.019735161402290872,
-            "prop_urban": 0.99,
+            "total_pop": 8655000,
+            "hospital_beds": 34620,
+            "prop_15_64": 0.66,
+            "age_gt_64": 0.20232131715771232,
+            "prop_urban": 0.73,
             "staff_per_bed": 2.5,
             "income_category": "H"
       },
       "scenario_params": [
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
                         "2021-04-14",
@@ -134,8 +134,8 @@
             },
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
                         "2021-04-14",
@@ -151,8 +151,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        300000,
-                        300000
+                        30000,
+                        30000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -210,8 +210,8 @@
             },
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
                         "2021-04-14",
@@ -227,8 +227,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        300000,
-                        300000
+                        30000,
+                        30000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -281,8 +281,8 @@
             },
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
                         "2021-04-14",
@@ -297,8 +297,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        300000,
-                        300000
+                        30000,
+                        30000
                   ],
                   "type_test_mitigation": [
                         "PCR",
