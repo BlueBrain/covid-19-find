@@ -403,6 +403,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       #overwrites default value of day1
       par.day1=day1
       par.shift=shift
+      #call simday today
       simphase,simday=computetoday(day1,par.trig_values)
       par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       sim = Sim(par.num_days,par.num_compartments)
@@ -486,7 +487,13 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          dfsum.to_csv('richard_dump' + scenario_name+'.csv')
          print('************')
 
-      prevalence=dfsum.iloc[par.num_days-1]['prevalence']  
+   #   prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 
+   #   simday is today - in normal usage we measure today's prevalence
+   #   during optimization we use the length of the simulation
+      if simday>par.num_days:
+          prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 
+      else:
+          prevalence=dfsum.iloc[simday]['prevalence'] 
       total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
       total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
@@ -1354,6 +1361,9 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            non_infected_secondaries=0
            sim.newimportedinfections[t,i]=sim.get_imported(par,t,i,phase)
            sim.newinfected[t,i]=sim.newinfected[t,i]+sim.newimportedinfections[t,i]
+    # This makes sure the accumulated number of infected is never bigger than the population
+           if sim.accumulatedinfected[t-1,i]+sim.newinfected[t,i]>sim.population[t-1,i]:
+               sim.newinfected[t,i]=sim.population[t-1,i]-sim.accumulatedinfected[t-1,i]
     # The code below ensures there is no double counting if result_period changes - can be a procedure
            for target in range(last_target_isolation+1, t-par.results_period[phase]+1):
                 if target-results_delay>0:
@@ -1364,8 +1374,14 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                 sim.newconfirmed[t,i]=0
                 if (t-results_delay)>0:  
                    sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
+                   if sim.newisolated[t,i]>sim.newinfected[t,i]:
+                        sim.newisolated[t,i]=sim.newinfected[t,i]
                    sim.newisolatedinfected[t,i] =sim.newisolatedinfected[t,i]+ sim.truepositives[target-results_delay,i]+infected_secondaries
+                   if sim.newisolatedinfected[t,i]>sim.newisolated[t,i]:
+                        sim.newisolatedinfected[t,i]=sim.newisolated[t,i]
                    sim.newconfirmed[t,i] = (sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i])
+                   if sim.newconfirmed[t,i]>sim.newinfected[t,i]:
+                       sim.newconfirmed[t,i]=sim.newinfected[t,i]
            if t-(par.recovery_period+par.incubation_period)>=0:
                sim.newrecovered[t,i] = sim.newinfected[t-(par.recovery_period+par.incubation_period),i]*gamma
            else:

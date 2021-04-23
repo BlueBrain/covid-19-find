@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=7
+a=8
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -181,7 +181,6 @@ def getactualdeaths(countryname):
   dfactual = country_df.rename(columns = {'accumulated_deaths': 'total_deaths'}, inplace = False)
   dfactual["New deaths"] = dfactual['total_deaths'].diff().fillna(dfactual['total_deaths'].iloc[0])
   dfactual["New deaths"] = dfactual["New deaths"].astype(float)
-
   dfx = pd.DataFrame()
   dfx['Date'] = dfactual['Date']
   dfx['orig_new_deaths'] = dfactual['New deaths']

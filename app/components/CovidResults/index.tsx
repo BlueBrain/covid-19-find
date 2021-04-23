@@ -13,9 +13,10 @@ import './covid-results.less';
 export const makeSlidingAverage = (
   array: { [key: string]: number | string }[],
   key: string,
+  days:number,
 ) => (entry, index) => {
   const valuesToAverage = [];
-  for (let i = index - 7; i < index; i++) {
+  for (let i = index - days; i < index; i++) {
     if (i >= 0) {
       valuesToAverage.push(array[i][key] || 0);
     }
@@ -98,7 +99,7 @@ const CovidResults: React.FC<{
               upIsGood: false,
             } as { previous: number; present: number })}
           />
-          <span className="subtitle"> COVID-19 Positive Tests</span>
+          <span className="subtitle"> Total Positive Tests (7-day trend)</span>
         </h3>
         <h3>
           <span>{data.totalDeaths.toLocaleString()}</span>{' '}
@@ -108,7 +109,7 @@ const CovidResults: React.FC<{
               upIsGood: false,
             } as { previous: number; present: number })}
           />
-          <span className="subtitle">Deaths attributed to COVID-19</span>
+          <span className="subtitle">Total Deaths (7-day trend)</span>
         </h3>
         <h3>
           {showRecovered ? (
@@ -121,7 +122,7 @@ const CovidResults: React.FC<{
                   present: number;
                 })}
               />
-              <span className="subtitle"> People Recovered from COVID-19</span>
+              <span className="subtitle"> Total Recovered (7-day trend)</span>
             </>
           ) : (
             <>
@@ -131,8 +132,8 @@ const CovidResults: React.FC<{
           )}
         </h3>
         <h3>
-          <span>{data.meanTestsLast7Days}</span>{' '}
-          <span className="subtitle">Mean tests per day</span>
+          <span>{data.meanTestsLast7Days.toLocaleString()}</span>{' '}
+          <span className="subtitle">Mean tests per day (last 7 days)</span>
         </h3>
       </div>
       <div className="charts">
@@ -164,7 +165,7 @@ const CovidResults: React.FC<{
                     position: 'left',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Number of positive tests',
+                      labelString: 'Positive tests (per day)',
                     },
                     gridLines: {
                       color: '#00000005',
@@ -182,7 +183,7 @@ const CovidResults: React.FC<{
                     position: 'right',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Number of Deaths',
+                      labelString: 'Deaths/Recoveries (per day)',
                     },
                     gridLines: {
                       color: '#00000005',
@@ -228,10 +229,10 @@ const CovidResults: React.FC<{
               backgroundColor: '#fff',
               datasets: [
                 {
-                  label: 'New Positive Tests',
+                  label: 'Positive Tests',
                   yAxisID: 'A',
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newConfirmed'))
+                    .map(makeSlidingAverage(chartData, 'newConfirmed',7))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.blueGray],
                   backgroundColor: [
@@ -241,11 +242,11 @@ const CovidResults: React.FC<{
                   ],
                 },
                 {
-                  label: 'New Deaths',
+                  label: 'Deaths',
                   yAxisID: 'B',
 
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newDeaths'))
+                    .map(makeSlidingAverage(chartData, 'newDeaths',7))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.pomegranate],
 
@@ -258,10 +259,10 @@ const CovidResults: React.FC<{
 
                 showRecovered
                   ? {
-                      label: 'New Recovered',
+                      label: 'Recovered',
                       yAxisID: 'A',
                       data: chartData
-                        .map(makeSlidingAverage(chartData, 'newRecovered'))
+                        .map(makeSlidingAverage(chartData, 'newRecovered',7))
                         .map(entry => Math.floor(Number(entry))),
                       borderColor: [colors.turqouise],
                       backgroundColor: [
@@ -304,7 +305,7 @@ const CovidResults: React.FC<{
                     position: 'left',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Number of Tests (per day)',
+                      labelString: 'Tests (per day)',
                     },
                     gridLines: {
                       color: '#00000005',
@@ -371,7 +372,7 @@ const CovidResults: React.FC<{
                   label: 'Tests Performed',
                   yAxisID: 'A',
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newTests'))
+                    .map(makeSlidingAverage(chartData, 'newTests',28))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.turqouise],
                   backgroundColor: [
@@ -388,6 +389,7 @@ const CovidResults: React.FC<{
                       makeSlidingAverage(
                         chartData,
                         'newTestsPositiveProportion',
+                        28
                       ),
                     )
                     .map(entry => Number(entry).toFixed(4)),
