@@ -50,7 +50,7 @@ def process_countries(a_tuple):
     dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method',
                                    'Long Sev', 'Long Trig'])
     
-    i = 1
+    i = 2
     if testmode:
        CDB = cd.gettestcountries()
     else:
