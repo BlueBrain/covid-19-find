@@ -124,6 +124,7 @@ class CovidDataRepository:
             timeseries_data[i]["newDeaths"] = timeseries_data[i]["totalDeaths"] - timeseries_data[i - 1]["totalDeaths"]
             timeseries_data[i]["newRecovered"] = timeseries_data[i]["totalRecovered"] - timeseries_data[i - 1][
                 "totalRecovered"]
+           
 
     def __get_or_none(self, data, country_code, date, key):
         return data.get(country_code, {}).get(date, {}).get(key)
