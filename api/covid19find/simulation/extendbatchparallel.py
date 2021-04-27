@@ -124,6 +124,8 @@ if __name__=='__main__':
     db1_path=cl_path_prefix
     temp_path=os.path.join(cl_path_prefix,'results')
     n_processors=cpu_count()-2
+    if n_processors<1:
+        n_processors=1
     extendbatchparallel(db1_path, temp_path, n_processors)
 
    
