@@ -172,7 +172,7 @@ export default [
         key: 'specificity',
       },
       {
-        label: 'Symptoms to result',
+        label: 'Symptoms to result (days)',
         type: INPUT_TYPES.number,
         min: 0,
         max: 30,

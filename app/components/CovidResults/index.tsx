@@ -324,7 +324,7 @@ const CovidResults: React.FC<{
                     position: 'right',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Positive (per day)',
+                      labelString: 'Positive (%)',
                     },
                     ticks: {
                       beginAtZero: true,
@@ -389,7 +389,7 @@ const CovidResults: React.FC<{
                       makeSlidingAverage(
                         chartData,
                         'newTestsPositiveProportion',
-                        28
+                        7
                       ),
                     )
                     .map(entry => Number(entry).toFixed(4)),
