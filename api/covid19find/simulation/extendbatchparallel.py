@@ -36,7 +36,7 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
         last1=next1
         last2=next2
         tuples_list.append((next1,next2,i,filename_long,dbx_name))
-    process_countries(tuples_list[0])
+  #  process_countries(tuples_list[0])
     with Pool(n_processors) as p:
         p.map(process_countries,tuples_list)
     merge_files(dbx_name,filename,filename_long,n_processors)
