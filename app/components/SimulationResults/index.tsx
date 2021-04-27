@@ -94,7 +94,7 @@ const SimulationResults: React.FC<{
       cohort: 'total',
     },
     {
-      title: 'Positive Tests/day',
+      title: 'Cases (positive tests)/day',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
@@ -524,7 +524,7 @@ const SimulationResults: React.FC<{
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Total number of <br /> positive tests
+                      Total number of <br /> cases (positive tests)
                     </span>
                   </h3>
                   <h3>

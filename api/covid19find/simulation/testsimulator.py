@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="QA"
+ccode="FR"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -60,7 +60,7 @@ scenario_params=[]
 
 
 scenario_params.append({
-    'severity':['major tightening','major tightening'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
@@ -80,11 +80,11 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['major tightening','major tightening'],\
+    'severity':['no change','no change'],\
     'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[60000,60000],\
+    'num_tests_mitigation':[350000,350000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -104,7 +104,7 @@ scenario_params.append({
     'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[60000,60000],\
+    'num_tests_mitigation':[350000,350000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -124,7 +124,7 @@ scenario_params.append({
     'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[60000, 60000],\
+    'num_tests_mitigation':[350000, 350000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
