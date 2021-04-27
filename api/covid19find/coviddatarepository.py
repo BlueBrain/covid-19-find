@@ -51,6 +51,12 @@ class CovidDataRepository:
             return int(float(string_int))
         except ValueError:
             return 0
+            
+    def __float_or_none(self, string_int):
+        try:
+            return float(string_int)
+        except ValueError:
+            return None
 
     def __read_find(self, filename):
         grouped_country_data = dict()
@@ -61,14 +67,11 @@ class CovidDataRepository:
                     continue
                 country_code = row["unit"]
                 country_data = grouped_country_data.get(country_code, OrderedDict())
-                new_tests_positive = self.__divide_if_not_none(
-                    self.__int_or_none(row["new_cases_orig"]),
-                    self.__int_or_none(row["new_tests_orig"])
-                )
+                new_tests_positive = row["pos"]
                 country_data[row["time"]] = {
                     "newTests": self.__int_or_none(row["new_tests_orig"]),
                     "totalTests": self.__int_or_none(row["all_cum_tests"]),
-                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None and new_tests_positive < 1.0 else None
+                    "newTestsPositiveProportion": self.__float_or_none(row["pos"])
                 }
                 grouped_country_data[country_code] = country_data
         return grouped_country_data
