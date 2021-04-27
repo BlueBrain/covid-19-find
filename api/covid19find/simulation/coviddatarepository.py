@@ -38,10 +38,13 @@ class CovidDataRepository:
                     continue
                 country_code = row["unit"]
                 country_data = grouped_country_data.get(country_code, OrderedDict())
-                new_tests_positive = self.__divide_if_not_none(
-                    self.__int_or_none(row["new_cases_orig"]),
-                    self.__int_or_none(row["new_tests_orig"])
-                )
+# =============================================================================
+#                 new_tests_positive = self.__divide_if_not_none(
+#                     self.__int_or_none(row["new_cases_orig"]),
+#                     self.__int_or_none(row["new_tests_orig"])
+#                 )
+# =============================================================================
+                new_tests_positive=row["pos"]
                 country_data[row["time"]] = {
                     "newTests": self.__int_or_none(row["new_tests_orig"]),
                     "totalTests": self.__int_or_none(row["all_cum_tests"]),
