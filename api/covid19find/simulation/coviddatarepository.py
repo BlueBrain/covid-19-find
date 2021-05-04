@@ -48,7 +48,7 @@ class CovidDataRepository:
                 country_data[row["time"]] = {
                     "newTests": self.__int_or_none(row["new_tests_orig"]),
                     "totalTests": self.__int_or_none(row["all_cum_tests"]),
-                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None and new_tests_positive < 1.0 else None
+                    "newTestsPositiveProportion": new_tests_positive if new_tests_positive is not None else None
                 }
                 grouped_country_data[country_code] = country_data
         return grouped_country_data

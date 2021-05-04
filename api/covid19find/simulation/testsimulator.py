@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="FR"
+ccode="CH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -169,6 +169,9 @@ for i in range (0,len(results_dict['total_infected_by_scenario'])):
 print('Total cases by scenario')
 for i in range (0,len(results_dict['total_cases_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['total_cases_by_scenario'][i])
+print('Total isolated by scenario')
+for i in range (0,len(results_dict['max_isolated_by_scenario'])):
+    print ('scenario: ',i,': ', results_dict['max_isolated_by_scenario'][i])
     
 print('test_df=',test_df)
         
