@@ -62,8 +62,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-04-26",
-                        "2021-05-10"
+                        "2021-05-04",
+                        "2021-05-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -126,7 +126,6 @@
                   ],
                   "results_period": [
                         3,
-                        3,
                         3
                   ],
                   "fatality_reduction_recent": [
@@ -141,8 +140,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-04-26",
-                        "2021-05-10"
+                        "2021-05-04",
+                        "2021-05-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -154,8 +153,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        350000,
-                        350000
+                        13000,
+                        13000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -181,12 +180,12 @@
                         "PCR"
                   ],
                   "prop_contacts_traced": [
-                        "highly effective",
-                        "highly effective"
+                        "fairly effective",
+                        "fairly effective"
                   ],
                   "imported_infections_per_day": [
-                        "not effective",
-                        "not effective"
+                        "highly effective",
+                        "highly effective"
                   ],
                   "requireddxtests": [
                         2,
@@ -213,12 +212,12 @@
             },
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
-                        "2021-04-26",
-                        "2021-05-10"
+                        "2021-05-04",
+                        "2021-05-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -230,8 +229,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        350000,
-                        350000
+                        13000,
+                        13000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -274,8 +273,8 @@
                         "symptomatic first"
                   ],
                   "results_period": [
-                        2,
-                        2
+                        3,
+                        3
                   ],
                   "fatality_reduction_recent": [
                         0.35,
@@ -284,12 +283,12 @@
             },
             {
                   "severity": [
-                        "major tightening",
-                        "major tightening"
+                        "no change",
+                        "no change"
                   ],
                   "trig_values": [
-                        "2021-04-26",
-                        "2021-05-10"
+                        "2021-05-04",
+                        "2021-05-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -300,8 +299,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        350000,
-                        350000
+                        13000,
+                        13000
                   ],
                   "type_test_mitigation": [
                         "PCR",
