@@ -301,7 +301,7 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
 
 def getbestfit(dfx, sev, trig):
    sc = 0
-   #This is addition to compensate for added extra frame
+   #This is addition to compensate for added extra frame - previously 60
    lastday = len(dfx)+60
    i = len(sev)
    print(trig[-1],(lastday-shiftlag))

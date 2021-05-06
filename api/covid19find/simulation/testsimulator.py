@@ -61,7 +61,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-05-04','2021-05-14'],\
+    'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -75,23 +75,23 @@ scenario_params.append({
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
-    'results_period':[3,3],\
+    'results_period':[3,3,3],\
     'fatality_reduction_recent':[0.35,0.35,0.35]
     })
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-05-04','2021-05-14'],\
+    'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[350000,350000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['fairly effective','fairly effective'],\
-    'imported_infections_per_day':['highly effective','highly effective'],\
+    'prop_contacts_traced':['highly effective','highly effective'],\
+    'imported_infections_per_day':['not effective','not effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
@@ -100,11 +100,11 @@ scenario_params.append({
     })
     
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-05-04','2021-05-14'],\
+    'severity':['major tightening','major tightening'],\
+    'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[13000,13000],\
+    'num_tests_mitigation':[350000,350000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -115,16 +115,16 @@ scenario_params.append({
     'requireddxtests':[3,3],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
-    'results_period':[3,3],\
+    'results_period':[2,2],\
     'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
-    'severity':['no change','no change'],\
-    'trig_values':['2021-05-04','2021-05-14'],\
+    'severity':['major tightening','major tightening'],\
+    'trig_values':['2021-04-26','2021-05-10'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[13000, 13000],\
+    'num_tests_mitigation':[350000, 350000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -152,8 +152,10 @@ except FileNotFoundError as inst:
     print('Exception raised by simulation:',inst)
     sys.exit()
 
-for i in range(0,3):
-    dataframes[i*2+1].to_csv('richard_dump2' + str(i) +'.csv')
+# =============================================================================
+# for i in range(0,3):
+#     dataframes[i*2+1].to_csv('richard_dump2' + str(i) +'.csv')
+# =============================================================================
 print ('total deaths by scenario')
 for i in range (0,len(results_dict['total_deaths_by_scenario'])):
     print ('scenario: ',i,': ', results_dict['total_deaths_by_scenario'][i])

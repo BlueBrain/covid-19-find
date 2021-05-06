@@ -492,10 +492,13 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    #   prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 
    #   simday is today - in normal usage we measure today's prevalence
    #   during optimization we use the length of the simulation
-      if simday>par.num_days:
-          prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 
-      else:
-          prevalence=dfsum.iloc[simday]['prevalence'] 
+# =============================================================================
+#       if simday>par.num_days:
+#           prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 
+#       else:
+#           prevalence=dfsum.iloc[simday]['prevalence'] 
+# =============================================================================
+      prevalence=dfsum.iloc[-1]['prevalence']
       total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
       total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
