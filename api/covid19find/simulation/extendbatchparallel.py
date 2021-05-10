@@ -1,5 +1,5 @@
-import pandas as pd
 import optlib as opt
+import pandas as pd
 import cdata as cd
 import ast
 import os
@@ -89,7 +89,7 @@ def process_countries(a_tuple):
     today=datetime.now()
     day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
     sim_days=(today-day1).days
-    start_extend=sim_days-60 #should be 56 - have made it bigger for safety
+    start_extend=sim_days-120 # uaed to be 60
     for index,a_row in dbdf.iterrows():
           #if cd.checkcountryparams(ccode) is not None:
           #   row=dbdf.loc[dbdf['Code']==ccode]
@@ -125,6 +125,7 @@ def process_countries(a_tuple):
 
 
 if __name__=='__main__':
+    a=1
     db1_path=cl_path_prefix
     temp_path=os.path.join(cl_path_prefix,'results')
     n_processors=cpu_count()-2

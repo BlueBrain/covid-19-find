@@ -14,12 +14,10 @@
                   283,
                   307,
                   329,
-                  352,
-                  378,
-                  393,
-                  420,
-                  434,
-                  456,
+                  355,
+                  409,
+                  437,
+                  455,
                   476
             ],
             "past_severities": [
@@ -36,10 +34,8 @@
                   0.05,
                   0.7,
                   0.8,
-                  0.75,
                   0.85,
                   0.8,
-                  0.85,
                   0.65,
                   0.75
             ],
@@ -62,8 +58,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-05-04",
-                        "2021-05-14"
+                        "2021-04-26",
+                        "2021-05-10"
                   ],
                   "trig_def_type": [
                         "date",
@@ -126,6 +122,7 @@
                   ],
                   "results_period": [
                         3,
+                        3,
                         3
                   ],
                   "fatality_reduction_recent": [
@@ -140,8 +137,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-05-04",
-                        "2021-05-14"
+                        "2021-04-26",
+                        "2021-05-10"
                   ],
                   "trig_def_type": [
                         "date",
@@ -153,8 +150,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        350000,
+                        350000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -180,12 +177,12 @@
                         "PCR"
                   ],
                   "prop_contacts_traced": [
-                        "fairly effective",
-                        "fairly effective"
-                  ],
-                  "imported_infections_per_day": [
                         "highly effective",
                         "highly effective"
+                  ],
+                  "imported_infections_per_day": [
+                        "not effective",
+                        "not effective"
                   ],
                   "requireddxtests": [
                         2,
@@ -212,12 +209,12 @@
             },
             {
                   "severity": [
-                        "no change",
-                        "no change"
+                        "major tightening",
+                        "major tightening"
                   ],
                   "trig_values": [
-                        "2021-05-04",
-                        "2021-05-14"
+                        "2021-04-26",
+                        "2021-05-10"
                   ],
                   "trig_def_type": [
                         "date",
@@ -229,8 +226,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        350000,
+                        350000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -273,8 +270,8 @@
                         "symptomatic first"
                   ],
                   "results_period": [
-                        3,
-                        3
+                        2,
+                        2
                   ],
                   "fatality_reduction_recent": [
                         0.35,
@@ -283,12 +280,12 @@
             },
             {
                   "severity": [
-                        "no change",
-                        "no change"
+                        "major tightening",
+                        "major tightening"
                   ],
                   "trig_values": [
-                        "2021-05-04",
-                        "2021-05-14"
+                        "2021-04-26",
+                        "2021-05-10"
                   ],
                   "trig_def_type": [
                         "date",
@@ -299,8 +296,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        13000,
-                        13000
+                        350000,
+                        350000
                   ],
                   "type_test_mitigation": [
                         "PCR",

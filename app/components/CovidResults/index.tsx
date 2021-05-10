@@ -389,7 +389,7 @@ const CovidResults: React.FC<{
                       makeSlidingAverage(
                         chartData,
                         'newTestsPositiveProportion',
-                        7
+                        1
                       ),
                     )
                     .map(entry => Number(entry).toFixed(4)),
