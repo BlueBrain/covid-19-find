@@ -1,5 +1,5 @@
-import pandas as pd
 import optlib as opt
+import pandas as pd
 import cdata as cd
 import ast
 import os
@@ -37,8 +37,11 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
         last2=next2
         tuples_list.append((next1,next2,i,filename_long,dbx_name))
   #  process_countries(tuples_list[0])
-    with Pool(n_processors) as p:
-        p.map(process_countries,tuples_list)
+    if n_processors==1:
+        process_countries(tuples_list[0])
+    else:
+        with Pool(n_processors) as p:
+            p.map(process_countries,tuples_list)
     merge_files(dbx_name,filename,filename_long,n_processors)
     return(1)
 
@@ -70,7 +73,7 @@ def process_countries(a_tuple):
     processor=a_tuple[2]
     db1_long_name=a_tuple[3]
     dbx_name=a_tuple[4]
-    testmode = True
+    testmode = False
     dbname = dbx_name+ str(processor)
     fname1 =dbname+'.csv'
     fname2 =dbname+'long.csv'
@@ -86,7 +89,7 @@ def process_countries(a_tuple):
     today=datetime.now()
     day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
     sim_days=(today-day1).days
-    start_extend=sim_days-60 #should be 56 - have made it bigger for safety
+    start_extend=sim_days-120 # uaed to be 60
     for index,a_row in dbdf.iterrows():
           #if cd.checkcountryparams(ccode) is not None:
           #   row=dbdf.loc[dbdf['Code']==ccode]
@@ -94,6 +97,7 @@ def process_countries(a_tuple):
              #print('row=',a_row)
              cname = a_row['Country']
              ccode=a_row['Code']
+             print ('Currently processing', ccode)
     #         sev = json.loads(a_row['Long Sev'].tolist()[0])
              if not type(pd.eval(a_row['Long Sev'])) is list:
                  sev=pd.eval(a_row['Long Sev']).tolist()
@@ -112,7 +116,7 @@ def process_countries(a_tuple):
                   trig.pop()
                score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,sev,trig)
             
-              # opt.showthiscase(dfx,sev,trig,'EXT')
+               opt.showthiscase(dfx,sev,trig,'EXT')
                #problem in line below - 'cannot set a row with misplaced columns
                df.loc[len(df.index)] = [ccode, cname, sev, trig, score]
                dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig]
@@ -121,10 +125,10 @@ def process_countries(a_tuple):
 
 
 if __name__=='__main__':
+    a=1
     db1_path=cl_path_prefix
     temp_path=os.path.join(cl_path_prefix,'results')
     n_processors=cpu_count()-2
-    n_processors=1
     if n_processors<1:
         n_processors=1
     extendbatchparallel(db1_path, temp_path, n_processors)

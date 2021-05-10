@@ -135,16 +135,7 @@ const SimulationResults: React.FC<{
     },
   ];
 
-  const maxIsolated =
-    maxBy(scenariosResults as ScenarioResult[], (scenario: ScenarioResult) => {
-      return scenario.data.total.reduce((memo, entry) => {
-        return memo + entry.newIsolated;
-      }, 0);
-    })?.data.total.reduce((memo, entry) => {
-      return memo + entry.newIsolated;
-    }, 0) || 0;
-
-  const datasets = Array.from(scenariosResults).map(
+  const datasets = Array.from(scenariosResults as ScenarioResult[]).map(
     (scenarioResult, scenarioIndex) => {
       return {
         label: clientScenariosInput[scenarioIndex]?.name,
@@ -294,9 +285,6 @@ const SimulationResults: React.FC<{
                                   maximumFractionDigits: 0,
                                 });
                               },
-                              // beginAtZero: true,
-                              // suggestedMax: 100,
-                              max: maxIsolated * 1.2,
                             },
                           },
                         ],
@@ -392,8 +380,10 @@ const SimulationResults: React.FC<{
                     <h3 className="title">Cross-Scenario Comparison</h3>
                     <div className="flex">
                       {comparisons.map(({ key, title }, index) => {
+                        console.log(key);
                         const graphPatterns = simulationResults.scenarios.map(
                           (scenario, scenarioIndex) => {
+                            console.log(scenario);
                             const patternKey = patterns[scenarioIndex];
                             return draw(
                               // @ts-ignore

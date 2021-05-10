@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=8
+a=9
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -301,7 +301,7 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
 
 def getbestfit(dfx, sev, trig):
    sc = 0
-   #This is addition to compensate for added extra frame
+   #This is addition to compensate for added extra frame - previously 60
    lastday = len(dfx)+60
    i = len(sev)
    print(trig[-1],(lastday-shiftlag))
