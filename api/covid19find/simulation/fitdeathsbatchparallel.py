@@ -8,6 +8,7 @@ import numpy as np
 import sys
 from multiprocessing import Pool
 from multiprocessing import cpu_count
+from multiprocessing import set_start_method
 from datetime import datetime
 import os
 
@@ -37,6 +38,8 @@ def merge_files(in_name, out_name,out_name_long,n):
     
 
 def process_countries(a_tuple):
+    filename ='db1.csv'
+    filename_long ='db1_long.csv'
     figname = 'RUN12RW'
     dbname = 'dbx'
     start=a_tuple[0]
@@ -55,24 +58,48 @@ def process_countries(a_tuple):
        CDB = cd.gettestcountries()
     else:
        CDB = list(cd.getallcountrycodes())
-     
+    df_old_values=pd.read_csv(filename_long,keep_default_na=False)
     for ccode in CDB[start-1:finish]:
           if cd.checkcountryparams(ccode) is not None:
              cname = cd.getcountryname(ccode)
              print("COUNTRY:",cname, '('+ccode+')')
-             opt.setlengths(14,28,50)
-             score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
-  #           opt.setlengths(14,28,100)
-   #          score2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)
-  #           diff = abs(score1-score2)
-     #        if score1 < score2:
-             dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
-             longsev, longtrig = longsev1, longtrig1
-             #else:
-              #  dfx, sev, trig, score, method = dfx2, sev2, trig2, score2, "horizon=100"+str(diff)
-             #   longsev, longtrig = longsev2, longtrig2
-             print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score,",",method)
-             opt.showthiscase(dfx,sev,trig,figname)
+             opt.setcountry(ccode)
+             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(df_old_values, cname)
+             method="horizon==50"
+             dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
+             if simulated_score<0.05 or np.isnan(simulated_score):
+                 sev=old_sev
+                 trig=old_trig
+                 longsev=old_long_sev 
+                 longtrig=old_long_trig
+                 score=simulated_score
+             else:
+                 opt.setlengths(14,28,50)
+                 score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
+                 if score1<simulated_score or not(np.isnan(simulated_score)) or not(np.isnan(score1)):
+                     dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
+                     longsev, longtrig = longsev1, longtrig1
+                 else:
+                     sev=old_sev
+                     trig=old_trig
+                     longsev=old_long_sev 
+                     longtrig=old_long_trig
+                     score=simulated_score
+                     
+                     
+      #           opt.setlengths(14,28,100)
+       #          score2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)
+      #           diff = abs(score1-score2)
+         #        if score1 < score2:
+# =============================================================================
+#                  dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
+#                  longsev, longtrig = longsev1, longtrig1
+# =============================================================================
+                 #else:
+                  #  dfx, sev, trig, score, method = dfx2, sev2, trig2, score2, "horizon=100"+str(diff)
+                 #   longsev, longtrig = longsev2, longtrig2
+                 print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score,",",method)
+                 opt.showthiscase(dfx,sev,trig,figname)
              df.loc[len(df.index)] = [ccode, cname, sev, trig, score, method]
              dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, method, longsev, longtrig]
              df.to_csv(fname1,index=False,header=False)
@@ -86,8 +113,10 @@ if __name__=='__main__':
     
    
    
-    CDB = cd.gettestcountries()
     print('starting',datetime.now())
+    filename ='db1.csv'
+    filename_long ='db1_long.csv'
+    CDB = cd.gettestcountries()
     n_processors=cpu_count()-2
     n_countries=181
     countries_per_processor=int(n_countries/n_processors)+1
@@ -104,13 +133,17 @@ if __name__=='__main__':
             next2=n_countries
         last1=next1
         last2=next2
-        tuples_list.append((next1,next2,i))
-        
-    
+        if next2>next1:
+            tuples_list.append((next1,next2,i))
+# multiprocessing temporarily disabled during development        
+#    process_countries(tuples_list[0]) 
+    if n_processors>len(tuples_list):
+        n_processors=len(tuples_list)
     with Pool(n_processors) as p:
         p.map(process_countries,tuples_list)
+    
+    dbxname='dbx_'
     filename ='db1.csv'
     filename_long ='db1_long.csv'
-    dbxname='dbx_'
     merge_files(dbxname,filename,filename_long,n_processors)
     print('ending',datetime.now())

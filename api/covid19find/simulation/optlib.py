@@ -40,13 +40,12 @@ def aligntotest(dfactual,dfsimdeaths):
    day1 = dt.datetime.strptime(dfactual.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=cl.create_empty_country_df(day1, 60)
    frames=[empty_df,dfactual]
-
-   results_df=pd.concat(frames)
-   actdeaths = dfactual['total_deaths'].tolist()
+   results_df=pd.concat(frames)[0:len(simdeaths)]
+ #  actdeaths = dfactual['total_deaths'].tolist()
 #   aligneddeaths, shift = cl.aligndeaths(actdeaths,simdeaths)
  #  dfactual['sim_total_deaths'] = aligneddeaths
  #lengths do not match
-   results_df['sim_total_deaths'] = simdeaths
+   results_df['sim_total_deaths'] = simdeaths[0:len(results_df)]
    # day0 = dfactual.iloc[shift]['Date']
    return results_df
 
@@ -66,10 +65,18 @@ def getsimdeaths(dfx,sev,trig):
    fixed_params['past_dates'] = trig
    fixed_params['expert_mode'] = False
    fixed_params['save_results'] = "False"
-   local_df=dfx
+   fixed_params['run_multiple_test_scenarios'] = False
+#   local_df=dfx
 #   fixed_params['fatality_reduction'] = 0.35
-   fixed_params['num_days'] = len(country_df)+60
-   end_day=len(country_df)+60
+   day1 = dt.datetime.strptime(dfx.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
+   simphase,lastday=cl.computetoday(day1,trig)
+   span=lookahead(trig[-1], horizon,lastday)
+   fixed_params['num_days']=span
+   end_day=span
+# =============================================================================
+#    fixed_params['num_days'] = len(country_df)+60
+#    end_day=len(country_df)+60
+# =============================================================================
 #   print(len(country_df))
    
    scenario_params=[]
@@ -222,7 +229,7 @@ def findnexttrig(dfx, sev, trig, trignum):
  #     print(">severity:",currsev)
       scorerun = 0
       score = 0
-      for t in range(lowerbound,upperbound):
+      for t in range(lowerbound,upperbound,2):
          lastscore = score
          sev[trignum] = currsev
          trig[trignum] = t
@@ -360,6 +367,8 @@ def computephases(ccode):
 #       return 1.0,dfx,[1.0],[1],[1.0],[1]
 # =============================================================================
    score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, initsev, [1])
+   if np.isnan(score)or not isinstance(score,float):
+       score=0.0
    return score, dfx, sev, trig, longsev, longtrig
 
 # =============================================================================
@@ -380,6 +389,8 @@ def extendphases(ccode, sev, trig):
    result = runandalignsim(dfx,nsev,ntrig)
    score = scorealignment(result,len(dfx))
    print('PACKED SCORE',nsev,ntrig,score)
+   if np.isnan(score) or not isinstance(score,float):
+       score=0.0
    return score, dfx, nsev, ntrig, sev, trig
 
 def finetune(ccode, sevguide, trigguide):
@@ -489,3 +500,38 @@ def plotcase(ccode,sev,trig,figname):
 #   print("LAST DAY:",len(dfx))
    score = showthiscase(dfx,sev,trig,figname)
    return dfx, score
+
+def get_previous_parameters(df_old_values, country_name):
+# Having problems with pd.eval
+    
+    a_row=df_old_values.loc[df_old_values['Country']==country_name]
+    if not type(pd.eval(a_row['Severities'])) is list:
+            sev=pd.eval(a_row['Severities']).tolist()[0]
+    else:
+            sev=pd.eval(a_row['Severities'])
+    if not type(pd.eval(a_row['Long Sev'])) is list:
+            long_sev=pd.eval(a_row['Long Sev']).tolist()[0]
+    else:
+            long_sev=pd.eval(a_row['Long Sev'])
+    if not type(pd.eval(a_row['Trigger Dates'])) is list:
+            trig=pd.eval(a_row['Trigger Dates']).tolist()[0]
+    else:
+           trig=pd.eval(a_row['Trigger Dates'])
+    if not type(pd.eval(a_row['Long Trig'])) is list:
+            long_trig=pd.eval(a_row['Long Trig']).tolist()[0]
+    else:
+           long_trig=pd.eval(a_row['Long Trig'])
+    score=float(a_row['Score'])
+    if np.isnan(score):
+        score=0.0
+    method=a_row['Method']
+    return(sev,trig,long_sev, long_trig,score,method)
+
+def simulate_with_old_parameters(sev,trig,country_name):
+    dfx_actuals=getactualdeaths(country_name)
+    result=runandalignsim(dfx_actuals,sev,trig)
+    score=scorealignment(result, len(dfx_actuals))
+    if score==None or np.isnan(score):
+        score=0.0
+    return(dfx_actuals,score)
+    

@@ -4,6 +4,7 @@ import cdata as cd
 import ast
 import os
 import json
+import numpy as np
 from multiprocessing import Pool
 from multiprocessing import cpu_count
 from datetime import datetime
@@ -26,7 +27,7 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
     last1=0
     last2=last1+countries_per_processor-1
     tuples_list.append((last1,last2,0,filename_long,dbx_name))
-    for i in range(1,n_processors):
+    for i in range(1,n_processors+1):
         next1=last2+1
         next2=next1+countries_per_processor-1
         if next1>n_countries:
@@ -37,6 +38,9 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
         last2=next2
         tuples_list.append((next1,next2,i,filename_long,dbx_name))
   #  process_countries(tuples_list[0])
+ #   process_countries(tuples_list[0])
+    if n_processors>len(tuples_list):
+        n_processors=len(tuples_list)
     if n_processors==1:
         process_countries(tuples_list[0])
     else:
@@ -84,47 +88,48 @@ def process_countries(a_tuple):
        CDB = cd.gettestcountries()
     else:
        CDB = list(cd.getallcountrycodes()) 
-    #for index, row in dbdf.iterrows():
+    localCDB=CDB#for index, row in dbdf.iterrows():
     #for ccode in CDB[start-1:finish]:
     today=datetime.now()
     day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
     sim_days=(today-day1).days
-    start_extend=sim_days-120 # uaed to be 60
-    for index,a_row in dbdf.iterrows():
-          #if cd.checkcountryparams(ccode) is not None:
-          #   row=dbdf.loc[dbdf['Code']==ccode]
-          if index>=start and index<=finish:
-             #print('row=',a_row)
-             cname = a_row['Country']
-             ccode=a_row['Code']
+    start_extend=sim_days-60 # uaed to be 60
+    for ccode in CDB[start:finish+1]:
+        if cd.checkcountryparams(ccode) is not None:
+             cname = cd.getcountryname(ccode)
+             print("COUNTRY:",cname, '('+ccode+')')
+             opt.setcountry(ccode)
              print ('Currently processing', ccode)
-    #         sev = json.loads(a_row['Long Sev'].tolist()[0])
-             if not type(pd.eval(a_row['Long Sev'])) is list:
-                 sev=pd.eval(a_row['Long Sev']).tolist()
+             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(dbdf, cname)
+             dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
+             if simulated_score<0.05 or np.isnan(simulated_score):
+                 sev=old_sev
+                 trig=old_trig
+                 longsev=old_long_sev 
+                 longtrig=old_long_trig
+                 score=simulated_score  
              else:
-                sev=pd.eval(a_row['Long Sev'])
-             if not type(pd.eval(a_row['Long Trig'])) is list:
-                 trig=pd.eval(a_row['Long Trig']).tolist()
-             else:
-                trig=pd.eval(a_row['Long Trig'])
-   #          trig = json.loads(a_row['Long Trig'].tolist()[0])
-   #currently there is no long trig for this to read
-             score = a_row['Score']
-             if len(sev) > 1:
-               while (trig[-1] > start_extend):
-                  sev.pop()
-                  trig.pop()
-               score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,sev,trig)
-            
-               opt.showthiscase(dfx,sev,trig,'EXT')
+                 if len(old_long_sev) > 1:
+                   while (old_long_trig[-1] > start_extend):
+                      old_long_sev.pop()
+                      old_long_trig.pop()
+                   score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,old_long_sev,old_long_trig)
+                   if score>old_score:
+                       sev=old_sev
+                       trig=old_trig
+                       longsev=old_long_sev 
+                       longtrig=old_long_trig
+                       score=simulated_score
+                   opt.showthiscase(dfx,sev,trig,'EXT')
                #problem in line below - 'cannot set a row with misplaced columns
-               df.loc[len(df.index)] = [ccode, cname, sev, trig, score]
-               dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig]
-               df.to_csv(fname1,index=False,header=False)
-               dflong.to_csv(fname2,index=False,header=False)
+             df.loc[len(df.index)] = [ccode, cname, sev, trig, score]
+             dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig]
+             df.to_csv(fname1,index=False,header=False)
+             dflong.to_csv(fname2,index=False,header=False)
 
 
 if __name__=='__main__':
+    print('starting',datetime.now())
     a=1
     db1_path=cl_path_prefix
     temp_path=os.path.join(cl_path_prefix,'results')
@@ -132,6 +137,8 @@ if __name__=='__main__':
     if n_processors<1:
         n_processors=1
     extendbatchparallel(db1_path, temp_path, n_processors)
+    print('finished',datetime.now())
+    
 
    
  
