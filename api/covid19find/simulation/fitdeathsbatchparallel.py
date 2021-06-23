@@ -52,32 +52,38 @@ def process_countries(a_tuple):
     df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
     dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method',
                                    'Long Sev', 'Long Trig'])
-    
-    i = 3
-    if testmode:
-       CDB = cd.gettestcountries()
-    else:
-       CDB = list(cd.getallcountrycodes())
     df_old_values=pd.read_csv(filename_long,keep_default_na=False)
-    for ccode in CDB[start-1:finish]:
-          if cd.checkcountryparams(ccode) is not None:
+    
+# =============================================================================
+#     i = 3
+#     if testmode:
+#        CDB = cd.gettestcountries()
+#     else:
+#        CDB = list(cd.getallcountrycodes())
+#     df_old_values=pd.read_csv(filename_long,keep_default_na=False)
+# =============================================================================
+    
+    for ccode in df_old_values['Code'][start:finish+1]:
+          if cd.checkcountryparams(ccode) is  None:
+             print('No data found ',ccode)
+          else:
              cname = cd.getcountryname(ccode)
+             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(df_old_values, cname)
              print("COUNTRY:",cname, '('+ccode+')')
              opt.setcountry(ccode)
-             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(df_old_values, cname)
-             method="horizon==50"
              dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
-             if simulated_score<0.05 or np.isnan(simulated_score):
+             if simulated_score<0.05:
                  sev=old_sev
                  trig=old_trig
                  longsev=old_long_sev 
                  longtrig=old_long_trig
                  score=simulated_score
+                 method='Result good without reoptimization'
              else:
                  opt.setlengths(14,28,50)
                  score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
-                 if score1<simulated_score or not(np.isnan(simulated_score)) or not(np.isnan(score1)):
-                     dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
+                 if score1<simulated_score:
+                     dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "Re-optimized;"#+str(diff)
                      longsev, longtrig = longsev1, longtrig1
                  else:
                      sev=old_sev
@@ -85,26 +91,27 @@ def process_countries(a_tuple):
                      longsev=old_long_sev 
                      longtrig=old_long_trig
                      score=simulated_score
+                     method='Old parameters retained - better results than new optimization'
                      
                      
       #           opt.setlengths(14,28,100)
        #          score2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)
       #           diff = abs(score1-score2)
          #        if score1 < score2:
-# =============================================================================
-#                  dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
-#                  longsev, longtrig = longsev1, longtrig1
-# =============================================================================
+    # =============================================================================
+    #                  dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "horizon=50;"#+str(diff)
+    #                  longsev, longtrig = longsev1, longtrig1
+    # =============================================================================
                  #else:
                   #  dfx, sev, trig, score, method = dfx2, sev2, trig2, score2, "horizon=100"+str(diff)
                  #   longsev, longtrig = longsev2, longtrig2
-                 print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score,",",method)
-                 opt.showthiscase(dfx,sev,trig,figname)
+             print("RESULT:",ccode,",",cname,",",sev,",",trig,",",score,",",method)
+             opt.showthiscase(dfx,sev,trig,figname)
              df.loc[len(df.index)] = [ccode, cname, sev, trig, score, method]
              dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, method, longsev, longtrig]
              df.to_csv(fname1,index=False,header=False)
              dflong.to_csv(fname2,index=False,header=False)
-             #next statement used to be >=finish
+                 #next statement used to be >=finish
     
 #    dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, method, longsev, longtrig]
     
@@ -115,13 +122,15 @@ if __name__=='__main__':
    
     print('starting',datetime.now())
     filename ='db1.csv'
-    filename_long ='db1_long.csv'
-    CDB = cd.gettestcountries()
+    db1_path=cl_path_prefix
+    filename_long =os.path.join(db1_path, 'db1_long.csv')
+#    CDB = cd.gettestcountries()
+    df_old_values=pd.read_csv(filename_long,keep_default_na=False)
     n_processors=cpu_count()-2
-    n_countries=181
+    n_countries=len(df_old_values)
     countries_per_processor=int(n_countries/n_processors)+1
     tuples_list=[]
-    last1=1
+    last1=0
     last2=last1+countries_per_processor-1
     tuples_list.append((last1,last2,0))
     for i in range(1,n_processors):

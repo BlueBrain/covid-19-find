@@ -290,7 +290,7 @@ const CovidResults: React.FC<{
               *
             </a>
             <ReactTooltip id="jh-tooltip">
-              <p>case data from Johns Hopkins University</p>
+              <p>Case data from Johns Hopkins University. May be zero if official data  not up to date</p>
             </ReactTooltip>
           </h3>
           <Line

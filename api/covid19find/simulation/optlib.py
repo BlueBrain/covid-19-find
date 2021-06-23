@@ -103,7 +103,7 @@ def getsimdeaths(dfx,sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   totweight=0.7
+   totweight=0.3
    denom1 = result['total_deaths'].head(span).mean()
    if abs(denom1) < 1:
       denom1 = 1
@@ -524,7 +524,8 @@ def get_previous_parameters(df_old_values, country_name):
     score=float(a_row['Score'])
     if np.isnan(score):
         score=0.0
-    method=a_row['Method']
+  #  method=a_row['Method']
+    method=''
     return(sev,trig,long_sev, long_trig,score,method)
 
 def simulate_with_old_parameters(sev,trig,country_name):
