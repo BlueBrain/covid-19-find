@@ -17,17 +17,17 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
     # and writes a new db1.csv and db1_long.csv in the same directory
     # In the process it generates temporary files in the directory defined by temp_path
     # On correct completion the method returns a value of 1
-
-    n_countries=175
-    countries_per_processor=int(n_countries/n_processors)+1
     dbx_name= os.path.join(temp_path,'dbextend_')
     filename =os.path.join(db1_path, 'db1.csv')
     filename_long =os.path.join(db1_path, 'db1_long.csv')
+    df_old_values=pd.read_csv(filename_long,keep_default_na=False)
+    n_countries=len(df_old_values)
+    countries_per_processor=int(n_countries/n_processors)+1
     tuples_list=[]
     last1=0
     last2=last1+countries_per_processor-1
     tuples_list.append((last1,last2,0,filename_long,dbx_name))
-    for i in range(1,n_processors+1):
+    for i in range(1,n_processors):
         next1=last2+1
         next2=next1+countries_per_processor-1
         if next1>n_countries:
@@ -53,14 +53,14 @@ def extendbatchparallel(db1_path, temp_path, n_processors):
 
 def merge_files(in_name, out_name,out_name_long,n):
     df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
-    dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig'])
+    dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig','Method'])
     for i in range(0,n):
         dbname=in_name+str(i)+'.csv'
         dbname_long=in_name+str(i)+'long.csv'
         dbfile=os.path.join(cl_path_prefix, 'results', dbname)
         dbfile_long=os.path.join(cl_path_prefix, 'results', dbname_long)
         in_df=pd.read_csv(dbfile,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'],keep_default_na=False)
-        in_df_long=pd.read_csv(dbfile_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig'],keep_default_na=False)
+        in_df_long=pd.read_csv(dbfile_long,names=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig','Method'],keep_default_na=False)
         df=df.append(in_df)
         dflong=dflong.append(in_df_long)
         #alist_long.append(origin_df_long)
@@ -81,49 +81,54 @@ def process_countries(a_tuple):
     dbname = dbx_name+ str(processor)
     fname1 =dbname+'.csv'
     fname2 =dbname+'long.csv'
-    df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score'])
-    dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig'])
-    dbdf = pd.read_csv(db1_long_name,keep_default_na=False)
-    if testmode:
-       CDB = cd.gettestcountries()
-    else:
-       CDB = list(cd.getallcountrycodes()) 
-    localCDB=CDB#for index, row in dbdf.iterrows():
+    df = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score','Method'])
+    dflong = pd.DataFrame(columns=['Code', 'Country', 'Severities', 'Trigger Dates', 'Score', 'Long Sev', 'Long Trig','Method'])
+    df_old_values = pd.read_csv(db1_long_name,keep_default_na=False)
+# =============================================================================
+#     if testmode:
+#        CDB = cd.gettestcountries()
+#     else:
+#        CDB = list(cd.getallcountrycodes()) 
+#     localCDB=CDB#for index, row in dbdf.iterrows():
+# =============================================================================
     #for ccode in CDB[start-1:finish]:
     today=datetime.now()
     day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
     sim_days=(today-day1).days
     start_extend=sim_days-60 # uaed to be 60
-    for ccode in CDB[start:finish+1]:
+    for ccode in df_old_values['Code'][start:finish+1]:
         if cd.checkcountryparams(ccode) is not None:
              cname = cd.getcountryname(ccode)
              print("COUNTRY:",cname, '('+ccode+')')
              opt.setcountry(ccode)
              print ('Currently processing', ccode)
-             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(dbdf, cname)
+             old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(df_old_values, cname)
              dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
-             if simulated_score<0.05 or np.isnan(simulated_score):
+             if simulated_score<0.05:
                  sev=old_sev
                  trig=old_trig
                  longsev=old_long_sev 
                  longtrig=old_long_trig
-                 score=simulated_score  
+                 score=simulated_score
+                 method='Old result already good'
              else:
                  if len(old_long_sev) > 1:
                    while (old_long_trig[-1] > start_extend):
                       old_long_sev.pop()
                       old_long_trig.pop()
                    score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,old_long_sev,old_long_trig)
+                   method='reoptimized on extend'
                    if score>old_score:
                        sev=old_sev
                        trig=old_trig
                        longsev=old_long_sev 
                        longtrig=old_long_trig
                        score=simulated_score
-                   opt.showthiscase(dfx,sev,trig,'EXT')
+                       method='Old result retained on extend - better than new '
+             opt.showthiscase(dfx,sev,trig,'EXT')
                #problem in line below - 'cannot set a row with misplaced columns
-             df.loc[len(df.index)] = [ccode, cname, sev, trig, score]
-             dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig]
+             df.loc[len(df.index)] = [ccode, cname, sev, trig, score, method]
+             dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig,method]
              df.to_csv(fname1,index=False,header=False)
              dflong.to_csv(fname2,index=False,header=False)
 
