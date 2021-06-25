@@ -80,7 +80,7 @@ def process_countries(a_tuple):
                  score=simulated_score
                  method='Result good without reoptimization'
              else:
-                 opt.setlengths(14,28,50)
+                 opt.setlengths(7,28,50)
                  score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
                  if score1<simulated_score:
                      dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "Re-optimized;"#+str(diff)
