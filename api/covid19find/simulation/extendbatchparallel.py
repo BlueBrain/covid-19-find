@@ -112,7 +112,8 @@ def process_countries(a_tuple):
                  score=simulated_score
                  method='Old result already good'
              else:
-                 if len(old_long_sev) > 1:
+                  opt.setlengths(7,28,50)
+                  if len(old_long_sev) > 1:
                    while (old_long_trig[-1] > start_extend):
                       old_long_sev.pop()
                       old_long_trig.pop()
