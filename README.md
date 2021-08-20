@@ -253,3 +253,23 @@ or absolute paths.
 
 - `API_URL` (default `/api`) - the base url where the client calls the API (eg `/api/simulation`)
 - `PUBLIC_URL` (default `/`) - the path where the compiled static assets are hosted and publicly available.
+
+
+## Acknowledgements
+
+The development of this software is a joint collaboration between:
+
+- Richard Walker, a consultant of the Blue Brain Project, who coordinated the development of this project.
+- EPFL Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL).
+- Ateneo de Manila University, Manila, the Philippines.
+- FIND.
+
+## Funding 
+
+The development of this software was supported by funding to:
+- the Blue Brain Project, from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
+- FIND from Unitaid.
+
+
+Copyright © 2020-2021 Blue Brain Project/EPFL & Ateneo de Manila University, Manila, the Philippines
+
