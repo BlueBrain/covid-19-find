@@ -5,6 +5,7 @@ from collections import OrderedDict
 import datetime
 import csv
 import json
+import pycountry
 
 from .simulation.covidlib import cl_path_prefix
 
@@ -48,7 +49,8 @@ class CovidDataRepository:
 
     def __int_or_zero(self, string_int):
         try:
-            return int(float(string_int))
+#            return int(float(string_int))
+             return int(string_int)
         except ValueError:
             return 0
             
@@ -66,6 +68,12 @@ class CovidDataRepository:
                 if row["set"] != "country":
                     continue
                 country_code = row["unit"]
+                #covert 3 letter country code used by FIND to 2 letter code
+                a_country=pycountry.countries.get(alpha_3=country_code)
+                if (a_country is None):
+                   country_code=None
+                else:
+               	   country_code=a_country.alpha_2
                 country_data = grouped_country_data.get(country_code, OrderedDict())
                 new_tests_positive = row["pos"]
                 country_data[row["time"]] = {
