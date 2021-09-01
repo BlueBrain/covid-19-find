@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="PH"
+ccode="CH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -52,7 +52,7 @@ fixed_params={
     'expert_mode':True,\
     'save_results':False,\
     'fatality_reduction':0.35,\
-    'num_days':450}
+    'num_days':850}
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
 scenario_params=[]

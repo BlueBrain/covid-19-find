@@ -43,6 +43,12 @@ class CovidDataRepository:
                 if row["set"] != "country":
                     continue
                 country_code = row["unit"]
+                 #covert 3 letter country code used by FIND to 2 letter code
+                a_country=pycountry.countries.get(alpha_3=country_code)
+                if (a_country is None):
+                   country_code=None
+                else:
+               	   country_code=a_country.alpha_2
                 country_data = grouped_country_data.get(country_code, OrderedDict())
 # =============================================================================
 #                 new_tests_positive = self.__divide_if_not_none(
