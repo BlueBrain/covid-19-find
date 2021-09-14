@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-#past_dates= [1, 15, 83, 99, 119, 137, 163, 177, 201, 221, 237, 273, 297, 323, 343, 379, 415, 433, 467, 491, 543]
-#past_severities= [0.0, 1.0, 0.85, 0.1, 0.8, 0.9, 0.95, 0.85, 0.75, 0.85, 0.8, 0.85, 0.9, 0.85, 0.9, 0.8, 0.85, 0.9, 0.7, 0.85, 0.8]
+past_dates= [1, 15, 81, 105, 127, 151, 187, 213, 231, 257, 277, 299, 323, 347, 365, 385, 411, 425, 451, 465, 501, 519, 543, 563, 583, 603, 623]
+past_severities= [0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.9, 0.85, 0.8, 0.55, 0.65, 0.15, 0.7, 0.8, 0.75, 0.85, 0.8, 0.85, 0.7, 0.65, 0.7, 0.75, 0.85, 0.95, 0.6, 0.3, 0.5]
 # =============================================================================
 
 print('past_dates=',past_dates)
@@ -61,7 +61,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-06-21','2021-06-30'],\
+    'trig_values':['2021-09-13','2021-09-27'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -81,10 +81,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-06-21','2021-06-30'],\
+   'trig_values':['2021-09-13','2021-09-27'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[40000,40000],\
+    'num_tests_mitigation':[200000,200000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -121,7 +121,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-06-21','2021-06-30'],\
+    'trig_values':['2021-09-13','2021-09-27'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[40000, 40000],\
