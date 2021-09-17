@@ -920,24 +920,35 @@ class Sim:
         p_infected_symptomatic_simulated=np.zeros(par.num_compartments)
         p_infected_asymptomatic_simulated=np.zeros(par.num_compartments)
         expected_infected=np.zeros(par.num_compartments)
-        uninfected_symptomatic_new=np.zeros(par.num_compartments)
+        uninfected_symptomatic=np.zeros((par.num_days,par.num_compartments))
         simphase,today=computetoday(par.day1,par.trig_values)
+           #this positive_rate is only used in past. In the future it is wrong but this has no effect.
+        if sim.actualnewtests_mit[t]>0:
+            positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
+        else:
+            positive_rate=0 
+        sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
         infected_symptomatic=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
         infected_asymptomatic=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
         total_infected=sim.newinfected[t-par.incubation_period]
-        uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
-        total_symptomatic=infected_symptomatic+uninfected_symptomatic
+   #     uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
+        if ispast(par.day1, t):
+            if positive_rate>0:
+               uninfected_symptomatic[t]=infected_symptomatic*((1/positive_rate)-1)
+            else:
+               uninfected_symptomatic[t]=sim.population[t-1]  #this is not physically true- much of population may not show symptoms but it may give right result
+        else:
+            uninfected_symptomatic[t]=sim.population[t-1]*par.background_rate_symptomatic
+        if t==300:
+            print('background rate at t=300=',uninfected_symptomatic[t]/sim.population[t-1])
+        total_symptomatic=infected_symptomatic+uninfected_symptomatic[t]
         total_asymptomatic=sim.population[t-1]-total_symptomatic
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
-        #this positive_rate is only used in past. In the future it is wrong but this has no effect.
-        if sim.actualnewtests_mit[t]>0:
-            positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
-        else:
-            positive_rate=0   
+     
         for i in range(0,par.num_compartments):
             if sim.population[t-1,i]>0:
             
@@ -946,7 +957,7 @@ class Sim:
             else:
                 p_infected_asymptomatic_simulated[i]=0
                 p_infected_symptomatic_simulated[i]==0
-        sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
+        
 
         if tests_available.sum()>0:
         # How do I know how many symptomatic I have?
@@ -959,7 +970,7 @@ class Sim:
                 else:
                     symptomatic_tested[i]=total_symptomatic[i]
                     asymptomatic_tested[i]=tests_available[i]-symptomatic_tested[i] 
-                if t==820 and i==2:
+                if t==300 and i==2:
                     print("new infected", sim.newinfected[t-par.incubation_period,i])
                     print("infected_symptomatic",infected_symptomatic[i])
                     print("total symptomatic:",total_symptomatic[i])
@@ -986,7 +997,7 @@ class Sim:
 # =============================================================================
                 if tests_available[i]>0:
                     sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic_simulated[i]*asymptomatic_tested[i])/tests_available[i]
-                    if t==820 and i==2:
+                    if t==300 and i==2:
                         print("p_infected_symptomatic_simulated=",p_infected_symptomatic_simulated[i])
                         print("symptomatic tested=",symptomatic_tested[i])
                         print("p_infected_asymptomatic_simulated=",p_infected_asymptomatic_simulated[i])
@@ -995,22 +1006,15 @@ class Sim:
                 else:
                     sim.p_infected_all_simulated[t,i]=0
        # I
+# =============================================================================
+# just before the end of the period we calculate background rate of symptoms in uninfected people over previous 30 days)
                 if t==(today-4):
-        # calculate required increase in p_infected_basic to reach observed rate. We use 14 day average to avoid dependency on single value 
-        # calculation below could give p_infected>1 which is obviously wrong
-                    if sim.p_infected_all_simulated[t-14:t,i].sum()>0:
-                        par.alpha[i]=sim.p_infected_all[t-14:t,i].sum()/sim.p_infected_all_simulated[t-14:t,i].sum()  
-                    else:
-                        par.alpha[i]=0
-  #                  print ('t=',t,'i=',i,'alpha set to ',par.alpha[i])   
-
-        #this is the probability that a sample tests positive -In the past it is the positive rate from the actual data. From today on it is computed
+                    par.background_rate_symptomatic=uninfected_symptomatic[t-30:t].sum()/sim.population[t-31:t].sum()
+#he positive rate from the actual data. From today on it is computed
         if t<(today-4):
             p_infected=sim.p_infected_all[t]
         else:
-            p_infected=sim.p_infected_all_simulated[t]*par.alpha
-        if t==820:
-            print('alpha=',par.alpha[2], 'p_infected=', p_infected[2])
+            p_infected=sim.p_infected_all_simulated[t]
         #in some cases alpha becomes enormous - but p_infected can NEVER be more than 1
         # calculate required increase in p_infected_basic to reach observed rate
 # =============================================================================
@@ -1895,7 +1899,7 @@ def adjust_positives_and_negatives(sim,par,t,phase,testsperformed,p_infected):
        if p_infected[i]>1:
            p_infected[i]=1
        sim.truepositives[t,i] = testsperformed[i] * p_infected[i] * par.sensitivity[phase]
-       if t==820 and i==2:
+       if t==300 and i==2:
            print('in adjust')
            print('testsperformed=',testsperformed[i])
            print('p_infected=',p_infected[i])
