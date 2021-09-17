@@ -928,7 +928,7 @@ class Sim:
         infected_symptomatic=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
         infected_asymptomatic=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
    #     uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
-        if ispast(par.day1, t):
+        if ispast(par.day1, t+1):
             if positive_rate>0:
                uninfected_symptomatic[t]=infected_symptomatic*((1/positive_rate)-1)
             else:
@@ -942,7 +942,7 @@ class Sim:
         total_symptomatic=infected_symptomatic+uninfected_symptomatic[t]
         total_asymptomatic=sim.population[t-1]-total_symptomatic
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
-        if (use_real_testdata) and ispast(par.day1,t):
+        if (use_real_testdata) and ispast(par.day1,t+1):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
@@ -988,7 +988,8 @@ class Sim:
 #                     p_infected_symptomatic_simulated[i]=0
 # =============================================================================
                 if tests_available[i]>0:
-                    sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic_simulated[i]*asymptomatic_tested[i])/tests_available[i]
+#                    sim.p_infected_all_simulated[t,i]=(p_infected_symptomatic_simulated[i]*symptomatic_tested[i]+p_infected_asymptomatic_simulated[i]*asymptomatic_tested[i])/tests_available[i]
+                     sim.p_infected_all_simulated[t,i]=p_infected_symptomatic_simulated[i]*symptomatic_tested[i]/tests_available[i]
 # =============================================================================
 #                     if t==300 and i==2:
 #                         print("p_infected_symptomatic_simulated=",p_infected_symptomatic_simulated[i])
@@ -1019,10 +1020,10 @@ class Sim:
         # I
 # =============================================================================
 # just before the end of the period we calculate background rate of symptoms in uninfected people over previous 30 days)
-                if t==(today-4):
+                if t==(today-2):
                     par.background_rate_symptomatic=uninfected_symptomatic[t-30:t].sum()/sim.population[t-31:t-1].sum()
 #he positive rate from the actual data. From today on it is computed
-        if t<(today-4):
+        if t<(today+2):
             p_infected=sim.p_infected_all[t]
         else:
             p_infected=sim.p_infected_all_simulated[t]
