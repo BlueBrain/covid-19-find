@@ -1035,14 +1035,16 @@ class Sim:
         infected_asymptomatic=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
         uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
         total_symptomatic=infected_symptomatic+uninfected_symptomatic
-        if infected_symptomatic.sum()>0:
-            prop_tests=infected_symptomatic/infected_symptomatic.sum()
-        else:
-            prop_tests=np.zeros(par.num_compartments)
+# =============================================================================
+#         if infected_symptomatic.sum()>0:
+#             prop_tests=infected_symptomatic/infected_symptomatic.sum()
+#         else:
+#             prop_tests=np.zeros(par.num_compartments)
+# =============================================================================
         if (use_real_testdata) and ispast(par.day1,t):
-          tests_available=sim.actualnewtests_mit[t]*prop_tests
+          total_tests_available=sim.actualnewtests_mit[t]
         else:
-          tests_available=par.num_tests_mitigation[phase]*prop_tests
+          total_tests_available=par.num_tests_mitigation[phase]
           
         if sim.actualnewtests_mit[t]>0:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
@@ -1065,21 +1067,21 @@ class Sim:
 #                 print('DEBUG')
 #                 print('t=',t,'total_tests_available=',total_tests_available)
 # =============================================================================
-            if tests_available[i]>0:
+            if total_tests_available>0:
     #asymptomatics are tested periodically (period in retest_period_asymptomatics)
                 asymptomatic_patients=asymptomatic[i]/par.retest_period_asymptomatics
                 patients=total_symptomatic[i] +asymptomatic_patients
-                if patients>= tests_available[i]:
-                    symptomatic_tested[i]=tests_available[i]*total_symptomatic[i]/patients
-                    asymptomatic_tested[i]=tests_available[i]*asymptomatic_patients/patients
+                if patients>= total_tests_available:
+                    symptomatic_tested[i]=total_tests_available*total_symptomatic[i]/patients
+                    asymptomatic_tested[i]=total_tests_available*asymptomatic_patients/patients
                 else:
                     symptomatic_tested[i]=total_symptomatic[i]
                     asymptomatic_tested[i]=asymptomatic_patients
                 tests_performed[i]=symptomatic_tested[i]+asymptomatic_tested[i]
-                if tests_performed[i]<tests_available[i]:
-                    tests_available[i]=tests_available[i]-tests_performed[i]
+                if tests_performed[i]<total_tests_available:
+                    total_tests_available=total_tests_available-tests_performed[i]
                 else:
-                    tests_available[i]=0
+                    total_tests_available=0
 #this uses p_infected_all which is only valid for the past
                 if tests_performed[i]>0 and symptomatic_tested[i]>0:
 # =============================================================================
