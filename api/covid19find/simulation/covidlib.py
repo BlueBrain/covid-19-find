@@ -743,6 +743,7 @@ class Sim:
       self.actualnewtests_mit=np.zeros(num_days)
       self.p_infected_all_simulated=np.zeros((num_days,num_compartments))
       self.p_infected_all=np.zeros((num_days,num_compartments))
+      self.uninfected_symptomatic=np.zeros((num_days,num_compartments))
      
       
       
@@ -917,29 +918,31 @@ class Sim:
         p_infected=np.zeros(par.num_compartments)
         p_infected_symptomatic_simulated=np.zeros(par.num_compartments)
         p_infected_asymptomatic_simulated=np.zeros(par.num_compartments)
-        uninfected_symptomatic=np.zeros((par.num_days,par.num_compartments))
         simphase,today=computetoday(par.day1,par.trig_values)
            #this positive_rate is only used in past. In the future it is wrong but this has no effect.
         if sim.actualnewtests_mit[t]>0:
             positive_rate=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
         else:
             positive_rate=0 
-        sim.p_infected_all[t]=[positive_rate,positive_rate,positive_rate]
         infected_symptomatic=sim.newinfected[t-par.incubation_period]*(1-par.prop_asymptomatic)
         infected_asymptomatic=sim.newinfected[t-par.incubation_period]*(par.prop_asymptomatic)
    #     uninfected_symptomatic=sim.population[t-1]*par.background_rate_symptomatic
-        if ispast(par.day1, t+1):
+        if t<today:
             if positive_rate>0:
-               uninfected_symptomatic[t]=infected_symptomatic*((1/positive_rate)-1)
+               sim.uninfected_symptomatic[t]=infected_symptomatic*((1/positive_rate)-1)
+               if t==665:
+                   print('uninfected_symptomatic=', sim.uninfected_symptomatic[t])
             else:
-               uninfected_symptomatic[t]=sim.population[t-1]  #this is not physically true- much of population may not show symptoms but it may give right result
+               sim.uninfected_symptomatic[t]=sim.population[t-1]  #this is not physically true- much of population may not show symptoms but it may give right result
         else:
-            uninfected_symptomatic[t]=sim.population[t-1]*par.background_rate_symptomatic
+            if t<674:
+                print("background rate used at",t)
+            sim.uninfected_symptomatic[t]=sim.population[t-1]*par.background_rate_symptomatic
 # =============================================================================
 #         if t==300:
 #             print('background rate at t=300=',uninfected_symptomatic[t]/sim.population[t-1])
 # =============================================================================
-        total_symptomatic=infected_symptomatic+uninfected_symptomatic[t]
+        total_symptomatic=infected_symptomatic+sim.uninfected_symptomatic[t]
         total_asymptomatic=sim.population[t-1]-total_symptomatic
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
         if (use_real_testdata) and ispast(par.day1,t+1):
@@ -949,9 +952,14 @@ class Sim:
      
         for i in range(0,par.num_compartments):
             if sim.population[t-1,i]>0:
-            
-                p_infected_asymptomatic_simulated[i]=infected_asymptomatic[i]/total_asymptomatic[i]
-                p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
+                if total_asymptomatic[i]>0:
+                    p_infected_asymptomatic_simulated[i]=infected_asymptomatic[i]/total_asymptomatic[i]
+                else:
+                    p_infected_asymptomatic_simulated[i]=0
+                if total_symptomatic[i]>0:
+                    p_infected_symptomatic_simulated[i]=infected_symptomatic[i]/total_symptomatic[i]
+                else:
+                    p_infected_symptomatic_simulated[i]=0
             else:
                 p_infected_asymptomatic_simulated[i]=0
                 p_infected_symptomatic_simulated[i]==0
@@ -1000,12 +1008,13 @@ class Sim:
 # =============================================================================
                 else:
                     sim.p_infected_all_simulated[t,i]=0
-                if t==633 and i==2:
+                if 666<t<671 and i==2:
+                    print("today=", today)
                     print("new infected ", sim.newinfected[t-par.incubation_period,i])
                     print("infected_symptomatic ",infected_symptomatic[i])
-                    print("uninfected symptomatic ",uninfected_symptomatic[t,i])
+                    print("uninfected symptomatic ",sim.uninfected_symptomatic[t,i])
                     print("population ", sim.population[t-1,i])
-                    print("background rate ",uninfected_symptomatic[t,i]/sim.population[t-1,i])
+                    print("background rate ",sim.uninfected_symptomatic[t,i]/sim.population[t-1,i])
                     print("p_infected_all ",sim.p_infected_all[t,i])
                     print("p_infected_symptomatic_simulated ",p_infected_symptomatic_simulated[i])
                     print("p_infected_asymptomatic_simulated ",p_infected_asymptomatic_simulated[i])
@@ -1021,9 +1030,13 @@ class Sim:
 # =============================================================================
 # just before the end of the period we calculate background rate of symptoms in uninfected people over previous 30 days)
                 if t==(today-2):
-                    par.background_rate_symptomatic=uninfected_symptomatic[t-30:t].sum()/sim.population[t-31:t-1].sum()
+                    print('old background rate=', par.background_rate_symptomatic)
+                    par.background_rate_symptomatic=sim.uninfected_symptomatic[t-30:t,i].sum()/sim.population[t-31:t-1,i].sum()
+                    print('accum uninfected_symptomatic ',sim.uninfected_symptomatic[t-30:t,i].sum())
+                    print('accum population',sim.population[t-31:t-1,i].sum())
+                    print("background rate changed at ",t,'to newbackground',par.background_rate_symptomatic)
 #he positive rate from the actual data. From today on it is computed
-        if t<(today+2):
+        if t<=(today):
             p_infected=sim.p_infected_all[t]
         else:
             p_infected=sim.p_infected_all_simulated[t]
