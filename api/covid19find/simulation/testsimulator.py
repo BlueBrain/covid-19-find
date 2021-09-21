@@ -37,9 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 81, 105, 127, 151, 187, 213, 237, 261, 279, 301, 325, 341, 365, 387, 419, 433, 451, 469, 495, 519, 539, 559, 585, 601, 625]
-past_severities= [0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.9, 0.85, 0.8, 0.6, 0.7, 0.2, 0.7, 0.8, 0.75, 0.85, 0.8, 0.85, 0.7, 0.65, 0.7, 0.75, 0.8, 0.95, 0.6, 0.45, 0.6]
-# =============================================================================
+past_dates= [1, 15, 81, 105, 127, 151, 187, 213, 237, 261, 279, 301, 325, 341, 365, 387, 419, 433, 451, 469, 495, 519, 537, 559, 585, 601, 625]
+past_severities=[0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.9, 0.85, 0.8, 0.6, 0.7, 0.2, 0.7, 0.8, 0.75, 0.85, 0.8, 0.85, 0.7, 0.65, 0.7, 0.75, 0.8, 0.95, 0.6, 0.45, 0.6] 
 
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -81,7 +80,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-09-13','2021-09-27'],\
+   'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[200000,200000],\
@@ -101,7 +100,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-13','2021-09-27'],\
+    'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[200000,200000],\
@@ -115,16 +114,16 @@ scenario_params.append({
     'requireddxtests':[3,3],\
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
-    'results_period':[2,2],\
+    'results_period':[3,3],\
     'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-13','2021-09-27'],\
+    'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[40000, 40000],\
+    'num_tests_mitigation':[200000, 200000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\

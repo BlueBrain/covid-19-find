@@ -24,7 +24,7 @@
                   469,
                   495,
                   519,
-                  539,
+                  537,
                   559,
                   585,
                   601,
@@ -157,8 +157,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-09-13",
-                        "2021-09-27"
+                        "2021-09-21",
+                        "2021-10-07"
                   ],
                   "trig_def_type": [
                         "date",
@@ -233,8 +233,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-09-13",
-                        "2021-09-27"
+                        "2021-09-21",
+                        "2021-10-07"
                   ],
                   "trig_def_type": [
                         "date",
@@ -290,8 +290,8 @@
                         "symptomatic first"
                   ],
                   "results_period": [
-                        2,
-                        2
+                        3,
+                        3
                   ],
                   "fatality_reduction_recent": [
                         0.35,
@@ -304,8 +304,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-09-13",
-                        "2021-09-27"
+                        "2021-09-21",
+                        "2021-10-07"
                   ],
                   "trig_def_type": [
                         "date",
@@ -316,8 +316,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        40000,
-                        40000
+                        200000,
+                        200000
                   ],
                   "type_test_mitigation": [
                         "PCR",
