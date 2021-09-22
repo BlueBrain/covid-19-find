@@ -103,7 +103,7 @@ scenario_params.append({
     'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[200000,200000],\
+    'num_tests_mitigation':[20000,20000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\

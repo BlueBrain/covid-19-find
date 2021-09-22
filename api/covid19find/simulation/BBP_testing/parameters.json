@@ -242,8 +242,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        200000,
-                        200000
+                        20000,
+                        20000
                   ],
                   "type_test_mitigation": [
                         "PCR",
