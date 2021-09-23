@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 81, 105, 127, 151, 187, 213, 239, 263, 281, 299, 323, 347, 365, 387, 435, 457, 499, 519, 537, 559, 581, 603, 625]
-past_severities=[0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.9, 0.85, 0.8, 0.5, 0.6, 0.15, 0.7, 0.8, 0.75, 0.85, 0.8, 0.65, 0.7, 0.75, 0.8, 0.95, 0.7, 0.15, 0.4] 
+past_dates= [1, 15, 81, 105, 125, 141, 195, 217, 237, 261, 281, 305, 329, 347, 371, 407, 461, 495, 531, 557, 571, 585, 605, 627] 
+past_severities=[0.0, 1.0, 0.1, 0.75, 0.9, 1.0, 0.95, 0.85, 0.9, 0.75, 0.8, 0.35, 0.75, 0.8, 0.85, 0.9, 0.8, 0.85, 0.9, 0.95, 1.0, 0.7, 0.6, 0.75] 
 
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -80,10 +80,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-09-21','2021-10-07'],\
+   'trig_values':['2021-09-23','2021-10-09'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[200000,200000],\
+    'num_tests_mitigation':[27000,27000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -103,10 +103,10 @@ scenario_params.append({
     'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[20000,20000],\
+    'num_tests_mitigation':[27000,27000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
-    'specificity':[0.998,0.998],\
+    'specificity':[0.95,0.95],\
     'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
@@ -123,7 +123,7 @@ scenario_params.append({
     'trig_values':['2021-09-21','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[200000, 200000],\
+    'num_tests_mitigation':[27000, 27000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
