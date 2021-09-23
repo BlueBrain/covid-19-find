@@ -240,8 +240,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        27000,
-                        27000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -252,8 +252,8 @@
                         0.95
                   ],
                   "specificity": [
-                        0.95,
-                        0.95
+                        0.93,
+                        0.93
                   ],
                   "num_tests_care": [
                         13000,

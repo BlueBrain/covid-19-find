@@ -1766,7 +1766,9 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
 # =============================================================================
         sim.truepositives[t,i] = tests_performed[i]*p_infected[i]*par.sensitivity[phase] 
         sim.truenegatives[t,i]=tests_performed[i]*(1-p_infected[i])*par.specificity[phase]
-        if t<666: #temp
+        simphase,today=computetoday(par.day1,par.trig_values)
+        print ('TODAY =',today)#temp
+        if t<today:
            if cases[i]>sim.truepositives[t,i]:
                sim.falsepositives[t,i]= cases[i]-sim.truepositives[t,i]
            else:
