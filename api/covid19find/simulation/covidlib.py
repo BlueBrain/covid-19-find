@@ -840,7 +840,7 @@ class Sim:
         infected_symptomatic_tests=np.zeros(par.num_compartments)
         symptomatic_population=np.zeros(par.num_compartments)
         simphase,today=computetoday(par.day1,par.trig_values)
-        infected_symptomatic_population=sim.newinfected[t]*par.prop_asymptomatic
+        infected_symptomatic_population=sim.newinfected[t]*(1-par.prop_asymptomatic)
         uninfected_symptomatic_population=sim.population[t]*par.background_rate_symptomatic
         symptomatic_population=infected_symptomatic_population+ uninfected_symptomatic_population
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
