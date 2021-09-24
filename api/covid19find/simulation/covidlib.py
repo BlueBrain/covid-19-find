@@ -849,9 +849,9 @@ class Sim:
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         if tests_available.sum()>0:
-        #test all symptomatics first
+        #test all symptomatics first 
             for i in range(0,par.num_compartments):
-                if tests_available[i]>symptomatic_population[i]:
+                if tests_available[i]>symptomatic_population[i]: #shouldn't normally happen
                     infected_symptomatic_tests[i]=infected_symptomatic_population[i]
                 else:
                     infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
@@ -1451,7 +1451,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            if sim.isolatedinfected[t,i]>sim.infected[t,i]:
                sim.isolatedinfected[t,i]=sim.infected[t,i]
            if sim.infected[t,i]>0:
-               sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*(par.recovery_period+par.incubation_period)
+               sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*(par.recovery_period+par.incubation_period) #add lag
            else:
                sim.reff[t,i]=np.nan
            
@@ -1747,6 +1747,7 @@ def read_parameters(afilename):
     
         
 def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
+    simphase,today=computetoday(par.day1,par.trig_values)
     if sim.actualnewtests_mit[t]>0:
             p_case=sim.actualnewcases[t]/sim.actualnewtests_mit[t]
     else:
@@ -1758,21 +1759,19 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
 #        if p_infected[i]>1:
 #            p_infected[i]=1
 # =============================================================================
-        sim.truepositives[t,i] = tests_performed[i]*p_infected[i]*par.sensitivity[phase] 
-        sim.truenegatives[t,i]=tests_performed[i]*(1-p_infected[i])*par.specificity[phase]
-        simphase,today=computetoday(par.day1,par.trig_values)
-        #print ('TODAY =',today)#temp
         if t<today:
-           if cases[i]>sim.truepositives[t,i]:
-               sim.falsepositives[t,i]= cases[i]-sim.truepositives[t,i]
-           else:
-               sim.falsepositives[t,i]=sim.truenegatives[t,i]*(1-par.specificity[phase])
-           sim.falsenegatives[t,i]=cases[i]-(sim.truepositives[t,i]+sim.truenegatives[t,i]+sim.falsepositives[t,i])    
-               
-        else: #we are using actual data
+           sim.truenegatives[t,i]=tests_performed[i]-cases[i]
+           if sim.truenegatives[t,i]<0:
+              sim.truenegatives[t,i]=0
+           sim.falsepositives[t,i]= sim.truenegatives[t,i]*(1-par.specificity[phase])
+           sim.truepositives[t,i]=cases[i]-sim.falsepositives[t,i]
+           sim.falsenegatives[t,i]=sim.truepositives[t,i]*(1-par.sensitivity[phase])
+        else:
+           sim.truepositives[t,i]=tests_performed[i]*p_infected[i]*par.sensitivity[phase]
+           sim.truenegatives[t,i]=tests_performed[i]*(1-p_infected[i])*par.specificity[phase]
+           sim.falsepositives[t,i]=sim.truenegatives[t,i]*(1-par.specificity[phase])   
            sim.falsenegatives[t,i]=tests_performed[i]*p_infected[i]*(1-par.sensitivity[phase])
-
-           sim.falsepositives[t,i]=sim.truenegatives[t,i]*(1-par.specificity[phase])
+    
            
    #    sim.truepositives[t,i] = testsperformed[i] * p_infected[i]
         if t==670 and i==2:
