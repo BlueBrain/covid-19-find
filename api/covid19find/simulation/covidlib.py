@@ -840,7 +840,7 @@ class Sim:
         uninfected_symptomatic_tests=np.zeros(par.num_compartments)
         symptomatic_population=np.zeros(par.num_compartments)
         simphase,today=computetoday(par.day1,par.trig_values)
-        infected_symptomatic_population=sim.newinfected[t]*par.prop_asymptomatic
+        infected_symptomatic_population=sim.newinfected[t]*(1-par.prop_asymptomatic)
         uninfected_symptomatic_population=sim.population[t]*par.background_rate_symptomatic
         symptomatic_population=infected_symptomatic_population+ uninfected_symptomatic_population
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
@@ -849,21 +849,22 @@ class Sim:
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
         if tests_available.sum()>0:
-        #test all symptomatics first
+        #
+        #test all symptomatics first - we assume number of uninfected 
             for i in range(0,par.num_compartments):
             #people with symptoms but no covid appear at a constant background rate
-                if tests_available[i]*par.background_rate_symptomatic>uninfected_symptomatic_population[i]:
-                    uninfected_symptomatic_tests[i]=uninfected_symptomatic_population[i]
-                else:    
-                    uninfected_symptomatic_tests[i]=tests_available[i]*par.background_rate_symptomatic
+                 if tests_available[i] *par.background_rate_symptomatic>uninfected_symptomatic_population[i]: 
+                     uninfected_symptomatic_tests[i]=uninfected_symptomatic_population[i]
+                 else:
+                     uninfected_symptomatic_tests[i]=tests_available[i]*par.background_rate_symptomatic
             # everyone else is either uninfected symptomatic or uninfected asymptomatic
-                if tests_available[i]>symptomatic_population[i]:
-                	infected_symptomatic_tests[i]=symptomatic_population[i]-uninfected_symptomatic_tests[i]
-                else:
-                    infected_symptomatic_tests[i]=tests_available[i]-uninfected_symptomatic_tests[i]
-                if tests_available[i]>0:
+                 if tests_available[i]>symptomatic_population[i]-uninfected_symptomatic_tests[i]:
+                    infected_symptomatic_tests[i]=symptomatic_population[i]-uninfected_symptomatic_tests[i]
+                 else:
+                    infected_symptomatic_tests[i]=tests_available[i]*(1-uninfected_symptomatic_tests[i])
+                 if tests_available[i]>0:
                    p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
-                else:
+                 else:
                    p_infected=0
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
