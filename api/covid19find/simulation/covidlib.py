@@ -834,16 +834,10 @@ class Sim:
    def perform_tests_symptomatic_first(sim,par:Par,t,phase,use_real_testdata):
    # tests are performed for symptomatic patients first - if there are any  left over they are used to test asymptomatics
   
-
-        symptomatic_tested=np.zeros(par.num_compartments)
-        asymptomatic_tested=np.zeros(par.num_compartments)
-        uninfected_tested=np.zeros(par.num_compartments)
         p_infected=np.zeros(par.num_compartments)
         infected_symptomatic_population=np.zeros(par.num_compartments)
         uninfected_symptomatic_population=np.zeros(par.num_compartments)
         infected_symptomatic_tests=np.zeros(par.num_compartments)
-        uninfected_symptomatic_tests=np.zeros(par.num_compartments)
-        infected_asymptomatic_simulated=np.zeros(par.num_compartments)
         symptomatic_population=np.zeros(par.num_compartments)
         simphase,today=computetoday(par.day1,par.trig_values)
         infected_symptomatic_population=sim.newinfected[t]*par.prop_asymptomatic
@@ -1767,7 +1761,7 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
         sim.truepositives[t,i] = tests_performed[i]*p_infected[i]*par.sensitivity[phase] 
         sim.truenegatives[t,i]=tests_performed[i]*(1-p_infected[i])*par.specificity[phase]
         simphase,today=computetoday(par.day1,par.trig_values)
-        print ('TODAY =',today)#temp
+        #print ('TODAY =',today)#temp
         if t<today:
            if cases[i]>sim.truepositives[t,i]:
                sim.falsepositives[t,i]= cases[i]-sim.truepositives[t,i]
