@@ -170,8 +170,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        27000,
-                        27000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -294,8 +294,8 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.9,
-                        0.9
+                        0.35,
+                        0.35
                   ]
             },
             {
@@ -316,8 +316,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        27000,
-                        27000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",

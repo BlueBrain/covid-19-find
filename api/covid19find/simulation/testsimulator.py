@@ -83,7 +83,7 @@ scenario_params.append({
    'trig_values':['2021-09-27','2021-10-09'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[27000,27000],\
+    'num_tests_mitigation':[31000,31000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -115,7 +115,7 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.9,0.9]
+    'fatality_reduction_recent':[0.35,0.35]
     })
     
 scenario_params.append({
@@ -123,7 +123,7 @@ scenario_params.append({
     'trig_values':['2021-09-27','2021-10-07'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[27000, 27000],\
+    'num_tests_mitigation':[31000, 31000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
