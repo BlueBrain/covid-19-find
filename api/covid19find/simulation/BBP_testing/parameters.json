@@ -170,8 +170,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        27000,
-                        27000
+                        200000,
+                        200000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -197,12 +197,12 @@
                         "PCR"
                   ],
                   "prop_contacts_traced": [
-                        "highly effective",
-                        "highly effective"
+                        "fairly effective",
+                        "fairly effective"
                   ],
                   "imported_infections_per_day": [
-                        "not effective",
-                        "not effective"
+                        "highly effective",
+                        "highly effective"
                   ],
                   "requireddxtests": [
                         2,

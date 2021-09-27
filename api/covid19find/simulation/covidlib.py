@@ -871,6 +871,7 @@ class Sim:
        #tests are used first for health workers (symptomatic and asymptomatic), then for other high risk groups, then for the rest of the population
        # if the number of tests is low only health workers will get tested
         p_infected=np.zeros(par.num_compartments)
+        tests_performed=np.zeros(par.num_compartments)
         p_infected_symptomatic=np.zeros(par.num_compartments)
         p_infected_asymptomatic=np.zeros(par.num_compartments)
         infected_symptomatic_population=np.zeros(par.num_compartments)
@@ -881,29 +882,39 @@ class Sim:
         infected_symptomatic_population=sim.newinfected[t]*(1-par.prop_asymptomatic)
         uninfected_symptomatic_population=sim.population[t-1]*par.background_rate_symptomatic
         symptomatic_population=infected_symptomatic_population+ uninfected_symptomatic_population
+        asymptomatic_population=sim.population[t-1]-symptomatic_population
+        asymptomatic_eligible=asymptomatic_population*par.retest_period_asymptomatics
+        eligible=symptomatic_population+asymptomatic_eligible
         for i in range(0,par.num_compartments):
-            if symptomatic_population[i]>0:
+            if eligible[i]>0:
                 p_infected_symptomatic[i]=infected_symptomatic_population[i]/symptomatic_population[i]
             else:
                 p_infected_symptomatic[i]=0
-        prop_tests=sim.population[t-1]/sim.population[t-1].sum()
+        
         if (use_real_testdata) and ispast(par.day1,t+1):
-          tests_available=prop_tests*sim.actualnewtests_mit[t]
+          total_tests_available=sim.actualnewtests_mit[t]
         else:
-          tests_available=prop_tests*par.num_tests_mitigation[phase]
-        if tests_available.sum()>0:
-            tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
-            tests_available_asymptomatic=tests_available*par.prop_tested_asymptomatic       
-        #test all symptomatics first 
-            for i in range(0,par.num_compartments):
-                if tests_available[i]>symptomatic_population[i]: #shouldn't normally happen
-                    infected_symptomatic_tests[i]=infected_symptomatic_population[i]
+          total_tests_available=par.num_tests_mitigation[phase]
+        if total_tests_available>0:
+                
+            for k in range(0,par.num_compartments):
+                i=priorities[k]
+                if total_tests_available>symptomatic_population[i]+asymptomatic_eligible[i]:
+                    tests_available_symptomatic=symptomatic_population[i]
+                    tests_available_asymptomatic=asymptomatic_eligible[i]
+                else:
+                    tests_available_symptomatic=total_tests_available*symptomatic_population[i]/sim.population[t,i]
+                    tests_available_asymptomatic=total_tests_available*asymptomatic_eligible[i]/sim.population[t,i]
+                if tests_available_symptomatic>symptomatic_population[i]: #shouldn't normally happen
+                    infected_symptomatic_tests=infected_symptomatic_population[i]
                 else:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
-                    infected_symptomatic_tests[i]=tests_available_symptomatic[i]*p_infected_symptomatic[i]
-                p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
-        adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
-        return(tests_available)
+                    infected_symptomatic_tests=tests_available_symptomatic*p_infected_symptomatic[i]
+                p_infected[i]=infected_symptomatic_tests/total_tests_available
+                tests_performed[i]=tests_available_symptomatic+tests_available_asymptomatic
+                total_tests_available=total_tests_available-tests_performed[i]                
+        adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected)   
+        return(tests_performed)
    
    def perform_tests_open_public(sim,par:Par,t,phase,use_real_testdata):
         p_infected=np.zeros(par.num_compartments)

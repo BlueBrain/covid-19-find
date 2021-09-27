@@ -83,14 +83,14 @@ scenario_params.append({
    'trig_values':['2021-09-27','2021-10-09'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[27000,27000],\
+    'num_tests_mitigation':[200000,200000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
     'num_tests_care':[10000,10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
-    'prop_contacts_traced':['highly effective','highly effective'],\
-    'imported_infections_per_day':['not effective','not effective'],\
+    'prop_contacts_traced':['fairly effective','fairly effective'],\
+    'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2,2],\
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
