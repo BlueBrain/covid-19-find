@@ -1357,7 +1357,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
            if sim.isolatedinfected[t,i]>sim.infected[t,i]:
                sim.isolatedinfected[t,i]=sim.infected[t,i]
            if sim.infected[t,i]>0:
-               sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t,i]*(par.recovery_period+par.incubation_period) #add lag
+               sim.reff[t,i]=sim.newinfected[t,i]/sim.infected[t-1,i]*(par.recovery_period+par.incubation_period) #add lag
            else:
                sim.reff[t,i]=np.nan
            
