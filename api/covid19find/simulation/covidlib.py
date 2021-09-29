@@ -218,6 +218,9 @@ def update_system_params2(p, fixed_params):
 def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'symptomatic first' - so simulations of past
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
+   
+   #First line is temporary fix - front end is passing wrong parameter value - this needs to be corrected
+   fixed_params['fatality_reduction']=0.84
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -274,6 +277,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
+   filename=os.path.join(fixed_params['test_directory'],'parameter dump.json')
+   write_parameters(filename,p,scenarios_user_specified)
    today=(dt.datetime.now()-day1).days
    if end_day==None:
        end_day=today+180

@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 81, 105, 127, 149, 187, 213, 239, 261, 281, 299, 325, 349, 363, 385, 427, 443, 459, 479, 527, 551, 565, 583, 623]
-past_severities=[0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.95, 0.85, 0.8, 0.45, 0.6, 0.0, 0.75, 0.8, 0.7, 0.8, 0.85, 0.75, 0.65, 0.7, 0.75, 0.85, 0.9, 0.5, 0.65]  
+#past_dates= [1, 15, 81, 105, 127, 149, 187, 213, 239, 261, 281, 299, 325, 349, 363, 385, 427, 443, 459, 479, 527, 551, 565, 583, 623]
+#past_severities=[0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.95, 0.85, 0.8, 0.45, 0.6, 0.0, 0.75, 0.8, 0.7, 0.8, 0.85, 0.75, 0.65, 0.7, 0.75, 0.85, 0.9, 0.5, 0.65]  
 
 print('past_dates=',past_dates)
 print('past_severities=', past_severities)
@@ -50,7 +50,7 @@ fixed_params={
     'past_severities':past_severities,\
     'expert_mode':True,\
     'save_results':False,\
-    'fatality_reduction':0.84,\
+  #  'fatality_reduction':0.84,\
     'num_days':850}
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
@@ -60,7 +60,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-28','2021-10-07'],\
+    'trig_values':['2021-09-29','2021-10-08'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -80,7 +80,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-09-28','2021-10-09'],\
+   'trig_values':['2021-09-29','2021-10-08'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -100,7 +100,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-28','2021-10-07'],\
+    'trig_values':['2021-09-29','2021-10-08'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -120,7 +120,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-28','2021-10-07'],\
+    'trig_values':['2021-09-29','2021-10-08'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[31000, 31000],\
