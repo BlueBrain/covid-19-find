@@ -231,8 +231,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        31000,
-                        31000
+                        13000,
+                        13000
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -303,8 +303,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        31000,
-                        31000
+                        13000,
+                        13000
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -375,8 +375,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        31000,
-                        31000
+                        13000,
+                        13000
                   ],
                   "type_tests_mitigation": [
                         "PCR",
