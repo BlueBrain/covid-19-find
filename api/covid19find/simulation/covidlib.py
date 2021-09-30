@@ -219,8 +219,6 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'symptomatic first' - so simulations of past
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
-   #First line is temporary fix - front end is passing wrong parameter value - this needs to be corrected
-   fixed_params['fatality_reduction']=0.84
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -1684,14 +1682,16 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
            sim.falsenegatives[t,i]=tests_performed[i]*p_infected[i]*(1-par.sensitivity[phase])
     
            
-   #    sim.truepositives[t,i] = testsperformed[i] * p_infected[i]
-        if t==670 and i==2:
-           print('in adjust')
-           print('testsperformed=',tests_performed[i])
-           print('p_infected=',p_infected[i])
-           print('true_positives=',sim.truepositives[t,i])
-           print('false positives=',sim.falsepositives[t,i])
-           print('total positives=',sim.truepositives[t,i]+sim.falsepositives[t,i])
+# =============================================================================
+#    #    sim.truepositives[t,i] = testsperformed[i] * p_infected[i]
+#         if t==670 and i==2:
+#            print('in adjust')
+#            print('testsperformed=',tests_performed[i])
+#            print('p_infected=',p_infected[i])
+#            print('true_positives=',sim.truepositives[t,i])
+#            print('false positives=',sim.falsepositives[t,i])
+#            print('total positives=',sim.truepositives[t,i]+sim.falsepositives[t,i])
+# =============================================================================
       
         if (sim.truepositives[t,i]+sim.falsepositives[t,i])>0:
            sim.ppv[t,i]=sim.truepositives[t,i]/(sim.truepositives[t,i]+sim.falsepositives[t,i])

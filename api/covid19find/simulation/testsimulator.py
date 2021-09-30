@@ -40,15 +40,17 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 #past_dates= [1, 15, 81, 105, 127, 149, 187, 213, 239, 261, 281, 299, 325, 349, 363, 385, 427, 443, 459, 479, 527, 551, 565, 583, 623]
 #past_severities=[0.0, 1.0, 0.1, 0.75, 0.95, 1.0, 0.95, 0.85, 0.8, 0.45, 0.6, 0.0, 0.75, 0.8, 0.7, 0.8, 0.85, 0.75, 0.65, 0.7, 0.75, 0.85, 0.9, 0.5, 0.65]  
 
-print('past_dates=',past_dates)
-print('past_severities=', past_severities)
+# =============================================================================
+# print('past_dates=',past_dates)
+# print('past_severities=', past_severities)
+# =============================================================================
 
 fixed_params=cl.get_system_params(test_directory)
 fixed_params={
     'test_directory':'bbp_testing',\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':True,\
+    'expert_mode':False,\
     'save_results':False,\
   #  'fatality_reduction':0.84,\
     'num_days':850}
@@ -75,7 +77,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
-    'fatality_reduction_recent':[0.9,0.9,0.9]
+    'fatality_reduction_recent':[0.84,0.84,0.84]
     })
     
 scenario_params.append({
@@ -95,7 +97,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.9,0.9]
+    'fatality_reduction_recent':[0.84,0.84]
     })
     
 scenario_params.append({
@@ -115,7 +117,7 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.9,0.9]
+    'fatality_reduction_recent':[0.84,0.84]
     })
     
 scenario_params.append({
@@ -135,7 +137,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.9,0.9]
+    'fatality_reduction_recent':[0.84,0.84]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')
