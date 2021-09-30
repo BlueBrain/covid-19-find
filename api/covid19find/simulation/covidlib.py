@@ -215,12 +215,25 @@ def update_system_params2(p, fixed_params):
 #        - dataframes and various derivative outputs
 ######################################################################
 
+def compute_reduction_IFR(country_df,day1):
+    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-8]['accumulated_deaths']
+    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-8]['accumulated_cases']
+    cfr_last_week=new_deaths_last_week/new_cases_last_week
+    new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
+    new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
+    cfr_jan1=new_deaths_jan1/new_cases_jan1
+    reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
+    #this is a temporary fudge factor. Value is half way between value for CH and PH
+    reduction_ifr=reduction_cfr*0.88
+    return(reduction_ifr)
+
+
+
 def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'symptomatic first' - so simulations of past
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
-   #this is fix for PH - to be removed
-   fixed_params['fatality_reduction']=0.57
+   
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -244,6 +257,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df=country_df_raw.rolling(win_length).mean()
    country_df['Date']=country_df_raw['Date']
+   fixed_params['fatality_reduction']=compute_reduction_IFR(country_df,day1)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
    keys=kwargs.keys()
