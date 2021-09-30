@@ -12,7 +12,7 @@
             "death_period": 21,
             "design_effect": 2,
             "expert_mode": false,
-            "fatality_reduction": 0.84,
+            "fatality_reduction": 0.57,
             "ge_65": 0.045,
             "high_contact": 0.3,
             "IFR_1_14": 2.97e-05,
@@ -135,7 +135,7 @@
       "scenario_params": [
             {
                   "imported_infections_per_day": [
-                        "not effective"
+                        "highly effective"
                   ],
                   "severity": [
                         "no change"
@@ -186,63 +186,7 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.84
-                  ]
-            },
-            {
-                  "imported_infections_per_day": [
-                        "fairly effective"
-                  ],
-                  "severity": [
-                        "no change"
-                  ],
-                  "trig_values": [
-                        "2021-09-30"
-                  ],
-                  "trig_def_type": [
-                        "date"
-                  ],
-                  "trig_op_type": [
-                        "="
-                  ],
-                  "prop_contacts_traced": [
-                        "fairly effective"
-                  ],
-                  "num_tests_mitigation": [
-                        13000
-                  ],
-                  "type_tests_mitigation": [
-                        "PCR"
-                  ],
-                  "test_strategy": [
-                        "symptomatic first"
-                  ],
-                  "sensitivity": [
-                        0.95
-                  ],
-                  "specificity": [
-                        0.998
-                  ],
-                  "test_multipliers": [
-                        0,
-                        1,
-                        2,
-                        3
-                  ],
-                  "num_tests_care": [
-                        13000
-                  ],
-                  "type_tests_care": [
-                        "PCR"
-                  ],
-                  "requireddxtests": [
-                        2
-                  ],
-                  "results_period": [
-                        3
-                  ],
-                  "fatality_reduction_recent": [
-                        0.84
+                        0.2
                   ]
             },
             {
@@ -298,7 +242,7 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.84
+                        0.35
                   ]
             },
             {
@@ -354,7 +298,63 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.84
+                        0.5
+                  ]
+            },
+            {
+                  "imported_infections_per_day": [
+                        "highly effective"
+                  ],
+                  "severity": [
+                        "no change"
+                  ],
+                  "trig_values": [
+                        "2021-09-30"
+                  ],
+                  "trig_def_type": [
+                        "date"
+                  ],
+                  "trig_op_type": [
+                        "="
+                  ],
+                  "prop_contacts_traced": [
+                        "fairly effective"
+                  ],
+                  "num_tests_mitigation": [
+                        13000
+                  ],
+                  "type_tests_mitigation": [
+                        "PCR"
+                  ],
+                  "test_strategy": [
+                        "symptomatic first"
+                  ],
+                  "sensitivity": [
+                        0.95
+                  ],
+                  "specificity": [
+                        0.998
+                  ],
+                  "test_multipliers": [
+                        0,
+                        1,
+                        2,
+                        3
+                  ],
+                  "num_tests_care": [
+                        13000
+                  ],
+                  "type_tests_care": [
+                        "PCR"
+                  ],
+                  "requireddxtests": [
+                        2
+                  ],
+                  "results_period": [
+                        3
+                  ],
+                  "fatality_reduction_recent": [
+                        0.75
                   ]
             }
       ]

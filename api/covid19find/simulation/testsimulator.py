@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="CH"
+ccode="PH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -50,7 +50,7 @@ fixed_params={
     'test_directory':'bbp_testing',\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':False,\
+    'expert_mode':True,\
     'save_results':False,\
   #  'fatality_reduction':0.84,\
     'num_days':850}
@@ -77,7 +77,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
-    'fatality_reduction_recent':[0.84,0.84,0.84]
+    'fatality_reduction_recent':[0.57,0.57,0.57]
     })
     
 scenario_params.append({
@@ -97,7 +97,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.84,0.84]
+    'fatality_reduction_recent':[0.57,0.57]
     })
     
 scenario_params.append({
@@ -117,7 +117,7 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.84,0.84]
+    'fatality_reduction_recent':[0.57,0.57]
     })
     
 scenario_params.append({
@@ -137,7 +137,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.84,0.84]
+    'fatality_reduction_recent':[0.57,0.57]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')

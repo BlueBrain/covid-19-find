@@ -219,6 +219,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'symptomatic first' - so simulations of past
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
+   #this is fix for PH - to be removed
+   fixed_params['fatality_reduction']=0.57
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
