@@ -17,7 +17,7 @@ export const DEFAULT_SIMULATION_REQUEST_PARAMS = {
   hospitalStaffPerBed: 2.5,
   activePopulationProportion: null,
   belowPovertyLineProportion: null,
-  fatalityReduction: 35,
+  fatalityReduction: 84,
   hospitalEmployment: null,
   over64Proportion: null,
   sensitivityPCR: 0.95,

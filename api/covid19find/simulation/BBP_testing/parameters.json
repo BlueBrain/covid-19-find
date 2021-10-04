@@ -4,62 +4,63 @@
             "past_dates": [
                   1,
                   12,
-                  81,
-                  106,
-                  125,
-                  146,
-                  209,
-                  220,
-                  233,
-                  260,
-                  280,
-                  303,
-                  326,
-                  347,
-                  387,
-                  430,
-                  441,
-                  456,
-                  519,
-                  550,
-                  563,
-                  584
+                  92,
+                  117,
+                  144,
+                  166,
+                  189,
+                  224,
+                  239,
+                  271,
+                  278,
+                  307,
+                  316,
+                  331,
+                  358,
+                  436,
+                  459,
+                  506,
+                  523,
+                  548,
+                  576,
+                  595,
+                  610
             ],
             "past_severities": [
                   0.0,
                   1.0,
                   0.1,
+                  0.7,
+                  0.8,
                   0.75,
-                  0.95,
-                  1.0,
-                  0.9,
                   0.85,
-                  0.9,
                   0.8,
                   0.85,
-                  0.35,
+                  0.8,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.8,
+                  0.85,
                   0.75,
+                  0.6,
+                  0.8,
                   0.85,
                   0.9,
-                  0.95,
-                  0.9,
                   0.85,
                   0.9,
-                  0.95,
-                  1.0,
-                  0.75
+                  0.85
             ],
             "expert_mode": true,
             "save_results": false,
-            "fatality_reduction": 0.35,
             "num_days": 850,
-            "total_pop": 8655000,
-            "hospital_beds": 34620,
+            "total_pop": 1380004000,
+            "hospital_beds": 1380004.0,
             "prop_15_64": 0.66,
-            "age_gt_64": 0.20232131715771232,
-            "prop_urban": 0.73,
+            "age_gt_64": 0.07224416813284598,
+            "prop_urban": 0.34,
             "staff_per_bed": 2.5,
-            "income_category": "H"
+            "income_category": "LM"
       },
       "scenario_params": [
             {
@@ -68,8 +69,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-06-21",
-                        "2021-06-30"
+                        "2021-09-29",
+                        "2021-10-08"
                   ],
                   "trig_def_type": [
                         "date",
@@ -136,9 +137,9 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.35,
-                        0.35,
-                        0.35
+                        0.57,
+                        0.57,
+                        0.57
                   ]
             },
             {
@@ -147,8 +148,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-06-21",
-                        "2021-06-30"
+                        "2021-09-29",
+                        "2021-10-08"
                   ],
                   "trig_def_type": [
                         "date",
@@ -160,8 +161,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        40000,
-                        40000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -187,12 +188,12 @@
                         "PCR"
                   ],
                   "prop_contacts_traced": [
-                        "highly effective",
-                        "highly effective"
+                        "fairly effective",
+                        "fairly effective"
                   ],
                   "imported_infections_per_day": [
-                        "not effective",
-                        "not effective"
+                        "highly effective",
+                        "highly effective"
                   ],
                   "requireddxtests": [
                         2,
@@ -213,8 +214,8 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.35,
-                        0.35
+                        0.57,
+                        0.57
                   ]
             },
             {
@@ -223,8 +224,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-06-21",
-                        "2021-06-30"
+                        "2021-09-29",
+                        "2021-10-08"
                   ],
                   "trig_def_type": [
                         "date",
@@ -236,8 +237,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        40000,
-                        40000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -280,12 +281,12 @@
                         "symptomatic first"
                   ],
                   "results_period": [
-                        2,
-                        2
+                        3,
+                        3
                   ],
                   "fatality_reduction_recent": [
-                        0.35,
-                        0.35
+                        0.57,
+                        0.57
                   ]
             },
             {
@@ -294,8 +295,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-06-21",
-                        "2021-06-30"
+                        "2021-09-29",
+                        "2021-10-08"
                   ],
                   "trig_def_type": [
                         "date",
@@ -306,8 +307,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        40000,
-                        40000
+                        31000,
+                        31000
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -356,8 +357,8 @@
                         3
                   ],
                   "fatality_reduction_recent": [
-                        0.35,
-                        0.35
+                        0.57,
+                        0.57
                   ]
             }
       ]
