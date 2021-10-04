@@ -221,7 +221,10 @@ def compute_reduction_IFR(country_df,day1):
     cfr_last_week=new_deaths_last_week/new_cases_last_week
     new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
     new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
-    cfr_jan1=new_deaths_jan1/new_cases_jan1
+    if new_cases_jan1>0:
+        cfr_jan1=new_deaths_jan1/new_cases_jan1
+    else:
+        cfr_jan1=0
     if cfr_jan1>0:
         reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
     else: 
