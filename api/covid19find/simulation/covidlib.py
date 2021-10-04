@@ -222,8 +222,10 @@ def compute_reduction_IFR(country_df,day1):
     new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
     new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
     cfr_jan1=new_deaths_jan1/new_cases_jan1
-    reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
-    #this is a temporary fudge factor. Value is half way between value for CH and PH
+    if cfr_jan1>0:
+        reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
+    else: 
+        reduction_cfr=0
     reduction_ifr=reduction_cfr*0.88
     return(reduction_ifr)
 
