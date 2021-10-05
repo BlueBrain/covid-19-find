@@ -201,6 +201,34 @@ def update_system_params2(p, fixed_params):
 
 
 ######################################################################
+# compute reduction IFR:
+#    Uses data on actual deaths and cases to compute instantaneous CFR
+#    on Jan 1 2021, and today (uses averages over 7 days)
+#    Reduction in CFR is a good measure of the impact of vaccination
+######################################################################
+
+def compute_reduction_IFR(country_df,day1):
+    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-8]['accumulated_deaths']
+    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-8]['accumulated_cases']
+    cfr_last_week=new_deaths_last_week/new_cases_last_week
+#Our automated test procedure uses a static country_df. The if statement makes sure this does not cause an error in computation
+    if len(country_df)<406:
+        reduction_cfr=0
+    else:
+        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
+        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
+        if new_cases_jan1>0:
+            cfr_jan1=new_deaths_jan1/new_cases_jan1
+        else:
+            cfr_jan1=0
+        if cfr_jan1>0:
+            reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
+        else: 
+            reduction_cfr=0
+    reduction_ifr=reduction_cfr*0.88
+    return(reduction_ifr)
+
+######################################################################
 # run_simulation:
 #    takes in fixed user-specified system and scenario parameters
 #    and calls process_scenarios with updated parameters
@@ -214,24 +242,6 @@ def update_system_params2(p, fixed_params):
 #        results produced by process_scenarios
 #        - dataframes and various derivative outputs
 ######################################################################
-
-def compute_reduction_IFR(country_df,day1):
-    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-8]['accumulated_deaths']
-    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-8]['accumulated_cases']
-    cfr_last_week=new_deaths_last_week/new_cases_last_week
-    new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
-    new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
-    if new_cases_jan1>0:
-        cfr_jan1=new_deaths_jan1/new_cases_jan1
-    else:
-        cfr_jan1=0
-    if cfr_jan1>0:
-        reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
-    else: 
-        reduction_cfr=0
-    reduction_ifr=reduction_cfr*0.88
-    return(reduction_ifr)
-
 
 
 def run_simulation(country_df_raw,fixed_params, **kwargs):
