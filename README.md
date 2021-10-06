@@ -261,7 +261,7 @@ The development of this software is a joint collaboration between:
 
 - Richard Walker, a consultant of the Blue Brain Project, who coordinated the development of this project.
 - EPFL Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL).
-- Ateneo de Manila University, Manila, the Philippines.
+- Department of Information Systems and Computer Science, Ateneo de Manila University, Philippines.
 - FIND.
 
 ## Funding 
