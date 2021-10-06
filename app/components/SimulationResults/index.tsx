@@ -240,14 +240,16 @@ const SimulationResults: React.FC<{
                   </button>
                 </div>
                 <div className="chart">
-                  <h3 className="title">Scenarios Summary Graph</h3>
+                  <h3 className="title">Scenarios for next six months</h3>
                   <p style={{ textAlign: 'center', opacity: '0.5' }}>
                     The size of the circles represents the number of simulated
                     deaths
                   </p>
+                  
                   <Bubble
                     width={null}
                     height={null}
+                    
                     options={{
                       aspectRatio: isMobile ? 1 : 2,
                       tooltips: {
