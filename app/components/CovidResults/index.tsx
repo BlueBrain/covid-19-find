@@ -114,7 +114,7 @@ const CovidResults: React.FC<{
         
         <h3>
           <span>{data.meanTestsLast7Days.toLocaleString()}</span>{' '}
-          <span className="subtitle">Mean tests per day (last 7 days)</span>
+          <span className="subtitle">Mean tests per day (last 7 days)</span>  
         </h3>
       </div>
       <div className="charts">
@@ -305,7 +305,7 @@ const CovidResults: React.FC<{
                     position: 'right',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Positive (%)',
+                      labelString: 'Positivity rate (%)',
                     },
                     ticks: {
                       beginAtZero: true,
