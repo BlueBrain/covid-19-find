@@ -111,26 +111,7 @@ const CovidResults: React.FC<{
           />
           <span className="subtitle">Total Deaths (7-day trend)</span>
         </h3>
-        <h3>
-          {showRecovered ? (
-            <>
-              {' '}
-              <span>{data.totalRecovered.toLocaleString()}</span>{' '}
-              <TrendIndicator
-                {...(totalRecovered as {
-                  previous: number;
-                  present: number;
-                })}
-              />
-              <span className="subtitle"> Total Recovered (7-day trend)</span>
-            </>
-          ) : (
-            <>
-              <span>N/A</span>{' '}
-              <span className="subtitle"> People Recovered from COVID-19</span>
-            </>
-          )}
-        </h3>
+        
         <h3>
           <span>{data.meanTestsLast7Days.toLocaleString()}</span>{' '}
           <span className="subtitle">Mean tests per day (last 7 days)</span>
@@ -183,7 +164,7 @@ const CovidResults: React.FC<{
                     position: 'right',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Deaths/Recoveries (per day)',
+                      labelString: 'Deaths (per day)',
                     },
                     gridLines: {
                       color: '#00000005',
