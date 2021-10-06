@@ -191,10 +191,8 @@ const CountrySelector: React.FC<{
                 <br />
                 (private and public)
               </label>
-              <input {...hospitalBeds} required min="1" type="number" />
-              
-            </div>
-            <div className="form-column">
+              <input {...hospitalBeds} required min="1" type="number" 
+              />
               <label>Income Category</label>
               <Select
                 // @ts-ignore
@@ -226,7 +224,10 @@ const CountrySelector: React.FC<{
                 onChange={e => {
                   incomeCategory.onChange(e);
                 }}
-              />
+              />   
+            </div>
+            <div className="form-column">
+              
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
               <TooltipLabel

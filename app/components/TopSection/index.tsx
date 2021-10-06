@@ -35,7 +35,7 @@ const TopSection: React.FC = () => {
           </a>
           , Manila, the Philippines, and was supported by funding from{' '}
           <a href="https://unitaid.org" target="_blank">
-            Unitaid
+            Unitaid 
           </a>
           <br />
           <p>
