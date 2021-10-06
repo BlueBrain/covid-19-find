@@ -2,7 +2,7 @@
   "name": "covid-19-find",
   "version": "0.0.213",
   "main": "index.js",
-  "repository": "https://github.com/wwajerowicz/covid-19-find.git",
+  "repository": "https://github.com/BlueBrain/covid-19-find.git",
   "license": "MIT",
   "scripts": {
     "test": "jest",
