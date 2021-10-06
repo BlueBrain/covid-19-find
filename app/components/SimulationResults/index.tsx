@@ -527,6 +527,7 @@ const SimulationResults: React.FC<{
                     </span>
                   </h3>
                 </div>
+                  
                 <div className="charts">
                   {graphs.map(graph => {
                     return (
@@ -680,16 +681,7 @@ const SimulationResults: React.FC<{
                 </div>
                 <hr />
                 <div className="stats horizontal">
-                  <h3>
-                    {selectedScenario.testsNeededForCare.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
-                    <br />
-                    <span className="subtitle">
-                      Number of tests <br /> used for patient care
-                    </span>
-                  </h3>
+
                   <h3>
                     {selectedScenario.testsNeededForMitigation.toLocaleString(
                       undefined,
@@ -697,8 +689,7 @@ const SimulationResults: React.FC<{
                     )}
                     <br />
                     <span className="subtitle">
-                      Number of tests used and required <br /> for epidemic
-                      mitigation
+                      Number of tests  <br /> in next six months
                     </span>
                   </h3>
                 </div>

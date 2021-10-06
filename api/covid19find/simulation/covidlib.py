@@ -345,8 +345,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
    total_serotests_by_scenario_10=np.zeros(num_scenarios)
-   total_serotests_by_scenario_100=np.zeros(num_scenarios)
-   total_serotests_by_scenario_1000=np.zeros(num_scenarios)
+   total_serotests_by_scenario_25=np.zeros(num_scenarios)
    total_cases_by_scenario=np.zeros(num_scenarios)
    total_deaths_by_scenario=np.zeros(num_scenarios)
    total_infected_by_scenario=np.zeros(num_scenarios)
@@ -539,8 +538,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
       total_serotests_by_scenario_10[i]=sim.compute_sample_size(par,10,prevalence,1.96,0.01)
-      total_serotests_by_scenario_100[i]=sim.compute_sample_size(par,100,prevalence,1.96,0.01)
-      total_serotests_by_scenario_1000[i]=sim.compute_sample_size(par,1000,prevalence,1.96,0.01)
+      total_serotests_by_scenario_25[i]=sim.compute_sample_size(par,25,prevalence,1.96,0.01)
+      #total_serotests_by_scenario_1000[i]=sim.compute_sample_size(par,1000,prevalence,1.96,0.01)
       total_cases_by_scenario[i]=dfsum['actualnewcases'][0:simday].sum()+dfsum['newconfirmed'][simday:end_date].sum()
  #     total_deaths_by_scenario[i]=dfsum['newdeaths'].sum()
       total_deaths_by_scenario[i]=dfsum['actualnewdeaths'][0:simday].sum()+dfsum['newdeaths'][simday:end_date].sum()
@@ -564,8 +563,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          print('************')
          print('Max subgroups 5:', sim.compute_sample_size(par,5,prevalence,1.96,0.01))
          print('Max subgroups 10:', sim.compute_sample_size(par,10,prevalence,1.96,0.01))
-         print('Max subgroups 100:',sim.compute_sample_size(par,100,prevalence,1.96,0.01))
-         print('Max subgroups 1000:',sim.compute_sample_size(par,1000,prevalence,1.96,0.01))
+         print('Max subgroups 25:',sim.compute_sample_size(par,25,prevalence,1.96,0.01))
          print('************')
    if expert_mode:
       print('******************')
@@ -576,7 +574,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       print('')
       for i in range(0,num_scenarios):
          print('Scenario ',i,' Mitigation:',total_tests_mit_by_scenario[i])
-         print('Scenario ',i,' Care: ',total_tests_care_by_scenario[i])
+         
       print('')
       print('Total Deaths')
       print('')
@@ -607,8 +605,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    'total_tests_care_by_scenario':total_tests_care_by_scenario,\
    'total_serotests_by_scenario_5':total_serotests_by_scenario_5,\
    'total_serotests_by_scenario_10':total_serotests_by_scenario_10,\
-   'total_serotests_by_scenario_100':total_serotests_by_scenario_100,\
-   'total_serotests_by_scenario_1000':total_serotests_by_scenario_1000,\
+   'total_serotests_by_scenario_25':total_serotests_by_scenario_25,\
    'total_deaths_by_scenario':total_deaths_by_scenario,\
    'max_infected_by_scenario':max_infected_by_scenario,\
    'total_infected_by_scenario':total_infected_by_scenario,\
