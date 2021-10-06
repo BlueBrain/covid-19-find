@@ -172,7 +172,7 @@ const ScenarioEditorPanel: React.FC<{
                 type="submit"
                 onClick={handleSubmitButtonClicked}
               >
-                See Scenarios Next Six Months
+                See Scenarios For Next Six Months
               </button>
             </div>
           </div>
