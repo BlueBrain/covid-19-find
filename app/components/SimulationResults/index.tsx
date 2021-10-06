@@ -94,26 +94,23 @@ const SimulationResults: React.FC<{
       cohort: 'total',
     },
     {
+      title: 'Total Infections/day',
+      key: 'newInfected',
+      cohort: 'total',
+    },
+    {
       title: 'Positive tests/day',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
-    {
-      title: 'Recovered/day',
-      key: 'newRecovered',
-      cohort: 'total',
-    },
+    
     {
       title: 'Infected hospital staff/day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
-    {
-      title: 'Total Infections/day',
-      key: 'newInfected',
-      cohort: 'total',
-    },
+    
   ];
 
   const comparisons = [
