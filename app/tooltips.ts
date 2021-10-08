@@ -72,7 +72,7 @@ export default {
   'Testing for Care':
     'This section describes tests used for the care of patients who have already been diagnosed with COVID. These include tests used to confirm the initial diagnosis, and tests used to verify whether a patient is still infectious, before discharge from hospital.',
   'Samples Required for Serological Studies':
-    'The number of samples required to accurately estimate the number of people carrying antibodies to the virus in a given population comprising a certain number of subgroups (e.g. people belonging to a specific age group, people living in a specific city or region, people with a specific socio-economic status).',
+    'The number of samples required to estimate the number of people carrying antibodies to the virus in a  population divided into a certain number of subgroups (e.g. people belonging to  specific age groups, people living in  specific cities or regions, people with different socio-economic status). The sample size is computed to achieve 95% confidence that the actual proportion of people in a group who carry antibodies is no more than 1 percentage point higher or lower than the actual figure.',
   reffGraph:
     ' The estimated value of the Effective Reproductive Number (Reff) for the epidemic on a given day. This is the mean number of new infections, caused by a single primary case of COVID, over the duration of the infection. The value of Reff depends on the effectiveness of government intervention and on the biology of the disease. New strains of COVID may have higher values of Reff.',
   prevalanceGraph:
