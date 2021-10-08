@@ -441,6 +441,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       par.shift=shift
       #call simday today
       simphase,simday=computetoday(day1,par.trig_values)
+  #    par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       sim = Sim(par.num_days,par.num_compartments)
       sim.set_initial_conditions(par)
@@ -1441,11 +1442,13 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                sim.prevalence[t,i]=0
        
        if(ispast(par.day1,t)): 
-           if t>=par.no_improvement_period:
+        if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day
-          
-       else: #future phases
-          tau=par.tau*(1-par.fatality_reduction_recent[phase])
+# For the moment we do not consider recent improvements in fatality        
+# =============================================================================
+#        else: #future phases
+#           tau=par.tau*(1-par.fatality_reduction_recent[phase])
+# =============================================================================
        gamma=1-tau
        meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
        # this defines where the loops for isolation and recoveries begins on next t
