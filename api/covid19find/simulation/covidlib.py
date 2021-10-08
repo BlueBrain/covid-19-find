@@ -515,7 +515,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          if expert_mode:
             print('total population in compartment',comp,p['init_pop'][j])
             print('total tested for mitigation in compartment',comp,'=',dfsumcomp['newtested_mit'][j])
-            print('total tested for diagnosis and care in compartment',comp,'=',dfsumcomp['actualdxtests'][j])
+            print('total tested for diagnosis and care in compartment',comp,'=',0)
             print('total_deaths in ',comp,'=', dfsumcomp['newdeaths'][j])
             print('max_infections in ',comp,'=',dfmaxcomp['infected'][j])
             print('total_infections in ',comp,'=',dfsumcomp['newinfected'][j])
@@ -539,7 +539,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       prevalence=dfsum.iloc[-1]['prevalence']
  #     total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
      
-      total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
+  #    total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
+      total_tests_care_by_scenario[i]=0
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
       total_serotests_by_scenario_10[i]=sim.compute_sample_size(par,10,prevalence,1.96,0.01)
       total_serotests_by_scenario_25[i]=sim.compute_sample_size(par,25,prevalence,1.96,0.01)
@@ -556,7 +557,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 
       if expert_mode:
          print('Total tested for mitigation =',total_tests_mit_by_scenario[i])
-         print('Total tested for care =',total_tests_care_by_scenario[i])
+         print('Total tested for care =',0)
          print('Max infected=',max_infected_by_scenario[i])
          print('Total infected by scenario=',total_infected_by_scenario[i]),
          print('Max isolated=',max_isolated_by_scenario[i])
@@ -1237,21 +1238,23 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
         end_loop=par.num_days
     for i in range(0,end_loop):
    #this was to fill in missing values when we were using centered averages. Should no longer be necessary - even if required can be moved to a procedure
-        if i>350:
-            if np.isnan(sim.actualnewtests_mit[i]) or sim.actualnewtests_mit[i]==0:
-                sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
-            if np.isnan(sim.actualcases[i])or sim.actualcases[i]==0:
-                sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
-            if np.isnan(sim.actualdeaths[i])or sim.actualcases[i]==0:
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
-                
-        else:
-            if np.isnan(sim.actualcases[i]):
-                sim.actualcases[i]=0
-            if np.isnan(sim.actualnewtests_mit[i]):
-                sim.actualnewtests_mit[i]=0
-            if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=0
+# =============================================================================
+#         if i>350:
+#             if np.isnan(sim.actualnewtests_mit[i]) or sim.actualnewtests_mit[i]==0:
+#                 sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
+#             if np.isnan(sim.actualcases[i])or sim.actualcases[i]==0:
+#                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
+#             if np.isnan(sim.actualdeaths[i])or sim.actualcases[i]==0:
+#                 sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+#                 
+#         else:
+# =============================================================================
+        if np.isnan(sim.actualcases[i]):
+            sim.actualcases[i]=0
+        if np.isnan(sim.actualnewtests_mit[i]):
+            sim.actualnewtests_mit[i]=0
+        if np.isnan(sim.actualdeaths[i]):
+            sim.actualdeaths[i]=0
         sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
         if sim.actualnewdeaths[i]<0:
             sim.actualnewdeaths[i]=0
