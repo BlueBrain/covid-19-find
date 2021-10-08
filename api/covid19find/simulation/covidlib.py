@@ -309,6 +309,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    filename=os.path.join(fixed_params['test_directory'],'parameter dump.json')
    write_parameters(filename,p,scenarios_user_specified)
    today=(dt.datetime.now()-day1).days
+   #simulations will run by default for 180 days after today
+   # would be useful to parameterize this
    if end_day==None:
        end_day=today+180
        p['num_days']=end_day
@@ -345,8 +347,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    total_tests_care_by_scenario=np.zeros(num_scenarios)
    total_serotests_by_scenario_5=np.zeros(num_scenarios)
    total_serotests_by_scenario_10=np.zeros(num_scenarios)
-   total_serotests_by_scenario_100=np.zeros(num_scenarios)
-   total_serotests_by_scenario_1000=np.zeros(num_scenarios)
+   total_serotests_by_scenario_25=np.zeros(num_scenarios)
    total_cases_by_scenario=np.zeros(num_scenarios)
    total_deaths_by_scenario=np.zeros(num_scenarios)
    total_infected_by_scenario=np.zeros(num_scenarios)
@@ -440,6 +441,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       par.shift=shift
       #call simday today
       simphase,simday=computetoday(day1,par.trig_values)
+  #    par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       sim = Sim(par.num_days,par.num_compartments)
       sim.set_initial_conditions(par)
@@ -535,12 +537,13 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 #           prevalence=dfsum.iloc[simday]['prevalence'] 
 # =============================================================================
       prevalence=dfsum.iloc[-1]['prevalence']
-      total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
+ #     total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
+     
       total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
       total_serotests_by_scenario_10[i]=sim.compute_sample_size(par,10,prevalence,1.96,0.01)
-      total_serotests_by_scenario_100[i]=sim.compute_sample_size(par,100,prevalence,1.96,0.01)
-      total_serotests_by_scenario_1000[i]=sim.compute_sample_size(par,1000,prevalence,1.96,0.01)
+      total_serotests_by_scenario_25[i]=sim.compute_sample_size(par,25,prevalence,1.96,0.01)
+      #total_serotests_by_scenario_1000[i]=sim.compute_sample_size(par,1000,prevalence,1.96,0.01)
       total_cases_by_scenario[i]=dfsum['actualnewcases'][0:simday].sum()+dfsum['newconfirmed'][simday:end_date].sum()
  #     total_deaths_by_scenario[i]=dfsum['newdeaths'].sum()
       total_deaths_by_scenario[i]=dfsum['actualnewdeaths'][0:simday].sum()+dfsum['newdeaths'][simday:end_date].sum()
@@ -549,6 +552,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       df_from_today=dfsum.iloc[today:par.num_days-1]
       max_infected_by_scenario[i]=df_from_today['newinfected'].max()
       max_isolated_by_scenario[i]=df_from_today['isolated'].max()
+      total_tests_mit_by_scenario[i]=df_from_today['newtested_mit'].sum()
 
       if expert_mode:
          print('Total tested for mitigation =',total_tests_mit_by_scenario[i])
@@ -564,8 +568,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          print('************')
          print('Max subgroups 5:', sim.compute_sample_size(par,5,prevalence,1.96,0.01))
          print('Max subgroups 10:', sim.compute_sample_size(par,10,prevalence,1.96,0.01))
-         print('Max subgroups 100:',sim.compute_sample_size(par,100,prevalence,1.96,0.01))
-         print('Max subgroups 1000:',sim.compute_sample_size(par,1000,prevalence,1.96,0.01))
+         print('Max subgroups 25:',sim.compute_sample_size(par,25,prevalence,1.96,0.01))
          print('************')
    if expert_mode:
       print('******************')
@@ -576,7 +579,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       print('')
       for i in range(0,num_scenarios):
          print('Scenario ',i,' Mitigation:',total_tests_mit_by_scenario[i])
-         print('Scenario ',i,' Care: ',total_tests_care_by_scenario[i])
+         
       print('')
       print('Total Deaths')
       print('')
@@ -607,8 +610,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    'total_tests_care_by_scenario':total_tests_care_by_scenario,\
    'total_serotests_by_scenario_5':total_serotests_by_scenario_5,\
    'total_serotests_by_scenario_10':total_serotests_by_scenario_10,\
-   'total_serotests_by_scenario_100':total_serotests_by_scenario_100,\
-   'total_serotests_by_scenario_1000':total_serotests_by_scenario_1000,\
+   'total_serotests_by_scenario_25':total_serotests_by_scenario_25,\
    'total_deaths_by_scenario':total_deaths_by_scenario,\
    'max_infected_by_scenario':max_infected_by_scenario,\
    'total_infected_by_scenario':total_infected_by_scenario,\
@@ -839,6 +841,7 @@ class Sim:
        
    #Computes the sample size required for a national wide seroprevalence survey in which max
    # n. of groups for stratified analysis is given by n_groups
+   # the error is the maximum  error (as a %) with a confidence of x% 
    # assumes a design effect (multiplier to compensate for clustering) specified in system parameters
    
    def compute_sample_size(sim,par,n_groups,prev,z,error):
@@ -1439,11 +1442,13 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                sim.prevalence[t,i]=0
        
        if(ispast(par.day1,t)): 
-           if t>=par.no_improvement_period:
+        if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day
-          
-       else: #future phases
-          tau=par.tau*(1-par.fatality_reduction_recent[phase])
+# For the moment we do not consider recent improvements in fatality        
+# =============================================================================
+#        else: #future phases
+#           tau=par.tau*(1-par.fatality_reduction_recent[phase])
+# =============================================================================
        gamma=1-tau
        meanbeta,betas=adjust_beta(par,betas,final_betas,alpha)
        # this defines where the loops for isolation and recoveries begins on next t

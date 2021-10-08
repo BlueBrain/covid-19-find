@@ -31,11 +31,11 @@ const TopSection: React.FC = () => {
           </a>{' '}
           and{' '}
           <a href="http://ateneo.edu/" target="_blank">
-            Ateneo de Manila University
+            Department of Information Systems and Computer Science, Ateneo de Manila University
           </a>
           , Manila, the Philippines, and was supported by funding from{' '}
           <a href="https://unitaid.org" target="_blank">
-            Unitaid
+            Unitaid 
           </a>
           <br />
           <p>

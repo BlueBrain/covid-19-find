@@ -94,26 +94,23 @@ const SimulationResults: React.FC<{
       cohort: 'total',
     },
     {
-      title: 'Cases (positive tests)/day',
+      title: 'Total Infections/day',
+      key: 'newInfected',
+      cohort: 'total',
+    },
+    {
+      title: 'Positive tests/day',
       key: 'newConfirmed',
       actualKey: 'actualCases',
       cohort: 'total',
     },
-    {
-      title: 'Recovered/day',
-      key: 'newRecovered',
-      cohort: 'total',
-    },
+    
     {
       title: 'Infected hospital staff/day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
-    {
-      title: 'Total Infections/day',
-      key: 'newInfected',
-      cohort: 'total',
-    },
+    
   ];
 
   const comparisons = [
@@ -240,14 +237,16 @@ const SimulationResults: React.FC<{
                   </button>
                 </div>
                 <div className="chart">
-                  <h3 className="title">Scenarios Summary Graph</h3>
+                  <h3 className="title">Scenarios for next six months</h3>
                   <p style={{ textAlign: 'center', opacity: '0.5' }}>
                     The size of the circles represents the number of simulated
                     deaths
                   </p>
+                  
                   <Bubble
                     width={null}
                     height={null}
+                    
                     options={{
                       aspectRatio: isMobile ? 1 : 2,
                       tooltips: {
@@ -514,7 +513,7 @@ const SimulationResults: React.FC<{
                     ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     <br />
                     <span className="subtitle">
-                      Total number of <br /> cases (positive tests)
+                      Total number of <br /> positive tests
                     </span>
                   </h3>
                   <h3>
@@ -528,6 +527,7 @@ const SimulationResults: React.FC<{
                     </span>
                   </h3>
                 </div>
+                  
                 <div className="charts">
                   {graphs.map(graph => {
                     return (
@@ -681,16 +681,7 @@ const SimulationResults: React.FC<{
                 </div>
                 <hr />
                 <div className="stats horizontal">
-                  <h3>
-                    {selectedScenario.testsNeededForCare.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
-                    <br />
-                    <span className="subtitle">
-                      Number of tests <br /> used for patient care
-                    </span>
-                  </h3>
+
                   <h3>
                     {selectedScenario.testsNeededForMitigation.toLocaleString(
                       undefined,
@@ -698,8 +689,7 @@ const SimulationResults: React.FC<{
                     )}
                     <br />
                     <span className="subtitle">
-                      Number of tests used and required <br /> for epidemic
-                      mitigation
+                      Number of tests  <br /> in next six months
                     </span>
                   </h3>
                 </div>

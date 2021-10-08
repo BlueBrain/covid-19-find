@@ -151,7 +151,7 @@ class Simulator:
     @staticmethod
     def __get_serological_data(scenario_index, scenario_totals):
         result = []
-        for i in [5, 10, 100, 1000]:
+        for i in [5, 10, 25]:
             result.append(
                 {
                     "numSubgroups": i,

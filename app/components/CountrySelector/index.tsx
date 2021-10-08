@@ -42,7 +42,6 @@ export type CountrySelectorResponse = {
   hospitalEmployment: number | null;
   activePopulationProportion: number | null;
   over64Proportion: number | null;
-  fatalityReduction: number | null;
 };
 
 const CountrySelector: React.FC<{
@@ -97,11 +96,7 @@ const CountrySelector: React.FC<{
     'Enter... [1 - 100]',
     true,
   );
-  const fatalityReduction = useFormInput(
-    countryInfo.fatalityReduction,
-    null,
-    true,
-  );
+ 
   const incomeCategory = useFormInput(
     countryInfo.incomeCategory,
     'High income',
@@ -128,7 +123,6 @@ const CountrySelector: React.FC<{
           belowPovertyLineProportion: belowPovertyLineProportion.value,
           activePopulationProportion: activePopulationProportion.value,
           over64Proportion: over64Proportion.value,
-          fatalityReduction: fatalityReduction.value,
         },
         e.target.checkValidity(),
       );
@@ -197,27 +191,8 @@ const CountrySelector: React.FC<{
                 <br />
                 (private and public)
               </label>
-              <input {...hospitalBeds} required min="1" type="number" />
-              <TooltipLabel
-                label={
-                  <>
-                    Est. Reduction
-                    <br />
-                    in fatality rate (%)
-                  </>
-                }
-                tooltipKey="fatalityReduction"
+              <input {...hospitalBeds} required min="1" type="number" 
               />
-              <input
-                {...fatalityReduction}
-                required
-                min="0"
-                max="100"
-                step="0.5"
-                type="number"
-              />
-            </div>
-            <div className="form-column">
               <label>Income Category</label>
               <Select
                 // @ts-ignore
@@ -249,7 +224,10 @@ const CountrySelector: React.FC<{
                 onChange={e => {
                   incomeCategory.onChange(e);
                 }}
-              />
+              />   
+            </div>
+            <div className="form-column">
+              
               <label>Population size</label>
               <input {...population} required min="0" type="number" />
               <TooltipLabel

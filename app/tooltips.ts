@@ -6,13 +6,13 @@ export default {
     technical and cleaning staff per hospital bed. In the US and
     Europe the average is approximately 2.5 staff/bed. In other
     countries, it may be higher or lower than this number.`,
-  workingOutsideHomeProportion: `The percentage of the population whose occupation requires a
+  workingOutsideHomeProportion: `The percentage of the population whose occupation requires them to work outside the home with a
     high level of contact with other people (even in quarantine
     conditions), e.g. workers in essential shops, markets,
     factories, public transport and delivery services, doctors and
     dentists. Hospital staff are excluded (the number of hospital
     staff is calculated from the number of hospital beds for the
-    country).`,
+    country).` ,
   belowPovertyLineProportion: `The percentage of the urban population living below the
     poverty line. Many members of this population live in
     conditions that make it difficult or impossible to comply with
@@ -48,9 +48,9 @@ export default {
   confirmationTests:
     'The number of tests performed per day for purposes of patient care. This includes confirmatory testing and tests before patient discharge. ',
   specificity:
-    'The probability that an individual with a positive test result is actually infected',
+    'The probability of a negative test given that the person tested is healthy',
   sensitivity:
-    'The proportion of infected individuals the test is able to correctly detect',
+    'The probability of a positive test given that the person tested is infected',
   numTestsCare:
     'Tests performed with the goal of managing patients with a positive initial test result. Includes confirmatory testing and tests before patient discharge.',
   typeTestsCare: `The type of test used. Options are:

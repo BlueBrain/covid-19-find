@@ -179,50 +179,10 @@ export default [
         step: 1,
         key: 'resultsPeriod',
       },
-      {
-        label:
-          'Estimated reduction in infection fatality rate (IFR) since start of epidemic (%)',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 100,
-        step: 0.1,
-        key: 'fatalityReductionRecent',
-      },
+
     ],
   },
-  {
-    title: 'Testing for Care',
-    input: [
-      {
-        label: 'Test Type',
-        type: INPUT_TYPES.select,
-        min: 0,
-        key: 'typeTestsCare',
-        options: [
-          {
-            label: TEST_TYPES.PCR,
-            value: TEST_TYPES.PCR,
-          },
-          {
-            label: TEST_TYPES.RDT,
-            value: TEST_TYPES.RDT,
-          },
-        ],
-      },
-      {
-        label: 'Total tests per day',
-        type: INPUT_TYPES.number,
-        min: 0,
-        key: 'numTestsCare',
-      },
-      {
-        label: 'Recommended number of tests for care of one patient',
-        type: INPUT_TYPES.number,
-        min: 0,
-        key: 'requiredDxTests',
-      },
-    ],
-  },
+  
 ] as {
   title: string;
   input: AnyInputProp[];
