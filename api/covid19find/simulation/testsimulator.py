@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="CH"
+ccode="PH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
