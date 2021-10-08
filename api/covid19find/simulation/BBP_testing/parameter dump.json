@@ -12,7 +12,7 @@
             "death_period": 21,
             "design_effect": 2,
             "expert_mode": false,
-            "fatality_reduction": 0.759502587159556,
+            "fatality_reduction": 0.7502470288726872,
             "ge_65": 0.045,
             "high_contact": 0.3,
             "IFR_1_14": 2.97e-05,
@@ -147,8 +147,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-06",
-                        "2021-10-16"
+                        "2021-10-08",
+                        "2021-10-18"
                   ],
                   "trig_def_type": [
                         "date",
@@ -219,8 +219,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-06",
-                        "2021-10-16"
+                        "2021-10-08",
+                        "2021-10-18"
                   ],
                   "trig_def_type": [
                         "date",
@@ -291,8 +291,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-06",
-                        "2021-10-16"
+                        "2021-10-08",
+                        "2021-10-18"
                   ],
                   "trig_def_type": [
                         "date",
@@ -363,8 +363,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-06",
-                        "2021-10-16"
+                        "2021-10-08",
+                        "2021-10-18"
                   ],
                   "trig_def_type": [
                         "date",

@@ -309,6 +309,8 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    filename=os.path.join(fixed_params['test_directory'],'parameter dump.json')
    write_parameters(filename,p,scenarios_user_specified)
    today=(dt.datetime.now()-day1).days
+   #simulations will run by default for 180 days after today
+   # would be useful to parameterize this
    if end_day==None:
        end_day=today+180
        p['num_days']=end_day
@@ -534,7 +536,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 #           prevalence=dfsum.iloc[simday]['prevalence'] 
 # =============================================================================
       prevalence=dfsum.iloc[-1]['prevalence']
-      total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
+ #     total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
+     
       total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
       total_serotests_by_scenario_10[i]=sim.compute_sample_size(par,10,prevalence,1.96,0.01)
@@ -548,6 +551,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       df_from_today=dfsum.iloc[today:par.num_days-1]
       max_infected_by_scenario[i]=df_from_today['newinfected'].max()
       max_isolated_by_scenario[i]=df_from_today['isolated'].max()
+      total_tests_mit_by_scenario[i]=df_from_today['newtested_mit'].sum()
 
       if expert_mode:
          print('Total tested for mitigation =',total_tests_mit_by_scenario[i])
@@ -836,6 +840,7 @@ class Sim:
        
    #Computes the sample size required for a national wide seroprevalence survey in which max
    # n. of groups for stratified analysis is given by n_groups
+   # the error is the maximum  error (as a %) with a confidence of x% 
    # assumes a design effect (multiplier to compensate for clustering) specified in system parameters
    
    def compute_sample_size(sim,par,n_groups,prev,z,error):
