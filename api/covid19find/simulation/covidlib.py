@@ -899,7 +899,10 @@ class Sim:
                 else:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests[i]=tests_available[i]*p_infected_symptomatic[i]
-                p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                if tests_available[i]>0:
+                    p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                else:
+                    p_infected[i]=0
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
     
@@ -934,6 +937,7 @@ class Sim:
           total_tests_available=sim.actualnewtests_mit[t]
         else:
           total_tests_available=par.num_tests_mitigation[phase]
+        p_infected=[0,0,0]
         if total_tests_available>0:
                 
             for k in range(0,par.num_compartments):
@@ -950,7 +954,10 @@ class Sim:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests=tests_available_symptomatic*p_infected_symptomatic[i]
                 tests_performed[i]=tests_available_symptomatic+tests_available_asymptomatic
-                p_infected[i]=infected_symptomatic_tests/tests_performed[i]
+                if tests_performed[i]>0:
+                    p_infected[i]=infected_symptomatic_tests/tests_performed[i]
+                else:
+                    p_infected[i]=0
                 total_tests_available=total_tests_available-tests_performed[i]                
 # =============================================================================
 #         if 673<=t<675:
@@ -1005,7 +1012,10 @@ class Sim:
                 else:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests[i]=tests_available_symptomatic[i]*p_infected_symptomatic[i]
-                p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                if tests_available[i]>0:
+                    p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                else:
+                    p_infected[i]=0
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
    
