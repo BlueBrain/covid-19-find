@@ -226,6 +226,8 @@ def compute_reduction_IFR(country_df,day1):
         else: 
             reduction_cfr=0
     reduction_ifr=reduction_cfr*0.88
+    if reduction_ifr<0:
+        reduction_ifr=0
     return(reduction_ifr)
 
 ######################################################################
@@ -1457,6 +1459,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        if(ispast(par.day1,t)): 
         if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day
+                   
 # For the moment we do not consider recent improvements in fatality        
 # =============================================================================
 #        else: #future phases
