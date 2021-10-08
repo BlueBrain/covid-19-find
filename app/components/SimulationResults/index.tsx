@@ -689,7 +689,7 @@ const SimulationResults: React.FC<{
                     )}
                     <br />
                     <span className="subtitle">
-                      Number of tests  <br /> in next six months
+                      Number of tests required  <br /> in next six months
                     </span>
                   </h3>
                 </div>
