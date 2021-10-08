@@ -179,15 +179,7 @@ export default [
         step: 1,
         key: 'resultsPeriod',
       },
-      {
-        label:
-          'Estimated reduction in infection fatality rate (IFR) since start of epidemic (%)',
-        type: INPUT_TYPES.number,
-        min: 0,
-        max: 100,
-        step: 0.1,
-        key: 'fatalityReductionRecent',
-      },
+
     ],
   },
   
