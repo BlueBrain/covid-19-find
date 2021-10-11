@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="KG"
+ccode="CN"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-#past_dates= [1, 15, 51, 77, 91, 113, 127, 141, 209, 233, 247, 269, 565, 579, 593, 607, 629] 
-#past_severities=[0.0, 1.0, 0.0, 0.9, 1.0, 0.45, 0.75, 1.0, 0.9, 0.7, 0.75, 0.0, 0.65, 0.5, 0.8, 0.95, 0.05]  
+#past_dates= [1, 15, 117, 143, 167, 181, 199, 217, 231, 285, 311, 337, 389, 415, 437, 463, 489, 515, 541, 567, 585, 611, 631]
+#past_severities=[0.0, 1.0, 0.9, 0.95, 0.7, 0.65, 0.3, 0.8, 1.0, 0.85, 0.75, 0.85, 0.7, 0.8, 0.95, 0.8, 0.75, 0.85, 0.9, 0.75, 0.85, 0.9, 0.95]
 
 # =============================================================================
 # print('past_dates=',past_dates)
@@ -53,7 +53,7 @@ fixed_params={
     'expert_mode':True,\
     'save_results':False,\
   #  'fatality_reduction':0.84,\
-    'num_days':850}
+    'num_days':830}
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
 scenario_params=[]
@@ -62,7 +62,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-29','2021-10-08'],\
+    'trig_values':['2021-10-11','2021-10-21'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -77,12 +77,12 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
-    'fatality_reduction_recent':[0.57,0.57,0.57]
+    #'fatality_reduction_recent':[0.57,0.57,0.57]
     })
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-09-29','2021-10-08'],\
+   'trig_values':['2021-10-11','2021-10-21'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -97,12 +97,12 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.57,0.57]
+  #  'fatality_reduction_recent':[0.57,0.57]
     })
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-29','2021-10-08'],\
+    'trig_values':['2021-10-11','2021-10-21'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -117,12 +117,12 @@ scenario_params.append({
     'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.57,0.57]
+ #   'fatality_reduction_recent':[0.57,0.57]
     })
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-09-29','2021-10-08'],\
+    'trig_values':['2021-10-11','2021-10-21'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[31000, 31000],\
@@ -137,7 +137,7 @@ scenario_params.append({
     'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[3,3],\
-    'fatality_reduction_recent':[0.57,0.57]
+ #   'fatality_reduction_recent':[0.57,0.57]
     })
 try:
     filename=os.path.join(fixed_params['test_directory'],'parameters.json')

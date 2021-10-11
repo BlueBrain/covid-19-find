@@ -210,7 +210,12 @@ def update_system_params2(p, fixed_params):
 def compute_reduction_IFR(country_df,day1):
     new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-8]['accumulated_deaths']
     new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-8]['accumulated_cases']
-    cfr_last_week=new_deaths_last_week/new_cases_last_week
+#possible divide by zerp here
+    if new_cases_last_week>0:
+        cfr_last_week=new_deaths_last_week/new_cases_last_week
+    else:
+        cfr_last_week=0
+        
 #Our automated test procedure uses a static country_df. The if statement makes sure this does not cause an error in computation
     if len(country_df)<406:
         reduction_cfr=0
@@ -251,6 +256,14 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
    
+   if len(kwargs)>0:
+      scenarios_user_specified=kwargs['scenarios']
+   #params_dict=fixed_params['test_dictionary']
+# =============================================================================
+#    with open(afilename,'w') as outfile:      
+#         json.dump(fixed_params,outfile,indent=6)
+#    outfile.close()
+# =============================================================================
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -316,6 +329,12 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    if end_day==None:
        end_day=today+180
        p['num_days']=end_day
+# =============================================================================
+#    afilename=os.path.join(fixed_params['test_directory'],'received from front end.json')
+#    with open(afilename,'w') as outfile:      
+#         json.dump(fixed_params,outfile,indent=6)
+#    outfile.close()
+# =============================================================================
    try:
        results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
    except:
@@ -610,7 +629,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    results_dict={}
    results_dict.update({
    'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
-   'total_tests_care_by_scenario':total_tests_care_by_scenario,\
    'total_serotests_by_scenario_5':total_serotests_by_scenario_5,\
    'total_serotests_by_scenario_10':total_serotests_by_scenario_10,\
    'total_serotests_by_scenario_25':total_serotests_by_scenario_25,\
@@ -672,7 +690,7 @@ class Par:
       self.is_counterfactual=[]
       self.fatality_reduction=float(params['fatality_reduction'])
       self.fatality_reduction_per_day=0
-      self.fatality_reduction_recent=list(map(float, params['fatality_reduction_recent']))
+  #    self.fatality_reduction_recent=list(map(float, params['fatality_reduction_recent']))
       self.no_improvement_period=params['no_improvement_period']
       self.retest_period_asymptomatics=params['retest_period_asymptomatics']
       self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios']) 

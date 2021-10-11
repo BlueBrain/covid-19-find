@@ -51,7 +51,6 @@ class Simulator:
             "age_gt_64": parameters["over64Proportion"],
             "prop_urban": parameters["urbanPopulationProportion"],
             "staff_per_bed": parameters["hospitalStaffPerBed"],
-            "fatality_reduction": parameters["fatalityReduction"],
             "income_category": INCOME_CATEGORY_LABEL_TO_CODE[parameters["incomeCategory"]],
             "test_directory": self.parameters_directory
         }
@@ -80,7 +79,6 @@ class Simulator:
             "type_tests_care": Simulator.__get_array_for_key(phases, "typeTestsCare"),
             "requireddxtests": Simulator.__get_array_for_key(phases, "requiredDxTests"),
             "results_period": Simulator.__get_array_for_key(phases, "resultsPeriod"),
-            "fatality_reduction_recent": Simulator.__get_array_for_key(phases, "fatalityReductionRecent")
         }
 
     @staticmethod
@@ -237,7 +235,6 @@ class Simulator:
             "typeTestsCare": "PCR",
             "requiredDxTests": int(covid_libscenario["requireddxtests"]),
             "resultsPeriod": int(covid_libscenario["results_period"]),
-            "fatalityReductionRecent": covid_libscenario["fatality_reduction_recent"]
         }
         phase2 = dict(phase1)
         phase2["trigger"] = (date.today() + timedelta(days=10)).isoformat()
@@ -270,8 +267,7 @@ class Simulator:
         with open(os.path.join(cl_path_prefix, self.parameters_directory, "system_params.json")) as params_file:
             fixed_parameters_from_file = json.load(params_file)
         return {
-            "scenarios": scenarios,
-            "fatalityReduction": fixed_parameters_from_file["fatality_reduction"]
+            "scenarios": scenarios
         }
 
     def __past_phases_for(self, country_code):
