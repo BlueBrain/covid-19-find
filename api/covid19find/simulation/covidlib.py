@@ -474,8 +474,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       first_valid_date_4_reff=dt.datetime.strptime('2020-01-22', '%Y-%m-%d').date()
       dataframes.append(df) 
       dfsum = df.groupby(['dates']).sum().reset_index()
-      #eliminate spurious computation of Reff where number of infected very low
       dfsum['reff']=(dfsum['newinfected']/dfsum['infected']*(p['recovery_period']+p['incubation_period'])).where(dfsum['dates'].dt.date>=first_valid_date_4_reff,other=0)
+      dfsum['reff'].where(dfsum['reff']>0, other=0,inplace=True)
       dfsum['positive rate']=dfsum['newconfirmed']/dfsum['newtested_mit']
       dfsum['detection rate']=dfsum['newconfirmed']/dfsum['newinfected']
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
