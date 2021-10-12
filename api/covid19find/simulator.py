@@ -129,7 +129,7 @@ class Simulator:
                     "maxInfected": int(scenario_totals["max_infected_by_scenario"][i]),
                     "totalInfected": int(scenario_totals["total_infected_by_scenario"][i]),
                     "maxIsolated": int(scenario_totals["max_isolated_by_scenario"][i]),
-                    "testsNeededForCare": int(scenario_totals["total_tests_care_by_scenario"][i]),
+#                    "testsNeededForCare": int(scenario_totals["total_tests_care_by_scenario"][i]),
                     "testsNeededForMitigation": int(scenario_totals["total_tests_mit_by_scenario"][i]),
                     "data": {
                         "hospitals": self.__dataframe_to_response(
