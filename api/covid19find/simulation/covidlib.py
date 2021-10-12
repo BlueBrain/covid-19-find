@@ -846,6 +846,8 @@ class Sim:
             sim.newinfected[t,i]=sim.newinfected[t,i]+sim.compart_newinfected[t,j,i]
          if sim.newinfected[t,i]>sim.susceptibles[t-1,i]:#This should be part of i loop - may not be necessary
             sim.newinfected[t,i]=sim.susceptibles[t-1,i]
+         if sim.newinfected[t,i]<0:
+             sim.newinfected[t,i]=0
        
   # computes the number of imported infections for all compartments
             
@@ -1059,7 +1061,7 @@ class Sim:
        elif params.trig_def_type[phase]=='deaths':
            value=np.sum(sim.newdeaths[t-7:t])/7
        elif params.trig_def_type[phase]=='increase cases':
-           if t>7:               
+           if t>7 and np.sum(sim.newisolated[t-14:t-7,:])>0:               
               value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newisolated[t-14:t-7,:])-1)
            else:
               value=float('NaN')
@@ -1071,7 +1073,10 @@ class Sim:
               value=float('NaN')
               raise CustomError('Unable to compute increase in deaths')
        elif params.trig_def_type[phase]=='positives':
-           value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
+           if np.sum(sim.newtested_mit[t-7:t,:])>0:
+               value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
+           else:
+               value=0
  #          print ('positives calculated at',value)
        else:
            raise CustomError('trig_def_type for phase ',str(phase),' does not exist')
@@ -1348,16 +1353,22 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                     non_infected_secondaries=non_infected_secondaries+non_infected_secondaries_now
                 if (t-results_delay)>0:  
                    sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
+                   if sim.newisolated[t,i]<0:
+                       sim.newisolated[t,i]=0
 # =============================================================================
 #                    if sim.newisolated[t,i]>sim.newinfected[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+non_infected_secondaries:
 #                         sim.newisolated[t,i]=sim.newinfected[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+non_infected_secondaries
 # =============================================================================
                    sim.newisolatedinfected[t,i] =sim.newisolatedinfected[t,i]+ sim.truepositives[target-results_delay,i]+infected_secondaries
+                   if sim.newisolatedinfected[t,i]<0:
+                       sim.newisolatedinfected[t,i]=0
 # =============================================================================
 #                    if sim.newisolatedinfected[t,i]>sim.newisolated[t,i]:
 #                         sim.newisolatedinfected[t,i]=sim.newisolated[t,i]
 # =============================================================================
                    sim.newconfirmed[t,i] = (sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i])
+                   if sim.newconfirmed[t,i]<0:
+                       sim.newconfirmed[t,i]=0
 #============================================================================================
 # The statement below causes cases to collapse irrealistically as we approach current date - this raises questions about the other comnditionals.
 # I think the conditionals come too late in the code. We need to stop things at root
