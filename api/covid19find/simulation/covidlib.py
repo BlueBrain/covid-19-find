@@ -477,10 +477,15 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['reff']=(dfsum['newinfected']/dfsum['infected']*(p['recovery_period']+p['incubation_period'])).where(dfsum['dates'].dt.date>=first_valid_date_4_reff,other=0)
       dfsum['reff'].where(dfsum['reff']>0, other=0,inplace=True)
       dfsum['positive rate']=dfsum['newconfirmed']/dfsum['newtested_mit']
+      dfsum['positive rate'].where(dfsum['positive rate']<=1, other=0,inplace=True)
       dfsum['detection rate']=dfsum['newconfirmed']/dfsum['newinfected']
+      dfsum['detection rate'].where(dfsum['detection rate']<=1, other=0,inplace=True)
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
+      dfsum['ppv'].where(dfsum['ppv']<=1, other=0,inplace=True)
       dfsum['npv']=dfsum['truenegatives']/(dfsum['truenegatives']+dfsum['falsenegatives'])
+      dfsum['ppv'].where(dfsum['npv']<=1, other=0,inplace=True)
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
+      dfsum['incidence'].where(dfsum['incidence']>0, other=0,inplace=True)
       dfsum['prevalence']=(dfsum['accumulatedinfected']-dfsum['deaths'])/dfsum['population']
       dfsum['actualdeaths']=np.round(sim.actualdeaths,decimals=3)
       dfsum['actualcases']=np.round(sim.actualcases,decimals=3)
