@@ -103,7 +103,7 @@ def getsimdeaths(dfx,sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   totweight=0.3
+   totweight=0.0
    denom1 = result['total_deaths'].head(span).mean()
    if abs(denom1) < 1:
       denom1 = 1
