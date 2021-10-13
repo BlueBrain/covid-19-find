@@ -203,31 +203,38 @@ def update_system_params2(p, fixed_params):
 ######################################################################
 # compute reduction IFR:
 #    Uses data on actual deaths and cases to compute instantaneous CFR
-#    on Jan 1 2021, and today (uses averages over 7 days)
+#    on Jan 1 2021, and today (uses averages over 28 days)
+#    If cannot compute value because of missing data uses a default value
 #    Reduction in CFR is a good measure of the impact of vaccination
 ######################################################################
 
-def compute_reduction_IFR(country_df,day1):
-    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-8]['accumulated_deaths']
-    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-8]['accumulated_cases']
-    cfr_last_week=new_deaths_last_week/new_cases_last_week
+def compute_reduction_IFR(country_df,day1,fixed_params):
+    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-29]['accumulated_deaths']
+    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-29]['accumulated_cases']
+#possible divide by zerp here
+    if new_cases_last_week>0:
+        cfr_last_week=new_deaths_last_week/new_cases_last_week
+    else:
+        return()
+        
 #Our automated test procedure uses a static country_df. The if statement makes sure this does not cause an error in computation
     if len(country_df)<406:
-        reduction_cfr=0
+        return()
     else:
-        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[397]['accumulated_deaths']
-        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[397]['accumulated_cases']
+        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[377]['accumulated_deaths']
+        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[377]['accumulated_cases']
         if new_cases_jan1>0:
             cfr_jan1=new_deaths_jan1/new_cases_jan1
         else:
-            cfr_jan1=0
+            return()
         if cfr_jan1>0:
             reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
         else: 
-            reduction_cfr=0
+            return()
     reduction_ifr=reduction_cfr*0.88
-    return(reduction_ifr)
-
+    if reduction_ifr<0:
+        reduction_ifr=0
+    fixed_params['fatality_reduction']=reduction_ifr
 ######################################################################
 # run_simulation:
 #    takes in fixed user-specified system and scenario parameters
@@ -249,6 +256,14 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
    
+   if len(kwargs)>0:
+      scenarios_user_specified=kwargs['scenarios']
+   #params_dict=fixed_params['test_dictionary']
+# =============================================================================
+#    with open(afilename,'w') as outfile:      
+#         json.dump(fixed_params,outfile,indent=6)
+#    outfile.close()
+# =============================================================================
    day1 = dt.datetime.strptime(country_df_raw.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=create_empty_country_df(day1, 60)
    frames=[empty_df,country_df_raw]
@@ -272,7 +287,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df=country_df_raw.rolling(win_length).mean()
    country_df['Date']=country_df_raw['Date']
-   fixed_params['fatality_reduction']=compute_reduction_IFR(country_df,day1)
+   compute_reduction_IFR(country_df,day1,fixed_params)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
    keys=kwargs.keys()
@@ -314,6 +329,12 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    if end_day==None:
        end_day=today+180
        p['num_days']=end_day
+# =============================================================================
+#    afilename=os.path.join(fixed_params['test_directory'],'received from front end.json')
+#    with open(afilename,'w') as outfile:      
+#         json.dump(fixed_params,outfile,indent=6)
+#    outfile.close()
+# =============================================================================
    try:
        results = process_scenarios(country_df,p, scenarios_user_specified, initial_beta, params_dir,end_day)
    except:
@@ -453,13 +474,18 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       first_valid_date_4_reff=dt.datetime.strptime('2020-01-22', '%Y-%m-%d').date()
       dataframes.append(df) 
       dfsum = df.groupby(['dates']).sum().reset_index()
-      #eliminate spurious computation of Reff where number of infected very low
       dfsum['reff']=(dfsum['newinfected']/dfsum['infected']*(p['recovery_period']+p['incubation_period'])).where(dfsum['dates'].dt.date>=first_valid_date_4_reff,other=0)
+      dfsum['reff'].where(dfsum['reff']>0, other=0,inplace=True)
       dfsum['positive rate']=dfsum['newconfirmed']/dfsum['newtested_mit']
+      dfsum['positive rate'].where(dfsum['positive rate']<=1, other=0,inplace=True)
       dfsum['detection rate']=dfsum['newconfirmed']/dfsum['newinfected']
+      dfsum['detection rate'].where(dfsum['detection rate']<=1, other=0,inplace=True)
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
+      dfsum['ppv'].where(dfsum['ppv']<=1, other=0,inplace=True)
       dfsum['npv']=dfsum['truenegatives']/(dfsum['truenegatives']+dfsum['falsenegatives'])
+      dfsum['ppv'].where(dfsum['npv']<=1, other=0,inplace=True)
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
+      dfsum['incidence'].where(dfsum['incidence']>0, other=0,inplace=True)
       dfsum['prevalence']=(dfsum['accumulatedinfected']-dfsum['deaths'])/dfsum['population']
       dfsum['actualdeaths']=np.round(sim.actualdeaths,decimals=3)
       dfsum['actualcases']=np.round(sim.actualcases,decimals=3)
@@ -515,7 +541,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
          if expert_mode:
             print('total population in compartment',comp,p['init_pop'][j])
             print('total tested for mitigation in compartment',comp,'=',dfsumcomp['newtested_mit'][j])
-            print('total tested for diagnosis and care in compartment',comp,'=',dfsumcomp['actualdxtests'][j])
+            print('total tested for diagnosis and care in compartment',comp,'=',0)
             print('total_deaths in ',comp,'=', dfsumcomp['newdeaths'][j])
             print('max_infections in ',comp,'=',dfmaxcomp['infected'][j])
             print('total_infections in ',comp,'=',dfsumcomp['newinfected'][j])
@@ -539,7 +565,8 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       prevalence=dfsum.iloc[-1]['prevalence']
  #     total_tests_mit_by_scenario[i]=dfsumcomp['newtested_mit'].sum()
      
-      total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
+  #    total_tests_care_by_scenario[i]=dfsumcomp['actualdxtests'].sum()
+      total_tests_care_by_scenario[i]=0
       total_serotests_by_scenario_5[i]=sim.compute_sample_size(par,5,prevalence,1.96,0.01)
       total_serotests_by_scenario_10[i]=sim.compute_sample_size(par,10,prevalence,1.96,0.01)
       total_serotests_by_scenario_25[i]=sim.compute_sample_size(par,25,prevalence,1.96,0.01)
@@ -556,7 +583,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 
       if expert_mode:
          print('Total tested for mitigation =',total_tests_mit_by_scenario[i])
-         print('Total tested for care =',total_tests_care_by_scenario[i])
+         print('Total tested for care =',0)
          print('Max infected=',max_infected_by_scenario[i])
          print('Total infected by scenario=',total_infected_by_scenario[i]),
          print('Max isolated=',max_isolated_by_scenario[i])
@@ -607,7 +634,6 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
    results_dict={}
    results_dict.update({
    'total_tests_mit_by_scenario':total_tests_mit_by_scenario,\
-   'total_tests_care_by_scenario':total_tests_care_by_scenario,\
    'total_serotests_by_scenario_5':total_serotests_by_scenario_5,\
    'total_serotests_by_scenario_10':total_serotests_by_scenario_10,\
    'total_serotests_by_scenario_25':total_serotests_by_scenario_25,\
@@ -669,7 +695,7 @@ class Par:
       self.is_counterfactual=[]
       self.fatality_reduction=float(params['fatality_reduction'])
       self.fatality_reduction_per_day=0
-      self.fatality_reduction_recent=list(map(float, params['fatality_reduction_recent']))
+  #    self.fatality_reduction_recent=list(map(float, params['fatality_reduction_recent']))
       self.no_improvement_period=params['no_improvement_period']
       self.retest_period_asymptomatics=params['retest_period_asymptomatics']
       self.run_multiple_test_scenarios=(params['run_multiple_test_scenarios']) 
@@ -820,6 +846,8 @@ class Sim:
             sim.newinfected[t,i]=sim.newinfected[t,i]+sim.compart_newinfected[t,j,i]
          if sim.newinfected[t,i]>sim.susceptibles[t-1,i]:#This should be part of i loop - may not be necessary
             sim.newinfected[t,i]=sim.susceptibles[t-1,i]
+         if sim.newinfected[t,i]<0:
+             sim.newinfected[t,i]=0
        
   # computes the number of imported infections for all compartments
             
@@ -899,7 +927,10 @@ class Sim:
                 else:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests[i]=tests_available[i]*p_infected_symptomatic[i]
-                p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                if tests_available[i]>0:
+                    p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                else:
+                    p_infected[i]=0
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
     
@@ -934,6 +965,7 @@ class Sim:
           total_tests_available=sim.actualnewtests_mit[t]
         else:
           total_tests_available=par.num_tests_mitigation[phase]
+        p_infected=[0,0,0]
         if total_tests_available>0:
                 
             for k in range(0,par.num_compartments):
@@ -950,7 +982,10 @@ class Sim:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests=tests_available_symptomatic*p_infected_symptomatic[i]
                 tests_performed[i]=tests_available_symptomatic+tests_available_asymptomatic
-                p_infected[i]=infected_symptomatic_tests/tests_performed[i]
+                if tests_performed[i]>0:
+                    p_infected[i]=infected_symptomatic_tests/tests_performed[i]
+                else:
+                    p_infected[i]=0
                 total_tests_available=total_tests_available-tests_performed[i]                
 # =============================================================================
 #         if 673<=t<675:
@@ -1005,7 +1040,10 @@ class Sim:
                 else:
  #                   infected_symptomatic_tests[i]=tests_available[i]*(1-par.background_rate_symptomatic)
                     infected_symptomatic_tests[i]=tests_available_symptomatic[i]*p_infected_symptomatic[i]
-                p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                if tests_available[i]>0:
+                    p_infected[i]=infected_symptomatic_tests[i]/tests_available[i] 
+                else:
+                    p_infected[i]=0
         adjust_positives_and_negatives(sim,par,t,phase,tests_available,p_infected)   
         return(tests_available)
    
@@ -1023,7 +1061,7 @@ class Sim:
        elif params.trig_def_type[phase]=='deaths':
            value=np.sum(sim.newdeaths[t-7:t])/7
        elif params.trig_def_type[phase]=='increase cases':
-           if t>7:               
+           if t>7 and np.sum(sim.newisolated[t-14:t-7,:])>0:               
               value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newisolated[t-14:t-7,:])-1)
            else:
               value=float('NaN')
@@ -1035,7 +1073,10 @@ class Sim:
               value=float('NaN')
               raise CustomError('Unable to compute increase in deaths')
        elif params.trig_def_type[phase]=='positives':
-           value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
+           if np.sum(sim.newtested_mit[t-7:t,:])>0:
+               value=(np.sum(sim.newisolated[t-7:t,:])/np.sum(sim.newtested_mit[t-7:t,:]))
+           else:
+               value=0
  #          print ('positives calculated at',value)
        else:
            raise CustomError('trig_def_type for phase ',str(phase),' does not exist')
@@ -1227,21 +1268,23 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
         end_loop=par.num_days
     for i in range(0,end_loop):
    #this was to fill in missing values when we were using centered averages. Should no longer be necessary - even if required can be moved to a procedure
-        if i>350:
-            if np.isnan(sim.actualnewtests_mit[i]) or sim.actualnewtests_mit[i]==0:
-                sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
-            if np.isnan(sim.actualcases[i])or sim.actualcases[i]==0:
-                sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
-            if np.isnan(sim.actualdeaths[i])or sim.actualcases[i]==0:
-                sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
-                
-        else:
-            if np.isnan(sim.actualcases[i]):
-                sim.actualcases[i]=0
-            if np.isnan(sim.actualnewtests_mit[i]):
-                sim.actualnewtests_mit[i]=0
-            if np.isnan(sim.actualdeaths[i]):
-                sim.actualdeaths[i]=0
+# =============================================================================
+#         if i>350:
+#             if np.isnan(sim.actualnewtests_mit[i]) or sim.actualnewtests_mit[i]==0:
+#                 sim.actualnewtests_mit[i]=sim.actualnewtests_mit[i-29:i-1].mean()
+#             if np.isnan(sim.actualcases[i])or sim.actualcases[i]==0:
+#                 sim.actualcases[i]=sim.actualcases[i-1]+sim.actualnewcases[i-29:i-1].mean()
+#             if np.isnan(sim.actualdeaths[i])or sim.actualcases[i]==0:
+#                 sim.actualdeaths[i]=sim.actualdeaths[i-1]+sim.actualnewdeaths[i-29:i-1].mean()
+#                 
+#         else:
+# =============================================================================
+        if np.isnan(sim.actualcases[i]):
+            sim.actualcases[i]=0
+        if np.isnan(sim.actualnewtests_mit[i]):
+            sim.actualnewtests_mit[i]=0
+        if np.isnan(sim.actualdeaths[i]):
+            sim.actualdeaths[i]=0
         sim.actualnewdeaths[i]=sim.actualdeaths[i]-sim.actualdeaths[i-1]
         if sim.actualnewdeaths[i]<0:
             sim.actualnewdeaths[i]=0
@@ -1310,16 +1353,22 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
                     non_infected_secondaries=non_infected_secondaries+non_infected_secondaries_now
                 if (t-results_delay)>0:  
                    sim.newisolated[t,i] =  sim.newisolated[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+infected_secondaries+non_infected_secondaries
+                   if sim.newisolated[t,i]<0:
+                       sim.newisolated[t,i]=0
 # =============================================================================
 #                    if sim.newisolated[t,i]>sim.newinfected[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+non_infected_secondaries:
 #                         sim.newisolated[t,i]=sim.newinfected[target-results_delay,i]+sim.falsepositives[target-results_delay,i]+non_infected_secondaries
 # =============================================================================
                    sim.newisolatedinfected[t,i] =sim.newisolatedinfected[t,i]+ sim.truepositives[target-results_delay,i]+infected_secondaries
+                   if sim.newisolatedinfected[t,i]<0:
+                       sim.newisolatedinfected[t,i]=0
 # =============================================================================
 #                    if sim.newisolatedinfected[t,i]>sim.newisolated[t,i]:
 #                         sim.newisolatedinfected[t,i]=sim.newisolated[t,i]
 # =============================================================================
                    sim.newconfirmed[t,i] = (sim.newconfirmed[t,i]+sim.truepositives[target-results_delay,i]+sim.falsepositives[target-results_delay,i])
+                   if sim.newconfirmed[t,i]<0:
+                       sim.newconfirmed[t,i]=0
 #============================================================================================
 # The statement below causes cases to collapse irrealistically as we approach current date - this raises questions about the other comnditionals.
 # I think the conditionals come too late in the code. We need to stop things at root
@@ -1444,6 +1493,7 @@ def simulate(country_df,sim, par, max_betas, min_betas,start_day=1, end_day=300,
        if(ispast(par.day1,t)): 
         if t>=par.no_improvement_period:
                tau=tau=tau*par.fatality_reduction_per_day
+                   
 # For the moment we do not consider recent improvements in fatality        
 # =============================================================================
 #        else: #future phases

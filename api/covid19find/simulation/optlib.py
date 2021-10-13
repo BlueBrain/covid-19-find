@@ -246,7 +246,7 @@ def findnexttrig(dfx, sev, trig, trignum):
          if scorerun == 5:
             break
  #        print(currsev,t,score)
-         if score < bestscore:
+         if score <= bestscore:
             bestscore = score
             bests = currsev
             besttrig = t
