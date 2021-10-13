@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="BT"
+ccode="PE"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 375, 389, 411, 557, 571, 619]
-past_severities=[0.0, 1.0, 0.05, 0.0, 1.0, 0.5, 0.0, 1.0]
+past_dates= [1, 15, 83, 103, 125, 145, 171, 197, 299, 323, 347, 369, 391, 411, 429, 443, 465, 479]
+past_severities=[0.0, 1.0, 0.6, 0.0, 0.65, 0.8, 0.85, 0.8, 0.75, 0.7, 0.65, 0.55, 0.4, 0.45, 0.5, 0.45, 0.15, 0.0]
 # =============================================================================
 # print('past_dates=',past_dates)
 # print('past_severities=', past_severities)
