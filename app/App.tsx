@@ -13,6 +13,7 @@ import useQueryString from './hooks/useQuerySring';
 import { decodeClientState, encodeClientState } from './libs/stateLoader';
 
 const App: React.FC = () => {
+  const [numberOftest, setNumberOftests] = React.useState(1000);
   const api = useAPIContext();
   const [defaultScenarios, setDefaultScenarios] = React.useState(
     DEFAULT_SIMULATION_REQUEST_PARAMS.scenarios,
@@ -102,6 +103,7 @@ const App: React.FC = () => {
       </section>
       {/* Panel 1 */}
       <Countries
+        onCountryData={tests => setNumberOftests(tests)}
         countrySelectFormReady={countrySelectFormReady}
         setCountrySelectFormReady={(countrySelectFormReady: boolean) => {
           setFormsReady({
@@ -131,6 +133,7 @@ const App: React.FC = () => {
       />
       {/* Panel 2 */}
       <ScenarioEditorPanel
+        numberOftest={numberOftest}
         defaultScenarios={defaultScenarios}
         scenarios={state.scenarios}
         onSubmit={handleSubmit}

@@ -26,12 +26,20 @@ import './scenario-editor.less';
 import tooltips from '../../tooltips';
 
 const ScenarioEditor: React.FC<{
+  numberOftest?: number;
   scenario: ClientScenarioData;
   defaultPhase: ClientPhase;
   onChange?: (scenario: ClientScenarioData) => void;
   disabled: boolean;
   scenarioIndex: number;
-}> = ({ defaultPhase, scenario, onChange, disabled, scenarioIndex }) => {
+}> = ({
+  defaultPhase,
+  scenario,
+  onChange,
+  disabled,
+  scenarioIndex,
+  numberOftest,
+}) => {
   const name = useTextInput(scenario.name, null, true);
   const { phases } = scenario;
 
@@ -173,6 +181,8 @@ const ScenarioEditor: React.FC<{
                         // TODO refactor as pattern
                         // change type of trigger for validation
                         const inputProps = { ...input };
+                        let value = phase[inputProps.key];
+
                         if (
                           inputProps.key === 'trigger' &&
                           phase.triggerType === TRIGGER_TYPE.DATE
@@ -201,6 +211,12 @@ const ScenarioEditor: React.FC<{
                           }
                         }
 
+                        if (inputProps.key === 'numTestsMitigation') {
+                          if (value !== 0 && value !== undefined) {
+                            value = numberOftest;
+                          }
+                        }
+
                         return (
                           <div
                             className="col"
@@ -215,7 +231,7 @@ const ScenarioEditor: React.FC<{
                                 inputProps,
                                 phaseIndex,
                               )}
-                              value={phase[inputProps.key]}
+                              value={value}
                             />
                           </div>
                         );

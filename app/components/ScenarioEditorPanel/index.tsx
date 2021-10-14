@@ -83,12 +83,19 @@ const validateFormWithCustomRules = (
 };
 
 const ScenarioEditorPanel: React.FC<{
+  numberOftest?: number;
   defaultScenarios: ClientScenarioData[];
   scenarios: ClientScenarioData[];
   onSubmit?: (props: { scenarios: ClientScenarioData[] }) => void;
   testsFormReady: boolean;
   setTestsFormReady: (value: boolean) => void;
-}> = ({ defaultScenarios, scenarios, onSubmit, setTestsFormReady }) => {
+}> = ({
+  defaultScenarios,
+  scenarios,
+  onSubmit,
+  setTestsFormReady,
+  numberOftest,
+}) => {
   const [scenariosValue, setScenariosValue] = React.useState({ scenarios });
   const [isValid, setValidity] = React.useState(false);
   const [invalidScenarioIndexes, setInvalidScenarioIndexes] = React.useState<
@@ -144,6 +151,7 @@ const ScenarioEditorPanel: React.FC<{
             </h2>
           </div>
           <ScenarioEditor
+            numberOftest={numberOftest}
             defaultScenarios={defaultScenarios}
             scenarios={scenariosValue.scenarios}
             onSubmit={setScenariosValue}

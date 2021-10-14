@@ -104,13 +104,12 @@ const SimulationResults: React.FC<{
       actualKey: 'actualCases',
       cohort: 'total',
     },
-    
+
     {
       title: 'Infected hospital staff/day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
-    
   ];
 
   const comparisons = [
@@ -242,11 +241,10 @@ const SimulationResults: React.FC<{
                     The size of the circles represents the number of simulated
                     deaths
                   </p>
-                  
+
                   <Bubble
                     width={null}
                     height={null}
-                    
                     options={{
                       aspectRatio: isMobile ? 1 : 2,
                       tooltips: {
@@ -527,7 +525,7 @@ const SimulationResults: React.FC<{
                     </span>
                   </h3>
                 </div>
-                  
+
                 <div className="charts">
                   {graphs.map(graph => {
                     return (
@@ -680,8 +678,33 @@ const SimulationResults: React.FC<{
                   })}
                 </div>
                 <hr />
-                <div className="stats horizontal">
 
+                <div className="charts">
+                  <NumberOfTestsPerDay
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                  <RNaught
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                  <Prevalence
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                </div>
+                <hr />
+                <div className="charts">
+                  <LivesSaved
+                    clientScenariosInput={clientScenariosInput}
+                    scenariosResults={scenariosResults}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                  />
+                </div>
+                <div className="stats horizontal">
                   <h3>
                     {selectedScenario.testsNeededForMitigation.toLocaleString(
                       undefined,
@@ -689,7 +712,7 @@ const SimulationResults: React.FC<{
                     )}
                     <br />
                     <span className="subtitle">
-                      Number of tests required  <br /> in next six months
+                      Number of tests <br /> in next six months
                     </span>
                   </h3>
                 </div>
@@ -719,31 +742,6 @@ const SimulationResults: React.FC<{
                       ),
                     )}
                   </table>
-                </div>
-                <div className="charts">
-                  <NumberOfTestsPerDay
-                    clientScenariosInput={clientScenariosInput}
-                    scenariosResults={scenariosResults}
-                    selectedScenarioIndex={selectedScenarioIndex}
-                  />
-                  <RNaught
-                    clientScenariosInput={clientScenariosInput}
-                    scenariosResults={scenariosResults}
-                    selectedScenarioIndex={selectedScenarioIndex}
-                  />
-                  <Prevalence
-                    clientScenariosInput={clientScenariosInput}
-                    scenariosResults={scenariosResults}
-                    selectedScenarioIndex={selectedScenarioIndex}
-                  />
-                </div>
-                <hr />
-                <div className="charts">
-                  <LivesSaved
-                    clientScenariosInput={clientScenariosInput}
-                    scenariosResults={scenariosResults}
-                    selectedScenarioIndex={selectedScenarioIndex}
-                  />
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">
