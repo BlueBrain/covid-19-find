@@ -204,7 +204,6 @@
           "data",
           "testingImpact",
           "samplesRequiredForSerologicalStudies",
-          "testsNeededForCare",
           "testsNeededForMitigation"
         ],
         "properties": {
@@ -223,9 +222,7 @@
           "maxIsolated": {
             "type": "integer"
           },
-          "testsNeededForCare": {
-            "type": "integer"
-          },
+          
           "testsNeededForMitigation": {
             "type": "integer"
           },

@@ -286,6 +286,11 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
  
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df=country_df_raw.rolling(win_length).mean()
+# raw data occasionally includes negatives and some very high values - for the moment I replace with value for previous day - this was necessary for Peru
+   filler=country_df['tests'].shift(1).rolling(7).mean()
+   country_df['tests'].where(country_df['tests']<filler*2, other=filler,inplace=True)
+   country_df['tests'].where(country_df['tests']>=0, other=filler,inplace=True)
+   country_df['tests'].where(country_df['tests'].notnull(), other=0,inplace=True)
    country_df['Date']=country_df_raw['Date']
    compute_reduction_IFR(country_df,day1,fixed_params)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
@@ -482,8 +487,10 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       dfsum['detection rate'].where(dfsum['detection rate']<=1, other=0,inplace=True)
       dfsum['ppv']=dfsum['truepositives']/(dfsum['truepositives']+dfsum['falsepositives'])
       dfsum['ppv'].where(dfsum['ppv']<=1, other=0,inplace=True)
+      dfsum['ppv'].where(dfsum['ppv']<0, other=0,inplace=True)
       dfsum['npv']=dfsum['truenegatives']/(dfsum['truenegatives']+dfsum['falsenegatives'])
-      dfsum['ppv'].where(dfsum['npv']<=1, other=0,inplace=True)
+      dfsum['npv'].where(dfsum['npv']<=1, other=0,inplace=True)
+      dfsum['npv'].where(dfsum['npv']<0, other=0,inplace=True)
       dfsum['incidence']=dfsum['newinfected']/(dfsum['population'])
       dfsum['incidence'].where(dfsum['incidence']>0, other=0,inplace=True)
       dfsum['prevalence']=(dfsum['accumulatedinfected']-dfsum['deaths'])/dfsum['population']
@@ -1756,9 +1763,7 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
 # =============================================================================
         if t<today:
            sim.truenegatives[t,i]=tests_performed[i]-cases[i]
-           if sim.truenegatives[t,i]<0:
-              sim.truenegatives[t,i]=0
-           sim.falsepositives[t,i]= sim.truenegatives[t,i]*(1-par.specificity[phase])
+           sim.falsepositives[t,i]= sim.truenegatives[t,i]*(1-par.specificity[phase]) 
            sim.truepositives[t,i]=cases[i]-sim.falsepositives[t,i]
            sim.falsenegatives[t,i]=sim.truepositives[t,i]*(1-par.sensitivity[phase])
         else:
@@ -1766,7 +1771,14 @@ def adjust_positives_and_negatives(sim,par,t,phase,tests_performed,p_infected):
            sim.truenegatives[t,i]=tests_performed[i]*(1-p_infected[i])*par.specificity[phase]
            sim.falsepositives[t,i]=sim.truenegatives[t,i]*(1-par.specificity[phase])   
            sim.falsenegatives[t,i]=tests_performed[i]*p_infected[i]*(1-par.sensitivity[phase])
-    
+        if sim.truenegatives[t,i]<0:
+              sim.truenegatives[t,i]=0
+        if sim.falsepositives[t,i]<0:
+              sim.falsepositives[t,i]=0
+        if sim.truepositives[t,i]<0:
+              sim.truepositives[t,i]=0
+        if sim.falsenegatives[t,i]<0:
+              sim.falsenegatives[t,i]=0
            
 # =============================================================================
 #    #    sim.truepositives[t,i] = testsperformed[i] * p_infected[i]
