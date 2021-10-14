@@ -103,7 +103,7 @@ def getsimdeaths(dfx,sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   totweight=0.0
+   totweight=0.2
    denom1 = result['total_deaths'].head(span).mean()
    if abs(denom1) < 1:
       denom1 = 1
@@ -296,7 +296,7 @@ def findnexttrig_finetune(dfx, sev, trig, trignum, sevguide, trigguide):
          if scorerun == 5:
             break
          print(currsev,t,score)
-         if score < bestscore:
+         if score <= bestscore:
             bestscore = score
             bests = currsev
             besttrig = t
@@ -369,6 +369,7 @@ def computephases(ccode):
    score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, initsev, [1])
    if np.isnan(score)or not isinstance(score,float):
        score=0.0
+   
    return score, dfx, sev, trig, longsev, longtrig
 
 # =============================================================================
@@ -391,6 +392,11 @@ def extendphases(ccode, sev, trig):
    print('PACKED SCORE',nsev,ntrig,score)
    if np.isnan(score) or not isinstance(score,float):
        score=0.0
+   #when data on tests is bad we sometimes get string of zeros in severities
+   # this is a sign of error. This signals error to front end which will then signal unreliable result
+   # Date should be related to today
+   if trig[-1]<550:
+       score=2.0
    return score, dfx, nsev, ntrig, sev, trig
 
 def finetune(ccode, sevguide, trigguide):

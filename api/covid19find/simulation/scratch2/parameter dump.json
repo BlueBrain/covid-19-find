@@ -12,12 +12,12 @@
             "death_period": 21,
             "design_effect": 2,
             "expert_mode": false,
-            "fatality_reduction": 0,
+            "fatality_reduction": 0.7843807314974627,
             "ge_65": 0.045,
             "high_contact": 0.3,
             "IFR_1_14": 2.97e-05,
             "IFR_15_64": 0.00296,
-            "IFR_corrected": 0.003773380485076531,
+            "IFR_corrected": 0.007232673992956068,
             "IFR_gt_64": 0.03936,
             "imported_infections_above_limit": 2,
             "imported_infections_below_limit": 0.009,
@@ -32,9 +32,9 @@
                   "0"
             ],
             "init_pop": [
-                  5880.0,
-                  897824.2559999999,
-                  1448295.744
+                  14393240.0,
+                  598597579.712,
+                  826333180.288
             ],
             "latency_period": 2,
             "major_tightening": 0.5,
@@ -46,7 +46,7 @@
             "min_infected_not_isolated": 15,
             "no_improvement_period": 405,
             "num_compartments": 3,
-            "num_days": 123,
+            "num_days": 350,
             "num_testkit_types": 2,
             "testkits": [
                   "PCR",
@@ -71,25 +71,59 @@
                   "2",
                   "3"
             ],
-            "total_pop": 2352000,
-            "hospital_beds": 2352,
-            "prop_15_64": 0.61,
-            "age_gt_64": 0.04973767006802722,
-            "prop_urban": 0.69,
+            "total_pop": 1439324000,
+            "hospital_beds": 5757296,
+            "prop_15_64": 0.71,
+            "age_gt_64": 0.1302421032373531,
+            "prop_urban": 0.59,
             "income_category": "UM",
             "past_severities": [
                   0.0,
                   1.0,
                   1.0,
+                  0.0,
+                  0.9,
                   1.0,
-                  0.2
+                  0.45,
+                  0.7,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  0.85,
+                  0.85,
+                  0.95,
+                  1.0,
+                  1.0,
+                  1.0,
+                  0.05
             ],
             "past_dates": [
                   1,
                   12,
-                  39,
-                  66,
-                  73
+                  37,
+                  46,
+                  73,
+                  92,
+                  113,
+                  124,
+                  141,
+                  148,
+                  155,
+                  162,
+                  169,
+                  176,
+                  183,
+                  210,
+                  237,
+                  256,
+                  267,
+                  274,
+                  281,
+                  300
             ]
       },
       "scenario_params": [
@@ -147,8 +181,8 @@
                         "="
                   ],
                   "trig_values": [
-                        "2021-10-13",
-                        "2021-10-27"
+                        "2021-10-14",
+                        "2021-10-28"
                   ]
             }
       ]

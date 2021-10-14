@@ -286,6 +286,11 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
  
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df=country_df_raw.rolling(win_length).mean()
+# raw data occasionally includes negatives and some very high values - for the moment I replace with value for previous day - this was necessary for Peru
+   filler=country_df['tests'].shift(1).rolling(7).mean()
+   country_df['tests'].where(country_df['tests']<filler*2, other=filler,inplace=True)
+   country_df['tests'].where(country_df['tests']>=0, other=filler,inplace=True)
+   country_df['tests'].where(country_df['tests'].notnull(), other=0,inplace=True)
    country_df['Date']=country_df_raw['Date']
    compute_reduction_IFR(country_df,day1,fixed_params)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
