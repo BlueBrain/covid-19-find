@@ -26,7 +26,6 @@
 					"hospitalTestProportion": 0.33,
 					"otherHighContactPopulationTestProportion": 0.33,
 					"restOfPopulationTestProportion": 0.33,
-					"numTestsCare": 1000,
 					"typeTestsCare": "PCR",
 					"requiredDxTests": 1
 				}
@@ -49,7 +48,6 @@
 					"hospitalTestProportion": 0.33,
 					"otherHighContactPopulationTestProportion": 0.33,
 					"restOfPopulationTestProportion": 0.33,
-					"numTestsCare": 1000,
 					"typeTestsCare": "PCR",
 					"requiredDxTests": 1
 				}
