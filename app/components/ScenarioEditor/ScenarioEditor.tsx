@@ -211,12 +211,6 @@ const ScenarioEditor: React.FC<{
                           }
                         }
 
-                        if (inputProps.key === 'numTestsMitigation') {
-                          if (value !== 0 && value !== undefined) {
-                            value = numberOftest;
-                          }
-                        }
-
                         return (
                           <div
                             className="col"

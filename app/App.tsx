@@ -3,7 +3,10 @@ import * as React from 'react';
 import ScenarioEditorPanel from './components/ScenarioEditorPanel';
 import Countries from './containers/countries';
 import Simulation from './containers/simulation';
-import { ClientSimulationRequest, Scenario } from './types/simulation';
+import {
+  ClientSimulationRequest,
+  ClientScenarioData,
+} from './types/simulation';
 import { DEFAULT_SIMULATION_REQUEST_PARAMS } from './defaults';
 import SaveScenariosButton from './components/SaveScenariosButton';
 import LoadScenariosButton from './components/LoadScenariosButton';
@@ -36,19 +39,38 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     if (state.scenarios.length) {
-      api.scenarios().then(({ scenarios }: { scenarios: Scenario[] }) => {
-        // @ts-ignore
-        setDefaultScenarios(scenarios);
+      api
+        .scenarios()
+        .then(({ scenarios }: { scenarios: ClientScenarioData[] }) => {
+          const newScenarios = scenarios.map(scenario => {
+            if (scenario.name !== 'No testing') {
+              const phases = scenario.phases.map(phase => {
+                return {
+                  ...phase,
+                  numTestsMitigation: numberOftest,
+                };
+              });
+              return {
+                ...scenario,
+                phases,
+              };
+            }
+            return scenario;
+          });
 
-        setScenarioRequestData({
-          state: {
-            scenarios,
-            ...state,
-          },
+          // @ts-ignore
+          setDefaultScenarios(newScenarios);
+
+          setScenarioRequestData({
+            state: {
+              ...state,
+              // @ts-ignore
+              scenarios: newScenarios,
+            },
+          });
         });
-      });
     }
-  }, []);
+  }, [numberOftest]);
 
   const [
     { countrySelectFormReady, testsFormReady },

@@ -705,17 +705,19 @@ const SimulationResults: React.FC<{
                   />
                 </div>
                 <div>
-                  <h3>
-                    {selectedScenario.testsNeededForMitigation.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
-                    <br />
-                    <span className="subtitle">
-                      Number of tests <br /> in next six months
-                    </span>
-                  </h3>
-
+                  {/* <div className="stats-aligned">
+                    <h3>
+                      {selectedScenario.testsNeededForMitigation.toLocaleString(
+                        undefined,
+                        { maximumFractionDigits: 0 },
+                      )}
+                      <br />
+                      <span className="subtitle">
+                        Number of tests needed
+                        <br /> in next six months
+                      </span>
+                    </h3>
+                  </div> */}
                   <TooltipLabel
                     label="Samples Required for Serological Studies"
                     tooltipKey={'Samples Required for Serological Studies'}
