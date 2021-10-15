@@ -112,9 +112,13 @@ const CovidResults: React.FC<{
           <span className="subtitle">Total Deaths (7-day trend)</span>
         </h3>
 
-        <h3>
-          {/*copy this*/}
-          <span>{data.meanTestsLast7Days.toLocaleString()}</span>          {' '}
+        <h3 style={{ padding: '10px' }}>
+          <span>
+            {data.meanTestsLast7Days === 0
+              ? 'N/A'
+              : data.meanTestsLast7Days.toLocaleString()}
+          </span>
+          {'    '}
           <span className="subtitle">Mean tests per day (last 7 days)</span>
         </h3>
       </div>
