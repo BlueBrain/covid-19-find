@@ -389,14 +389,14 @@ def extendphases(ccode, sev, trig):
    nsev, ntrig = packseverities(sev, trig)
    result = runandalignsim(dfx,nsev,ntrig)
    score = scorealignment(result,len(dfx))
-   print('PACKED SCORE',nsev,ntrig,score)
-   if np.isnan(score) or not isinstance(score,float):
-       score=0.0
    #when data on tests is bad we sometimes get string of zeros in severities
    # this is a sign of error. This signals error to front end which will then signal unreliable result
    # Date should be related to today
-   if trig[-1]<550:
+   if ntrig[-1]<550:
        score=2.0
+   print('PACKED SCORE',nsev,ntrig,score)
+#   if np.isnan(score) or not isinstance(score,float):
+#       score=0.0
    return score, dfx, nsev, ntrig, sev, trig
 
 def finetune(ccode, sevguide, trigguide):
