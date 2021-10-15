@@ -12,11 +12,18 @@ import 'react-tabs/style/react-tabs.css';
 import './scenario-editor.less';
 
 const ScenarioList: React.FC<{
+  numberOftest?: number;
   defaultScenarios: ClientScenarioData[];
   scenarios: ClientScenarioData[];
   onSubmit?: (scenarioListSubmit: { scenarios: ClientScenarioData[] }) => void;
   onChange: () => void;
-}> = ({ defaultScenarios, scenarios = [], onSubmit, onChange }) => {
+}> = ({
+  numberOftest,
+  defaultScenarios,
+  scenarios = [],
+  onSubmit,
+  onChange,
+}) => {
   const removeScenario = (index: number) => e => {
     const newScenarios = [...scenarios].filter((scenario, i) => i !== index);
     const scenario = scenarios[index];
@@ -95,6 +102,7 @@ const ScenarioList: React.FC<{
             return (
               <TabPanel key={`panel-${scenario.name}-${index}`}>
                 <ScenarioEditor
+                  numberOftest={numberOftest}
                   defaultPhase={{
                     ...defaultScenarios[0].phases[0],
                     triggerType: null,

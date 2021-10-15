@@ -10,6 +10,7 @@ import { CountryData } from '../types/simulation';
 import { CountryResponse } from '../types/country';
 
 const Countries: React.FC<{
+  onCountryData?: (numberOftest: number) => void;
   countrySelectFormReady: boolean;
   setCountrySelectFormReady: (value: boolean) => void;
   onSubmit?: (
@@ -17,6 +18,7 @@ const Countries: React.FC<{
   ) => void;
   values: CountryData;
 }> = ({
+  onCountryData,
   onSubmit,
   values,
   setCountrySelectFormReady,
@@ -50,6 +52,7 @@ const Countries: React.FC<{
       });
       const countryInfo = await api.country(countryCode);
       const covidData = await api.countryCovidData(countryCode);
+      onCountryData(covidData.meanTestsLast7Days);
       setCountryInfo({
         loading: false,
         error: null,

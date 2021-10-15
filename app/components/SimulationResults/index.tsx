@@ -104,13 +104,12 @@ const SimulationResults: React.FC<{
       actualKey: 'actualCases',
       cohort: 'total',
     },
-    
+
     {
       title: 'Infected hospital staff/day',
       key: 'newInfected',
       cohort: 'hospitals',
     },
-    
   ];
 
   const comparisons = [
@@ -242,11 +241,10 @@ const SimulationResults: React.FC<{
                     The size of the circles represents the number of simulated
                     deaths
                   </p>
-                  
+
                   <Bubble
                     width={null}
                     height={null}
-                    
                     options={{
                       aspectRatio: isMobile ? 1 : 2,
                       tooltips: {
@@ -527,7 +525,7 @@ const SimulationResults: React.FC<{
                     </span>
                   </h3>
                 </div>
-                  
+
                 <div className="charts">
                   {graphs.map(graph => {
                     return (
@@ -680,46 +678,7 @@ const SimulationResults: React.FC<{
                   })}
                 </div>
                 <hr />
-                <div className="stats horizontal">
 
-                  <h3>
-                    {selectedScenario.testsNeededForMitigation.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
-                    <br />
-                    <span className="subtitle">
-                      Number of tests required  <br /> in next six months
-                    </span>
-                  </h3>
-                </div>
-                <div style={{ margin: '0 auto', width: '50%' }}>
-                  <TooltipLabel
-                    label="Samples Required for Serological Studies"
-                    tooltipKey={'Samples Required for Serological Studies'}
-                    wrapper={({ children }) => (
-                      <h3 style={{ color: '#697881', textAlign: 'center' }}>
-                        {children}
-                      </h3>
-                    )}
-                  />
-                  <table>
-                    <tr>
-                      <th>Number of Subgroups</th>
-                      <th>Tests Required</th>
-                    </tr>
-                    {scenariosResults[
-                      selectedScenarioIndex
-                    ].samplesRequiredForSerologicalStudies.map(
-                      (entry, index) => (
-                        <tr>
-                          <td>{entry.numSubgroups}</td>
-                          <td>{entry.testsRequired}</td>
-                        </tr>
-                      ),
-                    )}
-                  </table>
-                </div>
                 <div className="charts">
                   <NumberOfTestsPerDay
                     clientScenariosInput={clientScenariosInput}
@@ -744,6 +703,44 @@ const SimulationResults: React.FC<{
                     scenariosResults={scenariosResults}
                     selectedScenarioIndex={selectedScenarioIndex}
                   />
+                </div>
+                <div>
+                  <h3>
+                    {selectedScenario.testsNeededForMitigation.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
+                    <br />
+                    <span className="subtitle">
+                      Number of tests <br /> in next six months
+                    </span>
+                  </h3>
+
+                  <TooltipLabel
+                    label="Samples Required for Serological Studies"
+                    tooltipKey={'Samples Required for Serological Studies'}
+                    wrapper={({ children }) => (
+                      <h3 style={{ color: '#697881', textAlign: 'left' }}>
+                        {children}
+                      </h3>
+                    )}
+                  />
+                  <table style={{ width: '50%' }}>
+                    <tr>
+                      <th>Number of Subgroups</th>
+                      <th>Tests Required</th>
+                    </tr>
+                    {scenariosResults[
+                      selectedScenarioIndex
+                    ].samplesRequiredForSerologicalStudies.map(
+                      (entry, index) => (
+                        <tr>
+                          <td>{entry.numSubgroups}</td>
+                          <td>{entry.testsRequired}</td>
+                        </tr>
+                      ),
+                    )}
+                  </table>
                 </div>
                 <div className="disclaimer">
                   <p className="disclaimer-text">

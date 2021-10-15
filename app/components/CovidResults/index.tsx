@@ -13,7 +13,7 @@ import './covid-results.less';
 export const makeSlidingAverage = (
   array: { [key: string]: number | string }[],
   key: string,
-  days:number,
+  days: number,
 ) => (entry, index) => {
   const valuesToAverage = [];
   for (let i = index - days; i < index; i++) {
@@ -111,10 +111,11 @@ const CovidResults: React.FC<{
           />
           <span className="subtitle">Total Deaths (7-day trend)</span>
         </h3>
-        
+
         <h3>
-          <span>{data.meanTestsLast7Days.toLocaleString()}</span>{' '}
-          <span className="subtitle">Mean tests per day (last 7 days)</span>  
+          {/*copy this*/}
+          <span>{data.meanTestsLast7Days.toLocaleString()}</span>          {' '}
+          <span className="subtitle">Mean tests per day (last 7 days)</span>
         </h3>
       </div>
       <div className="charts">
@@ -213,7 +214,7 @@ const CovidResults: React.FC<{
                   label: 'Positive Tests',
                   yAxisID: 'A',
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newConfirmed',7))
+                    .map(makeSlidingAverage(chartData, 'newConfirmed', 7))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.blueGray],
                   backgroundColor: [
@@ -227,7 +228,7 @@ const CovidResults: React.FC<{
                   yAxisID: 'B',
 
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newDeaths',7))
+                    .map(makeSlidingAverage(chartData, 'newDeaths', 7))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.pomegranate],
 
@@ -243,7 +244,7 @@ const CovidResults: React.FC<{
                       label: 'Recovered',
                       yAxisID: 'A',
                       data: chartData
-                        .map(makeSlidingAverage(chartData, 'newRecovered',7))
+                        .map(makeSlidingAverage(chartData, 'newRecovered', 7))
                         .map(entry => Math.floor(Number(entry))),
                       borderColor: [colors.turqouise],
                       backgroundColor: [
@@ -271,7 +272,10 @@ const CovidResults: React.FC<{
               *
             </a>
             <ReactTooltip id="jh-tooltip">
-              <p>Case data from Johns Hopkins University. May be zero if official data  not up to date</p>
+              <p>
+                Case data from Johns Hopkins University. May be zero if official
+                data not up to date
+              </p>
             </ReactTooltip>
           </h3>
           <Line
@@ -353,7 +357,7 @@ const CovidResults: React.FC<{
                   label: 'Tests Performed',
                   yAxisID: 'A',
                   data: chartData
-                    .map(makeSlidingAverage(chartData, 'newTests',28))
+                    .map(makeSlidingAverage(chartData, 'newTests', 28))
                     .map(entry => Math.floor(Number(entry))),
                   borderColor: [colors.turqouise],
                   backgroundColor: [
@@ -370,7 +374,7 @@ const CovidResults: React.FC<{
                       makeSlidingAverage(
                         chartData,
                         'newTestsPositiveProportion',
-                        1
+                        1,
                       ),
                     )
                     .map(entry => Number(entry).toFixed(4)),

@@ -179,10 +179,8 @@ export default [
         step: 1,
         key: 'resultsPeriod',
       },
-
     ],
   },
-  
 ] as {
   title: string;
   input: AnyInputProp[];
