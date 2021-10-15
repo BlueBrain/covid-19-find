@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="PE"
+ccode="FR"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 15, 83, 131, 149, 169, 203, 237, 251, 265, 279, 295, 321, 347, 371, 391, 417, 443, 467, 481] 
-past_severities=[0.0, 1.0, 0.35, 0.7, 0.8, 0.85, 0.8, 0.75, 0.8, 0.85, 0.8, 0.75, 0.7, 0.65, 0.55, 0.4, 0.5, 0.45, 0.1, 0.0]
+#past_dates= [1, 15, 83, 131, 149, 169, 203, 237, 251, 265, 279, 295, 321, 347, 371, 391, 417, 443, 467, 481] 
+#past_severities=[0.0, 1.0, 0.35, 0.7, 0.8, 0.85, 0.8, 0.75, 0.8, 0.85, 0.8, 0.75, 0.7, 0.65, 0.55, 0.4, 0.5, 0.45, 0.1, 0.0]
 # =============================================================================
 # print('past_dates=',past_dates)
 # print('past_severities=', past_severities)
@@ -61,7 +61,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-11','2021-10-21'],\
+    'trig_values':['2021-10-15','2021-10-25'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -81,7 +81,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-10-11','2021-10-21'],\
+   'trig_values':['2021-10-15','2021-10-25'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -101,7 +101,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-11','2021-10-21'],\
+    'trig_values':['2021-10-15','2021-10-25'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[31000,31000],\
@@ -121,7 +121,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-11','2021-10-21'],\
+    'trig_values':['2021-10-15','2021-10-25'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[31000, 31000],\

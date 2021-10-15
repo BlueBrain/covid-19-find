@@ -105,13 +105,15 @@ def getsimdeaths(dfx,sev,trig):
 def scorealignment(result,span):
    totweight=0.2
    denom1 = result['total_deaths'].head(span).mean()
-   if abs(denom1) < 1:
-      denom1 = 1
-   meanreldev1 = result['absdiff'].head(span).mean()/denom1
+   if denom1>0:
+       meanreldev1 = result['absdiff'].head(span).mean()/denom1
+   else:
+       meanreldev1=0
    denom2 = result['new_deaths'].head(span).mean()
-   if abs(denom2) < 1:
-      denom2 = 1
-   meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
+   if denom2>0:
+       meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
+   else:
+       meanreldev2=0
    return (meanreldev1*totweight+meanreldev2*(1-totweight))
 
 # =============================================================================
@@ -367,9 +369,11 @@ def computephases(ccode):
 #       return 1.0,dfx,[1.0],[1],[1.0],[1]
 # =============================================================================
    score, dfx, sev, trig, longsev, longtrig = extendphases(ccode, initsev, [1])
-   if np.isnan(score)or not isinstance(score,float):
-       score=0.0
-   
+# =============================================================================
+#    if np.isnan(score)or not isinstance(score,float):
+#        score=0.0
+#    
+# =============================================================================
    return score, dfx, sev, trig, longsev, longtrig
 
 # =============================================================================
@@ -395,8 +399,8 @@ def extendphases(ccode, sev, trig):
    if ntrig[-1]<550:
        score=2.0
    print('PACKED SCORE',nsev,ntrig,score)
-#   if np.isnan(score) or not isinstance(score,float):
-#       score=0.0
+   if np.isnan(score) or not isinstance(score,float):
+       score=0.0
    return score, dfx, nsev, ntrig, sev, trig
 
 def finetune(ccode, sevguide, trigguide):
