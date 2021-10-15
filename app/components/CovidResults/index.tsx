@@ -371,7 +371,7 @@ const CovidResults: React.FC<{
                   ],
                 },
                 {
-                  label: 'Tests Positive',
+                  label: 'Positivity Rate',
                   yAxisID: 'B',
                   data: chartData
                     .map(
