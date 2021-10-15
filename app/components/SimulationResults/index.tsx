@@ -704,7 +704,7 @@ const SimulationResults: React.FC<{
                     selectedScenarioIndex={selectedScenarioIndex}
                   />
                 </div>
-                <div className="stats horizontal">
+                <div>
                   <h3>
                     {selectedScenario.testsNeededForMitigation.toLocaleString(
                       undefined,
@@ -715,18 +715,17 @@ const SimulationResults: React.FC<{
                       Number of tests <br /> in next six months
                     </span>
                   </h3>
-                </div>
-                <div style={{ margin: '0 auto', width: '50%' }}>
+
                   <TooltipLabel
                     label="Samples Required for Serological Studies"
                     tooltipKey={'Samples Required for Serological Studies'}
                     wrapper={({ children }) => (
-                      <h3 style={{ color: '#697881', textAlign: 'center' }}>
+                      <h3 style={{ color: '#697881', textAlign: 'left' }}>
                         {children}
                       </h3>
                     )}
                   />
-                  <table>
+                  <table style={{ width: '50%' }}>
                     <tr>
                       <th>Number of Subgroups</th>
                       <th>Tests Required</th>
