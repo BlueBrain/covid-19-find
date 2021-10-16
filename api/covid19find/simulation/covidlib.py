@@ -257,9 +257,13 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #optimization is performed using 'symptomatic first' - so simulations of past
 #also use 'symptomatic first'. This is also a temp fix for open problem with result_period
    
-   
    if len(kwargs)>0:
       scenarios_user_specified=kwargs['scenarios']
+   filename=os.path.join(fixed_params['test_directory'],'parameter dump.json')
+   write_parameters(filename,fixed_params,scenarios_user_specified)
+   filename=os.path.join(fixed_params['test_directory'],'country dump.json')
+   country_df_raw.to_csv(filename,index=False,date_format='%Y-%m-%d')
+   
    #params_dict=fixed_params['test_dictionary']
 # =============================================================================
 #    with open(afilename,'w') as outfile:      
@@ -328,8 +332,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    initial_beta = get_beta(initial_betafile, num_compartments)  #don't think this is needed
 
  #  results = process_scenarios(p, sc, initial_beta, target_betas)
-   filename=os.path.join(fixed_params['test_directory'],'parameter dump.json')
-   write_parameters(filename,p,scenarios_user_specified)
+  
    today=(dt.datetime.now()-day1).days
    #simulations will run by default for 180 days after today
    # would be useful to parameterize this
@@ -364,6 +367,7 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
     
 def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
 
+   
    num_compartments = int(p['num_compartments'])
    num_scenarios = len(scenarios)
 
@@ -556,10 +560,10 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
             print('total_infections in ',comp,'=',dfsumcomp['newinfected'][j])
             print('max in isolation in ',comp,'=',dfmaxcomp['isolated'][j])
             plot_results(scenario_name,comp,int(num_tests_performed[j]),dfcomp['dates'],dfcomp['isolated'],dfcomp['infected'],dfcomp['tested_mit'],dfcomp['infectednotisolated'],dfcomp['confirmed'],dfcomp['deaths'],dfcomp['susceptibles'],dfcomp['prevalence'])
-             
+      dfsum.to_csv('richard_dump' + scenario_name+'.csv')      
       if expert_mode:
          plot_results(scenario_name,'ALL',dfsumcomp['newtested_mit'],dfsum['dates'],dfsum['isolated'],dfsum['infected'],dfsum['tested_mit'],dfsum['infectednotisolated'],dfsum['confirmed'],dfsum['deaths'],dfsum['susceptibles'],dfsum['prevalence'],country_df['accumulated_deaths'],)
-         dfsum.to_csv('richard_dump' + scenario_name+'.csv')
+         
          print('************')
 
    #   prevalence=dfsum.iloc[par.num_days-1]['prevalence'] 

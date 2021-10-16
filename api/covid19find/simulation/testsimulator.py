@@ -45,16 +45,18 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # =============================================================================
 
 fixed_params=cl.get_system_params(test_directory)
-fixed_params={
+updates={
     'test_directory':'bbp_testing',\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':True,\
+    'expert_mode':False,\
     'save_results':False,\
   #  'fatality_reduction':0.84,\
     'num_days':830}
+fixed_params.update(updates)
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
+fixed_params.update({'age_gt_64':0.2195})
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 
@@ -68,7 +70,7 @@ scenario_params.append({
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
-    'num_tests_care':[13000,13000,13000],\
+    'num_tests_care':[13000,13000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\
@@ -87,7 +89,7 @@ scenario_params.append({
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
-    'num_tests_care':[10000,10000,10000],\
+    'num_tests_care':[10000,10000],\
     'type_tests_care':['PCR','PCR','PCR'],\
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\

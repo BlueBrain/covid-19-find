@@ -1,6 +1,76 @@
 {
       "fixed_params": {
+            "background_rate_symptomatic": 0.00375,
+            "beta_adaptation_days": 3,
+            "beta_initial": 0.35,
+            "beta_lockdown": 0.03,
+            "compartment": [
+                  "Hospitals",
+                  "Other high contact ",
+                  "Rest of population"
+            ],
+            "death_period": 21,
+            "design_effect": 2,
+            "expert_mode": false,
+            "fatality_reduction": 0.5,
+            "ge_65": 0.045,
+            "high_contact": 0.3,
+            "IFR_1_14": 2.97e-05,
+            "IFR_15_64": 0.00296,
+            "IFR_corrected": 0,
+            "IFR_gt_64": 0.03936,
+            "imported_infections_above_limit": 2,
+            "imported_infections_below_limit": 0.009,
+            "imported_infections_limit_very_low": 1,
+            "imported_infections_limit_low": 200,
+            "imported_infections_limit_high": 2000,
+            "imported_infections_very_high": 20,
+            "incubation_period": 5,
+            "init_infected": [
+                  "0",
+                  "0",
+                  "0"
+            ],
+            "init_pop": [
+                  "0",
+                  "0",
+                  "0"
+            ],
+            "latency_period": 2,
+            "major_tightening": 0.5,
+            "major_loosening": 0.5,
+            "max_contacts_per_case": 10,
+            "mild_loosening": 0.15,
+            "mild_tightening": 0.15,
+            "min_contacts_per_case": 2.5,
+            "min_infected_not_isolated": 15,
+            "no_improvement_period": 405,
+            "num_compartments": 3,
+            "num_days": 830,
+            "num_testkit_types": 2,
+            "testkits": [
+                  "PCR",
+                  "RDT"
+            ],
+            "pc_contacts_isolated": 0.0,
+            "prop_asymptomatic": 0.2,
+            "prop_for_fair_tracing": 0.2,
+            "prop_for_good_tracing": 0.8,
+            "prop_for_no_tracing": 0,
+            "prop_tested_asymptomatic": 0.5,
+            "recovery_period": 10,
+            "relative_prob_infected": 0.01,
+            "retest_period_asymptomatics": 7,
+            "run_multiple_test_scenarios": true,
+            "save_results": false,
+            "staff_per_bed": 2.5,
             "test_directory": "bbp_testing",
+            "test_multipliers": [
+                  " 0",
+                  "1",
+                  "2",
+                  "3"
+            ],
             "past_dates": [
                   1,
                   12,
@@ -49,15 +119,11 @@
                   0.65,
                   0.7
             ],
-            "expert_mode": true,
-            "save_results": false,
-            "num_days": 830,
             "total_pop": 65274000,
             "hospital_beds": 391644,
             "prop_15_64": 0.62,
-            "age_gt_64": 0.2194590189049238,
+            "age_gt_64": 0.2195,
             "prop_urban": 0.8,
-            "staff_per_bed": 2.5,
             "income_category": "H"
       },
       "scenario_params": [
@@ -97,7 +163,6 @@
                         0.998
                   ],
                   "num_tests_care": [
-                        13000,
                         13000,
                         13000
                   ],
@@ -166,7 +231,6 @@
                         0.998
                   ],
                   "num_tests_care": [
-                        10000,
                         10000,
                         10000
                   ],

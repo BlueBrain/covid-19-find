@@ -26,7 +26,7 @@ INCOME_CATEGORY_CODE_TO_LABEL = dict([(v, k) for (k, v) in INCOME_CATEGORY_LABEL
 
 class Simulator:
 
-    def __init__(self, covid_repository, parameters_directory="production"):
+    def __init__(self, covid_repository, parameters_directory="BBP_testing"):
         self.covid_repository = covid_repository
         self.parameters_directory = parameters_directory
         self.past_phases = self.__load_past_phases()

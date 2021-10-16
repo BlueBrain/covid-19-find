@@ -66,12 +66,18 @@ def fixparamnames(dict):
    propurb = dict['urbanPopulationProportion']
    if propurb is None:
       propurb = 0
+   else:
+      propurb=round(propurb,4)
    propactive =  dict['activePopulationProportion']
    if propactive is None:
       propactive = 0
+   else:
+      propactive=round(propactive,4)
    propoverage = dict['over64Proportion']
    if propoverage is None:
       propoverage = 0
+   else:
+      propoverage=round(propoverage,4)
    params={'total_pop':dict['population'],
     'hospital_beds':hospbeds,
     'prop_15_64':propactive,
