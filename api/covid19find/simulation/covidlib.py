@@ -209,6 +209,7 @@ def update_system_params2(p, fixed_params):
 ######################################################################
 
 def compute_reduction_IFR(country_df,day1,fixed_params):
+    fixed_params['fatality_reduction']=0.5
     new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-29]['accumulated_deaths']
     new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-29]['accumulated_cases']
 #possible divide by zerp here
@@ -218,11 +219,12 @@ def compute_reduction_IFR(country_df,day1,fixed_params):
         return()
         
 #Our automated test procedure uses a static country_df. The if statement makes sure this does not cause an error in computation
+# I currently use 7 days for comparison. Would be better with 30 but needs reoptimization
     if len(country_df)<406:
         return()
     else:
-        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[377]['accumulated_deaths']
-        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[377]['accumulated_cases']
+        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[398]['accumulated_deaths']
+        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[398]['accumulated_cases']
         if new_cases_jan1>0:
             cfr_jan1=new_deaths_jan1/new_cases_jan1
         else:

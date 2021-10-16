@@ -17,6 +17,7 @@ lag = 26
 sample =30
 #shiftlag=56
 shiftlag = lag+sample
+#used to be fifty - 25 does NOT work
 horizon = 50
 
 #countryname = 'Switzerland'

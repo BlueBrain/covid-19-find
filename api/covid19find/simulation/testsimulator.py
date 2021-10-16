@@ -61,7 +61,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-15','2021-10-25'],\
+    'trig_values':['2021-10-16','2021-10-26'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -73,7 +73,6 @@ scenario_params.append({
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2,2],\
-    'is_counterfactual':['False','False','False'],\
     'test_strategy':['no testing','no testing','no testing'],\
     'results_period':[3,3,3],\
     #'fatality_reduction_recent':[0.57,0.57,0.57]
@@ -81,10 +80,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-10-15','2021-10-25'],\
+   'trig_values':['2021-10-16','2021-10-26'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[446588,446588],\
+    'num_tests_mitigation':[445860,445860],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -93,7 +92,6 @@ scenario_params.append({
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[2,2,2],\
-    'is_counterfactual':['False','False','False'],\
     'test_strategy':['high contact groups first','high contact groups first'],\
     'results_period':[3,3],\
   #  'fatality_reduction_recent':[0.57,0.57]
@@ -101,10 +99,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-15','2021-10-25'],\
+    'trig_values':['2021-10-16','2021-10-26'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[446588,446588],\
+    'num_tests_mitigation':[445860,445860],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -113,7 +111,6 @@ scenario_params.append({
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[3,3],\
-    'is_counterfactual':['False','False'],\
     'test_strategy':['symptomatic first','symptomatic first'],\
     'results_period':[3,3],\
  #   'fatality_reduction_recent':[0.57,0.57]
@@ -121,10 +118,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-15','2021-10-25'],\
+    'trig_values':['2021-10-16','2021-10-26'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[446588, 446588],\
+    'num_tests_mitigation':[445860,445860],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -133,7 +130,6 @@ scenario_params.append({
     'prop_contacts_traced':['fairly effective','fairly effective'],\
     'imported_infections_per_day':['highly effective','highly effective'],\
     'requireddxtests':[0,0,0],\
-    'is_counterfactual':['False','False','False'],\
     'test_strategy':['open public testing','open public testing'],\
     'results_period':[3,3],\
  #   'fatality_reduction_recent':[0.57,0.57]

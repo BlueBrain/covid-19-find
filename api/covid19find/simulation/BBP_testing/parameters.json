@@ -67,8 +67,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -119,11 +119,6 @@
                         2,
                         2
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "no testing",
                         "no testing",
@@ -141,8 +136,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -154,8 +149,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -193,11 +188,6 @@
                         2,
                         2
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "high contact groups first",
                         "high contact groups first"
@@ -213,8 +203,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -226,8 +216,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -261,10 +251,6 @@
                         3,
                         3
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "symptomatic first",
                         "symptomatic first"
@@ -280,8 +266,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -292,8 +278,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -327,11 +313,6 @@
                         0,
                         0,
                         0
-                  ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
                   ],
                   "test_strategy": [
                         "open public testing",
