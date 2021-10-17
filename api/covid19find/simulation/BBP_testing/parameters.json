@@ -1,42 +1,115 @@
 {
       "fixed_params": {
+            "background_rate_symptomatic": 0.00375,
+            "beta_adaptation_days": 3,
+            "beta_initial": 0.35,
+            "beta_lockdown": 0.03,
+            "compartment": [
+                  "Hospitals",
+                  "Other high contact ",
+                  "Rest of population"
+            ],
+            "death_period": 21,
+            "design_effect": 2,
+            "expert_mode": false,
+            "fatality_reduction": 0.5,
+            "ge_65": 0.045,
+            "high_contact": 0.3,
+            "IFR_1_14": 2.97e-05,
+            "IFR_15_64": 0.00296,
+            "IFR_corrected": 0,
+            "IFR_gt_64": 0.03936,
+            "imported_infections_above_limit": 2,
+            "imported_infections_below_limit": 0.009,
+            "imported_infections_limit_very_low": 1,
+            "imported_infections_limit_low": 200,
+            "imported_infections_limit_high": 2000,
+            "imported_infections_very_high": 20,
+            "incubation_period": 5,
+            "init_infected": [
+                  "0",
+                  "0",
+                  "0"
+            ],
+            "init_pop": [
+                  "0",
+                  "0",
+                  "0"
+            ],
+            "latency_period": 2,
+            "major_tightening": 0.5,
+            "major_loosening": 0.5,
+            "max_contacts_per_case": 10,
+            "mild_loosening": 0.15,
+            "mild_tightening": 0.15,
+            "min_contacts_per_case": 2.5,
+            "min_infected_not_isolated": 15,
+            "no_improvement_period": 405,
+            "num_compartments": 3,
+            "num_days": 830,
+            "num_testkit_types": 2,
+            "testkits": [
+                  "PCR",
+                  "RDT"
+            ],
+            "pc_contacts_isolated": 0.0,
+            "prop_asymptomatic": 0.2,
+            "prop_for_fair_tracing": 0.2,
+            "prop_for_good_tracing": 0.8,
+            "prop_for_no_tracing": 0,
+            "prop_tested_asymptomatic": 0.5,
+            "recovery_period": 10,
+            "relative_prob_infected": 0.01,
+            "retest_period_asymptomatics": 7,
+            "run_multiple_test_scenarios": true,
+            "save_results": false,
+            "staff_per_bed": 2.5,
             "test_directory": "bbp_testing",
+            "test_multipliers": [
+                  " 0",
+                  "1",
+                  "2",
+                  "3"
+            ],
             "past_dates": [
                   1,
-                  12,
-                  73,
-                  111,
-                  132,
-                  186,
-                  228,
-                  249,
-                  270,
-                  289,
-                  306,
-                  329,
-                  340,
-                  429,
-                  450,
-                  469,
-                  513,
-                  534,
+                  21,
+                  79,
+                  121,
+                  139,
+                  187,
+                  233,
+                  259,
+                  285,
+                  309,
+                  331,
+                  353,
+                  369,
+                  387,
+                  413,
+                  439,
+                  479,
+                  517,
+                  533,
                   557,
-                  584,
-                  631,
-                  644
+                  583,
+                  609,
+                  635,
+                  655
             ],
             "past_severities": [
                   0.0,
                   1.0,
                   0.0,
-                  0.75,
+                  0.9,
                   0.95,
                   0.9,
-                  0.85,
-                  0.7,
-                  0.45,
-                  0.5,
-                  0.25,
+                  0.8,
+                  0.55,
+                  0.4,
+                  0.3,
+                  0.75,
+                  0.8,
                   0.7,
                   0.75,
                   0.8,
@@ -46,18 +119,15 @@
                   0.8,
                   0.9,
                   0.55,
+                  0.6,
                   0.65,
-                  0.7
+                  0.75
             ],
-            "expert_mode": true,
-            "save_results": false,
-            "num_days": 830,
             "total_pop": 65274000,
             "hospital_beds": 391644,
             "prop_15_64": 0.62,
-            "age_gt_64": 0.2194590189049238,
+            "age_gt_64": 0.2195,
             "prop_urban": 0.8,
-            "staff_per_bed": 2.5,
             "income_category": "H"
       },
       "scenario_params": [
@@ -67,8 +137,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -98,7 +168,6 @@
                   ],
                   "num_tests_care": [
                         13000,
-                        13000,
                         13000
                   ],
                   "type_tests_care": [
@@ -119,11 +188,6 @@
                         2,
                         2
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "no testing",
                         "no testing",
@@ -141,8 +205,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -154,8 +218,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -171,7 +235,6 @@
                         0.998
                   ],
                   "num_tests_care": [
-                        10000,
                         10000,
                         10000
                   ],
@@ -193,11 +256,6 @@
                         2,
                         2
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "high contact groups first",
                         "high contact groups first"
@@ -213,8 +271,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -226,8 +284,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -261,10 +319,6 @@
                         3,
                         3
                   ],
-                  "is_counterfactual": [
-                        "False",
-                        "False"
-                  ],
                   "test_strategy": [
                         "symptomatic first",
                         "symptomatic first"
@@ -280,8 +334,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-15",
-                        "2021-10-25"
+                        "2021-10-16",
+                        "2021-10-26"
                   ],
                   "trig_def_type": [
                         "date",
@@ -292,8 +346,8 @@
                         "="
                   ],
                   "num_tests_mitigation": [
-                        446588,
-                        446588
+                        445860,
+                        445860
                   ],
                   "type_test_mitigation": [
                         "PCR",
@@ -327,11 +381,6 @@
                         0,
                         0,
                         0
-                  ],
-                  "is_counterfactual": [
-                        "False",
-                        "False",
-                        "False"
                   ],
                   "test_strategy": [
                         "open public testing",

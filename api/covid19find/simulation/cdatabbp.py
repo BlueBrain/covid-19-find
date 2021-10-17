@@ -27,12 +27,18 @@ def get_fixed_parameters(paramdata):
    propurb = paramdata['urbanPopulationProportion']
    if propurb is None:
       propurb = 0
+   else:
+      propurb=round(propurb,4)
    propactive =  paramdata['activePopulationProportion']
    if propactive is None:
       propactive = 0
+   else:
+      propactive=round(propactive,4)
    propoverage = paramdata['over64Proportion']
    if propoverage is None:
       propoverage = 0
+   else:
+      propoverage=round(propoverage,4)
    params={'total_pop':paramdata['population'],
     'hospital_beds':hospbeds,
     'prop_15_64':propactive,
