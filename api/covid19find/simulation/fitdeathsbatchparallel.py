@@ -72,27 +72,33 @@ def process_countries(a_tuple):
              print("COUNTRY:",cname, '('+ccode+')')
              opt.setcountry(ccode)
              dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
-             if simulated_score<0.05:
-                 sev=old_sev
-                 trig=old_trig
-                 longsev=old_long_sev 
-                 longtrig=old_long_trig
-                 score=simulated_score
-                 method='Result good without reoptimization'
-             else:
-                 opt.setlengths(7,28,50)
-                 score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
-                 if score1<simulated_score:
-                     dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "Re-optimized;"#+str(diff)
-                     longsev, longtrig = longsev1, longtrig1
-                 else:
-                     sev=old_sev
-                     trig=old_trig
-                     longsev=old_long_sev 
-                     longtrig=old_long_trig
-                     score=simulated_score
-                     method='Old parameters retained - better results than new optimization'
-                     
+# =============================================================================
+#              if simulated_score<0.05:
+#                  sev=old_sev
+#                  trig=old_trig
+#                  longsev=old_long_sev 
+#                  longtrig=old_long_trig
+#                  score=simulated_score
+#                  method='Result good without reoptimization'
+#              else:
+# =============================================================================
+             opt.setlengths(7,28,50)
+             score1,dfx1,sev1,trig1,longsev1,longtrig1 = opt.computephases(ccode)
+# =============================================================================
+#              if score1<simulated_score:
+# =============================================================================
+             dfx, sev, trig, score, method  = dfx1, sev1, trig1, score1, "Re-optimized;"#+str(diff)
+             longsev, longtrig = longsev1, longtrig1
+# =============================================================================
+#              else:
+#                 sev=old_sev
+#                 trig=old_trig
+#                 longsev=old_long_sev 
+#                 longtrig=old_long_trig
+#                 score=simulated_score
+#                 method='Old parameters retained - better results than new optimization'
+#                      
+# =============================================================================
                      
       #           opt.setlengths(14,28,100)
        #          score2,dfx2,sev2,trig2,longsev2,longtrig2 = opt.computephases(ccode)

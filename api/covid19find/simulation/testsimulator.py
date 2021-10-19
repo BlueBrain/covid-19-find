@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="FR"
+ccode="US"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 21, 79, 121, 139, 187, 233, 259, 285, 309, 331, 353, 369, 387, 413, 439, 479, 517, 533, 557, 583, 609, 635, 655]
-past_severities=[0.0, 1.0, 0.0, 0.9, 0.95, 0.9, 0.8, 0.55, 0.4, 0.3, 0.75, 0.8, 0.7, 0.75, 0.8, 0.75, 0.7, 0.75, 0.8, 0.9, 0.55, 0.6, 0.65, 0.75]
+#past_dates= [1, 21, 81, 129, 149, 195, 219, 241, 277, 303, 319, 417, 493, 517, 533, 553, 571, 593, 619, 633, 657]
+#past_severities=[0.0, 1.0, 0.0, 0.85, 0.9, 0.8, 0.75, 0.8, 0.75, 0.8, 0.7, 0.75, 0.7, 0.65, 0.7, 0.75, 0.7, 0.6, 0.55, 0.6, 0.65] 
 # =============================================================================
 # print('past_dates=',past_dates)
 # print('past_severities=', past_severities)
@@ -49,21 +49,21 @@ updates={
     'test_directory':'bbp_testing',\
     'past_dates':past_dates,\
     'past_severities':past_severities,\
-    'expert_mode':False,\
+    'expert_mode':True,\
     'save_results':False,\
   #  'fatality_reduction':0.84,\
     'num_days':830}
 fixed_params.update(updates)
 fixed_params.update(cd.getcountryparams(ccode))
 fixed_params.update({'past_dates':past_dates,'past_severities':past_severities})
-fixed_params.update({'age_gt_64':0.2195})
+#fixed_params.update({'age_gt_64':0.2195})
 scenario_params=[]
 #scenario parameters are parameters that change from scenario to scenario
 
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-16','2021-10-26'],\
+    'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -82,10 +82,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-10-16','2021-10-26'],\
+   'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[445860,445860],\
+    'num_tests_mitigation':[1546871,1546871],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -101,10 +101,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-16','2021-10-26'],\
+    'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[445860,445860],\
+    'num_tests_mitigation':[1546871,1546871],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -120,10 +120,10 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-10-16','2021-10-26'],\
+    'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[445860,445860],\
+    'num_tests_mitigation':[1546871,1546871],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
