@@ -51,11 +51,7 @@
       "minimum": 0,
       "maximum": 1
     },
-    "fatalityReduction": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
+ 
     "scenarios": {
       "type": "array",
       "minItems": 1,
