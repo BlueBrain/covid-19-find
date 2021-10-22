@@ -9,7 +9,6 @@
     "hospitalStaffPerBed",
     "urbanPopulationProportion",
     "over64Proportion",
-    "fatalityReduction",
     "scenarios"
   ],
   "type": "object",
