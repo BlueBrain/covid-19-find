@@ -234,7 +234,7 @@ def findnexttrig(dfx, sev, trig, trignum):
       score = 0
       for t in range(lowerbound,upperbound,2):
          lastscore = score
-         sev[trignum] = currsev
+         sev[trignum] = currsev          
          trig[trignum] = t
          #have taken 14 off this on John's suggestion
     #     span = lookahead(t,horizon,lastday-14)
@@ -397,8 +397,10 @@ def extendphases(ccode, sev, trig):
    #when data on tests is bad we sometimes get string of zeros in severities
    # this is a sign of error. This signals error to front end which will then signal unreliable result
    # Date should be related to today
-   if ntrig[-1]<550:
-       score=2.0
+# =============================================================================
+#    if ntrig[-1]<550:
+#        score=2.0
+# =============================================================================
    print('PACKED SCORE',nsev,ntrig,score)
    if np.isnan(score) or not isinstance(score,float):
        score=0.0

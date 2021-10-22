@@ -11,7 +11,7 @@
             ],
             "death_period": 21,
             "design_effect": 2,
-            "expert_mode": false,
+            "expert_mode": true,
             "fatality_reduction": 0.5,
             "ge_65": 0.045,
             "high_contact": 0.3,
@@ -62,81 +62,77 @@
             "relative_prob_infected": 0.01,
             "retest_period_asymptomatics": 7,
             "run_multiple_test_scenarios": true,
-            "save_results": true,
+            "save_results": false,
             "staff_per_bed": 2.5,
-            "test_directory": "/Users/richard/Dropbox (HappyFamily)/Richard global sync/Documents 2021/FIND/Repos/BBP find repository/api/covid19find/simulation/BBP_testing",
+            "test_directory": "bbp_testing",
             "test_multipliers": [
                   " 0",
                   "1",
                   "2",
                   "3"
             ],
-            "total_pop": 11403000,
-            "hospital_beds": 11403.0,
-            "prop_15_64": 0.61,
-            "age_gt_64": 0.0564,
-            "prop_urban": 0.55,
-            "income_category": "L",
+            "past_dates": [
+                  1,
+                  21,
+                  93,
+                  119,
+                  143,
+                  169,
+                  203,
+                  237,
+                  251,
+                  265,
+                  279,
+                  295,
+                  321,
+                  347,
+                  371,
+                  391,
+                  411,
+                  429,
+                  443,
+                  463,
+                  477
+            ],
             "past_severities": [
                   0.0,
                   1.0,
-                  0.55,
+                  0.0,
+                  0.5,
                   0.8,
-                  0.9,
-                  0.95,
-                  0.9,
-                  0.95,
-                  1.0,
                   0.85,
-                  0.9,
-                  0.95,
-                  1.0,
-                  0.45,
+                  0.8,
+                  0.75,
+                  0.8,
+                  0.85,
+                  0.8,
+                  0.75,
                   0.7,
-                  0.85,
-                  0.9,
-                  0.95,
-                  1.0,
-                  0.9,
-                  0.75
+                  0.65,
+                  0.55,
+                  0.4,
+                  0.45,
+                  0.5,
+                  0.45,
+                  0.15,
+                  0.0
             ],
-            "past_dates": [
-                  1,
-                  14,
-                  113,
-                  138,
-                  182,
-                  209,
-                  234,
-                  243,
-                  285,
-                  357,
-                  404,
-                  419,
-                  446,
-                  491,
-                  510,
-                  531,
-                  563,
-                  582,
-                  603,
-                  634,
-                  651
-            ]
+            "total_pop": 32972000,
+            "hospital_beds": 32972,
+            "prop_15_64": 0.66,
+            "age_gt_64": 0.0943,
+            "prop_urban": 0.77,
+            "income_category": "UM"
       },
       "scenario_params": [
             {
-                  "imported_infections_per_day": [
-                        "highly effective",
-                        "highly effective"
-                  ],
                   "severity": [
                         "no change",
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-19",
-                        "2021-10-29"
+                        "2021-10-18",
+                        "2021-10-28"
                   ],
                   "trig_def_type": [
                         "date",
@@ -144,23 +140,17 @@
                   ],
                   "trig_op_type": [
                         "=",
+                        "=",
                         "="
-                  ],
-                  "prop_contacts_traced": [
-                        "fairly effective",
-                        "fairly effective"
                   ],
                   "num_tests_mitigation": [
                         0,
                         0
                   ],
-                  "type_tests_mitigation": [
+                  "type_test_mitigation": [
+                        "PCR",
                         "PCR",
                         "PCR"
-                  ],
-                  "test_strategy": [
-                        "no testing",
-                        "no testing"
                   ],
                   "sensitivity": [
                         0.95,
@@ -170,41 +160,47 @@
                         0.998,
                         0.998
                   ],
-                  "test_multipliers": [
-                        0,
-                        1,
-                        2,
-                        3
-                  ],
                   "num_tests_care": [
                         13000,
                         13000
                   ],
                   "type_tests_care": [
                         "PCR",
+                        "PCR",
                         "PCR"
+                  ],
+                  "prop_contacts_traced": [
+                        "fairly effective",
+                        "fairly effective"
+                  ],
+                  "imported_infections_per_day": [
+                        "highly effective",
+                        "highly effective"
                   ],
                   "requireddxtests": [
                         2,
+                        2,
                         2
                   ],
+                  "test_strategy": [
+                        "no testing",
+                        "no testing",
+                        "no testing"
+                  ],
                   "results_period": [
+                        3,
                         3,
                         3
                   ]
             },
             {
-                  "imported_infections_per_day": [
-                        "highly effective",
-                        "highly effective"
-                  ],
                   "severity": [
                         "no change",
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-19",
-                        "2021-10-29"
+                        "2021-10-18",
+                        "2021-10-28"
                   ],
                   "trig_def_type": [
                         "date",
@@ -212,24 +208,83 @@
                   ],
                   "trig_op_type": [
                         "=",
+                        "=",
                         "="
+                  ],
+                  "num_tests_mitigation": [
+                        1546871,
+                        1546871
+                  ],
+                  "type_test_mitigation": [
+                        "PCR",
+                        "PCR",
+                        "PCR"
+                  ],
+                  "sensitivity": [
+                        0.95,
+                        0.95
+                  ],
+                  "specificity": [
+                        0.998,
+                        0.998
+                  ],
+                  "num_tests_care": [
+                        10000,
+                        10000
+                  ],
+                  "type_tests_care": [
+                        "PCR",
+                        "PCR",
+                        "PCR"
                   ],
                   "prop_contacts_traced": [
                         "fairly effective",
                         "fairly effective"
                   ],
-                  "num_tests_mitigation": [
-                        0,
-                        0
+                  "imported_infections_per_day": [
+                        "highly effective",
+                        "highly effective"
                   ],
-                  "type_tests_mitigation": [
-                        "PCR",
-                        "PCR"
+                  "requireddxtests": [
+                        2,
+                        2,
+                        2
                   ],
                   "test_strategy": [
                         "high contact groups first",
                         "high contact groups first"
                   ],
+                  "results_period": [
+                        3,
+                        3
+                  ]
+            },
+            {
+                  "severity": [
+                        "no change",
+                        "no change"
+                  ],
+                  "trig_values": [
+                        "2021-10-18",
+                        "2021-10-28"
+                  ],
+                  "trig_def_type": [
+                        "date",
+                        "date"
+                  ],
+                  "trig_op_type": [
+                        "=",
+                        "=",
+                        "="
+                  ],
+                  "num_tests_mitigation": [
+                        1546871,
+                        1546871
+                  ],
+                  "type_test_mitigation": [
+                        "PCR",
+                        "PCR"
+                  ],
                   "sensitivity": [
                         0.95,
                         0.95
@@ -237,12 +292,6 @@
                   "specificity": [
                         0.998,
                         0.998
-                  ],
-                  "test_multipliers": [
-                        0,
-                        1,
-                        2,
-                        3
                   ],
                   "num_tests_care": [
                         13000,
@@ -252,95 +301,35 @@
                         "PCR",
                         "PCR"
                   ],
-                  "requireddxtests": [
-                        2,
-                        2
-                  ],
-                  "results_period": [
-                        3,
-                        3
-                  ]
-            },
-            {
-                  "imported_infections_per_day": [
-                        "highly effective",
-                        "highly effective"
-                  ],
-                  "severity": [
-                        "no change",
-                        "no change"
-                  ],
-                  "trig_values": [
-                        "2021-10-19",
-                        "2021-10-29"
-                  ],
-                  "trig_def_type": [
-                        "date",
-                        "date"
-                  ],
-                  "trig_op_type": [
-                        "=",
-                        "="
-                  ],
                   "prop_contacts_traced": [
                         "fairly effective",
                         "fairly effective"
                   ],
-                  "num_tests_mitigation": [
-                        0,
-                        0
+                  "imported_infections_per_day": [
+                        "highly effective",
+                        "highly effective"
                   ],
-                  "type_tests_mitigation": [
-                        "PCR",
-                        "PCR"
+                  "requireddxtests": [
+                        3,
+                        3
                   ],
                   "test_strategy": [
                         "symptomatic first",
                         "symptomatic first"
                   ],
-                  "sensitivity": [
-                        0.95,
-                        0.95
-                  ],
-                  "specificity": [
-                        0.998,
-                        0.998
-                  ],
-                  "test_multipliers": [
-                        0,
-                        1,
-                        2,
-                        3
-                  ],
-                  "num_tests_care": [
-                        13000,
-                        13000
-                  ],
-                  "type_tests_care": [
-                        "PCR",
-                        "PCR"
-                  ],
-                  "requireddxtests": [
-                        2,
-                        2
-                  ],
                   "results_period": [
                         3,
                         3
                   ]
             },
             {
-                  "imported_infections_per_day": [
-                        "highly effective",
-                        "highly effective"
-                  ],
                   "severity": [
                         "no change",
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-10-19",
-                        "2021-10-29"
+                        "2021-10-18",
+                        "2021-10-28"
                   ],
                   "trig_def_type": [
                         "date",
@@ -350,21 +339,13 @@
                         "=",
                         "="
                   ],
-                  "prop_contacts_traced": [
-                        "fairly effective",
-                        "fairly effective"
-                  ],
                   "num_tests_mitigation": [
-                        0,
-                        0
+                        1546871,
+                        1546871
                   ],
-                  "type_tests_mitigation": [
+                  "type_test_mitigation": [
                         "PCR",
                         "PCR"
-                  ],
-                  "test_strategy": [
-                        "open public testing",
-                        "open public testing"
                   ],
                   "sensitivity": [
                         0.95,
@@ -374,12 +355,6 @@
                         0.998,
                         0.998
                   ],
-                  "test_multipliers": [
-                        0,
-                        1,
-                        2,
-                        3
-                  ],
                   "num_tests_care": [
                         13000,
                         13000
@@ -388,9 +363,22 @@
                         "PCR",
                         "PCR"
                   ],
+                  "prop_contacts_traced": [
+                        "fairly effective",
+                        "fairly effective"
+                  ],
+                  "imported_infections_per_day": [
+                        "highly effective",
+                        "highly effective"
+                  ],
                   "requireddxtests": [
-                        2,
-                        2
+                        0,
+                        0,
+                        0
+                  ],
+                  "test_strategy": [
+                        "open public testing",
+                        "open public testing"
                   ],
                   "results_period": [
                         3,
