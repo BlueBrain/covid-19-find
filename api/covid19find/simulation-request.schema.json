@@ -80,7 +80,7 @@
                 "numTestsCare",
                 "typeTestsCare",
                 "requiredDxTests",
-                "resultsPeriod",
+                "resultsPeriod"
               ],
               "properties": {
                 "importedInfectionsPerDay": {
