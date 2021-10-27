@@ -106,12 +106,14 @@ def getsimdeaths(dfx,sev,trig):
 
 def scorealignment(result,span):
    weight_total_deaths=0.2
-   denom1 = result['total_deaths'].head(span).mean()
+#   denom1 = result['total_deaths'].head(span).mean()
+   denom1 = result['total_deaths'].max()
    if denom1>0:
        meanreldev1 = result['absdiff'].head(span).mean()/denom1
    else:
        meanreldev1=0
-   denom2 = result['new_deaths'].head(span).mean()
+ #  denom2 = result['new_deaths'].head(span).mean()
+   denom2 = result['new_deaths'].max()
    if denom2>0:
        meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
    else:
