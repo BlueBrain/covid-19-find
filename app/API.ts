@@ -10,7 +10,7 @@ import {
 import { toLetters } from './libs/strings';
 import { match, when } from 'ts-pattern';
 
-export const INVALID_SCORE_THRESHOLD = 0.46;
+export const INVALID_SCORE_THRESHOLD = 0.07;
 
 export const isScoreInvalid = (score: number) =>
   score > INVALID_SCORE_THRESHOLD;

@@ -10,7 +10,7 @@ import json
 import cdata as cd
 import datetime as dt
 
-a=9
+a=10
 minphaselength = 14
 maxphaselength = 28
 lag = 26
@@ -41,7 +41,8 @@ def aligntotest(dfactual,dfsimdeaths):
    day1 = dt.datetime.strptime(dfactual.iloc[0]['Date'],"%Y-%m-%d")-dt.timedelta(days=60)
    empty_df=cl.create_empty_country_df(day1, 60)
    frames=[empty_df,dfactual]
-   results_df=pd.concat(frames)[0:len(simdeaths)]
+   #this is inverting the concatenation
+   results_df=pd.concat(frames,ignore_index=True)[0:len(simdeaths)]
  #  actdeaths = dfactual['total_deaths'].tolist()
 #   aligneddeaths, shift = cl.aligndeaths(actdeaths,simdeaths)
  #  dfactual['sim_total_deaths'] = aligneddeaths
@@ -95,8 +96,8 @@ def getsimdeaths(dfx,sev,trig):
 #    if endsim>fixed_params['num_days']:
 #        endsim=fixed_params['num_days']-1
 # =============================================================================
-   dataframes, test_df,results_dict=\
-                   cl.run_simulation(country_df,fixed_params,scenarios=scenario_params,end_day=end_day)
+   dataframes, test_df,results_dict=cl.run_simulation(country_df,fixed_params,scenarios=scenario_params,end_day=end_day)
+   #This is unnecessary manipulation - would be cleaner to keep original dataframe with dates - would avoid risk of misindexing
    firstdf = dataframes[1].rename(columns = {'deaths': 'total_deaths', 'newdeaths': 'new_deaths'}, inplace = False)
    dfsum = firstdf.groupby(['days']).sum().reset_index()
    
@@ -104,18 +105,20 @@ def getsimdeaths(dfx,sev,trig):
    return deaths
 
 def scorealignment(result,span):
-   totweight=0.2
-   denom1 = result['total_deaths'].head(span).mean()
+   weight_total_deaths=0.2
+#   denom1 = result['total_deaths'].head(span).mean()
+   denom1 = result['total_deaths'].max()
    if denom1>0:
        meanreldev1 = result['absdiff'].head(span).mean()/denom1
    else:
        meanreldev1=0
-   denom2 = result['new_deaths'].head(span).mean()
+ #  denom2 = result['new_deaths'].head(span).mean()
+   denom2 = result['new_deaths'].max()
    if denom2>0:
        meanreldev2 = result['absdiff_new_deaths'].head(span).mean()/denom2
    else:
        meanreldev2=0
-   return (meanreldev1*totweight+meanreldev2*(1-totweight))
+   return (meanreldev1*weight_total_deaths+meanreldev2*(1-weight_total_deaths))
 
 # =============================================================================
 # def scorealignment(result,span):
@@ -163,6 +166,7 @@ def runandalignsim(dfx,sev,trig):
    # result['absdiff'] = abs(result.growth - result.sim_growth)
    result['absdiff'] = abs(result.total_deaths - result.sim_total_deaths)
    result['absdiff_new_deaths'] = abs(result.new_deaths - result.sim_new_deaths)
+#The following two keys are never used
    result['roll'] = result['absdiff'].rolling(3).mean()
    result['roll_new_deaths'] = result['absdiff_new_deaths'].rolling(3).mean()
    return result
@@ -234,7 +238,7 @@ def findnexttrig(dfx, sev, trig, trignum):
       score = 0
       for t in range(lowerbound,upperbound,2):
          lastscore = score
-         sev[trignum] = currsev
+         sev[trignum] = currsev          
          trig[trignum] = t
          #have taken 14 off this on John's suggestion
     #     span = lookahead(t,horizon,lastday-14)
@@ -328,18 +332,26 @@ def getbestfit_finetune(dfx, sev, trig, sevguide, trigguide):
       sc, sev, trig = findnexttrig_finetune(dfx,sev,trig,i, sevguide, trigguide)
    return sc, sev, trig
 
+#-----------------------------------
+# Many phases may have the same severity. Compress these
+# Always keep the data for the last phase
+# This ensures the output graph and the score will take account of the whole period
+# ----------------------------------
+
+
 def packseverities(sev,trig):
    n = len(sev)
    newsev = [sev[0]]
    newtrig = [trig[0]]
    j = 0
    for i in range(1,n):
-      if sev[i] == newsev[j]:
+      if sev[i] == newsev[j] and i<n-1:
          continue
       else:
          newsev.append(sev[i])
          newtrig.append(trig[i])
          j = j + 1
+   
    return newsev,newtrig
 
 def setcountry(ccode):
@@ -397,8 +409,10 @@ def extendphases(ccode, sev, trig):
    #when data on tests is bad we sometimes get string of zeros in severities
    # this is a sign of error. This signals error to front end which will then signal unreliable result
    # Date should be related to today
-   if ntrig[-1]<550:
-       score=2.0
+# =============================================================================
+#    if ntrig[-1]<550:
+#        score=2.0
+# =============================================================================
    print('PACKED SCORE',nsev,ntrig,score)
    if np.isnan(score) or not isinstance(score,float):
        score=0.0

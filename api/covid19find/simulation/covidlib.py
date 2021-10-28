@@ -210,11 +210,11 @@ def update_system_params2(p, fixed_params):
 
 def compute_reduction_IFR(country_df,day1,fixed_params):
     fixed_params['fatality_reduction']=0.5
-    new_deaths_last_week=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-29]['accumulated_deaths']
-    new_cases_last_week=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-29]['accumulated_cases']
+    new_deaths_last_month=country_df.iloc[-1]['accumulated_deaths']-country_df.iloc[-29]['accumulated_deaths']
+    new_cases_last_month=country_df.iloc[-1]['accumulated_cases']-country_df.iloc[-29]['accumulated_cases']
 #possible divide by zerp here
-    if new_cases_last_week>0:
-        cfr_last_week=new_deaths_last_week/new_cases_last_week
+    if new_cases_last_month>0:
+        cfr_last_month=new_deaths_last_month/new_cases_last_month
     else:
         return()
         
@@ -223,14 +223,14 @@ def compute_reduction_IFR(country_df,day1,fixed_params):
     if len(country_df)<406:
         return()
     else:
-        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[398]['accumulated_deaths']
-        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[398]['accumulated_cases']
+        new_deaths_jan1=country_df.iloc[405]['accumulated_deaths']-country_df.iloc[377]['accumulated_deaths']
+        new_cases_jan1=country_df.iloc[405]['accumulated_cases']-country_df.iloc[377]['accumulated_cases']
         if new_cases_jan1>0:
             cfr_jan1=new_deaths_jan1/new_cases_jan1
         else:
             return()
         if cfr_jan1>0:
-            reduction_cfr=(cfr_jan1-cfr_last_week)/cfr_jan1
+            reduction_cfr=(cfr_jan1-cfr_last_month)/cfr_jan1
         else: 
             return()
     reduction_ifr=reduction_cfr*0.88
@@ -293,8 +293,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
    country_df=country_df_raw.rolling(win_length).mean()
 # raw data occasionally includes negatives and some very high values - for the moment I replace with value for previous day - this was necessary for Peru
-#   filler=country_df['tests'].shift(1).rolling(7).mean()
-#   country_df['tests'].where(country_df['tests']<filler*2, other=filler,inplace=True)
+   filler=country_df['tests'].shift(1).rolling(7).median()
+   country_df['tests'].where(country_df['tests']<filler*4, other=filler,inplace=True)
+   country_df['tests'].where(country_df['tests']>filler*4, other=filler,inplace=True)
 #   country_df['tests'].where(country_df['tests']>=0, other=filler,inplace=True)
  #  country_df['tests'].where(country_df['tests'].notnull(), other=0,inplace=True)
    country_df['Date']=country_df_raw['Date']
@@ -475,6 +476,7 @@ def process_scenarios(country_df,p,scenarios,initial_beta, params_dir,end_date):
       simphase,simday=computetoday(day1,par.trig_values)
   #    par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
       par.fatality_reduction_per_day=math.exp(np.log(1-(par.fatality_reduction))/(simday-par.no_improvement_period))
+      # this is set temporarily to see if changes in IFR cause of peru problem
       sim = Sim(par.num_days,par.num_compartments)
       sim.set_initial_conditions(par)
       use_real_testdata=True
