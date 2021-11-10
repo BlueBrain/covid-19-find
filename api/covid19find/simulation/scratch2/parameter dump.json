@@ -46,7 +46,7 @@
             "min_infected_not_isolated": 15,
             "no_improvement_period": 405,
             "num_compartments": 3,
-            "num_days": 75,
+            "num_days": 271,
             "num_testkit_types": 2,
             "testkits": [
                   "PCR",
@@ -71,21 +71,41 @@
                   "2",
                   "3"
             ],
-            "total_pop": 341000,
-            "hospital_beds": 1023,
-            "prop_15_64": 0.65,
-            "age_gt_64": 0.1677,
-            "prop_urban": 0.93,
+            "total_pop": 10197000,
+            "hospital_beds": 30591,
+            "prop_15_64": 0.64,
+            "age_gt_64": 0.2405,
+            "prop_urban": 0.65,
             "income_category": "H",
             "past_severities": [
                   0.0,
                   1.0,
-                  0.05
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  0.2,
+                  0.8,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.8,
+                  0.7
             ],
             "past_dates": [
                   1,
                   14,
-                  25
+                  27,
+                  40,
+                  53,
+                  64,
+                  91,
+                  114,
+                  135,
+                  156,
+                  177,
+                  202,
+                  221
             ]
       },
       "scenario_params": [
