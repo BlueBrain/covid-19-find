@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="DE"
+ccode="CH"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 21, 83, 97, 119, 135, 155, 173, 225, 251, 277, 297, 323, 349, 375, 399, 413, 439, 455, 477, 511, 535, 563, 607, 627, 649]
-past_severities=[0.0, 1.0, 0.0, 0.25, 0.8, 0.9, 0.95, 0.9, 0.85, 0.6, 0.55, 0.25, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.85, 0.8, 0.75, 0.8, 0.85, 0.8, 0.65, 0.65]
+#past_dates= [1, 21, 83, 97, 119, 135, 155, 173, 225, 251, 277, 297, 323, 349, 375, 399, 413, 439, 455, 477, 511, 535, 563, 607, 627, 649]
+#past_severities=[0.0, 1.0, 0.0, 0.25, 0.8, 0.9, 0.95, 0.9, 0.85, 0.6, 0.55, 0.25, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.85, 0.8, 0.75, 0.8, 0.85, 0.8, 0.65, 0.65]
 # =============================================================================
 # print('past_dates=',past_dates)
 # print('past_severities=', past_severities)
@@ -85,7 +85,7 @@ scenario_params.append({
    'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[1546871,1546871],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -104,7 +104,7 @@ scenario_params.append({
     'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
-    'num_tests_mitigation':[1546871,1546871],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
@@ -123,7 +123,7 @@ scenario_params.append({
     'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
-    'num_tests_mitigation':[1546871,1546871],\
+    'num_tests_mitigation':[30000,30000],\
     'type_test_mitigation':['PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
     'specificity':[0.998,0.998],\
