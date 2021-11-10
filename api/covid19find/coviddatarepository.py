@@ -77,7 +77,7 @@ class CovidDataRepository:
                 country_data = grouped_country_data.get(country_code, OrderedDict())
                 new_tests_positive = row["pos"]
                 country_data[row["time"]] = {
-                    "newTests": self.__int_or_none(row["new_tests_orig"]),
+                    "newTests": self.__int_or_none(row["all_new_tests"]),
                     "totalTests": self.__int_or_none(row["all_cum_tests"]),
                     "newTestsPositiveProportion": self.__float_or_none(row["pos"])
                 }

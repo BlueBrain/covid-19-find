@@ -291,14 +291,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    win_length=28
  
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
-   country_df=country_df_raw.rolling(win_length).mean()
-# raw data occasionally includes negatives and some very high values - for the moment I replace with value for previous day - this was necessary for Peru
-   filler=country_df['tests'].shift(1).rolling(7).median()
-   country_df['tests'].where(country_df['tests']<filler*4, other=filler,inplace=True)
-   country_df['tests'].where(country_df['tests']>filler*4, other=filler,inplace=True)
-#   country_df['tests'].where(country_df['tests']>=0, other=filler,inplace=True)
- #  country_df['tests'].where(country_df['tests'].notnull(), other=0,inplace=True)
-   country_df['Date']=country_df_raw['Date']
+   country_df=country_df_raw
+   country_df['accumulated_deaths']=country_df['accumulated_deaths'].rolling(win_length).mean()
+   country_df['accumulated_cases']=country_df['accumulated_cases'].rolling(win_length).mean()
    compute_reduction_IFR(country_df,day1,fixed_params)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
@@ -1106,7 +1101,7 @@ class Sim:
                if value<params.trig_values[phase]:
                    return(True)
            else:
-               if params.trig_op_type[phase]=='>':
+               if params.trig_op_type[phase]=='>=':
                    if value>params.trig_values[phase]:
                        if params.trig_def_type[phase]=='positives':
                            print ('t=',t,'positives=',value, 'new > ','phase:',phase)
