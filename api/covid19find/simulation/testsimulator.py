@@ -65,7 +65,7 @@ scenario_params.append({
     'severity':['no change','no change'],\
     'trig_values':['2021-10-18','2021-10-28'],\
     'trig_def_type':['date','date'],\
-    'trig_op_type':['=','=','='],\
+    'trig_op_type':['>','=','='],\
     'num_tests_mitigation':[0,0],\
     'type_test_mitigation':['PCR','PCR','PCR'],\
     'sensitivity':[0.95,0.95],\
