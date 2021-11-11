@@ -925,7 +925,7 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
