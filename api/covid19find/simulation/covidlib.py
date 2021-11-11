@@ -929,6 +929,10 @@ class Sim:
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            tests_available=prop_tests*par.num_tests_mitigation[phase+1]
         if tests_available.sum()>0:
         #test all symptomatics first 
             for i in range(0,par.num_compartments):
@@ -971,10 +975,14 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           total_tests_available=sim.actualnewtests_mit[t]
         else:
           total_tests_available=par.num_tests_mitigation[phase]
+         #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            total_tests_available=par.num_tests_mitigation[phase+1]
         p_infected=[0,0,0]
         if total_tests_available>0:
                 
@@ -1036,10 +1044,14 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            tests_available=prop_tests*par.num_tests_mitigation[phase+1]
         if tests_available.sum()>0:
             tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
             tests_available_asymptomatic=tests_available*par.prop_tested_asymptomatic       
