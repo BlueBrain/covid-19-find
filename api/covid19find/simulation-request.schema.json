@@ -50,15 +50,13 @@
       "minimum": 0,
       "maximum": 1
     },
- 
+
     "scenarios": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "phases"
-        ],
+        "required": ["phases"],
         "properties": {
           "phases": {
             "type": "array",
@@ -92,10 +90,7 @@
                   ]
                 },
                 "trigger": {
-                  "type": [
-                    "string",
-                    "number"
-                  ]
+                  "type": ["string", "number"]
                 },
                 "triggerType": {
                   "type": "string",
@@ -111,11 +106,7 @@
                 },
                 "triggerCondition": {
                   "type": "string",
-                  "enum": [
-                    "<",
-                    "=",
-                    ">="
-                  ]
+                  "enum": ["<", "=", ">", ">="]
                 },
                 "severity": {
                   "type": "string",
@@ -130,11 +121,7 @@
                 },
                 "proportionOfContactsTraced": {
                   "type": "string",
-                  "enum": [
-                    "highly effective",
-                    "fairly effective",
-                    "none"
-                  ]
+                  "enum": ["highly effective", "fairly effective", "none"]
                 },
                 "numTestsMitigation": {
                   "type": "number",
@@ -142,10 +129,7 @@
                 },
                 "typeTestsMitigation": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "specificity": {
                   "type": "number",
@@ -172,10 +156,7 @@
                 },
                 "typeTestsCare": {
                   "type": "string",
-                  "enum": [
-                    "PCR",
-                    "RDT"
-                  ]
+                  "enum": ["PCR", "RDT"]
                 },
                 "requiredDxTests": {
                   "type": "number",
@@ -184,7 +165,6 @@
                 "resultsPeriod": {
                   "type": "integer"
                 }
-                
               }
             }
           }

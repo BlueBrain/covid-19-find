@@ -291,14 +291,9 @@ def run_simulation(country_df_raw,fixed_params, **kwargs):
    win_length=28
  
 #   country_df=country_df_raw.rolling(win_length,center=True).mean()
-   country_df=country_df_raw.rolling(win_length).mean()
-# raw data occasionally includes negatives and some very high values - for the moment I replace with value for previous day - this was necessary for Peru
-   filler=country_df['tests'].shift(1).rolling(7).median()
-   country_df['tests'].where(country_df['tests']<filler*4, other=filler,inplace=True)
-   country_df['tests'].where(country_df['tests']>filler*4, other=filler,inplace=True)
-#   country_df['tests'].where(country_df['tests']>=0, other=filler,inplace=True)
- #  country_df['tests'].where(country_df['tests'].notnull(), other=0,inplace=True)
-   country_df['Date']=country_df_raw['Date']
+   country_df=country_df_raw
+   country_df['accumulated_deaths']=country_df['accumulated_deaths'].rolling(win_length).mean()
+   country_df['accumulated_cases']=country_df['accumulated_cases'].rolling(win_length).mean()
    compute_reduction_IFR(country_df,day1,fixed_params)
  #  country_df['accumulated_deaths']=country_df['accumulated_deaths']
    end_day=None
@@ -930,10 +925,14 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            tests_available=prop_tests*par.num_tests_mitigation[phase+1]
         if tests_available.sum()>0:
         #test all symptomatics first 
             for i in range(0,par.num_compartments):
@@ -976,10 +975,14 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           total_tests_available=sim.actualnewtests_mit[t]
         else:
           total_tests_available=par.num_tests_mitigation[phase]
+         #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            total_tests_available=par.num_tests_mitigation[phase+1]
         p_infected=[0,0,0]
         if total_tests_available>0:
                 
@@ -1041,10 +1044,14 @@ class Sim:
             else:
                 p_infected_symptomatic[i]=0
         prop_tests=sim.population[t-1]/sim.population[t-1].sum()
-        if (use_real_testdata) and ispast(par.day1,t+1):
+        if (use_real_testdata) and ispast(par.day1,t):
           tests_available=prop_tests*sim.actualnewtests_mit[t]
         else:
           tests_available=prop_tests*par.num_tests_mitigation[phase]
+        #ad hoc to deal with case where one day's data missing
+        simphase,today=computetoday(par.day1,par.trig_values)
+        if t==today-1 and sim.actualnewtests_mit[t]==0:
+            tests_available=prop_tests*par.num_tests_mitigation[phase+1]
         if tests_available.sum()>0:
             tests_available_symptomatic=tests_available*(1-par.prop_tested_asymptomatic)
             tests_available_asymptomatic=tests_available*par.prop_tested_asymptomatic       
@@ -1106,7 +1113,7 @@ class Sim:
                if value<params.trig_values[phase]:
                    return(True)
            else:
-               if params.trig_op_type[phase]=='>':
+               if params.trig_op_type[phase]=='>=':
                    if value>params.trig_values[phase]:
                        if params.trig_def_type[phase]=='positives':
                            print ('t=',t,'positives=',value, 'new > ','phase:',phase)

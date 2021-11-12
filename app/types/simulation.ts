@@ -21,7 +21,7 @@ export const triggerTypeLabels = {
 export enum TRIGGER_CONDITION {
   EQUAL = '=',
   LESS_THAN = '<',
-  GREATER_OR_EQUAL = '>=',
+  GREATER_OR_EQUAL = '>',
 }
 
 export enum TEST_TYPES {

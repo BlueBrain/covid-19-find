@@ -226,14 +226,13 @@ const SimulationResults: React.FC<{
                   {isScoreInvalid(simulationResults.score) && (
                     <h3 className="warning">
                       Current estimates of epidemic parameters for this country
-                      are not reliable
+                      may not be reliable
                     </h3>
                   )}
 
                   {/* <p>{clientScenariosInput[selectedScenarioIndex].description}</p>{' '} */}
-                  <button onClick={handlePDFDownloadClick}>
-                    Download As PDF
-                  </button>
+                
+                  
                 </div>
                 <div className="chart">
                   <h3 className="title">Scenarios for next six months</h3>
