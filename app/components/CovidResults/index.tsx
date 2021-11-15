@@ -313,7 +313,7 @@ const CovidResults: React.FC<{
                     position: 'right',
                     scaleLabel: {
                       display: true,
-                      labelString: 'Positivity rate (%)',
+                      labelString: 'Positivity Rate (%)',
                     },
                     ticks: {
                       beginAtZero: true,
@@ -344,6 +344,24 @@ const CovidResults: React.FC<{
                     },
                   },
                 ],
+              },
+              tooltips: {
+                callbacks: {
+                  label: function(tooltipItem, data) {
+                    console.log(data.datasets[tooltipItem.datasetIndex].label);
+                    if (
+                      data.datasets[tooltipItem.datasetIndex].label ===
+                      'Positivity Rate'
+                    ) {
+                      return `${
+                        data.datasets[tooltipItem.datasetIndex].label
+                      } : ${(tooltipItem.yLabel * 100).toLocaleString()}%`;
+                    }
+                    return `${
+                      data.datasets[tooltipItem.datasetIndex].label
+                    } : ${tooltipItem.yLabel.toLocaleString()}`;
+                  },
+                },
               },
               elements: {
                 point: {
