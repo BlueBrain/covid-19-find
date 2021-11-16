@@ -147,8 +147,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-11-11",
-                        "2021-11-21"
+                        "2021-11-15",
+                        "2021-11-25"
                   ],
                   "trig_def_type": [
                         "date",
@@ -215,8 +215,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-11-11",
-                        "2021-11-21"
+                        "2021-11-15",
+                        "2021-11-25"
                   ],
                   "trig_def_type": [
                         "date",
@@ -231,8 +231,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        20604,
-                        20604
+                        6868,
+                        6868
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -283,8 +283,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-11-11",
-                        "2021-11-21"
+                        "2021-11-15",
+                        "2021-11-25"
                   ],
                   "trig_def_type": [
                         "date",
@@ -299,8 +299,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        20604,
-                        20604
+                        6868,
+                        6868
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -351,8 +351,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-11-11",
-                        "2021-11-21"
+                        "2021-11-15",
+                        "2021-11-25"
                   ],
                   "trig_def_type": [
                         "date",
@@ -367,8 +367,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        20604,
-                        20604
+                        6868,
+                        6868
                   ],
                   "type_tests_mitigation": [
                         "PCR",

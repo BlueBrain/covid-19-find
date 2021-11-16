@@ -63,7 +63,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-11','2021-11-24'],\
+    'trig_values':['2021-11-16','2021-11-24'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['>','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -82,7 +82,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-11-11','2021-11-24'],\
+   'trig_values':['2021-11-16','2021-11-24'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[21000,21000],\
@@ -101,7 +101,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-11','2021-11-24'],\
+    'trig_values':['2021-11-16','2021-11-24'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[21000,21000],\
@@ -120,7 +120,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-18','2021-11-24'],\
+    'trig_values':['2021-11-16','2021-11-24'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[21000,21000],\
