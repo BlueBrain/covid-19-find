@@ -4,9 +4,10 @@ BBP/FIND COVID-19 project
 
 ## Architecture
 
-The application consists of three main parts:
+The application consists of four main parts:
 
 - the simulation code
+- the optimizer code
 - the HTTP API
 - the web frontend
 
@@ -15,7 +16,53 @@ parameters required by simulation code. The API also exposes data about the curr
 
 ### Simulator
 
-to be filled in by Richard
+The simulator simulates the dynamics of the epidemic for a user-specified country from November 2019 until a specified number of days after the current date (by default 180 days).
+
+The simulation compares the impact of four testing strategies. 
+
+No Testing: no diagnostic tests are performed
+
+High Contact Groups first: testing prioritizes people who cannot isolate easily (essential workers, people living in degraded urban areas), regardless of whether or not they are showing symptoms
+
+Symptomatic First: testing prioritizes people with symptoms that could indicate infection with CODID-19
+
+Open Public Testing: testing is performed on a first-come first-served basis, where tests are offered to anyone who asks for one.
+
+The Simulator is based on a multi-compartmental discrete-time SIR model, modified to take account of the effects of testing (i.e. isolation of people testing positive and a proportion of their social contacts) and of key time-lags (lag between infection and first symptoms, lag between infection and death, lag between appearance of symptoms and isolation of patients with positive test results). 
+
+No attempt is made to  model government interventions or changes in social behavior in response to changes in the dynamics of the pandemic (e.g. imposition of new restrictions or spontaneous reductions in social interactions following a rise in cases). As a result, the simulation is likely to over-estimate future cases and deaths when infections are rising and underestimate these values when infections are falling.
+
+The simulation model considers three compartments:
+
+- Health care workers
+- Other high contact individuals (essential workers, people living in degraded urban conditions)
+- Rest of the population
+
+The size of the compartments is estimated using country demographic data. Baselines rates of transmission within and between compartments are defined such that transmission is faster within than between compartments, and faster among health-care workers and other high-contact individuals than in the rest of the population.  Daily rates of transmission are scaled using data from the optimizer (see below). Changes to baseline IFRs are scaled on the basis of trends in observed CFR. In this way the simulation implicitly takes account of the impact of vaccination on transmission and deaths.  
+
+Input consists of:
+
+- Epidemiological parameters (latent period of virus, time from infection to symptoms, time from infection to death, baselines IFR by age group)
+- Country demographic and social parameters (population size, number of hospital beds, income category, urban population , population>=65, population 15-64 as % of total population)
+- Country time series for deaths, cases, and tests performed
+- Estimated severity of government intervention at different phases of the epidemic (see below)
+- User determined parameters for future phases of the epidemic (stringency of government intervention, effectiveness of border controls and trace and contact procedures, number, category, sensitivity, specificity of diagnostic tests used per day, mean time from symptoms to test results)
+
+Output consists of estimates of:
+
+- Total numbers and numbers by compartment of new infections, deaths, cases (positive test results) and isolated patients from the November 2019 until a specified number of days after the current date (by default 180).
+
+The Web front-end visualizes these values as graphs and summary values.
+
+### Optimizer
+
+The Optimizer, which is run at regular intervals, generates two parallel time series representing respectively the stringency of government intervention at different phases of the pandemic and the start date for each phase. Empirical testing has shown that these parameters alone are enough to accurately reproduce the dynamics of the pandemic for most countries. 
+
+The values of the parameters are chosen to minimize the absolute difference between the time series for the observed and simulated number of deaths between the start of the epidemic and the current date. Goodness of fit is represented by a score.
+
+When the score does not meet a pre-defined validity criterion, simulation results are flagged as potentially unreliable. This may occur when the simulator encounters discrepancies in the input data (e.g. very large day to day variations in reported deaths, cases or test numbers) or when total numbers of deaths are extremely small.
+
+A fast-running version of the Optimizer generates the same time series modifying only the parameters for the most recent periods.
 
 ### API
 
