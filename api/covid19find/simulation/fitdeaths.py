@@ -3,7 +3,7 @@ import optlib as opt
 import sys
 import cdata as cd
 
-ccode = 'CH'
+ccode = 'US'
 if len(sys.argv) > 1:
    ccode = sys.argv[1]
    
