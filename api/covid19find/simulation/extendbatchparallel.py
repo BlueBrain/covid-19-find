@@ -95,7 +95,7 @@ def process_countries(a_tuple):
     today=datetime.now()
     day1= datetime.strptime('2019-11-23',"%Y-%m-%d")
     sim_days=(today-day1).days
-    start_extend=sim_days-60 # uaed to be 60
+    start_extend=sim_days-350 # uaed to be 60
     for ccode in df_old_values['Code'][start:finish+1]:
         if cd.checkcountryparams(ccode) is not None:
              cname = cd.getcountryname(ccode)
@@ -104,35 +104,34 @@ def process_countries(a_tuple):
              print ('Currently processing', ccode)
              old_sev,old_trig,old_long_sev, old_long_trig, old_score,method=opt.get_previous_parameters(df_old_values, cname)
              dfx,simulated_score=opt.simulate_with_old_parameters(old_sev,old_trig,cname)
-             if simulated_score<0.05:
+             if simulated_score<0.02:
                  sev=old_sev
                  trig=old_trig
                  longsev=old_long_sev 
                  longtrig=old_long_trig
                  score=simulated_score
-                 method='Old result already good'
+                 method='Old result good enough'
              else:
-                  opt.setlengths(7,28,50)
-                  if len(old_long_sev) > 1:
-                   while (old_long_trig[-1] > start_extend):
-                      old_long_sev.pop()
-                      old_long_trig.pop()
-                   score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,old_long_sev,old_long_trig)
-                   method='reoptimized on extend'
-                   if score>old_score:
-                       sev=old_sev
-                       trig=old_trig
-                       longsev=old_long_sev 
-                       longtrig=old_long_trig
-                       score=simulated_score
-                       method='Old result retained on extend - better than new '
+                 opt.setlengths(7,28,50)
+                 if len(old_long_sev) > 1:
+                  while (old_long_trig[-1] > start_extend):
+                    old_long_sev.pop()
+                    old_long_trig.pop()
+                 score,dfx,sev,trig,longsev,longtrig = opt.extendphases(ccode,old_long_sev,old_long_trig)
+                 method='reoptimized on extend'
+                 if score>simulated_score:
+                     sev=old_sev
+                     trig=old_trig
+                     longsev=old_long_sev 
+                     longtrig=old_long_trig
+                     score=simulated_score
+                     method='Old result retained on extend - better than new '
              opt.showthiscase(dfx,sev,trig,'EXT')
-               #problem in line below - 'cannot set a row with misplaced columns
+              #problem in line below - 'cannot set a row with misplaced columns
              df.loc[len(df.index)] = [ccode, cname, sev, trig, score, method]
              dflong.loc[len(dflong.index)] = [ccode, cname, sev, trig, score, longsev, longtrig,method]
              df.to_csv(fname1,index=False,header=False)
              dflong.to_csv(fname2,index=False,header=False)
-
 
 if __name__=='__main__':
     print('starting',datetime.now())
