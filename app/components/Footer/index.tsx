@@ -14,7 +14,7 @@ const Header: React.FC = () => {
         <img src={logo} className="logo" />
         <div className="links">
           <span className="item">
-            FIND © 2020 -{' '}
+            FIND © 2021 -{' '}
             <a
               href="https://www.finddx.org/wp-content/uploads/2018/05/FIND-Privacy-Policy-on-Personal-Data-use-2018-.pdf"
               target="_blank"
