@@ -37,8 +37,8 @@ past_dates=json.loads(datesandseverities.loc[ccode]['Trigger Dates'])
 # Uncomment the lines below
 # =============================================================================
 # =============================================================================
-past_dates= [1, 21, 81, 129, 147, 193, 219, 237, 275, 301, 319, 371, 387, 407, 437, 455, 469, 493, 515, 541, 563, 587, 613, 633, 655, 675]
-past_severities=[0.0, 1.0, 0.0, 0.85, 0.9, 0.8, 0.75, 0.8, 0.75, 0.8, 0.7, 0.75, 0.65, 0.75, 0.7, 0.8, 0.75, 0.7, 0.65, 0.75, 0.7, 0.6, 0.55, 0.6, 0.65, 0.65]
+#past_dates= [1, 21, 81, 129, 147, 193, 219, 237, 275, 301, 319, 371, 387, 407, 437, 455, 469, 493, 515, 541, 563, 587, 613, 633, 655, 675]
+#past_severities=[0.0, 1.0, 0.0, 0.85, 0.9, 0.8, 0.75, 0.8, 0.75, 0.8, 0.7, 0.75, 0.65, 0.75, 0.7, 0.8, 0.75, 0.7, 0.65, 0.75, 0.7, 0.6, 0.55, 0.6, 0.65, 0.65]
 # =============================================================================
 # print('past_dates=',past_dates)
 # print('past_severities=', past_severities)
@@ -63,7 +63,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-16','2021-11-24'],\
+    'trig_values':['2021-11-30','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['>','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -82,7 +82,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-11-16','2021-11-24'],\
+   'trig_values':['2021-11-30','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[1500000,1500000],\
@@ -101,7 +101,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-16','2021-11-24'],\
+    'trig_values':['2021-11-30','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[1500000,1500000],\
@@ -120,7 +120,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-16','2021-11-24'],\
+    'trig_values':['2021-11-30','2021-12-15'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[1500000,1500000],\
