@@ -82,8 +82,8 @@ if __name__=='__main__':
     manager=Manager()
     queue_in=Queue()
     queue_out=manager.Queue()
-    tolerance=0.015
-    days_considered=350
+    tolerance=0.01
+    days_considered=180
     n_processors=cpu_count()-2
     if n_processors<1:
         n_processors=1
