@@ -1,8 +1,8 @@
 ![BBP-FIND - Github banner](https://user-images.githubusercontent.com/3679766/146044128-e74000fd-4a0e-43dd-82cd-ebca89fedc99.jpg)
 
-# covid-19-find
+# Diagnostic Implementation Simulator for COVID-19
 
-BBP/FIND COVID-19 project
+The EPFL Blue Brain Project and FIND, the global alliance for diagnostics, collaborated to develop a Diagnostic Implementation Simulator for SARS-CoV-2 diagnostics, which uses modelling data to simulate scenarios and estimate the potential impact of deploying different testing strategies for COVID-19.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ No Testing: no diagnostic tests are performed
 
 High Contact Groups first: testing prioritizes people who cannot isolate easily (essential workers, people living in degraded urban areas), regardless of whether or not they are showing symptoms
 
-Symptomatic First: testing prioritizes people with symptoms that could indicate infection with CODID-19
+Symptomatic First: testing prioritizes people with symptoms that could indicate infection with COVID-19
 
 Open Public Testing: testing is performed on a first-come first-served basis, where tests are offered to anyone who asks for one.
 
