@@ -1,3 +1,5 @@
+![BBP-FIND - Github banner](https://user-images.githubusercontent.com/3679766/146044128-e74000fd-4a0e-43dd-82cd-ebca89fedc99.jpg)
+
 # covid-19-find
 
 BBP/FIND COVID-19 project
