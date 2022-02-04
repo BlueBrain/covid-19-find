@@ -2,7 +2,7 @@
       "fixed_params": {
             "background_rate_symptomatic": 0.00375,
             "beta_adaptation_days": 3,
-            "beta_initial": 0.35,
+            "beta_initial": 0.6,
             "beta_lockdown": 0.03,
             "compartment": [
                   "Hospitals",
@@ -71,57 +71,67 @@
                   "2",
                   "3"
             ],
-            "total_pop": 11403000,
-            "hospital_beds": 11403.0,
-            "prop_15_64": 0.61,
-            "age_gt_64": 0.0564,
-            "prop_urban": 0.55,
-            "income_category": "L",
+            "total_pop": 331003000,
+            "hospital_beds": 662006,
+            "prop_15_64": 0.65,
+            "age_gt_64": 0.1782,
+            "prop_urban": 0.82,
+            "income_category": "H",
             "past_severities": [
                   0.0,
                   1.0,
-                  0.55,
-                  0.8,
-                  0.9,
-                  0.95,
-                  1.0,
-                  0.8,
-                  0.85,
-                  0.95,
-                  1.0,
                   0.5,
+                  0.35,
+                  0.85,
+                  0.95,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
+                  0.85,
+                  0.9,
                   0.8,
                   0.85,
                   0.9,
-                  0.95,
-                  1.0,
-                  0.9,
-                  0.8,
-                  0.9,
-                  0.9
+                  0.85,
+                  0.8
             ],
             "past_dates": [
                   1,
                   14,
-                  113,
-                  138,
-                  182,
-                  212,
-                  288,
-                  364,
-                  385,
-                  412,
+                  74,
+                  87,
+                  110,
+                  135,
+                  194,
+                  248,
+                  263,
+                  300,
+                  324,
+                  335,
+                  378,
+                  387,
+                  421,
                   454,
-                  491,
-                  518,
-                  541,
-                  560,
-                  581,
-                  602,
-                  633,
-                  646,
-                  663,
-                  693
+                  471,
+                  498,
+                  523,
+                  550,
+                  563,
+                  590,
+                  635,
+                  670,
+                  691,
+                  749
             ]
       },
       "scenario_params": [
@@ -135,8 +145,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-12-13",
-                        "2021-12-23"
+                        "2022-02-04",
+                        "2022-02-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -203,8 +213,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-12-13",
-                        "2021-12-23"
+                        "2022-02-04",
+                        "2022-02-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -219,8 +229,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        0,
-                        0
+                        2010372,
+                        2010372
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -271,8 +281,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-12-13",
-                        "2021-12-23"
+                        "2022-02-04",
+                        "2022-02-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -287,8 +297,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        0,
-                        0
+                        2010372,
+                        2010372
                   ],
                   "type_tests_mitigation": [
                         "PCR",
@@ -339,8 +349,8 @@
                         "no change"
                   ],
                   "trig_values": [
-                        "2021-12-13",
-                        "2021-12-23"
+                        "2022-02-04",
+                        "2022-02-14"
                   ],
                   "trig_def_type": [
                         "date",
@@ -355,8 +365,8 @@
                         "fairly effective"
                   ],
                   "num_tests_mitigation": [
-                        0,
-                        0
+                        2010372,
+                        2010372
                   ],
                   "type_tests_mitigation": [
                         "PCR",
