@@ -19,7 +19,7 @@ import datetime as dt
 #fixed parameters are parameters that are the same for all scenario
  #temporary. Front_end will provide real data
 #ccode="FR"
-ccode="PT"
+ccode="US"
 test_directory="bbp_testing"
 n_records=60
 countrycode = ccode
@@ -63,7 +63,7 @@ scenario_params=[]
 
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-30','2021-12-15'],\
+    'trig_values':['2022-02-05','2022-02-19'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['>','=','='],\
     'num_tests_mitigation':[0,0],\
@@ -82,7 +82,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-   'trig_values':['2021-11-30','2021-12-15'],\
+   'trig_values':['2022-02-05','2022-02-19'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[1500000,1500000],\
@@ -101,7 +101,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-30','2021-12-15'],\
+    'trig_values':['2022-02-05','2022-02-19'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','=','='],\
     'num_tests_mitigation':[1500000,1500000],\
@@ -120,7 +120,7 @@ scenario_params.append({
     
 scenario_params.append({
     'severity':['no change','no change'],\
-    'trig_values':['2021-11-30','2021-12-15'],\
+    'trig_values':['2022-02-05','2022-02-19'],\
     'trig_def_type':['date','date'],\
     'trig_op_type':['=','='],\
     'num_tests_mitigation':[1500000,1500000],\
