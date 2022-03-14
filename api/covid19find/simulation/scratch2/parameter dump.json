@@ -46,7 +46,7 @@
             "min_infected_not_isolated": 15,
             "no_improvement_period": 405,
             "num_compartments": 3,
-            "num_days": 834,
+            "num_days": 840,
             "num_testkit_types": 2,
             "testkits": [
                   "PCR",
@@ -117,7 +117,7 @@
                   705,
                   726,
                   773,
-                  788
+                  790
             ]
       },
       "scenario_params": [
@@ -175,8 +175,8 @@
                         "="
                   ],
                   "trig_values": [
-                        "2022-03-06",
-                        "2022-03-20"
+                        "2022-03-13",
+                        "2022-03-27"
                   ]
             }
       ]
