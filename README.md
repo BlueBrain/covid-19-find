@@ -320,5 +320,5 @@ The development of this software was supported by funding to:
 - FIND from Unitaid.
 
 
-Copyright © 2020-2021 Blue Brain Project/EPFL & Ateneo de Manila University, Manila, the Philippines
+Copyright © 2020-2022 Blue Brain Project/EPFL & Ateneo de Manila University, Manila, the Philippines
 
